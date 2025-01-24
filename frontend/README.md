@@ -18,6 +18,20 @@
 
 # 😎 컨벤션
 
+[모든 컨벤션 확인하러 가기 ↗️](https://past-alder-21d.notion.site/1737b680c33480d294faded6c473e252)
+
+## Branch 명
+> FE/feature/JIRA-`{이슈키}`-`{요약}` 
+
+## 주요 Coding 컨벤션
+- **컴포넌트 파일 및 폴더** : `PascalCase` 사용
+- **변수, 함수, 메소드** : `camelCase` 사용
+- **유틸리티/서비스 파일** : `camelCase` 사용
+- **상수 변수** : `UPPER_CASE` 사용
+
+# 🗂️ 폴더 구조
+[폴더 구조 확인하러 가기 ↗️](https://past-alder-21d.notion.site/Frontend-bd8d69c754e44e95b90287f08f9703ff?pvs=4)
+
 # 주요 기능
 
 ## 1️⃣ 로그인/회원가입
