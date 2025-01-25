@@ -1,0 +1,105 @@
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import MainPage from '@/pages/MainPage/MainPage'
+import NotFound from '@/pages/NotFound/NotFound'
+import BaseLayout from '@/components/layout/BaseLayout'
+
+const router = createBrowserRouter([
+  {
+    element: <BaseLayout />, // 기본 header, footer가 있는 Page
+    children: [
+      // 메인 page
+      { path: '/', index: true, element: <MainPage /> },
+
+      // 계정 인증 관련 (로그인, 회원가입, 관심사 등록 등)
+      {
+        path: '/account',
+        children: [
+          // 로그인 page
+          { path: 'login', element: <h1>Login</h1> },
+          // 회원가입 page
+          {
+            path: 'signup',
+            children: [
+              { index: true, element: <h1>Singup</h1> },
+              { path: 'interest', element: <h1>interest</h1> },
+              { path: 'success', element: <h1>SignUpSuccess</h1> },
+              { path: 'error', element: <h1>SignUpSuccess</h1> },
+            ],
+          },
+        ],
+      },
+
+      // user 관련 page (마이페이지, 아이디/비밀번호 찾기 등)
+      {
+        path: '/user',
+        children: [
+          { path: 'profile', element: <h1>Profile</h1> },
+          { path: 'help/inquiry', element: <h1>inquiry</h1> },
+        ],
+      },
+
+      // 싸프린트 Page
+      {
+        path: '/sprint',
+        children: [
+          { index: true, element: <h1>sprint</h1> },
+          { path: ':sprintId', element: <h1>sprintId</h1> },
+        ],
+      },
+
+      // 싸드컵 page
+      {
+        path: '/ssadcup',
+        children: [
+          { index: true, element: <h1>ssadcup</h1> },
+          { path: ':ssadcupId', element: <h1>ssadcupId</h1> },
+        ],
+      },
+
+      // 게시판 페이지 (학습 게시판, 자유 게시판)
+      {
+        path: '/board',
+        children: [
+          {
+            path: 'edu',
+            children: [
+              { index: true, path: 'qna', element: <h1>질의 응답</h1> },
+              { path: 'legend', element: <h1>명예의 전당</h1> },
+            ],
+          },
+          {
+            path: 'free',
+            children: [
+              { index: true, element: <h1>자유게시판</h1> },
+              { path: 'ssaguman', element: <h1>싸구만</h1> },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  // 발표 화면 page
+  {
+    path: 'presentation',
+    element: <h1>발표화면</h1>,
+  },
+  // 관리자 관련 page
+  {
+    path: '/admin',
+    children: [
+      { index: true, element: <h1>관리자 페이지</h1> },
+      { path: 'user', element: <h1>admin user</h1> },
+      { path: 'sprint', element: <h1>admin sprint</h1> },
+      { path: 'ssadcup', element: <h1>admin ssadcup</h1> },
+      { path: 'board', element: <h1>admin board</h1> },
+    ],
+  },
+  // 404 Not Found
+  { path: '*', element: <NotFound /> },
+])
+
+const AppRoutes = () => {
+  return <RouterProvider router={router} />
+}
+
+export default AppRoutes
