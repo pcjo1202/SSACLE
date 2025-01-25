@@ -15,7 +15,7 @@ export default {
   tabWidth: 2,
 
   // 한 줄 최대 길이 120자
-  printWidth: 120,
+  printWidth: 80,
 
   // 화살표 함수 매개변수 항상 괄호 사용 (ESLint arrow-parens rule과 일치)
   arrowParens: 'always',

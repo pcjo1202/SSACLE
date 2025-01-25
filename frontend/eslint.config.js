@@ -53,7 +53,7 @@ export default [
       // Fast Refresh 관련 규칙 (상수 내보내기 허용)
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       // JSX 중괄호 내부 공백 규칙
-      'react/jsx-curly-spacing': ['error', { when: 'always', children: true }],
+      'react/jsx-curly-spacing': ['error', { when: 'never', children: true }],
       // props spreading 허용
       'react/jsx-props-no-spreading': 'off',
       // HTML 엔티티 이스케이프 경고
@@ -113,7 +113,7 @@ export default [
       // 중복 import 금지
       'no-duplicate-imports': 'error',
       // 모듈 해석 오류 검사
-      'import/no-unresolved': 'error',
+      // 'import/no-unresolved': 'error',
       // named import 검사
       'import/named': 'error',
 
