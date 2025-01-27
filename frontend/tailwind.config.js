@@ -50,6 +50,18 @@ export default {
           4: 'hsl(var(--chart-4))',
           5: 'hsl(var(--chart-5))',
         },
+        ssacle: {
+          sky: '#E5F0FF',
+          blue: '#5195F7',
+          gray: {
+            sm: '#F4F4F4',
+            DEFAULT: '#E5E5E5',
+          },
+          black: '#242424',
+        },
+      },
+      fontFamily: {
+        sans: ['Montserrat', 'Noto Sans KR', 'sans-serif'],
       },
     },
   },
