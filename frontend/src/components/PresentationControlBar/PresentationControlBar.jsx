@@ -12,7 +12,7 @@ import {
 const PRESENTATION_CONTROLS = {
   effects: {
     id: 1,
-    icon: <SparklesIcon />,
+    icon: <SparklesIcon className="w-full" />,
     title: '효과',
     style: 'text-yellow-500',
     activeFunction: () => {
@@ -22,7 +22,7 @@ const PRESENTATION_CONTROLS = {
   controls: [
     {
       id: 2,
-      icon: <MicIcon />,
+      icon: <MicIcon className="w-full" />,
       title: '마이크',
       activeFunction: () => {
         // 마이크 기능 활성화
@@ -31,7 +31,7 @@ const PRESENTATION_CONTROLS = {
     },
     {
       id: 3,
-      icon: <CameraIcon />,
+      icon: <CameraIcon className="w-full" />,
       title: '카메라',
       activeFunction: () => {
         console.log('카메라')
@@ -39,7 +39,7 @@ const PRESENTATION_CONTROLS = {
     },
     {
       id: 4,
-      icon: <ScreenShareIcon />,
+      icon: <ScreenShareIcon className="w-full" />,
       title: '화면공유',
       style: 'text-green-500',
       activeFunction: () => {
@@ -48,7 +48,7 @@ const PRESENTATION_CONTROLS = {
     },
     {
       id: 5,
-      icon: <UsersIcon />,
+      icon: <UsersIcon className="w-full" />,
       title: '참여자',
       activeFunction: () => {
         console.log('참여자')
@@ -56,7 +56,7 @@ const PRESENTATION_CONTROLS = {
     },
     {
       id: 6,
-      icon: <MessageSquareIcon />,
+      icon: <MessageSquareIcon className="w-full" />,
       title: '채팅',
       activeFunction: () => {
         console.log('채팅')
@@ -65,7 +65,7 @@ const PRESENTATION_CONTROLS = {
   ],
   exit: {
     id: 7,
-    icon: <LogOutIcon />,
+    icon: <LogOutIcon className="w-full" />,
     title: '나가기',
     style: 'text-red-500',
     activeFunction: () => {
@@ -78,7 +78,7 @@ const PresentationControlBar = () => {
   const { effects, controls, exit } = PRESENTATION_CONTROLS
 
   return (
-    <nav className="flex items-center justify-between px-24 py-4 bg-ssacle-black">
+    <nav className="flex items-center justify-between h-16 px-24 py-1 bg-black">
       <PresentationControlItem item={effects} />
       <ul className="flex justify-between gap-10 px-6">
         {controls.map((item) => (
