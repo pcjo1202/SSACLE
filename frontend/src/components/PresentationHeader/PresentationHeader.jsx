@@ -16,7 +16,7 @@ const PresentationHeader = () => {
         {/* progress UI */}
         <Progress //
           steps={steps}
-          activeStep={1}
+          activeStep={1} // 현재 진행 단계
           className="my-4"
         />
       </div>
