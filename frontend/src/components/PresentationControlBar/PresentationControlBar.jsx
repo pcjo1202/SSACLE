@@ -1,4 +1,5 @@
 import PresentationControlItem from '@/components/PresentationControlItem/PresentationControlItem'
+import { usePresentation } from '@/store/usePresentation'
 import {
   SparklesIcon,
   MicIcon,
@@ -9,7 +10,7 @@ import {
   LogOutIcon,
 } from 'lucide-react'
 
-const PRESENTATION_CONTROLS = {
+const PRESENTATION_CONTROLS = ({ isChatOpen, setIsChatOpen }) => ({
   effects: {
     id: 1,
     icon: <SparklesIcon className="w-full" />,
@@ -59,7 +60,7 @@ const PRESENTATION_CONTROLS = {
       icon: <MessageSquareIcon className="w-full" />,
       title: '채팅',
       activeFunction: () => {
-        console.log('채팅')
+        setIsChatOpen(!isChatOpen)
       },
     },
   ],
@@ -72,11 +73,14 @@ const PRESENTATION_CONTROLS = {
       console.log('나가기')
     },
   },
-}
+})
 
 const PresentationControlBar = () => {
-  const { effects, controls, exit } = PRESENTATION_CONTROLS
-
+  const { isChatOpen, setIsChatOpen } = usePresentation()
+  const { effects, controls, exit } = PRESENTATION_CONTROLS({
+    isChatOpen,
+    setIsChatOpen,
+  })
   return (
     <nav className="flex items-center justify-between h-16 px-24 py-1 bg-black">
       <PresentationControlItem item={effects} />
