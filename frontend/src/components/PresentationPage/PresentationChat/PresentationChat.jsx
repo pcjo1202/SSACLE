@@ -1,6 +1,6 @@
-import ChatHeader from '@/components/ChatHeader/ChatHeader'
-import ChatInputForm from '@/components/ChatInputForm/ChatInputForm'
-import ChatMessageArea from '@/components/ChatMessageArea/ChatMessageArea'
+import ChatHeader from '@/components/PresentationPage/ChatHeader/ChatHeader'
+import ChatInputForm from '@/components/PresentationPage/ChatInputForm/ChatInputForm'
+import ChatMessageArea from '@/components/PresentationPage/ChatMessageArea/ChatMessageArea'
 
 const PresentationChat = () => {
   return (

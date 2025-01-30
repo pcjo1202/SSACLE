@@ -1,4 +1,4 @@
-import QuestionCardSection from '@/components/QuestionCardSection/QuestionCardSection'
+import QuestionCardSection from '@/components/PresentationPage/QuestionCardSection/QuestionCardSection'
 import PresentingPage from '@/pages/PresentationPage/PresentingPage'
 
 const QuestionCardPage = () => {

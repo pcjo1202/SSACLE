@@ -1,4 +1,4 @@
-import PresentationControlItem from '@/components/PresentationControlItem/PresentationControlItem'
+import PresentationControlItem from '@/components/PresentationPage/PresentationControlItem/PresentationControlItem'
 import { usePresentation } from '@/store/usePresentation'
 import {
   SparklesIcon,

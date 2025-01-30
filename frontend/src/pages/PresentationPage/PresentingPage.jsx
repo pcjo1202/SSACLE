@@ -1,5 +1,5 @@
-import ParticipantSection from '@/components/ParticipantSection/ParticipantSection'
-import SharedSection from '@/components/SharedSection/SharedSection'
+import ParticipantSection from '@/components/PresentationPage/ParticipantSection/ParticipantSection'
+import SharedSection from '@/components/PresentationPage/SharedSection/SharedSection'
 
 const PresentingPage = () => {
   return (

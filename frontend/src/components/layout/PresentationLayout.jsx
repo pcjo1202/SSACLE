@@ -1,5 +1,5 @@
-import PresentationControlBar from '@/components/PresentationControlBar/PresentationControlBar'
-import PresentationHeader from '@/components/PresentationHeader/PresentationHeader'
+import PresentationControlBar from '@/components/PresentationPage/PresentationControlBar/PresentationControlBar'
+import PresentationHeader from '@/components/PresentationPage/PresentationHeader/PresentationHeader'
 import { Outlet } from 'react-router-dom'
 
 const PresentationLayout = () => {

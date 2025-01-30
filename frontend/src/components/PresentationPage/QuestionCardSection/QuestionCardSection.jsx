@@ -1,4 +1,4 @@
-import QuestionCard from '@/components/QuestionCard/QuestionCard'
+import QuestionCard from '@/components/PresentationPage/QuestionCard/QuestionCard'
 
 const QuestionCardSection = () => {
   return (

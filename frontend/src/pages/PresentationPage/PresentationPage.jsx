@@ -1,11 +1,11 @@
 import { usePresentation } from '@/store/usePresentation'
 
-import PresentationChat from '@/components/PresentationChat/PresentationChat'
 import BeforePresentationPage from '@/pages/PresentationPage/BeforePresentationPage'
 import PresentingPage from '@/pages/PresentationPage/PresentingPage'
 import QuestionCardPage from '@/pages/PresentationPage/QuestionCardPage'
 
 import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
+import PresentationChat from '@/components/PresentationPage/PresentationChat/PresentationChat'
 
 const PresentationPage = () => {
   const { isChatOpen, presentationStatus } = usePresentation() // 발표 상태 (상태에 따라 컴포넌트 변경)

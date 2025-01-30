@@ -1,4 +1,4 @@
-import StreamVideoCard from '@/components/StreamVideoCard/StreamVideoCard'
+import StreamVideoCard from '@/components/PresentationPage/StreamVideoCard/StreamVideoCard'
 import { cn } from '@/lib/utils'
 import { usePresentation } from '@/store/usePresentation'
 
