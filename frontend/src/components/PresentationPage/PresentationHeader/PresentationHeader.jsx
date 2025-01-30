@@ -3,17 +3,17 @@ import { usePresentation } from '@/store/usePresentation'
 import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
 
 const PresentationHeader = () => {
-  const { setPresentationStatus } = usePresentation()
+  const { presentationStatus, setPresentationStatus } = usePresentation()
 
   const { BEFORE_PRESENTATION, PRESENTING, QUESTION_CARD, END_PRESENTATION } =
     PRESENTATION_STATUS
 
   const steps = [
-    { step: '준비' },
-    { step: '발표' },
-    { step: '질문' },
-    { step: '평가' },
-    { step: '완료' },
+    { step: '준비', status: BEFORE_PRESENTATION },
+    { step: '발표', status: PRESENTING },
+    { step: '질문', status: QUESTION_CARD },
+    { step: '평가', status: END_PRESENTATION },
+    { step: '완료', status: END_PRESENTATION },
   ]
   return (
     <header className="">
@@ -50,7 +50,7 @@ const PresentationHeader = () => {
         {/* progress UI */}
         <Progress //
           steps={steps}
-          activeStep={1} // 현재 진행 단계
+          activeStep={presentationStatus} // 현재 진행 단계
           className="my-4"
         />
       </div>

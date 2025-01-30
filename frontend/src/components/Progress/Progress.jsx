@@ -1,14 +1,21 @@
 import { CheckIcon, Circle } from 'lucide-react'
+import { useMemo } from 'react'
 
 const Progress = ({
   steps = [],
-  activeStep = 0, // 현재 진행 단계
+  activeStep = '', // 현재 진행 단계
   activeColor = 'bg-gray-400', // 현재 진행 단계 색상
   completedColor = 'bg-ssacle-blue', // 완료 단계 색상
   inactiveColor = 'bg-white', // 미완료 단계 색상
   lineColor = 'bg-gray-700', // 선 색상
   className = '',
 }) => {
+  const activeStepIndex = useMemo(() => {
+    return steps.findIndex((step) => step.status === activeStep)
+  }, [steps, activeStep])
+
+  console.log(activeStepIndex, activeStep)
+
   return (
     <div className={`flex items-center ${className} gap-16`}>
       {steps.map((step, idx) => (
@@ -17,17 +24,17 @@ const Progress = ({
             <div
               className={`size-5 rounded-full flex items-center justify-center
                 ${
-                  idx < activeStep // 완료 단계
+                  idx < activeStepIndex // 완료 단계
                     ? completedColor
-                    : idx === activeStep // 진행 단계
+                    : idx === activeStepIndex // 진행 단계
                       ? activeColor
                       : inactiveColor // 미완료 단계
                 }`}
             >
               {/* 완료 단계 */}
-              {idx < activeStep && <CheckIcon className="size-2" />}
+              {idx < activeStepIndex && <CheckIcon className="size-2" />}
               {/* 진행 단계 */}
-              {idx === activeStep && <Circle className="size-2" />}
+              {idx === activeStepIndex && <Circle className="size-2" />}
             </div>
             <span className="text-sm text-gray-500">{step.step}</span>
           </div>
