@@ -1,11 +1,15 @@
+import ParticipantSection from '@/components/PresentationPage/ParticipantSection/ParticipantSection'
 import QuestionCardSection from '@/components/PresentationPage/QuestionCardSection/QuestionCardSection'
-import PresentingPage from '@/pages/PresentationPage/PresentingPage'
+import SharedSection from '@/components/PresentationPage/SharedSection/SharedSection'
 
 const QuestionCardPage = () => {
   return (
-    <div className="flex flex-col w-full h-full gap-2">
-      <QuestionCardSection />
-      <PresentingPage />
+    <div className="flex w-full gap-2">
+      <div className="flex flex-col w-full gap-2">
+        <QuestionCardSection />
+        <SharedSection />
+      </div>
+      <ParticipantSection />
     </div>
   )
 }
