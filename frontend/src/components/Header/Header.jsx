@@ -13,10 +13,18 @@ const Header = () => {
 
       {/* 네비게이션 */}
       <nav className="flex space-x-12 text-[#242424] text-xl font-medium font-noto-sans-kr">
-        <a href="/sprint" className="hover:underline">싸프린트</a>
-        <a href="/ssadcup" className="hover:underline">싸드컵</a>
-        <a href="/board/edu" className="hover:underline">학습게시판</a>
-        <a href="/board/free" className="hover:underline">자유게시판</a>
+        <a href="/sprint" className="hover:underline">
+          싸프린트
+        </a>
+        <a href="/ssadcup" className="hover:underline">
+          싸드컵
+        </a>
+        <a href="/board/edu" className="hover:underline">
+          학습게시판
+        </a>
+        <a href="/board/free" className="hover:underline">
+          자유게시판
+        </a>
       </nav>
 
       {/* 아이콘 */}
