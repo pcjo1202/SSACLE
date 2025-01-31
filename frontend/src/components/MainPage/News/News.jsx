@@ -14,7 +14,7 @@ const News = ({ news }) => {
             className="block"
           >
             <div className="flex felx-row justify-between border-b border-gray-100">
-              <p className="tracking-tighter text-l font-semibold text-ssacle-black my-4">
+              <p className="tracking-tight text-sm font-semibold text-ssacle-black my-4">
                 {item.summary}
               </p>
               <p className="text-l font-medium text-ssacle-gray my-4">
