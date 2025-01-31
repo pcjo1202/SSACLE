@@ -2,7 +2,7 @@ const News = ({ news }) => {
   return (
     <div>
       <div>
-        <p className="text-2xl font-bold text-ssacle-black mb-6">AI 기사 💻</p>
+        <p className="text-xl font-bold text-ssacle-black mb-6">AI 기사 💻</p>
       </div>
       <div>
         {news.map((item) => (
@@ -14,10 +14,10 @@ const News = ({ news }) => {
             className="block"
           >
             <div className="flex felx-row justify-between border-b border-gray-100">
-              <p className="text-xl font-medium text-ssacle-black my-4">
+              <p className="tracking-tighter text-l font-semibold text-ssacle-black my-4">
                 {item.summary}
               </p>
-              <p className="text-xl font-medium text-ssacle-gray my-4">
+              <p className="text-l font-medium text-ssacle-gray my-4">
                 {item.publishedAt}
               </p>
             </div>

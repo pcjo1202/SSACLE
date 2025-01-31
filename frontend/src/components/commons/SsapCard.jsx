@@ -19,19 +19,19 @@ const SsapCard = ({ sprintData }) => {
     stackLogos[requiredSkills[0]] || '/src/mocks/default-logo.png'
 
   return (
-    <div className="bg-purple-500 h-64 w-full rounded-xl p-5  relative">
+    <div className="bg-gradient-to-bl from-purple-400 via-purple-500 to-purple-600 h-54 w-full rounded-xl p-5  relative">
       <div className="text-white">
-        <p className="text-4xl font-bold mb-3">{requiredSkills[0]}</p>
-        <p className="text-xl font-medium mb-3">{title}</p>
-        <p className="text-base font-medium">시작일 {startDate}</p>
-        <p className="text-base font-medium">종료일 {endDate}</p>
-        <p className="text-base font-medium mb-3">
+        <p className="text-2xl font-bold mb-3">{requiredSkills[0]}</p>
+        <p className="text-l font-semibold mb-3">{title}</p>
+        <p className="text-sm font-medium">시작일 {startDate}</p>
+        <p className="text-sm font-medium">종료일 {endDate}</p>
+        <p className="text-sm font-medium mb-3">
           {status}{' '}
           <span>
             {currentMembers} / {maxMembers}
           </span>
         </p>
-        <p className="text-purple-500 text-base font-semibold bg-white w-20 h-8 rounded-md flex items-center justify-center">
+        <p className="text-purple-600 text-sm font-semibold bg-white w-20 h-7 rounded-md flex items-center justify-center">
           신청하기
         </p>
       </div>

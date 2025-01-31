@@ -5,7 +5,7 @@ const CurruntSsadcup = ({ userData, recommendedSprints }) => {
   return (
     <div>
       <div>
-        <p className="text-2xl font-medium text-ssacle-black mb-9">
+        <p className="tracking-tighter text-xl font-semibold text-ssacle-black mb-9">
           <span className="font-bold">{name}</span>님에게 딱 맞는{' '}
           <span className="font-bold text-ssacle-blue">싸드컵</span> 여기
           있어요! 🏆

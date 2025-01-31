@@ -17,7 +17,7 @@ const SsabapVote = () => {
   return (
     <div>
       {/* 제목 영역 */}
-      <p className="text-2xl font-bold text-ssacle-black mb-6 flex gap-2">
+      <p className="tracking-tighter text-xl font-bold text-ssacle-black mb-6 flex gap-2">
         오늘의 싸밥 🍚
       </p>
 
@@ -29,7 +29,7 @@ const SsabapVote = () => {
           <img
             src="/src/mocks/menu1.png"
             alt="비지찌개&떡볶이"
-            className="w-50 h-48 object-cover rounded-lg mb-3"
+            className="w-50 h-40 object-cover rounded-lg mb-3"
           />
           {/* 투표 버튼: 투표 전에는 물음표, 투표 후에는 득표율 표시.
           투표 후 더 많은 표를 받은 메뉴는 파란색, 적은 메뉴는 회색으로 표시 */}
@@ -63,7 +63,7 @@ const SsabapVote = () => {
           <img
             src="/src/mocks/menu2.png"
             alt="장조림비빔밥"
-            className="w-50 h-48 object-cover rounded-lg mb-3"
+            className="w-50 h-40 object-cover rounded-lg mb-3"
           />
           <button
             onClick={() => handleVote('menu2')}

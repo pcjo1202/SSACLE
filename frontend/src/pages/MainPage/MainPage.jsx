@@ -10,7 +10,7 @@ const MainPage = () => {
   const { user, currentSprints, recommendedSprints, aiNews } = mockData
 
   return (
-    <main className="mx-[200px]">
+    <main className="mx-[10%]">
       {/* 프로필, 나의 싸프린트 + 싸드컵 현황 보드 */}
       <div className="flex flex-row gap-x-5 mb-20">
         <section className="basis-1/3">
