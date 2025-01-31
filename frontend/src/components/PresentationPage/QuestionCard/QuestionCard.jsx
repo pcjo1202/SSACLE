@@ -9,7 +9,7 @@ const QuestionCard = () => {
     <li
       onClick={() => setIsOpen(!isOpen)}
       className={cn(
-        'w-80 border-[1px] border-gray-500 rounded-md flex-col px-3 py-2 bg-gray-500 cursor-pointer transition-all',
+        'w-1/5 border-[1px] border-gray-500 rounded-md flex-col px-3 py-2 bg-gray-500 cursor-pointer transition-all',
         !isOpen && 'hover:bg-gray-300',
         isOpen && 'w-full'
       )}

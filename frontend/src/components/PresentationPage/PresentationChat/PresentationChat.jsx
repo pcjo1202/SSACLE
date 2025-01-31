@@ -4,7 +4,7 @@ import ChatMessageArea from '@/components/PresentationPage/ChatMessageArea/ChatM
 
 const PresentationChat = () => {
   return (
-    <div className="w-1/3 flex flex-col  border-[1px] border-gray-500 rounded-md">
+    <div className="basis-1/4 flex flex-col  border-[1px] border-gray-500 rounded-md">
       {/* 채팅 헤더 */}
       <ChatHeader />
       {/* 채팅 메시지 영역 */}

@@ -1,6 +1,7 @@
 import Progress from '@/components/Progress/Progress'
 import { usePresentation } from '@/store/usePresentation'
 import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
+import { Link } from 'react-router-dom'
 
 const PresentationHeader = () => {
   const { presentationStatus, setPresentationStatus } = usePresentation()
@@ -17,31 +18,33 @@ const PresentationHeader = () => {
   ]
   return (
     <header className="">
-      <div className="flex items-center justify-between h-20 px-24">
+      <div className="flex items-center justify-between px-24 py-4">
         {/* logo */}
-        <h1 className="text-2xl font-bold text-sky-400">SSACLE</h1>
+        <Link to="/">
+          <h1 className="text-2xl font-bold text-sky-400">SSACLE</h1>
+        </Link>
         {/* 테스트를 위한 버튼 */}
         <div className="flex gap-2">
           <button
-            className="px-4 py-2 rounded-md bg-ssacle-gray-md text-ssacle-gray-sm hover:bg-gray-600"
+            className="px-4 rounded-md bg-ssacle-gray-md text-ssacle-gray-sm hover:bg-gray-600"
             onClick={() => setPresentationStatus(BEFORE_PRESENTATION)}
           >
             준비
           </button>
           <button
-            className="px-4 py-2 rounded-md bg-ssacle-gray-md text-ssacle-gray-sm hover:bg-gray-600"
+            className="px-4 rounded-md bg-ssacle-gray-md text-ssacle-gray-sm hover:bg-gray-600"
             onClick={() => setPresentationStatus(PRESENTING)}
           >
             발표
           </button>
           <button
-            className="px-4 py-2 rounded-md bg-ssacle-gray-md text-ssacle-gray-sm hover:bg-gray-600"
+            className="px-4 rounded-md bg-ssacle-gray-md text-ssacle-gray-sm hover:bg-gray-600"
             onClick={() => setPresentationStatus(QUESTION_CARD)}
           >
             질문
           </button>
           <button
-            className="px-4 py-2 rounded-md bg-ssacle-gray-md text-ssacle-gray-sm hover:bg-gray-600"
+            className="px-4 rounded-md bg-ssacle-gray-md text-ssacle-gray-sm hover:bg-gray-600"
             onClick={() => setPresentationStatus(END_PRESENTATION)}
           >
             완료
@@ -51,7 +54,7 @@ const PresentationHeader = () => {
         <Progress //
           steps={steps}
           activeStep={presentationStatus} // 현재 진행 단계
-          className="my-4"
+          className=""
         />
       </div>
     </header>
