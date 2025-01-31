@@ -2,6 +2,12 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import MainPage from '@/pages/MainPage/MainPage'
 import NotFound from '@/pages/NotFound/NotFound'
 import BaseLayout from '@/components/layout/BaseLayout'
+import LoginPage from '@/pages/Account/LoginPage/LoginPage'
+import SignupStep1 from '@/pages/Account/SignupPage/SignupStep1'
+import SignupStep2 from '@/pages/Account/SignupPage/SignupStep2'
+import InterestPage from '@/pages/Account/SignupPage/InterestPage'
+import SuccessPage from '@/pages/Account/SignupPage/SuccessPage'
+import FindAccount from '@/pages/Account/LoginPage/FindAccount'
 
 const router = createBrowserRouter([
   {
@@ -15,17 +21,20 @@ const router = createBrowserRouter([
         path: '/account',
         children: [
           // 로그인 page
-          { path: 'login', element: <h1>Login</h1> },
+          { path: 'login', element: <LoginPage /> },
           // 회원가입 page
           {
             path: 'signup',
             children: [
-              { index: true, element: <h1>Singup</h1> },
-              { path: 'interest', element: <h1>interest</h1> },
-              { path: 'success', element: <h1>SignUpSuccess</h1> },
+              { index: true, element: <SignupStep1 /> },
+              { path: 'step2', element: <SignupStep2 /> },
+              { path: 'interest', element: <InterestPage /> },
+              { path: 'success', element: <SuccessPage /> },
               { path: 'error', element: <h1>SignUpSuccess</h1> },
             ],
           },
+          // 이메일 찾기, 비밀번호 찾기
+          { path: 'help', element: <FindAccount /> },
         ],
       },
 
