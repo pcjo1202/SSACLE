@@ -10,7 +10,7 @@ const CurruntSsaprint = ({ userData, recommendedSprints }) => {
           <span className="font-bold text-ssacle-blue">싸프린트</span> 여기
           있어요! 💡
         </p>
-        <div className="grid grid-cols-4 gap-y-8 gap-x-5">
+        <div className="grid grid-cols-4 gap-y-5 gap-x-4">
           {recommendedSprints.map((sprint) => (
             <SsaCard key={sprint.sprintId} sprintData={sprint} />
           ))}
