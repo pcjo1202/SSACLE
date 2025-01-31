@@ -5,7 +5,7 @@ const Header = () => {
   const navigate = useNavigate()
 
   return (
-    <header className="w-full h-[50px] px-[200px] py-4 bg-white shadow-md flex justify-between items-center">
+    <header className="fixed top-0 left-0 w-full h-12 px-48 py-4 bg-white shadow-sm flex justify-between items-center">
       {/* 로고 */}
       <Link
         to="/"
@@ -32,17 +32,17 @@ const Header = () => {
 
       {/* 아이콘 */}
       <div className="flex space-x-6">
-        <button className="w-[20px] h-[20px] flex justify-center items-center">
+        <button className="w-5 h-5 flex justify-center items-center">
           <Search size={15} className="text-black" />
         </button>
         <button
-          className="w-[20px] h-[20px] flex justify-center items-center"
+          className="w-5 h-5 flex justify-center items-center"
           onClick={() => navigate('account/login')}
         >
           <Lock size={15} className="text-black" />
         </button>
         <button
-          className="w-[20px] h-[20px] flex justify-center items-center"
+          className="w-5 h-5 flex justify-center items-center"
           onClick={() => navigate('user/profile')}
         >
           <User size={15} className="text-black" />
