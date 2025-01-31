@@ -1,8 +1,8 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const SignupStep1 = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const [showCodeInput, setShowCodeInput] = useState(false)
 
   return (
@@ -32,7 +32,9 @@ const SignupStep1 = () => {
           {/* 인증 코드 요청 버튼 */}
           <button
             className={`w-full h-[50px] rounded-full text-center text-xl font-bold mb-4 transition-colors duration-300 ${
-              showCodeInput ? "bg-[#E5F0FF] text-[#242424]" : "bg-[#5195F7] text-white"
+              showCodeInput
+                ? 'bg-[#E5F0FF] text-[#242424]'
+                : 'bg-[#5195F7] text-white'
             }`}
             onClick={() => setShowCodeInput(true)}
           >
@@ -42,7 +44,7 @@ const SignupStep1 = () => {
           {showCodeInput && (
             <button
               className="w-full h-[50px] bg-[#5195F7] rounded-full px-6 text-white text-center text-xl font-bold mb-4"
-              onClick={() => navigate("step2")} // 다음 단계로 이동
+              onClick={() => navigate('step2')} // 다음 단계로 이동
             >
               SSAFY인 인증하기
             </button>

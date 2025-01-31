@@ -5,13 +5,13 @@ const SuccessPage = () => {
         회원가입이 완료되었습니다!
       </div>
       <div>
-        <span class="text-[#242424] text-xl font-['Noto Sans KR']">
-          로그인하고, 
+        <span className="text-[#242424] text-xl font-['Noto Sans KR']">
+          로그인하고,
         </span>
-        <span class="text-[#242424] text-xl font-medium font-['Noto Sans KR']">
+        <span className="text-[#242424] text-xl font-medium font-['Noto Sans KR']">
           싸클
         </span>
-        <span class="text-[#242424] text-xl font-light font-['Noto Sans KR']">
+        <span className="text-[#242424] text-xl font-light font-['Noto Sans KR']">
           의 다양한 컨텐츠에 참여해 보세요.
         </span>
       </div>

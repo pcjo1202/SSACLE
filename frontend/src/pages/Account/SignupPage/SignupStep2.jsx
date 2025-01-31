@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom'
 
 const SignupStep2 = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   return (
     <>
       <div className="w-full h-auto flex justify-center items-center px-[200px] mt-[100px]">
@@ -107,7 +107,7 @@ const SignupStep2 = () => {
             <div className="grid grid-cols-6 gap-4 mb-[50px]">
               <button
                 className="col-span-2 col-start-3 h-[50px] bg-[#5195F7] rounded-full px-6 text-white text-center text-xl font-bold mb-4"
-                onClick={() => navigate("/account/signup/interest")} // 다음 단계로 이동
+                onClick={() => navigate('/account/signup/interest')} // 다음 단계로 이동
               >
                 회원가입
               </button>
