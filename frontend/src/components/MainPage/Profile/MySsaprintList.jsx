@@ -1,9 +1,11 @@
 const MySsaprintList = ({ currentSprintsData }) => {
   return (
-    <div className="bg-white w-full h-72 rounded-xl pt-3 pl-6 text-ssacle-black">
+    <div className="bg-white w-full h-60 rounded-xl pt-3 pl-6 text-ssacle-black">
       <div className="flex flex-col">
         {/* 제목 영역 */}
-        <p className="text-2xl font-bold mb-8">나의 싸프린트 & 싸드컵 🌟</p>
+        <p className="tracking-tighter text-xl font-bold mb-8">
+          나의 싸프린트 & 싸드컵 🌟
+        </p>
 
         {/* currentSprintsData 배열을 순회하며 각 스프린트 정보 표시 */}
         {currentSprintsData.map((sprint) => {
@@ -33,18 +35,20 @@ const MySsaprintList = ({ currentSprintsData }) => {
               ></div>
 
               {/* 스프린트 제목 */}
-              <p className="text-xl font-normal mr-2">{sprint.title}</p>
+              <p className="tracking-tighter text-l font-medium mr-2">
+                {sprint.title}
+              </p>
 
               {/* 분류 뱃지 */}
               <p
-                className={`${statusColor} ${badgeWidth} h-6 rounded-xl text-center text-white text-base`}
+                className={`${statusColor} ${badgeWidth} font-medium h-6 rounded-xl text-center text-white text-sm`}
               >
                 {sprint.cls}
               </p>
 
               {/* 진행 기간 뱃지 */}
               <p
-                className={`${statusColor} ${dateBadgeWidth} h-6 rounded-xl text-center text-white text-base`}
+                className={`${statusColor} ${dateBadgeWidth} font-medium h-6 rounded-xl text-center text-white text-sm`}
               >
                 {sprint.progressDate}
               </p>
