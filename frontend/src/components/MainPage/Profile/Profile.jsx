@@ -7,10 +7,10 @@ const Profile = ({ userData }) => {
   const progressPercent = (experience / 10000) * 100
 
   return (
-    <div className="bg-ssacle-sky rounded-xl p-10 w-full h-72 content-center">
+    <div className="bg-ssacle-sky rounded-xl p-10 w-full h-60 content-center">
       <div className="flex items-center gap-6">
         {/* 프로필 이미지 */}
-        <div className="w-40 h-40 bg-white rounded-full">
+        <div className="w-28 h-28 bg-white rounded-full">
           <img
             src={profileImage}
             alt="프로필 캐릭터"
@@ -22,7 +22,7 @@ const Profile = ({ userData }) => {
         <div className="flex-1">
           {/* 이름, 레벨 */}
           <div className="flex items-center gap-2 mb-2">
-            <span className="font-semibold text-2xl text-ssacle-black">
+            <span className="font-semibold text-lg text-ssacle-black">
               {name}
             </span>
             <span className="text-green-500 font-semibold ">256 피클 🥒</span>
