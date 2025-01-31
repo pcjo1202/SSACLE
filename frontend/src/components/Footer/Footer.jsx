@@ -2,7 +2,7 @@ import { Coffee } from 'lucide-react'
 
 const Footer = () => {
   return (
-    <footer className="w-full h-[104px] px-6 py-10 bg-[#f4f4f4] flex flex-col justify-center items-center">
+    <footer className="w-full h-[50px] px-6 py-10 bg-ssacle-gray-sm flex flex-col justify-center items-center">
       <div className="flex items-center space-x-1">
         <span className="text-black text-base font-medium font-montserrat">
           SSACLE
