@@ -22,7 +22,7 @@ const SsabapVote = () => {
       </p>
 
       {/* 투표 컨테이너 */}
-      <div className="flex gap-4">
+      <div className="flex gap-2">
         {/* 왼쪽 메뉴 */}
         <div className="flex-1 flex flex-col items-center">
           {/* 메뉴 이미지 */}
@@ -47,7 +47,7 @@ const SsabapVote = () => {
             {hasVoted ? `${votes.menu1}%` : '?'}
           </button>
           {/* 메뉴 이름 */}
-          <p className="text-ssacle-black text-center mt-2 font-medium text-base">
+          <p className="text-ssacle-black text-center mt-2 font-medium text-sm">
             비지찌개 & 햄채소스크램블에그
           </p>
         </div>
@@ -78,7 +78,7 @@ const SsabapVote = () => {
           >
             {hasVoted ? `${votes.menu2}%` : '?'}
           </button>
-          <p className="text-ssacle-black text-center mt-2 font-medium text-base">
+          <p className="text-ssacle-black text-center mt-2 font-medium text-sm">
             장조림버터밥 & 쫄면채소무침
           </p>
         </div>

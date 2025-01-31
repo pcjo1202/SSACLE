@@ -10,7 +10,7 @@ const CurruntSsadcup = ({ userData, recommendedSprints }) => {
           <span className="font-bold text-ssacle-blue">싸드컵</span> 여기
           있어요! 🏆
         </p>
-        <div className="grid grid-cols-4 gap-y-8 gap-x-5">
+        <div className="grid grid-cols-4 gap-y-5 gap-x-4">
           {recommendedSprints.map((sprint) => (
             <SsadCard key={sprint.sprintId} sprintData={sprint} />
           ))}
