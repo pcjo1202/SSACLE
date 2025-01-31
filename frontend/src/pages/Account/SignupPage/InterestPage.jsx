@@ -1,8 +1,8 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const InterestPage = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const [selected, setSelected] = useState(new Set())
   const userNickname = '싸피인' // 실제 데이터와 연결 필요
 
@@ -18,8 +18,29 @@ const InterestPage = () => {
     })
   }
 
-  const mainCategories = ['백엔드', '프론트엔드', '데이터', '모바일', '네트워크', '보안']
-  const subCategories = ['Swift', 'Kotlin', 'MySQL', 'C++', 'Python', 'Java', 'Django', 'Spring Boot', 'HTML', 'CSS', 'JavaScript', 'React', 'Vue.js']
+  const mainCategories = [
+    '백엔드',
+    '프론트엔드',
+    '데이터',
+    '모바일',
+    '네트워크',
+    '보안',
+  ]
+  const subCategories = [
+    'Swift',
+    'Kotlin',
+    'MySQL',
+    'C++',
+    'Python',
+    'Java',
+    'Django',
+    'Spring Boot',
+    'HTML',
+    'CSS',
+    'JavaScript',
+    'React',
+    'Vue.js',
+  ]
 
   return (
     <div className="w-full h-auto bg-white flex flex-col items-center py-10 px-[200px]">
@@ -27,7 +48,8 @@ const InterestPage = () => {
         거의 다 됐어요!
       </p>
       <h2 className="text-[#242424] text-2xl font-noto-sans-kr font-light mb-2">
-        <span className="font-bold">{userNickname}</span>님의 관심 주제를 알려주세요!
+        <span className="font-bold">{userNickname}</span>님의 관심 주제를
+        알려주세요!
       </h2>
       <p className="text-center text-[#242424] text-2xl font-noto-sans-kr font-light mb-2">
         <p>해당 키워드를 바탕으로, </p>
@@ -72,7 +94,7 @@ const InterestPage = () => {
 
       <button
         className="mt-10 px-10 py-3 bg-[#242424] text-white text-xl font-bold font-noto-sans-kr rounded-full"
-        onClick={() => navigate("/account/signup/success")} // 다음 단계로 이동
+        onClick={() => navigate('/account/signup/success')} // 다음 단계로 이동
       >
         저장하기
       </button>

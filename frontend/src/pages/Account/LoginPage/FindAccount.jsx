@@ -26,24 +26,28 @@ const EmailPage = () => {
           <div className="flex justify-center border-b">
             <button
               className={`w-1/2 px-4 py-2 text-center ${
-                activeTab === 'email' ? "border-b-2 border-[#5194f6] text-[#242424] text-base font-medium" : "text-[#E5E5E5] text-base font-medium"
+                activeTab === 'email'
+                  ? 'border-b-2 border-[#5194f6] text-[#242424] text-base font-medium'
+                  : 'text-[#E5E5E5] text-base font-medium'
               }`}
-              onClick={() => setActiveTab("email")}
+              onClick={() => setActiveTab('email')}
             >
               이메일 찾기
             </button>
             <button
               className={`w-1/2 px-4 py-2 text-center ${
-                activeTab === "password" ? "border-b-2 border-[#5194f6] text-[#242424] text-base font-medium" : "text-[#E5E5E5] text-base font-medium"
+                activeTab === 'password'
+                  ? 'border-b-2 border-[#5194f6] text-[#242424] text-base font-medium'
+                  : 'text-[#E5E5E5] text-base font-medium'
               }`}
-              onClick={() => setActiveTab("password")}
+              onClick={() => setActiveTab('password')}
             >
               비밀번호 찾기
             </button>
           </div>
 
           {/* 탭 버튼 시 나올 화면 */}
-          {activeTab === "email" ? (
+          {activeTab === 'email' ? (
             <div className="pt-10">
               <input
                 placeholder="싸피 학번을 입력 해주세요"
