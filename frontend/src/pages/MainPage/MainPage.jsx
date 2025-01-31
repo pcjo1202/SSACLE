@@ -10,13 +10,13 @@ const MainPage = () => {
   const { user, currentSprints, recommendedSprints, aiNews } = mockData
 
   return (
-    <main className="mx-[10%]">
+    <main className="my-10">
       {/* 프로필, 나의 싸프린트 + 싸드컵 현황 보드 */}
       <div className="flex flex-row gap-x-5 mb-20">
-        <section className="basis-1/3">
+        <section className="basis-2/5">
           <Profile userData={user} />
         </section>
-        <section className="basis-2/3">
+        <section className="basis-3/5">
           <MySsaprintList currentSprintsData={currentSprints} />
         </section>
       </div>
