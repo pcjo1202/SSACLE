@@ -3,14 +3,17 @@ import { Coffee } from 'lucide-react'
 const Footer = () => {
   return (
     <footer className="w-full h-[104px] px-6 py-10 bg-[#f4f4f4] flex flex-col justify-center items-center">
-      <div className="flex items-center space-x-4">
-        <Coffee size={24} className="text-black" />
+      <div className="flex items-center space-x-1">
         <span className="text-black text-base font-medium font-montserrat">
           SSACLE
         </span>
-        <span className="text-black text-base font-medium font-noto-sans-kr">
-          개발자에게 커피사주기
+        <span className="text-black text-base font-light font-noto-sans-kr">
+          개발자에게 커피 사주기
         </span>
+        <Coffee size={20} strokeWidth={1} className="text-black" />
+      </div>
+      <div className="flex items-center space-x-1">
+        <span className='text-black text-xs font-light font-montserrat'>Copyright © SSACLE</span>
       </div>
     </footer>
   )
