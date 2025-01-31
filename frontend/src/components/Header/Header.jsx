@@ -5,17 +5,17 @@ const Header = () => {
   const navigate = useNavigate()
 
   return (
-    <header className="w-full h-[91px] px-[200px] py-4 bg-white shadow-md flex justify-between items-center">
+    <header className="w-full h-[50px] px-[200px] py-4 bg-white shadow-md flex justify-between items-center">
       {/* 로고 */}
       <Link
         to="/"
-        className="text-[#5194f6] text-5xl font-bold font-montserrat"
+        className="text-ssacle-blue text-3xl font-bold font-montserrat"
       >
         SSACLE
       </Link>
 
       {/* 네비게이션 */}
-      <nav className="flex space-x-12 text-[#242424] text-xl font-medium font-noto-sans-kr">
+      <nav className="flex space-x-12 text-ssacle-black text-base font-medium font-noto-sans-kr">
         <Link to="/sprint" className="hover:underline">
           싸프린트
         </Link>
@@ -32,20 +32,20 @@ const Header = () => {
 
       {/* 아이콘 */}
       <div className="flex space-x-6">
-        <button className="w-[30px] h-[30px] flex justify-center items-center">
-          <Search size={20} className="text-black" />
+        <button className="w-[20px] h-[20px] flex justify-center items-center">
+          <Search size={15} className="text-black" />
         </button>
         <button
-          className="w-[30px] h-[30px] flex justify-center items-center"
+          className="w-[20px] h-[20px] flex justify-center items-center"
           onClick={() => navigate('account/login')}
         >
-          <Lock size={20} className="text-black" />
+          <Lock size={15} className="text-black" />
         </button>
         <button
-          className="w-[30px] h-[30px] flex justify-center items-center"
+          className="w-[20px] h-[20px] flex justify-center items-center"
           onClick={() => navigate('user/profile')}
         >
-          <User size={20} className="text-black" />
+          <User size={15} className="text-black" />
         </button>
       </div>
     </header>
