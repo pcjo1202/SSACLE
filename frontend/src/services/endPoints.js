@@ -14,11 +14,38 @@ export const USER_END_POINT = {
   PASSWORD: '/user/password',
 }
 
-// 부가 기능 (메인페이지) -> mainService
+// 메인페이지 -> mainService
 export const MAIN_END_POINT = {
-  BANNER: '/main/banner',
-  NOTICE: '/main/notice',
-  FAQ: '/main/faq',
+  // GET 요청 - 로그인한 사용자의 기본 정보 조회
+  USER_INFO: (userId) => `/api/v1/user/${userId}`,
+
+  // GET 요청 - 참여중인 싸프린트, 싸드컵 리스트 조회
+  // NOW_MYSSAPRINT: '/api/v1/mylist',
+  NOW_MYSSAPRINT: '/api/v1/',
+
+  // 싸프린트 관련 엔드포인트
+  // POST 요청 - 관심사 기반 싸프린트 리스트 조회
+  // SSAPRINT_LIST: '/api/v1/ssaprint/interest',
+  SSAPRINT_LIST: '/api/v1/',
+
+  // 싸드컵 관련 엔드포인트
+  // POST 요청 - 관심사 기반 싸드컵 리스트 조회
+  // SSADCUP_LIST: '/api/v1/ssadcup/interest',
+  SSADCUP_LIST: '/api/v1/',
+
+  // 싸밥 관련 엔드포인트
+  // GET 요청 - 오늘의 싸밥(식단) 정보 조회
+  LUNCH_INFO: '/api/v1/lunch',
+
+  // PATCH 요청 - 싸밥 투표 (투표자 전용)
+  LUNCH_VOTE: '/api/v1/vote',
+
+  // GET 요청 - 싸밥 투표 결과 조회 (투표자 전용)
+  LUNCH_VOTE_RESULT: '/api/v1/vote/check-result',
+
+  // AI 기사 관련
+  // GET 요청 - 금일 AI 기사 전체 아티클 조회
+  AI_NEWS: (newId) => `/api/v1/news/${newId}`,
 }
 
 // 싸프린트 -> ssaprintService
