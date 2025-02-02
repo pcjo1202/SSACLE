@@ -74,3 +74,16 @@
   src: url(/src/assets/fonts/Montserrat-VariableFont_wght.ttf)
     format('truetype');
 }
+
+@font-face {
+  font-family: 'Noto Sans KR';
+  src: url('/src/assets/fonts/NotoSansKR-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900; /* 가변 폰트 지원 */
+  font-style: normal;
+}
+
+@layer base {
+  body {
+    font-family: 'Montserrat', 'Noto Sans KR', sans-serif;
+  }
+}

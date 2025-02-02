@@ -8,6 +8,7 @@ import SignupStep2 from '@/pages/Account/SignupPage/SignupStep2'
 import InterestPage from '@/pages/Account/SignupPage/InterestPage'
 import SuccessPage from '@/pages/Account/SignupPage/SuccessPage'
 import FindAccount from '@/pages/Account/LoginPage/FindAccount'
+import SsaprintPage from '@/pages/Ssaprint/SsaprintPage'
 
 const router = createBrowserRouter([
   {
@@ -51,7 +52,7 @@ const router = createBrowserRouter([
       {
         path: '/sprint',
         children: [
-          { index: true, element: <h1>sprint</h1> },
+          { index: true, element: <SsaprintPage /> },
           { path: ':sprintId', element: <h1>sprintId</h1> },
         ],
       },
