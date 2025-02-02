@@ -23,11 +23,27 @@ export const MAIN_END_POINT = {
 
 // 싸프린트 -> ssaprintService
 export const SSAPRINT_END_POINT = {
-  LIST: '/ssaprint/list',
-  DETAIL: '/ssaprint/detail',
-  CREATE: '/ssaprint/create',
-  UPDATE: '/ssaprint/update',
-  DELETE: '/ssaprint/delete',
+  LIST: '/api/v1/ssaprint', // 전체 싸프린트 목록 조회
+  LIST_WITH_FILTER: (major, sub) =>
+    `/api/v1/ssaprint?major=${major}&sub=${sub}`, // 조건별 싸프린트 조회
+  DETAIL: (id) => `/api/v1/ssaprint/${id}`, // 특정 싸프린트 상세 조회 (참가 이전/이후/완료 동일)
+
+  CREATE: '/api/v1/ssaprint', // 싸프린트 생성
+  UPDATE: (id) => `/api/v1/ssaprint/${id}`, // 싸프린트 수정
+  DELETE: (id) => `/api/v1/ssaprint/${id}`, // 싸프린트 삭제
+
+  JOIN: (id) => `/api/v1/ssaprint/${id}/join`, // 싸프린트 참가
+  CANCEL: (id) => `/api/v1/ssaprint/${id}/cancel`, // 싸프린트 참가 취소
+
+  PRESENTATION_PARTICIPANTS: (id) =>
+    `/api/v1/ssaprint/${id}/presentation/participants`, // 발표 참가자 목록 조회
+  PRESENTATION_CARDS: (id) => `/api/v1/ssaprint/${id}/presentation/cards`, // 발표 질문 카드 목록 조회
+  PRESENTATION_CARD_DETAIL: (id, cardId) =>
+    `/api/v1/ssaprint/${id}/presentation/cards/${cardId}`, // 특정 질문 카드 상세 조회
+  PRESENTATION_EXIT: (id) => `/api/v1/ssaprint/${id}/presentation/exit`, // 발표 종료
+
+  TODO_STATUS: (ssaprintId, todoId) =>
+    `/api/v1/ssaprint/${ssaprintId}/todo/${todoId}`, // TODO 상태 수정
 }
 
 // 싸드컵 -> ssadcupService
