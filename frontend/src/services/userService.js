@@ -74,7 +74,7 @@ export const fetchCheckInterest = async (interests) => {
 }
 
 // 7. 회원가입 (POST)
-export const fetchRegister = async (userData) => {
+export const fetchRegister = async (userData = {}) => {
   try {
     const response = await httpCommon.post(AUTH_END_POINT.SIGNUP, userData)
     return response.data
@@ -85,7 +85,7 @@ export const fetchRegister = async (userData) => {
 }
 
 // 8. 로그인 (POST)
-export const fetchLogin = async (credentials) => {
+export const fetchLogin = async (credentials = {}) => {
   try {
     const response = await httpCommon.post(AUTH_END_POINT.LOGIN, credentials)
     return response.data
@@ -98,10 +98,8 @@ export const fetchLogin = async (credentials) => {
 // 9. 로그아웃 (POST)
 export const fetchLogout = async () => {
   try {
-    const response = await httpCommon.post(AUTH_END_POINT.LOGOUT)
-    localStorage.removeItem('token') // 토큰 삭제
+    await httpCommon.post(AUTH_END_POINT.LOGOUT)
     window.location.href = '/login' // 로그인 페이지로 이동
-    return response.data
   } catch (error) {
     console.error('로그아웃 실패:', error)
     throw error
