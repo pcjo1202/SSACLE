@@ -10,4 +10,12 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-CMD ["echo", "React 빌드 완료!"]
+FROM nginx:alpine AS runner
+
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Copy the custom Nginx configuration
+COPY default.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
