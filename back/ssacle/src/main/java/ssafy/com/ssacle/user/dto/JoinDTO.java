@@ -13,12 +13,21 @@ import ssafy.com.ssacle.user.domain.Role;
 @Builder
 @Jacksonized
 public class JoinDTO {
-    @NotBlank(message = "username is required")
-    private String username;
+    @NotBlank(message = "studentNumber is required")
+    private String studentNumber;
+
+    @NotBlank(message = "email is required")
+    private String email;
+
+    @NotBlank(message = "nickname is required")
+    private String nickname;
+
+    @NotBlank(message = "name is required")
+    private String name;
+
     @NotBlank(message = "password is required")
     private String password;
-    @EnumValue(enumClass = Role.class, message = "Role must be one of USER, ADMIN, MODERATOR")
-    private Role role;
-    @NotBlank(message = "Name is required")
-    private String name;
+
+    @NotBlank(message = "confirmpassword is required")
+    private String confirmpassword;
 }

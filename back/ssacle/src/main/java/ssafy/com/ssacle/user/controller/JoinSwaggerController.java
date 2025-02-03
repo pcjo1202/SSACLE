@@ -1,0 +1,81 @@
+package ssafy.com.ssacle.user.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import ssafy.com.ssacle.user.dto.JoinDTO;
+import ssafy.com.ssacle.user.dto.LoginDTO;
+
+@Tag(name = "Join API", description = "회원가입 API입니다.")
+public interface JoinSwaggerController {
+
+    @Operation(summary = "이메일 인증 코드 전송", description = "입력한 이메일로 인증 코드를 전송합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "인증 코드가 이메일로 전송되었습니다."),
+            @ApiResponse(responseCode = "400", description = "잘못된 이메일 형식입니다.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
+    })
+    @Parameters(value = {
+            @Parameter(name = "email", description = "사용자 이메일", example = "spancer1@naver.com")
+    })
+    @PostMapping("/send-verification")
+    ResponseEntity<String> sendVerificationCode(@RequestParam("email") String email);
+
+
+    @Operation(summary = "인증번호 검증", description = "사용자가 입력한 인증번호를 검증합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "인증 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 인증 코드이거나 만료된 코드입니다.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "해당 이메일로 전송된 인증 코드가 없습니다.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
+    })
+    @Parameters(value = {
+            @Parameter(name = "email", description = "사용자 이메일", example = "spancer1@naver.com"),
+            @Parameter(name="verificationCode", description = "인증 코드")
+    })
+    @PostMapping("/verify-ssafy")
+    ResponseEntity<String> verifyCode(@RequestParam("email") String email, @RequestParam("verificationCode") String verificationCode);
+
+    @Operation(summary = "회원 가입", description = "회원을 등록합니다.")
+    @ApiResponse(responseCode = "201", description = "회원 가입에 성공하였습니다.")
+    @PostMapping
+    ResponseEntity<Void> createUser(@RequestBody @Valid JoinDTO joinDTO);
+
+
+    @Operation(summary = "이메일 중복 확인", description = "입력한 이메일이 이미 등록되어 있는지 확인합니다.")
+    @ApiResponse(responseCode = "200", description = "이메일 중복 확인에 성공하였습니다.")
+    @Parameters(value = {
+            @Parameter(name="email", description = "사용자 이메일", example = "spancer1@naver.com")
+    })
+    @GetMapping("/check-email")
+    ResponseEntity<Boolean> checkEmailDuplicate(@RequestParam("email") String email);
+
+    @Operation(summary = "비밀번호 일치 확인", description = "입력한 비밀번호와 확인용 비빌번호가 일치하는지 확인합니다")
+    @ApiResponse(responseCode = "200", description = "비밀번호 확인에 성공하였습니다.")
+    @Parameters(value = {
+            @Parameter(name="password", description = "비밀번호", example = "rlatngus@1"),
+            @Parameter(name="confirmpassword", description = "확인용 비밀번호", example = "rlatngus@1")
+    })
+    @GetMapping("/check-password")
+    ResponseEntity<Boolean> checkPassword(@RequestParam("password") String password, @RequestParam("confirmpassword") String confirmpassword);
+
+    @Operation(summary = "닉네임 중복 확인", description = "입력한 닉네임이 이미 등록되어 있는지 확인합니다")
+    @ApiResponse(responseCode = "200", description = "닉네임 중복 확인에 성공하였습니다.")
+    @Parameters(value = {
+            @Parameter(name="nickname", description = "닉네임", example = "KSH00610")
+    })
+    @GetMapping("/check-nickname")
+    ResponseEntity<Boolean> checkNicknameDuplicate(@RequestParam("nickname") String nickname);
+}
