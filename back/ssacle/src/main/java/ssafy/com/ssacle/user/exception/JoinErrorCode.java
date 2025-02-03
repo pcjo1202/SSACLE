@@ -14,7 +14,9 @@ public enum JoinErrorCode implements ErrorCode {
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "JOIN_409_2", "Nickname already exists"),
     PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "JOIN_400_3", "Passwords do not match"),
     JOIN_PROCESS_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JOIN_500_1", "Join process failed"),
-    INVALID_VERIFICATION_CODE(HttpStatus.UNAUTHORIZED, "JOIN_401_1", "Invalid or expired verification code");
+    INVALID_VERIFICATION_CODE(HttpStatus.UNAUTHORIZED, "JOIN_401_1", "Invalid or expired verification code"),
+    UNVERIFIED_EMAIL(HttpStatus.FORBIDDEN, "JOIN_403_1", "Email verification required");
+
 
     private final HttpStatus status;
     private final String code;

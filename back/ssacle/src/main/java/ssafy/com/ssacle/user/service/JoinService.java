@@ -25,27 +25,17 @@ public class JoinService {
         String code = verificationCodeService.generateVerificationCode(email);
         mattermostService.sendVerificationCode(email, code);
     }
-    public void joinStudent(JoinDTO joinDTO, String verificationCode){
-        verifyCodeBeforeJoin(joinDTO.getEmail(), verificationCode);
+    public void join(JoinDTO joinDTO){
+        if(!verificationCodeService.isEmailVerified(joinDTO.getEmail())){
+            throw new CannotJoinException(JoinErrorCode.UNVERIFIED_EMAIL);
+        }
         joinProcess(joinDTO);
-        User user  = User.createStudent(joinDTO.getEmail(), joinDTO.getPassword(), joinDTO.getName(), joinDTO.getStudentNumber(), joinDTO.getNickname());
-
-        userRepository.save(user);
-    }
-
-    public void joinAlumni(JoinDTO joinDTO, String verificationCode){
-        verifyCodeBeforeJoin(joinDTO.getEmail(), verificationCode);
-        joinProcess(joinDTO);
-        User user  = User.createAlumni(joinDTO.getEmail(), joinDTO.getPassword(), joinDTO.getName(), joinDTO.getStudentNumber(), joinDTO.getNickname());
-
-        userRepository.save(user);
-    }
-
-    public void joinAdmin(JoinDTO joinDTO, String verificationCode){
-        verifyCodeBeforeJoin(joinDTO.getEmail(), verificationCode);
-        joinProcess(joinDTO);
-        User user  = User.createAdmin(joinDTO.getEmail(), joinDTO.getPassword(), joinDTO.getName());
-
+        User user;
+        if(joinDTO.getStudentNumber().substring(0,2).equals("12") || joinDTO.getStudentNumber().substring(0,2).equals("13")){
+            user= User.createStudent(joinDTO.getEmail(), joinDTO.getPassword(), joinDTO.getName(), joinDTO.getStudentNumber(), joinDTO.getNickname());
+        }else{
+            user = User.createAlumni(joinDTO.getEmail(), joinDTO.getPassword(), joinDTO.getName(), joinDTO.getStudentNumber(), joinDTO.getNickname());
+        }
         userRepository.save(user);
     }
 

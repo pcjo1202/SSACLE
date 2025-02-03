@@ -34,7 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         if(requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs") ||
                 requestURI.startsWith("/swagger-resources") || requestURI.startsWith("/v3/api-docs.yaml") || requestURI.startsWith("/swagger-ui.html") || requestURI.startsWith("/swagger-ui/index.html") ||
-                requestURI.startsWith("/api/user")){
+                requestURI.startsWith("/api/v1/join") || requestURI.startsWith("/api/v1/login") || requestURI.startsWith("/api/v1/token")){
             filterChain.doFilter(request,response);
             return;
         }
@@ -42,6 +42,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (accessToken != null && jwtTokenUtil.isValidToken(accessToken)) {
             authenticateUser(accessToken, request);
+            response.setHeader("Authorization", "Bearer " + accessToken);
+            //request.setAttribute("Authorization", "Bearer " + accessToken);
         } else {
             String newAccessToken = userService.refreshAccessTokenFromRequest(request, response);
             if (newAccessToken != null) {

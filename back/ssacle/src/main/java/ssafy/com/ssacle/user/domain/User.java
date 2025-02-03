@@ -1,5 +1,6 @@
 package ssafy.com.ssacle.user.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -11,6 +12,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -41,8 +44,9 @@ public class User {
     @Column(name = "nickname", nullable = false, unique = true, length = 20)
     private String nickname;
 
-    @Column(name = "badge", length = 512)
-    private String badge;
+    @Column(name = "level")
+    @ColumnDefault("1")
+    private int level;
 
     @Column(name = "experience")
     @ColumnDefault("0")
@@ -71,6 +75,8 @@ public class User {
     @ColumnDefault("false")
     private boolean isDelete;
 
+
+
     // ** 관리자 생성자 **
     public static User createAdmin(String email, String password, String name) {
         return new User(
@@ -80,7 +86,7 @@ public class User {
                 name,
                 null, // 관리자에 studentNumber가 필요 없다면 null
                 name, // 관리자에게 닉네임은 이름으로 설정
-                "Admin Badge",
+                1,
                 0,
                 0,
                 false,
@@ -100,7 +106,7 @@ public class User {
                 name,
                 studentNumber,
                 nickname, // 기본 닉네임을 이름으로 설정
-                "Student Badge",
+                1,
                 0,
                 0,
                 false,
@@ -120,7 +126,7 @@ public class User {
                 name,
                 studentNumber,
                 nickname, // 기본 닉네임을 이름으로 설정
-                "Alumni Badge",
+                1,
                 0,
                 0,
                 true, // 졸업생이므로 true

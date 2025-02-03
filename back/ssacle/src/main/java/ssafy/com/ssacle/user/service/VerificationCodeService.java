@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class VerificationCodeService {
     private final Map<String, String> verificationCodes = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> verifiedEmails = new ConcurrentHashMap<>();
     private final Map<String, Long> expirationTimes = new ConcurrentHashMap<>();
 
     private static final long EXPIRATION_TIME = 10 * 60 * 1000; // 인증 코드 유효 시간 : 10분
@@ -26,15 +27,15 @@ public class VerificationCodeService {
 
     // 인증 코드 검증
     public boolean verifyCode(String email, String code) {
-        if (!verificationCodes.containsKey(email)) return false;
+        if (!verificationCodes.containsKey(email) || !verificationCodes.get(email).equals(code)) return false;
         if (System.currentTimeMillis() > expirationTimes.get(email)) return false; // 만료 시간 확인
-        return verificationCodes.get(email).equals(code);
-    }
-
-    // 인증 코드 삭제 (사용 후 삭제)
-    @Transactional
-    public void removeVerificationCode(String email) {
+        verifiedEmails.put(email,true);
         verificationCodes.remove(email);
         expirationTimes.remove(email);
+        return true;
+    }
+
+    public boolean isEmailVerified(String email) {
+        return verifiedEmails.getOrDefault(email, false);
     }
 }

@@ -19,8 +19,6 @@ public class QUser extends EntityPathBase<User> {
 
     public static final QUser user = new QUser("user");
 
-    public final StringPath badge = createString("badge");
-
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final DateTimePath<java.time.LocalDateTime> deletedAt = createDateTime("deletedAt", java.time.LocalDateTime.class);
@@ -34,6 +32,8 @@ public class QUser extends EntityPathBase<User> {
     public final BooleanPath is_graduate = createBoolean("is_graduate");
 
     public final BooleanPath isDelete = createBoolean("isDelete");
+
+    public final NumberPath<Integer> level = createNumber("level", Integer.class);
 
     public final StringPath name = createString("name");
 
