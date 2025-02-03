@@ -39,9 +39,7 @@ public class TokenService {
         String email = jwtTokenUtil.parseClaims(refreshToken).getSubject();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
-        System.out.println(user.toString());
         RefreshToken storedToken = refreshRepository.findByUser(user).orElseThrow(()-> new CannotLoginException(LoginErrorCode.INVALID_REFRESH_TOKEN));
-        System.out.println(storedToken);
         if (!storedToken.getToken().equals(refreshToken)) {
             throw new CannotLoginException(LoginErrorCode.INVALID_REFRESH_TOKEN);
         }

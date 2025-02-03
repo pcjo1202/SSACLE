@@ -53,9 +53,6 @@ public class UserService {
         String accessToken = jwtTokenUtil.generateAccessToken(user, accessExpireMs);
         String refreshToken = jwtTokenUtil.generateRefreshToken(user, refreshExpireMs);
 
-        log.info("Access Token: {}", accessToken);
-        log.info("Refresh Token: {}", refreshToken);
-
         refreshRepository.deleteByUser(user);
         refreshRepository.save(
                 RefreshToken.builder()
