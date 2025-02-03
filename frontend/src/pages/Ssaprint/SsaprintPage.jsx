@@ -4,11 +4,11 @@ import mockData from '@/mocks/ssaprintMockData.json';
 
 const SsaprintPage = () => {
   return (
-    <div>
+    <div className="mt-16">
       {/* 싸프린트 소개 배너 */}
       <section className="bg-[#F0F7F3] text-gray-700 text-center py-3 rounded-lg mb-3">
-        <h1 className="text-[14px] font-semibold">싸프린트</h1>
-        <p className="text-[10px]">
+        <h1 className="text-sm font-semibold">싸프린트</h1>
+        <p className="text-xs">
           함께 배우고 성장하는, 짧고 집중적인 스프린트 학습 공간입니다.
         </p>
       </section>
