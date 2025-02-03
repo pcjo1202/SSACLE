@@ -1,13 +1,14 @@
 package ssafy.com.ssacle.user.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import ssafy.com.ssacle.userteam.domain.UserTeam;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -17,6 +18,10 @@ public class User {
     @Id
     @GeneratedValue
     private Long id;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    List<UserTeam> userTeams;
 
     @NotBlank
     private String username;
