@@ -30,7 +30,9 @@ public class Team {
     @Column(unique = true, nullable = false, length = 20)
     private String name;
 
-    private int count;
+    @Column(name = "current_members", columnDefinition = "TINYINT UNSIGNED", nullable = false)
+    private Integer currentMembers;
+
     private boolean isFull;
 
 
