@@ -51,7 +51,10 @@ export default [
       // target="_blank" 사용 시 보안 경고 비활성화
       'react/jsx-no-target-blank': 'off',
       // Fast Refresh 관련 규칙 (상수 내보내기 허용)
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
       // JSX 중괄호 내부 공백 규칙
       'react/jsx-curly-spacing': ['error', { when: 'never', children: true }],
       // props spreading 허용

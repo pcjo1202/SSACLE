@@ -2,6 +2,8 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import MainPage from '@/pages/MainPage/MainPage'
 import NotFound from '@/pages/NotFound/NotFound'
 import BaseLayout from '@/components/layout/BaseLayout'
+import PresentationPage from '@/pages/PresentationPage/PresentationPage'
+import PresentationLayout from '@/components/layout/PresentationLayout'
 import LoginPage from '@/pages/Account/LoginPage/LoginPage'
 import SignupStep1 from '@/pages/Account/SignupPage/SignupStep1'
 import SignupStep2 from '@/pages/Account/SignupPage/SignupStep2'
@@ -89,8 +91,9 @@ const router = createBrowserRouter([
   },
   // 발표 화면 page
   {
-    path: 'presentation',
-    element: <h1>발표화면</h1>,
+    path: '/presentation',
+    element: <PresentationLayout />,
+    children: [{ index: true, element: <PresentationPage /> }],
   },
   // 관리자 관련 page
   {

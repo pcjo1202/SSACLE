@@ -11,7 +11,9 @@
       "@/services/*": ["./src/services/*"],
       "@/hooks/*": ["./src/hooks/*"],
       "@/store/*": ["./src/store/*"]
-    }
+    },
+    "jsx": "react-jsx",
+    "checkJs": true
   },
   "exclude": ["node_modules", "dist"]
 }
