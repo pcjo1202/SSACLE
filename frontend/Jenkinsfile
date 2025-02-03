@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    environment {
+        DEPLOY_DIR = "/home/ubuntu/deploy"
+        FRONT_DIR = "/home/ubuntu/deploy/S12P11A402/frontend"
+        FRONT_GIT_BRANCH = "FE/dev"
+        GITLAB_REPO = "https://lab.ssafy.com/s12-webmobile1-sub1/S12P11A402.git"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                sshagent(['ec2-ssh-key']) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no ubuntu@i12a402.p.ssafy.io << EOF
+                    export FRONT_DIR="/home/ubuntu/deploy/S12P11A402/frontend"
+                    cd $FRONT_DIR
+                    git fetch origin $FRONT_GIT_BRANCH
+                    git reset --hard origin/$FRONT_GIT_BRANCH
+                    git checkout FE/dev
+                    echo "Frontend checkout completed"
+                    EOF
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy with Docker Compose') {
+            steps {
+                sshagent(['ec2-ssh-key']) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no ubuntu@i12a402.p.ssafy.io << EOF
+                    echo "Starting Docker deployment..."
+                    export DEPLOY_DIR="/home/ubuntu/deploy"
+                    cd $DEPLOY_DIR
+
+                    sudo docker system prune -f
+               
+                    sudo docker-compose down || true
+
+                    sudo docker-compose up -d --build
+
+                    echo "Docker deployment completed"
+                    EOF
+                    '''
+                }
+            }
+        }
+    }
+}
