@@ -1,9 +1,18 @@
 // 회원 기능 -> authService
 export const AUTH_END_POINT = {
-  LOGIN: '/auth/login',
-  REGISTER: '/auth/register',
-  LOGOUT: '/auth/logout',
-  REFRESH: '/auth/refresh',
+  SSAFY_AUTH: '/api/v1/auth/ssafy', // 싸피 인증
+  CHECK_EMAIL: (email) => `/api/v1/auth/check-email?email=${email}`, // 이메일 체크
+  VERIFY_EMAIL: (token) => `/api/v1/auth/verify-email?token=${token}`, // 이메일 인증
+  CHECK_PASSWORD: (password) =>
+    `/api/v1/auth/check-password?password=${password}`, // 비밀번호 형식 체크
+  CHECK_NICKNAME: (nickname) =>
+    `/api/v1/auth/check-nickname?nickname=${nickname}`, // 닉네임 중복 체크
+  CHECK_INTERESTS: (interests) =>
+    `/api/v1/auth/check-interest?${interests.map((i) => `interests=${i}`).join('&')}`, // 관심사 체크
+
+  SIGNUP: '/api/v1/auth/signup', // 회원가입
+  LOGIN: '/api/v1/auth/login', // 로그인
+  LOGOUT: '/api/v1/auth/logout', // 로그아웃
 }
 
 // 유저 관련 -> userService
