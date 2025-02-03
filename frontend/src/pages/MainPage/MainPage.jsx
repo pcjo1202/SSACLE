@@ -10,7 +10,7 @@ const MainPage = () => {
   const { user, currentSprints, recommendedSprints, aiNews } = mockData
 
   return (
-    <main className="my-10">
+    <main className="my-20">
       {/* 프로필, 나의 싸프린트 + 싸드컵 현황 보드 */}
       <div className="flex flex-row gap-x-5 mb-20">
         <section className="basis-2/5">
