@@ -27,9 +27,9 @@ public class SecurityConfig {
                                 "/webjars/**"
                         ).permitAll()
                         .requestMatchers(
-                                "/api/v1/join/**",
-                                "/api/v1/login/**",
-                                "/api/v1/token"
+                                "/api/*/join/**",
+                                "/api/*/login/**",
+                                "/api/*/refreshtoken"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

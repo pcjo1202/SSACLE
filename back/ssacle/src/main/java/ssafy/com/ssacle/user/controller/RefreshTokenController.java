@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ssafy.com.ssacle.user.service.UserService;
 
 @RestController
-@RequestMapping("/api/v1/token")
+@RequestMapping("/api/v1/refreshtoken")
 @RequiredArgsConstructor
 public class RefreshTokenController implements RefreshTokenSwaggerController{
     private final UserService userService;
