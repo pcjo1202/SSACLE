@@ -5,7 +5,7 @@ const Header = () => {
   const navigate = useNavigate()
 
   return (
-    <header className="z-10 fixed top-0 left-0 w-full h-12 px-48 py-4 bg-white shadow-sm flex justify-between items-center">
+    <header className="fixed top-0 left-0 w-full h-12 px-48 py-4 bg-white shadow-sm flex justify-between items-center">
       {/* 로고 */}
       <Link
         to="/"
