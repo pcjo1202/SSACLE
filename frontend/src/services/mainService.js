@@ -26,27 +26,17 @@ export const fetchLunchInfo = async () => {
   return axios.get(MAIN_END_POINT.LUNCH_INFO)
 }
 
-// 싸밥 투표 (PATCH 요청, 토큰 필요)
-export const fetchVoteLunch = async (token, lunchId) => {
-  return axios.patch(
-    MAIN_END_POINT.LUNCH_VOTE,
-    { lunch_id: lunchId },
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  )
+// 싸밥 투표 (PATCH 요청, 토큰 필요) -> 토큰 제외하고 요청
+export const fetchVoteLunch = async (lunchId) => {
+  return axios.patch(MAIN_END_POINT.LUNCH_VOTE, { lunch_id: lunchId })
 }
 
-// 싸밥 투표 결과 조회 (GET 요청, 토큰 필요)
-export const fetchLunchVoteResult = async (token) => {
-  return axios.get(MAIN_END_POINT.LUNCH_VOTE_RESULT, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
+// 싸밥 투표 결과 조회 (GET 요청, 토큰 필요) -> 토큰 제외하고 요청
+export const fetchLunchVoteResult = async () => {
+  return axios.get(MAIN_END_POINT.LUNCH_VOTE_RESULT)
 }
 
-// AI 기사 목록 조회 (GET 요청, newId 필요, 토큰 필요)
-export const fetchAiNews = async (token, newId) => {
-  return axios.get(MAIN_END_POINT.AI_NEWS(newId), {
-    headers: { Authorization: `Bearer ${token}` },
-  })
+// AI 기사 목록 조회 (GET 요청, newId 필요, 토큰 필요) -> 토큰 제외하고 요청
+export const fetchAiNews = async (newId) => {
+  return axios.get(MAIN_END_POINT.AI_NEWS(newId))
 }
