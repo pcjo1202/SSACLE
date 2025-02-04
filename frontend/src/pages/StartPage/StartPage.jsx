@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom'
-
+// @ts-ignore
+import startPageImage from '@/assets/images/startPage_image.png'
 const StartPage = () => {
   const navigate = useNavigate()
+
   const handleStart = () => {
     alert('준비중입니다.')
     // navigate('/account/login')
@@ -14,7 +16,7 @@ const StartPage = () => {
           <div className="flex flex-col justify-center h-full">
             <img
               className="object-contain w-full h-full"
-              src="/src/assets/images/startPage_image.png"
+              src={startPageImage}
               alt="SSA Logo"
             />
           </div>
