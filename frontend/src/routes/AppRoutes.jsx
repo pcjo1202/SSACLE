@@ -10,13 +10,18 @@ import SignupStep2 from '@/pages/Account/SignupPage/SignupStep2'
 import InterestPage from '@/pages/Account/SignupPage/InterestPage'
 import SuccessPage from '@/pages/Account/SignupPage/SuccessPage'
 import FindAccount from '@/pages/Account/LoginPage/FindAccount'
+import StartPage from '@/pages/StartPage/StartPage'
 
 const router = createBrowserRouter([
+  // 시작 페이지 (로그인 전)
+  { path: '/', index: true, element: <StartPage /> },
+
+  // 로그인 후 페이지
   {
     element: <BaseLayout />, // 기본 header, footer가 있는 Page
     children: [
       // 메인 page
-      { path: '/', index: true, element: <MainPage /> },
+      { path: '/main', index: true, element: <MainPage /> },
 
       // 계정 인증 관련 (로그인, 회원가입, 관심사 등록 등)
       {
