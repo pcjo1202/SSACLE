@@ -9,7 +9,7 @@ const StartPage = () => {
     // navigate('/account/login')
   }
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-white to-blue-50">
+    <div className="w-full h-screen ">
       <div className="flex flex-col items-center justify-center w-full h-full gap-4 p-4 md:gap-8 md:flex-row md:px-20">
         {/* 왼쪽 영역 */}
         <section className="flex-1 h-full max-h-[30vh] md:max-h-full">
@@ -27,18 +27,18 @@ const StartPage = () => {
             <div className="flex flex-col items-center justify-center gap-4 md:gap-6">
               <div className="flex items-center gap-2 text-center">
                 <p className="text-lg font-bold md:text-2xl lg:text-3xl">
-                  <span className="text-ssacle-blue">SSA</span>
-                  <span className="text-ssacle-black">FY</span>
+                  <span className="text-ssacle-blue font-EN">SSA</span>
+                  <span className="text-ssacle-black font-EN">FY</span>
                 </p>
-                <span className="text-sm text-gray-600 md:text-base">
+                <span className="text-sm text-gray-600 md:text-base font-KR">
                   교육생만을 위한 학습 플랫폼
                 </span>
               </div>
               <h1 className="text-5xl font-bold tracking-tight md:text-6xl lg:text-8xl">
-                <span className="text-ssacle-blue">SSA</span>
-                <span className="text-ssacle-black">CLE</span>
+                <span className="text-ssacle-blue font-EN">SSA</span>
+                <span className="text-ssacle-black font-EN">CLE</span>
               </h1>
-              <pre className="text-xs text-center text-gray-700 whitespace-pre-line md:text-base lg:text-lg">
+              <pre className="text-xs text-center text-gray-700 whitespace-pre-line font-KR md:text-base lg:text-lg">
                 개인부터 팀까지, 개념부터 심화까지, 질문부터 취업 후기까지 이
                 모든 걸 하나로 통합하고 관리해요.
               </pre>
@@ -48,7 +48,7 @@ const StartPage = () => {
                 className="w-full py-2 md:py-3 text-white transition-all duration-300 rounded-full bg-ssacle-blue hover:bg-ssacle-blue/80 hover:shadow-lg transform hover:-translate-y-0.5 min-w-[200px]"
                 onClick={handleStart}
               >
-                <span className="text-base font-medium md:text-lg">
+                <span className="text-base font-medium md:text-lg font-KR">
                   시작하기
                 </span>
               </button>
