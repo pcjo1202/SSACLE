@@ -61,7 +61,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Montserrat', 'Noto Sans KR', 'sans-serif'],
+        KR: ['Noto Sans KR', 'sans-serif'],
+        EN: ['Montserrat', 'sans-serif'],
       },
     },
   },
