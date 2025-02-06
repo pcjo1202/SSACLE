@@ -15,6 +15,9 @@ import StudyBoardPage from '@/pages/Board/StudyBoardPage'
 import StartPage from '@/pages/StartPage/StartPage'
 import UserList from '@/pages/Admin/UserManagement/UserList'
 import AdminBaseLayout from '@/components/layout/AdminBaseLayout'
+import BoardDetailPage from '@/pages/Board/BoardDetailPage'
+import BoardFormPage from '@/pages/Board/BoardFormPage'
+import FreeBoardPage from '@/pages/Board/FreeBoardPage'
 
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
@@ -81,24 +84,51 @@ const router = createBrowserRouter([
       },
 
       // 게시판 페이지 (학습 게시판, 자유 게시판)
+
+      // 이전 코드
+      // {
+      //   path: '/board',
+      //   children: [
+      //     {
+      //       // 학습 게시판 -> 탭으로 명예의 전당, 질의응답 구분 예정. 아래 코드 주석 처리
+      //       // path: 'edu',
+      //       // children: [
+      //       //   { index: true, path: 'qna', element: <h1>질의 응답</h1> },
+      //       //   { path: 'legend', element: <StudyBoardPage /> },
+      //       // ],
+      //       path: 'edu',
+      //       children: [{ index: true, element: <StudyBoardPage /> }],
+      //     },
+      //     {
+      //       path: 'free',
+      //       children: [
+      //         { index: true, element: <h1>자유게시판</h1> },
+      //         { path: 'ssaguman', element: <h1>싸구만</h1> },
+      //       ],
+      //     },
+      //   ],
+      // },
       {
         path: '/board',
         children: [
+          // 학습 게시판
           {
-            // 학습 게시판 -> 탭으로 명예의 전당, 질의응답 구분 예정. 아래 코드 주석 처리
-            // path: 'edu',
-            // children: [
-            //   { index: true, path: 'qna', element: <h1>질의 응답</h1> },
-            //   { path: 'legend', element: <StudyBoardPage /> },
-            // ],
             path: 'edu',
-            children: [{ index: true, element: <StudyBoardPage /> }],
+            children: [
+              { index: true, element: <StudyBoardPage /> }, // 학습 게시판 메인
+              { path: ':boardId', element: <BoardDetailPage /> }, // 게시글 상세 페이지
+              { path: 'write', element: <BoardFormPage /> }, // 새 게시글 작성
+              { path: ':boardId/edit', element: <BoardFormPage /> }, // 기존 게시글 수정
+            ],
           },
+          // 자유 게시판
           {
             path: 'free',
             children: [
-              { index: true, element: <h1>자유게시판</h1> },
-              { path: 'ssaguman', element: <h1>싸구만</h1> },
+              { index: true, element: <FreeBoardPage /> }, // 자유 게시판 메인
+              { path: ':boardId', element: <BoardDetailPage /> }, // 게시글 상세 페이지
+              { path: 'write', element: <BoardFormPage /> }, // 새 게시글 작성
+              { path: ':boardId/edit', element: <BoardFormPage /> }, // 기존 게시글 수정
             ],
           },
         ],
@@ -121,7 +151,7 @@ const router = createBrowserRouter([
       { path: 'sprint', element: <h1>admin sprint</h1> },
       { path: 'ssadcup', element: <h1>admin ssadcup</h1> },
       { path: 'board', element: <h1>admin board</h1> },
-    ]
+    ],
   },
   // 404 Not Found
   { path: '*', element: <NotFound /> },
