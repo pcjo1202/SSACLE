@@ -12,13 +12,24 @@ import SuccessPage from '@/pages/Account/SignupPage/SuccessPage'
 import FindAccount from '@/pages/Account/LoginPage/FindAccount'
 import SsaprintPage from '@/pages/Ssaprint/SsaprintPage'
 import StudyBoardPage from '@/pages/Board/StudyBoardPage'
+import StartPage from '@/pages/StartPage/StartPage'
+import UserList from '@/pages/Admin/UserManagement/UserList'
+import AdminBaseLayout from '@/components/layout/AdminBaseLayout'
 
 const router = createBrowserRouter([
+  // 시작 페이지 (로그인 전)
+  { path: '/', index: true, element: <StartPage /> },
+
+  // 로그인 후 페이지
+  {
+    path: '/main',
+    element: <MainPage />,
+  },
   {
     element: <BaseLayout />, // 기본 header, footer가 있는 Page
     children: [
       // 메인 page
-      { path: '/', index: true, element: <MainPage /> },
+      { path: '/main', index: true, element: <MainPage /> },
 
       // 계정 인증 관련 (로그인, 회원가입, 관심사 등록 등)
       {
@@ -103,13 +114,14 @@ const router = createBrowserRouter([
   // 관리자 관련 page
   {
     path: '/admin',
+    element: <AdminBaseLayout />, // 기본 header, footer가 있는 Page
     children: [
       { index: true, element: <h1>관리자 페이지</h1> },
-      { path: 'user', element: <h1>admin user</h1> },
+      { path: 'user', element: <UserList /> },
       { path: 'sprint', element: <h1>admin sprint</h1> },
       { path: 'ssadcup', element: <h1>admin ssadcup</h1> },
       { path: 'board', element: <h1>admin board</h1> },
-    ],
+    ]
   },
   // 404 Not Found
   { path: '*', element: <NotFound /> },

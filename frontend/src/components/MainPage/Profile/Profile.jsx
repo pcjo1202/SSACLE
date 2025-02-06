@@ -7,7 +7,7 @@ const Profile = ({ userData }) => {
   const progressPercent = (experience / 10000) * 100
 
   return (
-    <div className="bg-ssacle-sky rounded-xl p-10 w-full h-60 content-center">
+    <div className="min-w-max bg-ssacle-sky rounded-xl p-10 w-full h-60 content-center">
       <div className="flex items-center gap-6">
         {/* 프로필 이미지 */}
         <div className="w-28 h-28 bg-white rounded-full">
