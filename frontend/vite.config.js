@@ -12,4 +12,13 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  // 개발 서버의 CORS 방지를 위한 리버스 프록시 설정 (추후 삭제)
+  server: {
+    proxy: {
+      '/api/v1': {
+        target: 'http://i12a402.p.ssafy.io:8080',
+        changeOrigin: true,
+      },
+    },
+  },
 })
