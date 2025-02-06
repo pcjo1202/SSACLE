@@ -4,10 +4,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.team.exception.SprintRequiredException;
-import ssafy.com.ssacle.team.exception.TeamNameRequiredException;
 import ssafy.com.ssacle.team.exception.UserRequiredException;
 import ssafy.com.ssacle.user.domain.User;
-import ssafy.com.ssacle.userteam.domain.UserTeam;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SprintTeamBuilder {

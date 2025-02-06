@@ -53,7 +53,7 @@ public class Sprint {
     @Column(name = "tag")
     private String tag;
 
-    private Sprint(String name, String description, LocalDateTime startAt, LocalDateTime endAt, LocalDateTime announcementDateTime, Integer maxMembers, Integer maxTeams, String detailTopic, LocalDateTime createdAt, Integer sequence, String tag){
+    public Sprint(String name, String description, LocalDateTime startAt, LocalDateTime endAt, LocalDateTime announcementDateTime, Integer maxMembers, Integer maxTeams, String detailTopic, LocalDateTime createdAt, Integer sequence, String tag){
         ValidationUtils.validationCount(maxMembers, UtilErrorCode.MEMBER_VALIDATION_COUNT_FAILED);
         ValidationUtils.validationCount(maxTeams, UtilErrorCode.TEAM_VALIDATION_COUNT_FAILED);
         ValidationUtils.validationCount(sequence, UtilErrorCode.SEQUENCE_VALIDATION_COUNT_FAILED);
@@ -75,54 +75,5 @@ public class Sprint {
         this.teams.add(team);
         team.setSprint(this);
     }
-
-    public static class SsaprintBuilder{
-        private String name;
-        private String description;
-        private LocalDateTime startAt;
-        private LocalDateTime endAt;
-        private LocalDateTime announcementDateTime;
-        private String detailTopic;
-        private String tag;
-        private Integer maxTeams;
-
-        public SsaprintBuilder name(String name){
-            this.name=name;
-            return this;
-        }
-        public SsaprintBuilder description(String description){
-            this.description=description;
-            return this;
-        }
-        public SsaprintBuilder startAt(LocalDateTime startAt){
-            this.startAt=startAt;
-            return this;
-        }
-        public SsaprintBuilder endAt(LocalDateTime endAt){
-            this.endAt=endAt;
-            return this;
-        }
-        public SsaprintBuilder announcementDateTime(LocalDateTime announcementDateTime){
-            this.announcementDateTime=announcementDateTime;
-            return this;
-        }
-        public SsaprintBuilder detailTopic(String detailTopic){
-            this.detailTopic=detailTopic;
-            return this;
-        }
-        public SsaprintBuilder tag(String tag){
-            this.tag=tag;
-            return this;
-        }
-        public SsaprintBuilder maxTeams(Integer maxTeams){
-            this.maxTeams = maxTeams;
-            return this;
-        }
-        public Sprint build(){
-            return new Sprint(name, description, startAt, endAt, announcementDateTime, 1, maxTeams, detailTopic, LocalDateTime.now(), 1, tag);
-        }
-    }
-
-    public static SsaprintBuilder ssaprintBuilder(){return new SsaprintBuilder();}
 
 }

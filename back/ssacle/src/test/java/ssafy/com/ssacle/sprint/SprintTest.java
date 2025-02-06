@@ -3,6 +3,7 @@ package ssafy.com.ssacle.sprint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ssafy.com.ssacle.sprint.domain.Sprint;
+import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +15,7 @@ class SprintTest {
 
     @BeforeEach
     void setUp() {
-        sprint = Sprint.ssaprintBuilder()
+        sprint = SprintBuilder.builder()
                 .name("Spring Boot Sprint")
                 .description("Spring Boot 학습 스프린트")
                 .startAt(LocalDateTime.of(2024, 1, 1, 0, 0))
@@ -37,7 +38,7 @@ class SprintTest {
     @Test
     void maxMembers와_currentMembers의_유효성_검증() {
         assertThrows(IllegalArgumentException.class, () -> {
-            Sprint.ssaprintBuilder()
+            SprintBuilder.builder()
                     .name("test")
                     .description("test")
                     .startAt(LocalDateTime.now())
@@ -52,7 +53,7 @@ class SprintTest {
     @Test
     void addMember_정상_작동_확인() {
         // 최대 참여 인원을 5명으로 설정하여 테스트
-        Sprint testSprint = Sprint.ssaprintBuilder()
+        Sprint testSprint = SprintBuilder.builder()
                 .name("Test Sprint")
                 .description("테스트용 스프린트")
                 .startAt(LocalDateTime.now())
@@ -68,7 +69,7 @@ class SprintTest {
 
     @Test
     void maxMembers_초과시_addMember_예외_발생() {
-        Sprint sprintMax = Sprint.ssaprintBuilder()
+        Sprint sprintMax = SprintBuilder.builder()
                 .name("Full Sprint")
                 .description("테스트")
                 .startAt(LocalDateTime.now())
