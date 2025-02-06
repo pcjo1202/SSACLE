@@ -6,8 +6,8 @@ const StreamVideoCard = ({ data }) => {
   return (
     <div
       className={cn(
-        'relative w-[calc(100%-10px)] mx-auto rounded-md shadow-md border-[1px] border-gray-500',
-        'min-w-[200px] aspect-video bg-sky-50'
+        'relative w-[calc(100%-1rem)] rounded-md shadow-md border-[1px] border-gray-500',
+        'min-w-[200px] aspect-video '
       )}
     >
       {/* 참여자 영상 */}
