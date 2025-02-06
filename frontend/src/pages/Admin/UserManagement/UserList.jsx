@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import UserTable from '@/components/AdminPage/UserManagement/UserTable';
-import Pagination from '@/components/commons/Pagenaition';
+import Pagination from '@/components/commons/Pagination';
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
