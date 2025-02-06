@@ -1,19 +1,33 @@
 // 회원 기능 -> authService
 export const AUTH_END_POINT = {
-  SSAFY_AUTH: '/api/v1/auth/ssafy', // 싸피 인증
-  CHECK_EMAIL: (email) => `/api/v1/auth/check-email?email=${email}`, // 이메일 체크
-  VERIFY_EMAIL: (token) => `/api/v1/auth/verify-email?token=${token}`, // 이메일 인증
-  CHECK_PASSWORD: (password) =>
-    `/api/v1/auth/check-password?password=${password}`, // 비밀번호 형식 체크
-  CHECK_NICKNAME: (nickname) =>
-    `/api/v1/auth/check-nickname?nickname=${nickname}`, // 닉네임 중복 체크
-  CHECK_INTERESTS: (interests) =>
-    `/api/v1/auth/check-interest?${interests.map((i) => `interests=${i}`).join('&')}`, // 관심사 체크
+  // 이메일 관련 엔드포인트
+  CHECK_EMAIL: (email) => `/api/v1/join/check-email?email=${email}`, // 이메일 중복 확인
 
-  SIGNUP: '/api/v1/auth/signup', // 회원가입
-  LOGIN: '/api/v1/auth/login', // 로그인
-  LOGOUT: '/api/v1/auth/logout', // 로그아웃
+  // 비밀번호 & 닉네임 관련 엔드포인트
+  CHECK_PASSWORD: (password, confirmPassword) => 
+    `/api/v1/join/check-password?password=${password}&confirmpassword=${confirmPassword}`, // 비밀번호 확인
+  CHECK_NICKNAME: (nickname) => `/api/v1/join/check-nickname?nickname=${nickname}`, // 닉네임 중복 체크
+
+  // 관심사 체크 (변경 없음)
+  CHECK_INTERESTS: (interests) =>
+    `/api/v1/auth/check-interest?${interests.map((i) => `interests=${i}`).join('&')}`,
+
+  // 회원가입 & 로그인 기능
+  SIGNUP: '/api/v1/join', // 회원가입
+  LOGIN: '/api/v1/login', // 로그인
+  LOGOUT: '/api/v1/logout', // 로그아웃
+
+  // 이메일 & 비밀번호 찾기 기능 추가
+  FIND_EMAIL: '/api/v1/login/find-email', // 이메일 찾기
+  FIND_PASSWORD: '/api/v1/login/find-password', // 비밀번호 찾기
+
+  // 인증 코드 전송 (웹훅 URL 포함)
+  SEND_VERIFICATION: (email) => `/api/v1/join/send-verification?email=${email}`, // 인증 코드 전송 (웹훅 URL 포함)
+
+  // 토큰 재발급
+  REFRESH_TOKEN: '/api/v1/refreshtoken', // 액세스 & 리프레시 토큰 재발급
 }
+
 
 // 유저 관련 -> userService
 export const USER_END_POINT = {
