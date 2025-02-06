@@ -12,6 +12,9 @@ import SuccessPage from '@/pages/Account/SignupPage/SuccessPage'
 import FindAccount from '@/pages/Account/LoginPage/FindAccount'
 import SsaprintPage from '@/pages/Ssaprint/SsaprintPage'
 import StartPage from '@/pages/StartPage/StartPage'
+import UserList from '@/pages/Admin/UserManagement/UserList'
+
+
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
   { path: '/', index: true, element: <StartPage /> },
@@ -109,7 +112,7 @@ const router = createBrowserRouter([
     path: '/admin',
     children: [
       { index: true, element: <h1>관리자 페이지</h1> },
-      { path: 'user', element: <h1>admin user</h1> },
+      { path: 'user', element: <UserList /> },
       { path: 'sprint', element: <h1>admin sprint</h1> },
       { path: 'ssadcup', element: <h1>admin ssadcup</h1> },
       { path: 'board', element: <h1>admin board</h1> },
