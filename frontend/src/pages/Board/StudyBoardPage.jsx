@@ -53,7 +53,7 @@ const StudyBoardPage = () => {
   // 글 작성 페이지로 이동
   // 현재 탭 정보 유지 및 state로 전달하여 글 유형 지정
   const handleWrite = () => {
-    navigate('/board/write', {
+    navigate('/board/edu/write', {
       state: {
         boardType: 'study', // 게시판 종류 (학습 or 자유)
         type: activeTab, // 게시글 유형 (명예의 전당 or 질의응답)
@@ -91,7 +91,7 @@ const StudyBoardPage = () => {
       </div>
       <div className="border-b my-3"></div>
       <section>
-        <BoardList posts={posts} type={activeTab} />
+        <BoardList posts={posts} type={activeTab} boardType="edu" />
       </section>
       <section>
         {/* 페이지네이션 추가 */}
