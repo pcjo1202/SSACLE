@@ -1,4 +1,4 @@
-const FreeCommunityPage = () => {
+const FreeBoardPage = () => {
   return (
     <div>
       <div>free board</div>
@@ -6,4 +6,4 @@ const FreeCommunityPage = () => {
   )
 }
 
-export default FreeCommunityPage
+export default FreeBoardPage

@@ -1,4 +1,4 @@
-const BoardLayout = () => {
+const BoardTab = () => {
   return (
     <div>
       <div>BoardLayout</div>
@@ -6,4 +6,4 @@ const BoardLayout = () => {
   )
 }
 
-export default BoardLayout
+export default BoardTab
