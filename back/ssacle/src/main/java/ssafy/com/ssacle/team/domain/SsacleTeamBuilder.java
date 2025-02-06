@@ -3,6 +3,9 @@ package ssafy.com.ssacle.team.domain;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ssafy.com.ssacle.sprint.domain.Sprint;
+import ssafy.com.ssacle.team.exception.SprintRequiredException;
+import ssafy.com.ssacle.team.exception.TeamNameRequiredException;
+import ssafy.com.ssacle.team.exception.UserRequiredException;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.userteam.domain.UserTeam;
 
@@ -33,11 +36,11 @@ public class SsacleTeamBuilder {
 
     public Team build(){
         if(teamName == null)
-            throw new IllegalStateException("팀을 생성하려면 팀 이름이 필요합니다.");
+            throw new TeamNameRequiredException();
         if(user == null)
-            throw new IllegalStateException("팀을 생성하려면 유저가 필요합니다.");
+            throw new UserRequiredException();
         if(sprint == null)
-            throw new IllegalStateException("팀을 생성하려면 스프린트가 필요합니다.");
+            throw new SprintRequiredException();
 
         Team team = new Team(teamName,1);
         team.addUser(user);
