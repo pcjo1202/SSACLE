@@ -70,6 +70,12 @@ public class Sprint {
         this.sequence=sequence;
         this.tag=tag;
     }
+
+    public void addTeam(Team team){
+        this.teams.add(team);
+        team.setSprint(this);
+    }
+
     public static class SsaprintBuilder{
         private String name;
         private String description;

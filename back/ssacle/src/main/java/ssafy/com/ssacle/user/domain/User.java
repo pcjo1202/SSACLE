@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ssafy.com.ssacle.userteam.domain.UserTeam;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,9 +20,14 @@ public class User {
     @GeneratedValue
     private Long id;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
-    List<UserTeam> userTeams;
+    List<UserTeam> userTeams = new ArrayList<>();
+
+    public void addUserTeam(UserTeam userTeam){
+        this.userTeams.add(userTeam);
+    }
+
 
     @NotBlank
     private String username;
