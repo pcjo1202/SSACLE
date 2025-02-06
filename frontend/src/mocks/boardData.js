@@ -1,5 +1,3 @@
-// mockData.js
-
 // 게시글 더미 데이터
 export const posts = [
   {
