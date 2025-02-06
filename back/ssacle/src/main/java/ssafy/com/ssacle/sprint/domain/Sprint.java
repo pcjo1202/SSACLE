@@ -26,49 +26,54 @@ public class Sprint {
     @Column(name = "description", nullable = false, length=100)
     private String description;
 
+    @Column(name = "detail", nullable = false)
+    private String detail;
+
+    @Column(name = "tags")
+    private String tags;
+
     @Column(name = "start_at", nullable = false)
     private LocalDateTime startAt;
 
     @Column(name = "end_at", nullable = false)
     private LocalDateTime endAt;
 
-    @Column(name = "announcement_date_time", nullable = false)
-    private LocalDateTime announcementDateTime;
+    @Column(name = "announce_at", nullable = false)
+    private LocalDateTime announceAt;
+
+    @Column(name = "status", columnDefinition = "TINYINT UNSIGNED", nullable = false)
+    private Integer status;
+
+    @Column(name = "sequence", columnDefinition = "TINYINT UNSIGNED", nullable = false)
+    private Integer sequence;
 
     @Column(name = "max_members", columnDefinition = "TINYINT UNSIGNED", nullable = false)
     private Integer maxMembers;
 
     @Column(name = "current_members", columnDefinition = "TINYINT UNSIGNED", nullable = false)
-    private Integer maxTeams;
-
-    @Column(name = "detail_topic", nullable = false)
-    private String detailTopic;
+    private Integer currentMembers;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "sequence", columnDefinition = "TINYINT UNSIGNED", nullable = false)
-    private Integer sequence;
-
-    @Column(name = "tag")
-    private String tag;
-
-    public Sprint(String name, String description, LocalDateTime startAt, LocalDateTime endAt, LocalDateTime announcementDateTime, Integer maxMembers, Integer maxTeams, String detailTopic, LocalDateTime createdAt, Integer sequence, String tag){
-        ValidationUtils.validationCount(maxMembers, UtilErrorCode.MEMBER_VALIDATION_COUNT_FAILED);
-        ValidationUtils.validationCount(maxTeams, UtilErrorCode.TEAM_VALIDATION_COUNT_FAILED);
+    protected Sprint(String name, String description, String detail, String tags, LocalDateTime startAt, LocalDateTime endAt, LocalDateTime announceAt, Integer status, Integer sequence, Integer maxMembers, Integer currentMembers, LocalDateTime createdAt){
+        ValidationUtils.validationCount(status, UtilErrorCode.STATUS_VALIDATION_COUNT_FAILED);
         ValidationUtils.validationCount(sequence, UtilErrorCode.SEQUENCE_VALIDATION_COUNT_FAILED);
+        ValidationUtils.validationCount(maxMembers, UtilErrorCode.MEMBER_VALIDATION_COUNT_FAILED);
+        ValidationUtils.validationCount(currentMembers, UtilErrorCode.MEMBER_VALIDATION_COUNT_FAILED);
 
         this.name=name;
         this.description=description;
+        this.detail=detail;
+        this.tags=tags;
         this.startAt=startAt;
         this.endAt=endAt;
-        this.announcementDateTime=announcementDateTime;
-        this.maxMembers=maxMembers;
-        this.maxTeams=maxTeams;
-        this.detailTopic=detailTopic;
-        this.createdAt=createdAt;
+        this.announceAt=announceAt;
+        this.status=status;
         this.sequence=sequence;
-        this.tag=tag;
+        this.maxMembers=maxMembers;
+        this.currentMembers=currentMembers;
+        this.createdAt=createdAt;
     }
 
     public void addTeam(Team team){

@@ -5,12 +5,12 @@ import java.time.LocalDateTime;
 public class SprintBuilder {
     private String name;
     private String description;
+    private String detail;
+    private String tags;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
-    private LocalDateTime announcementDateTime;
-    private String detailTopic;
-    private String tag;
-    private Integer maxTeams;
+    private LocalDateTime announceAt;
+    private Integer maxMembers;
 
     public static SprintBuilder builder() {
         return new SprintBuilder();
@@ -32,24 +32,24 @@ public class SprintBuilder {
         this.endAt = endAt;
         return this;
     }
-    public SprintBuilder announcementDateTime(LocalDateTime announcementDateTime){
-        this.announcementDateTime = announcementDateTime;
+    public SprintBuilder announceAt(LocalDateTime announceAt){
+        this.announceAt = announceAt;
         return this;
     }
-    public SprintBuilder detailTopic(String detailTopic){
-        this.detailTopic = detailTopic;
+    public SprintBuilder detail(String detail){
+        this.detail = detail;
         return this;
     }
-    public SprintBuilder tag(String tag){
-        this.tag = tag;
+    public SprintBuilder tags(String tags){
+        this.tags = tags;
         return this;
     }
-    public SprintBuilder maxTeams(Integer maxTeams){
-        this.maxTeams = maxTeams;
+    public SprintBuilder maxMembers(Integer maxMembers){
+        this.maxMembers = maxMembers;
         return this;
     }
 
     public Sprint build(){
-        return new Sprint(name, description, startAt, endAt, announcementDateTime, 1, maxTeams, detailTopic, LocalDateTime.now(), 1, tag);
+        return new Sprint(name, description, detail, tags, startAt, endAt, announceAt, 0, 1, maxMembers, 1, LocalDateTime.now());
     }
 }
