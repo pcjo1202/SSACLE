@@ -11,6 +11,7 @@ import InterestPage from '@/pages/Account/SignupPage/InterestPage'
 import SuccessPage from '@/pages/Account/SignupPage/SuccessPage'
 import FindAccount from '@/pages/Account/LoginPage/FindAccount'
 import SsaprintPage from '@/pages/Ssaprint/SsaprintPage'
+import StudyBoardPage from '@/pages/Board/StudyBoardPage'
 
 const router = createBrowserRouter([
   {
@@ -73,11 +74,14 @@ const router = createBrowserRouter([
         path: '/board',
         children: [
           {
+            // 학습 게시판 -> 탭으로 명예의 전당, 질의응답 구분 예정. 아래 코드 주석 처리
+            // path: 'edu',
+            // children: [
+            //   { index: true, path: 'qna', element: <h1>질의 응답</h1> },
+            //   { path: 'legend', element: <StudyBoardPage /> },
+            // ],
             path: 'edu',
-            children: [
-              { index: true, path: 'qna', element: <h1>질의 응답</h1> },
-              { path: 'legend', element: <h1>명예의 전당</h1> },
-            ],
+            children: [{ index: true, element: <StudyBoardPage /> }],
           },
           {
             path: 'free',
