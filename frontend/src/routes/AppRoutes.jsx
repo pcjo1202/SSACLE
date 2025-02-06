@@ -64,7 +64,7 @@ const router = createBrowserRouter([
 
       // 싸프린트 Page
       {
-        path: '/sprint',
+        path: '/ssaprint',
         children: [
           { index: true, element: <SsaprintPage /> },
           { path: ':sprintId', element: <h1>sprintId</h1> },
@@ -121,7 +121,7 @@ const router = createBrowserRouter([
       { path: 'sprint', element: <h1>admin sprint</h1> },
       { path: 'ssadcup', element: <h1>admin ssadcup</h1> },
       { path: 'board', element: <h1>admin board</h1> },
-    ]
+    ],
   },
   // 404 Not Found
   { path: '*', element: <NotFound /> },
