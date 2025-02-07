@@ -59,9 +59,7 @@ public class CommentService {
 
     /** 📌 2. 댓글 작성 */
     @Transactional
-    public Comment createComment(Long boardId, CommentRequestDTO commentRequestDTO, HttpServletRequest request) {
-        User user = validateUser(request);
-
+    public Comment createComment(Long boardId, CommentRequestDTO commentRequestDTO, User user) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new CommentException(CommentErrorCode.BOARD_NOT_FOUND));
 
@@ -82,9 +80,7 @@ public class CommentService {
 
     /** 📌 3. 댓글 수정 */
     @Transactional
-    public Comment updateComment(Long commentId, CommentRequestDTO commentRequestDTO, HttpServletRequest request) {
-        User user = validateUser(request);
-
+    public Comment updateComment(Long commentId, CommentRequestDTO commentRequestDTO, User user) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_NOT_FOUND));
 
@@ -102,9 +98,7 @@ public class CommentService {
 
     /** 📌 4. 댓글 삭제 */
     @Transactional
-    public void deleteComment(Long commentId, HttpServletRequest request) {
-        User user = validateUser(request);
-
+    public void deleteComment(Long commentId, User user) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_NOT_FOUND));
 
@@ -117,10 +111,7 @@ public class CommentService {
 
     /** 📌 5. 대댓글 작성 */
     @Transactional
-    public Comment createReply(Long parentCommentId, CommentRequestDTO commentRequestDTO, HttpServletRequest request) {
-        // JWT 토큰에서 유저 정보 추출
-        User user = validateUser(request);
-
+    public Comment createReply(Long parentCommentId, CommentRequestDTO commentRequestDTO, User user) {
         // 부모 댓글 조회 (존재하지 않으면 예외 발생)
         Comment parentComment = commentRepository.findById(parentCommentId)
                 .orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_NOT_FOUND));

@@ -2,6 +2,7 @@ package ssafy.com.ssacle.board.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,14 +12,18 @@ import ssafy.com.ssacle.board.dto.BoardRequestDTO;
 import ssafy.com.ssacle.board.dto.BoardResponseDTO;
 import ssafy.com.ssacle.board.dto.BoardUpdateRequestDTO;
 import ssafy.com.ssacle.board.service.BoardService;
+import ssafy.com.ssacle.user.domain.User;
+import ssafy.com.ssacle.user.service.UserService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/board")
 @RequiredArgsConstructor
+@Slf4j
 public class BoardController implements BoardSwaggerController{
     private final BoardService boardService;
+    private final UserService userService;
 
     @Override
     public ResponseEntity<List<BoardResponseDTO>> getAllBoards() {
@@ -31,20 +36,24 @@ public class BoardController implements BoardSwaggerController{
     }
 
     @Override
-    public ResponseEntity<Void> saveBoard(BoardRequestDTO boardRequestDTO, HttpServletRequest request) {
-        boardService.saveBoard(boardRequestDTO,request);
+    public ResponseEntity<Void> saveBoard(BoardRequestDTO boardRequestDTO) {
+        User user = userService.getAuthenticatedUser();
+        boardService.saveBoard(boardRequestDTO,user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Override
-    public ResponseEntity<Void> deleteBoard(Long boardId, HttpServletRequest request) {
-        boardService.deleteBoard(boardId,request);
+    public ResponseEntity<Void> deleteBoard(Long boardId) {
+        User user = userService.getAuthenticatedUser();
+        boardService.deleteBoard(boardId, user);
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<Board> updateBoard(Long boardId, BoardUpdateRequestDTO boardUpdateRequestDTO, HttpServletRequest request) {
-        return ResponseEntity.ok().body(boardService.updateBoard(boardId, boardUpdateRequestDTO, request));
+    public ResponseEntity<Board> updateBoard(Long boardId, BoardUpdateRequestDTO boardUpdateRequestDTO) {
+        User user = userService.getAuthenticatedUser();
+        log.info("{}", user.getName());
+        return ResponseEntity.ok().body(boardService.updateBoard(boardId, boardUpdateRequestDTO,user));
     }
 
     @Override

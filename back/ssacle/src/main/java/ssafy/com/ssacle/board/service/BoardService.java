@@ -67,10 +67,8 @@ public class BoardService {
 
     /** 📌 3. 게시글 저장 (토큰에서 email 추출 후 user 조회) */
     @Transactional
-    public Board saveBoard(BoardRequestDTO boardRequestDTO, HttpServletRequest request) {
-        // 1. JWT 토큰에서 email 추출 후 user 조회
-        User user = validateUser(request);
-        // 2. 제목 또는 내용이 비어 있는 경우 예외 처리
+    public Board saveBoard(BoardRequestDTO boardRequestDTO, User user) {
+        // 1. 제목 또는 내용이 비어 있는 경우 예외 처리
         if (boardRequestDTO.getTitle() == null || boardRequestDTO.getTitle().trim().isEmpty()) {
             throw new BoardException(BoardErrorCode.BOARD_TITLE_EMPTY);
         }
@@ -96,9 +94,8 @@ public class BoardService {
 
     /** 📌 4. 게시글 삭제 */
     @Transactional
-    public void deleteBoard(Long boardId, HttpServletRequest request) {
-        // 1. JWT 토큰에서 email 추출 후 user 조회
-        User user = validateUser(request);
+    public void deleteBoard(Long boardId, User user) {
+
         // 2. 게시글 조회 (없는 경우 예외 발생)
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_NOT_FOUND));
@@ -115,16 +112,14 @@ public class BoardService {
 
     /** 📌 5. 게시글 수정 */
     @Transactional
-    public Board updateBoard(Long boardId, BoardUpdateRequestDTO boardUpdateRequestDTO, HttpServletRequest request) {
-        // 1. JWT 토큰에서 email 추출 후 user 조회
-        User user = validateUser(request);
+    public Board updateBoard(Long boardId, BoardUpdateRequestDTO boardUpdateRequestDTO,User user) {
 
         // 2. 게시글 조회
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_NOT_FOUND));
 
         // 3. 수정 요청자가 작성자가 아닌 경우
-        if (!board.getUser().equals(user)) {
+        if (!board.getUser().getId().equals(user.getId())) {
             throw new BoardException(BoardErrorCode.BOARD_UPDATE_FORBIDDEN);
         }
 
