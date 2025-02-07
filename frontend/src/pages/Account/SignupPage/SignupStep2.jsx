@@ -17,6 +17,11 @@ const SignupStep2 = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordError, setPasswordError] = useState(false) // 비밀번호 불일치 메시지
 
+  // 약관 동의 상태
+  const [termsChecked, setTermsChecked] = useState(false)
+  const [privacyChecked, setPrivacyChecked] = useState(false)
+  const [termsError, setTermsError] = useState(false)
+
   // 닉네임 중복 확인 Mutation
   const nicknameMutation = useMutation({
     mutationFn: () => fetchCheckNickname(nickname),
@@ -54,11 +59,10 @@ const SignupStep2 = () => {
     if (password !== confirmPassword) {
       setPasswordError(true)
       confirmPasswordRef.current?.focus() // 불일치 시 포커스 이동
-      confirmPasswordRef.current?.classList.add('animate-shake') // 깜빡이게 애니메이션 추가
-      setTimeout(() => {
-        confirmPasswordRef.current?.classList.remove('animate-shake') // 0.5초 후 제거
-      }, 500)
-
+      return
+    }
+    if (!termsChecked || !privacyChecked) {
+      setTermsError(true)
       return
     }
     navigate('/account/signup/interest')
@@ -165,6 +169,8 @@ const SignupStep2 = () => {
             <label className="flex items-center space-x-2 px-2">
               <input
                 type="checkbox"
+                checked={termsChecked}
+                onChange={() => setTermsChecked(!termsChecked)}
                 className="w-5 h-5 text-ssacle-blue checked:bg-ssacle-blue checked:border-transparent"
               />
               <span className="text-ssacle-black text-base font-medium">
@@ -174,15 +180,20 @@ const SignupStep2 = () => {
             <label className="flex items-center space-x-2 mt-2 px-2">
               <input
                 type="checkbox"
+                checked={privacyChecked}
+                onChange={() => setPrivacyChecked(!privacyChecked)}
                 className="w-5 h-5 text-ssacle-blue checked:bg-ssacle-blue checked:border-transparent"
               />
               <span className="text-ssacle-black text-base font-medium">
                 개인정보 수집 / 이용 동의
               </span>
             </label>
-            <p className="text-[#f03939] text-sm px-2 mt-2 mb-10">
-              필수 약관은 동의가 필요합니다.
-            </p>
+            {/* 필수 약관 미동의 시 경고 메세지 */}
+            {termsError && (
+              <p className="text-[#f03939] text-sm px-2 mt-2 mb-10">
+                필수 약관은 동의가 필요합니다.
+              </p>
+            )}
 
             {/* 회원가입 버튼 */}
             <div className="grid grid-cols-6 gap-4 mb-12">
