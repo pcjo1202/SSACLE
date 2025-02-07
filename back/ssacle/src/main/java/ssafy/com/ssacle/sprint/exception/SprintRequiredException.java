@@ -1,9 +1,9 @@
-package ssafy.com.ssacle.team.exception;
+package ssafy.com.ssacle.sprint.exception;
 
 import ssafy.com.ssacle.global.exception.SSACLEException;
 
 public class SprintRequiredException extends SSACLEException {
     public SprintRequiredException(){
-        super(TeamErrorCode.SPRINT_REQUIRED);
+        super(SprintErrorCode.SPRINT_REQUIRED);
     }
 }

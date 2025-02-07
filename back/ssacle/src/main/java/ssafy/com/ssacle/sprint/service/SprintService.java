@@ -7,6 +7,7 @@ import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.dto.SprintCreateRequest;
 import ssafy.com.ssacle.sprint.dto.SprintResponse;
+import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
@@ -41,7 +42,7 @@ public class SprintService {
     @Transactional
     public void joinSprint(Long sprintId, User user) {
         Sprint sprint = sprintRepository.findByIdWithTeams(sprintId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스프린트입니다."));
+                .orElseThrow(SprintNotExistException::new);
 
         Team team = SprintTeamBuilder.builder()
                 .addUser(user)
