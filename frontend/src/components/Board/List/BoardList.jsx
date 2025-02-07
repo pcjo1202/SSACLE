@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 
-const BoardList = ({ posts, type }) => {
+const BoardList = ({ posts, boardType }) => {
+  // 게시판 유형 `boardType` 추가
   return (
     <div className="space-y-3">
       {posts.map((post) => (
@@ -9,19 +10,20 @@ const BoardList = ({ posts, type }) => {
           className="flex items-center justify-between p-4 border border-ssacle-gray rounded-lg hover:border-blue-500 transition-colors"
         >
           <div className="flex items-center space-x-4">
-            {type === 'legend' && (
+            {post.type === 'legend' && (
               <span className="text-yellow-500" title="명예의 전당">
                 🏆
               </span>
             )}
-            {type === 'qna' && (
+            {post.type === 'qna' && (
               <span className="text-blue-500 font-bold" title="질문">
                 Q
               </span>
             )}
 
             <div>
-              <Link to={`/board/${post.id}`} className="group">
+              {/* 게시판 유형(boardType)을 포함하여 동적으로 이동 */}
+              <Link to={`/board/${boardType}/${post.id}`} className="group">
                 <h3 className="text-ssacle-black text-lg font-medium group-hover:text-blue-500 transition-colors">
                   {post.title}
                 </h3>
