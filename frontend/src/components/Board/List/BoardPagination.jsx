@@ -1,4 +1,6 @@
 const BoardPagination = ({ currentPage, setCurrentPage, totalPages }) => {
+  const totalPagesSafe = Math.max(totalPages, 1) // 최소 1페이지는 보장
+
   return (
     <div className="flex justify-center items-center gap-2 mt-4 mb-8">
       {/* 처음으로 이동 */}
@@ -20,7 +22,7 @@ const BoardPagination = ({ currentPage, setCurrentPage, totalPages }) => {
       </button>
 
       {/* 페이지 번호 */}
-      {[...Array(totalPages)].map((_, index) => (
+      {[...Array(totalPagesSafe)].map((_, index) => (
         <button
           key={index}
           className={`w-10 h-10 flex justify-center items-center rounded-lg shadow-sm ${
@@ -37,8 +39,10 @@ const BoardPagination = ({ currentPage, setCurrentPage, totalPages }) => {
       {/* 다음 페이지 */}
       <button
         className="w-10 h-10 flex justify-center items-center rounded-lg bg-white border shadow-sm disabled:opacity-50"
-        disabled={currentPage === totalPages}
-        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+        disabled={currentPage === totalPagesSafe}
+        onClick={() =>
+          setCurrentPage((prev) => Math.min(prev + 1, totalPagesSafe))
+        }
       >
         ›
       </button>
@@ -46,8 +50,8 @@ const BoardPagination = ({ currentPage, setCurrentPage, totalPages }) => {
       {/* 마지막 페이지로 이동 */}
       <button
         className="w-10 h-10 flex justify-center items-center rounded-lg bg-white border shadow-sm disabled:opacity-50"
-        disabled={currentPage === totalPages}
-        onClick={() => setCurrentPage(totalPages)}
+        disabled={currentPage === totalPagesSafe}
+        onClick={() => setCurrentPage(totalPagesSafe)}
       >
         »
       </button>

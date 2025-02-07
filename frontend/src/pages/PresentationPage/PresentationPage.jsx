@@ -1,35 +1,21 @@
-import BeforePresentationPage from '@/pages/PresentationPage/BeforePresentationPage'
-import PresentingPage from '@/pages/PresentationPage/PresentingPage'
-import QuestionCardPage from '@/pages/PresentationPage/QuestionCardPage'
-
-import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
-import PresentationChat from '@/components/PresentationPage/PresentationChat/PresentationChat'
-
 import PresentationNoticeModal from '@/components/PresentationPage/PresentationNoticeModal/PresentationNoticeModal'
-import { usePresentation } from '@/store/usePresentation'
-
+import { useState } from 'react'
+import { MODAL_STEP } from '@/constants/modalStep'
+import PresentationPageWrapper from '@/components/PresentationPage/PresentationPageWrapper/PresentationPageWrapper'
 const PresentationPage = () => {
-  const { isChatOpen, presentationStatus } = usePresentation() // 발표 상태 (상태에 따라 컴포넌트 변경)
+  // 모달 열기 상태
+  const [isOpen, setIsOpen] = useState(true)
 
   return (
-    <div className="flex w-full h-full gap-2 py-4">
-      {/* 발표 전 페이지 */}
-      {presentationStatus === PRESENTATION_STATUS.BEFORE_PRESENTATION && (
-        <BeforePresentationPage />
-      )}
-      {/* 발표 중 페이지  */}
-      {presentationStatus === PRESENTATION_STATUS.PRESENTING && (
-        <PresentingPage />
-      )}
-      {/* 질문 카드 */}
-      {presentationStatus === PRESENTATION_STATUS.QUESTION_CARD && (
-        <QuestionCardPage />
-      )}
-      {/* 채팅 영역 */}
-      {isChatOpen && <PresentationChat />}
+    <PresentationPageWrapper>
       {/* 공통 공지 모달 */}
-      <PresentationNoticeModal />
-    </div>
+      {/* 상태가 바뀔 때 마다 모달이 뜨도록 구성 */}
+      <PresentationNoticeModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        modalStep={MODAL_STEP.READY}
+      />
+    </PresentationPageWrapper>
   )
 }
 export default PresentationPage
