@@ -1,9 +1,14 @@
 package ssafy.com.ssacle.sprint;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
+import ssafy.com.ssacle.sprint.exception.SprintRequiredException;
+import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
+import ssafy.com.ssacle.team.domain.Team;
+import ssafy.com.ssacle.team.exception.UserRequiredException;
+import ssafy.com.ssacle.user.domain.User;
 
 import java.time.LocalDateTime;
 
@@ -11,75 +16,92 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SprintTest {
 
-    private Sprint sprint;
-
-    @BeforeEach
-    void setUp() {
-        sprint = SprintBuilder.builder()
-                .name("Spring Boot Sprint")
-                .description("Spring Boot 학습 스프린트")
-                .startAt(LocalDateTime.of(2024, 1, 1, 0, 0))
-                .endAt(LocalDateTime.of(2024, 2, 1, 0, 0))
-                .announcementDateTime(LocalDateTime.of(2023, 12, 31, 0, 0))
-                .detailTopic("Spring Security와 OAuth2")
-                .tag("Spring, OAuth")
+    @Test
+    @DisplayName("SprintBuilder를 사용하여 Sprint 생성")
+    void createSprintWithBuilder() {
+        // Given
+        Sprint sprint = SprintBuilder.builder()
+                .name("Java Sprint")
+                .description("Java 학습을 위한 스프린트")
+                .detail("Spring Boot 학습 과정")
+                .tags("Java, Spring")
+                .startAt(LocalDateTime.now())
+                .endAt(LocalDateTime.now().plusDays(7))
+                .announceAt(LocalDateTime.now().plusDays(8))
+                .maxMembers(10)
                 .build();
-    }
 
-    @Test
-    void builder_객체_정상_생성_확인() {
+        // When & Then
         assertNotNull(sprint);
-        assertEquals("Spring Boot Sprint", sprint.getName());
-        assertEquals("Spring Boot 학습 스프린트", sprint.getDescription());
-        assertEquals("Spring Security와 OAuth2", sprint.getDetailTopic());
-        assertEquals("Spring, OAuth", sprint.getTag());
+        assertEquals("Java Sprint", sprint.getName());
+        assertEquals(10, sprint.getMaxMembers());
+        assertEquals("Java, Spring", sprint.getTags());
     }
 
     @Test
-    void maxMembers와_currentMembers의_유효성_검증() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            SprintBuilder.builder()
-                    .name("test")
-                    .description("test")
-                    .startAt(LocalDateTime.now())
-                    .endAt(LocalDateTime.now())
-                    .announcementDateTime(LocalDateTime.now())
-                    .detailTopic("test")
-                    .tag("test")
+    @DisplayName("SprintTeamBuilder를 사용하여 Team 생성")
+    void createTeamWithBuilder() {
+        // Given
+        Sprint sprint = SprintBuilder.builder()
+                .name("Backend Sprint")
+                .description("백엔드 기술 학습")
+                .detail("JPA와 Spring Security 집중 학습")
+                .tags("Spring, JPA, Security")
+                .startAt(LocalDateTime.now())
+                .endAt(LocalDateTime.now().plusDays(10))
+                .announceAt(LocalDateTime.now().plusDays(11))
+                .maxMembers(5)
+                .build();
+
+        User user = User.createStudent("test@example.com", "password", "John Doe", "1234567", "johndoe");
+
+        // When
+        Team team = SprintTeamBuilder.builder()
+                .addUser(user)
+                .participateSprint(sprint)
+                .build();
+
+        // Then
+        assertNotNull(team);
+        assertEquals(1, team.getCurrentMembers());
+        assertEquals(user.getName(), team.getName());
+        assertTrue(sprint.getTeams().contains(team));
+    }
+
+    @Test
+    @DisplayName("Sprint 없이 팀을 생성할 경우 예외 발생")
+    void createTeamWithoutSprintThrowsException() {
+        // Given
+        User user = User.createStudent("test@example.com", "password", "John Doe", "1234567", "johndoe");
+
+        // When & Then
+        assertThrows(SprintRequiredException.class, () -> {
+            SprintTeamBuilder.builder()
+                    .addUser(user)
                     .build();
         });
     }
 
     @Test
-    void addMember_정상_작동_확인() {
-        // 최대 참여 인원을 5명으로 설정하여 테스트
-        Sprint testSprint = SprintBuilder.builder()
-                .name("Test Sprint")
-                .description("테스트용 스프린트")
+    @DisplayName("User 없이 팀을 생성할 경우 예외 발생")
+    void createTeamWithoutUserThrowsException() {
+        // Given
+        Sprint sprint = SprintBuilder.builder()
+                .name("AI Sprint")
+                .description("AI 연구 프로젝트")
+                .detail("딥러닝 및 머신러닝 활용")
+                .tags("AI, Deep Learning")
                 .startAt(LocalDateTime.now())
-                .endAt(LocalDateTime.now().plusDays(30))
-                .announcementDateTime(LocalDateTime.now().minusDays(1))
-                .detailTopic("테스트 주제")
-                .tag("테스트 태그")
+                .endAt(LocalDateTime.now().plusDays(14))
+                .announceAt(LocalDateTime.now().plusDays(15))
+                .maxMembers(8)
                 .build();
 
-        testSprint.addMember();
-        assertEquals(2, testSprint.getCurrentMembers());
-    }
-
-    @Test
-    void maxMembers_초과시_addMember_예외_발생() {
-        Sprint sprintMax = SprintBuilder.builder()
-                .name("Full Sprint")
-                .description("테스트")
-                .startAt(LocalDateTime.now())
-                .endAt(LocalDateTime.now().plusDays(30))
-                .announcementDateTime(LocalDateTime.now().minusDays(1))
-                .detailTopic("test")
-                .tag("test")
-                .build();
-
-        sprintMax.addMember(); // 현재 2명
-        assertThrows(IllegalStateException.class, sprintMax::addMember);
+        // When & Then
+        assertThrows(UserRequiredException.class, () -> {
+            SprintTeamBuilder.builder()
+                    .participateSprint(sprint)
+                    .build();
+        });
     }
 }
