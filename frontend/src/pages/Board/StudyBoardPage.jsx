@@ -65,7 +65,7 @@ const StudyBoardPage = () => {
       setSelectPostId(postId)
       setShowPayModal(true)
     } else {
-      navigate(`/board/edu/${postIds}`)
+      navigate(`/board/edu/${postId}`)
     }
   }
 
