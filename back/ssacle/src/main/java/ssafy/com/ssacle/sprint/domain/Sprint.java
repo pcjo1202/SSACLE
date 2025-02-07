@@ -5,6 +5,7 @@ import lombok.*;
 import ssafy.com.ssacle.global.exception.UtilErrorCode;
 import ssafy.com.ssacle.global.utill.ValidationUtils;
 import ssafy.com.ssacle.team.domain.Team;
+import ssafy.com.ssacle.todo.domain.DefaultTodo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,6 +21,14 @@ public class Sprint {
 
     @OneToMany(mappedBy = "sprint")
     private List<Team> teams;
+
+    @OneToMany(mappedBy = "sprint", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<DefaultTodo> defaultTodos;
+
+    public void addDefaultTodo(DefaultTodo defaultTodo){
+        this.defaultTodos.add(defaultTodo);
+        defaultTodo.setSprint(this);
+    }
 
     @Column(name = "name", nullable = false, length=25)
     private String name;
@@ -76,6 +85,7 @@ public class Sprint {
         this.currentMembers=currentMembers;
         this.createdAt=createdAt;
         this.teams = new ArrayList<>();
+        this.defaultTodos = new ArrayList<>();
     }
 
     public void addTeam(Team team){

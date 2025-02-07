@@ -6,6 +6,7 @@ import lombok.*;
 import ssafy.com.ssacle.global.exception.UtilErrorCode;
 import ssafy.com.ssacle.global.utill.ValidationUtils;
 import ssafy.com.ssacle.sprint.domain.Sprint;
+import ssafy.com.ssacle.todo.domain.Todo;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.userteam.domain.UserTeam;
 
@@ -35,9 +36,13 @@ public class Team {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="sprint_id")
     @Setter
     @JsonIgnore
     private Sprint sprint;
+
+    @OneToMany(mappedBy = "team", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Todo> todos;
 
     @Column(unique = true, nullable = false, length = 20)
     private String name;
@@ -58,6 +63,7 @@ public class Team {
         this.name=name;
         this.currentMembers = currentMembers;
         this.userTeams = new ArrayList<>();
+        this.todos = new ArrayList<>();
     }
 
 }
