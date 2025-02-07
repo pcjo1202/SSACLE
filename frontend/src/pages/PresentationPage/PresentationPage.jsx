@@ -12,7 +12,7 @@ const PresentationPage = () => {
   const { isChatOpen, presentationStatus } = usePresentation() // 발표 상태 (상태에 따라 컴포넌트 변경)
 
   return (
-    <div className="flex h-full gap-2 py-4">
+    <div className="flex w-full h-full gap-2 py-4">
       {/* 발표 전 페이지 */}
       {presentationStatus === PRESENTATION_STATUS.BEFORE_PRESENTATION && (
         <BeforePresentationPage />
