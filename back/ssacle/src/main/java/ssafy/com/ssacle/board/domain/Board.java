@@ -2,6 +2,7 @@ package ssafy.com.ssacle.board.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 import ssafy.com.ssacle.comment.domain.Comment;
 import ssafy.com.ssacle.user.domain.User;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@DynamicUpdate
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

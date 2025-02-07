@@ -25,6 +25,7 @@ public interface BoardSwaggerController {
     @Operation(summary = "게시글 목록 조회", description = "모든 게시글을 최신순으로 조회합니다.")
     @ApiResponse(responseCode = "200", description = "게시글 목록 조회 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Board.class)))
+    @GetMapping
     ResponseEntity<List<BoardResponseDTO>> getAllBoards();
 
     /** 📌 2. 게시글 상세 조회 */
@@ -43,6 +44,7 @@ public interface BoardSwaggerController {
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 (제목/내용 없음)", content = @Content)
     })
+    @PostMapping
     ResponseEntity<Void> saveBoard(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "게시글 생성 요청 데이터",
@@ -81,7 +83,7 @@ public interface BoardSwaggerController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청 (제목/내용 없음)", content = @Content)
     })
     @PatchMapping("/{boardId}")
-    ResponseEntity<Board> updateBoard(
+    ResponseEntity<Void> updateBoard(
             @PathVariable Long boardId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "게시글 수정 요청 데이터",

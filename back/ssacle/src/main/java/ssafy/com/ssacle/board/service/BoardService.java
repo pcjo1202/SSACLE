@@ -103,7 +103,7 @@ public class BoardService {
 
         // 4. 삭제 요청자가 게시글 작성자가 아닌 경우
         if (!board.getUser().getId().equals(user.getId())) {
-            throw new BoardException(BoardErrorCode.BOARD_DELETE_FORBIDDEN);
+            throw new BoardException(BoardErrorCode.BOARD_UPDATE_FORBIDDEN);
         }
 
         // 5. 삭제 처리 (Soft Delete)
@@ -112,18 +112,16 @@ public class BoardService {
 
     /** 📌 5. 게시글 수정 */
     @Transactional
-    public Board updateBoard(Long boardId, BoardUpdateRequestDTO boardUpdateRequestDTO,User user) {
+    public void updateBoard(Long boardId, BoardUpdateRequestDTO boardUpdateRequestDTO,User user) {
 
         // 2. 게시글 조회
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findByIdWithUser(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_NOT_FOUND));
 
-        System.out.println(board.getUser().getId());
-        System.out.println(user.getId());
         // 3. 수정 요청자가 작성자가 아닌 경우
-//        if (!board.getUser().getId().equals(user.getId())) {
-//            throw new BoardException(BoardErrorCode.BOARD_UPDATE_FORBIDDEN);
-//        }
+        if (!board.getUser().getId().equals(user.getId())) {
+            throw new BoardException(BoardErrorCode.BOARD_UPDATE_FORBIDDEN);
+        }
         // 4. 제목 또는 내용이 비어 있는 경우
         if (boardUpdateRequestDTO.getTitle() == null || boardUpdateRequestDTO.getTitle().trim().isEmpty()) {
             throw new BoardException(BoardErrorCode.BOARD_TITLE_EMPTY);
@@ -136,31 +134,13 @@ public class BoardService {
         }
 
         String tag = formatTags(boardUpdateRequestDTO.getTags());
-        //System.out.println(tag);
-
-        // 5. 수정 처리
-        //board.setId(board.getId());
-        board.setUser(board.getUser());
-        board.setTitle(boardUpdateRequestDTO.getTitle());
-        board.setContent(boardUpdateRequestDTO.getContent());
-        board.setBoardType(board.getBoardType());
-        board.setTag(tag);
-        board.setCreatedAt(board.getCreatedAt());
-        board.setUpdatedAt(LocalDateTime.now());
-        board.setComments(new ArrayList<>(board.getComments())); // 깊은 복사로 참조 문제 해결
-        boardRepository.save(board);
-        return board;
+        boardRepository.updateBoard(boardId, boardUpdateRequestDTO.getTitle(),boardUpdateRequestDTO.getContent(), tag, LocalDateTime.now());
     }
     @Transactional
     public int countBoardsByBoardTypeName(String boardTypeName) {
         return boardRepository.countBoardsByBoardTypeName(boardTypeName);
     }
-    private User validateUser(HttpServletRequest request) {
-        String accessToken = userService.resolveToken(request);
-        String email = jwtTokenUtil.getUserEmailFromToken(accessToken);
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_CREATE_UNAUTHORIZED));
-    }
+
     private List<String> splitTags(String tagString) {
         List<String> tags = new ArrayList<>();
         if (tagString != null && !tagString.isEmpty()) {
@@ -171,10 +151,8 @@ public class BoardService {
         }
         return tags;
     }
-
     private String formatTags(List<String> tags) {
         return String.join(",", tags);
     }
-
 
 }
