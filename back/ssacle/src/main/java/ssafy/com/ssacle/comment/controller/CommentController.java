@@ -10,6 +10,8 @@ import ssafy.com.ssacle.comment.domain.Comment;
 import ssafy.com.ssacle.comment.dto.CommentRequestDTO;
 import ssafy.com.ssacle.comment.dto.CommentResponseDTO;
 import ssafy.com.ssacle.comment.service.CommentService;
+import ssafy.com.ssacle.user.domain.User;
+import ssafy.com.ssacle.user.service.UserService;
 
 import java.util.List;
 
@@ -18,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentController implements  CommentSwaggerController{
     private final CommentService commentService;
+    private final UserService userService;
 
     @Override
     public ResponseEntity<List<CommentResponseDTO>> getCommentsByBoard(Long boardId) {
@@ -25,25 +28,29 @@ public class CommentController implements  CommentSwaggerController{
     }
 
     @Override
-    public ResponseEntity<Void> createComment(Long boardId, CommentRequestDTO commentRequestDTO, HttpServletRequest request) {
-        commentService.createComment(boardId,commentRequestDTO,request);
+    public ResponseEntity<Void> createComment(Long boardId, CommentRequestDTO commentRequestDTO) {
+        User user = userService.getAuthenticatedUser();
+        commentService.createComment(boardId,commentRequestDTO,user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Override
-    public ResponseEntity<Comment> updateComment(Long commentId, CommentRequestDTO commentRequestDTO, HttpServletRequest request) {
-        return ResponseEntity.ok().body(commentService.updateComment(commentId,commentRequestDTO,request));
+    public ResponseEntity<Comment> updateComment(Long commentId, CommentRequestDTO commentRequestDTO) {
+        User user = userService.getAuthenticatedUser();
+        return ResponseEntity.ok().body(commentService.updateComment(commentId,commentRequestDTO,user));
     }
 
     @Override
-    public ResponseEntity<Void> deleteComment(Long commentId, HttpServletRequest request) {
-        commentService.deleteComment(commentId, request);
+    public ResponseEntity<Void> deleteComment(Long commentId) {
+        User user = userService.getAuthenticatedUser();
+        commentService.deleteComment(commentId, user);
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<Void> createReply(Long parentCommentId, CommentRequestDTO commentRequestDTO, HttpServletRequest request) {
-        commentService.createReply(parentCommentId, commentRequestDTO, request);
+    public ResponseEntity<Void> createReply(Long parentCommentId, CommentRequestDTO commentRequestDTO) {
+        User user = userService.getAuthenticatedUser();
+        commentService.createReply(parentCommentId, commentRequestDTO, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

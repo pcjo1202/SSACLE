@@ -2,6 +2,7 @@ package ssafy.com.ssacle.board.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -24,7 +25,6 @@ public interface BoardSwaggerController {
     @Operation(summary = "게시글 목록 조회", description = "모든 게시글을 최신순으로 조회합니다.")
     @ApiResponse(responseCode = "200", description = "게시글 목록 조회 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Board.class)))
-    @GetMapping("/api/boards")
     ResponseEntity<List<BoardResponseDTO>> getAllBoards();
 
     /** 📌 2. 게시글 상세 조회 */
@@ -33,7 +33,7 @@ public interface BoardSwaggerController {
             @ApiResponse(responseCode = "200", description = "게시글 조회 성공", content = @Content(schema = @Schema(implementation = Board.class))),
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음", content = @Content)
     })
-    @GetMapping("/api/boards/{id}")
+    @GetMapping("/{id}")
     ResponseEntity<BoardResponseDTO> getBoardById(@PathVariable Long id);
 
     /** 📌 3. 게시글 생성 */
@@ -43,10 +43,19 @@ public interface BoardSwaggerController {
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 (제목/내용 없음)", content = @Content)
     })
-    @PostMapping("/api/boards")
     ResponseEntity<Void> saveBoard(
-            @RequestBody BoardRequestDTO boardRequestDTO,
-            HttpServletRequest request
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "게시글 생성 요청 데이터",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = BoardRequestDTO.class),
+                            examples = @ExampleObject(
+                                    name = "게시글 예제",
+                                    value = "{ \"majorCategory\": \"학습게시판\", \"subCategory\": \"질의 응답\", \"title\": \"프런트 고수분 질문드려요\", \"content\": \"이거 모르겠어요\", \"tags\": [\"Front-end\",\"React\"] }"
+                            )
+                    )
+            )
+            @RequestBody BoardRequestDTO boardRequestDTO
     );
 
     /** 📌 4. 게시글 삭제 */
@@ -57,10 +66,9 @@ public interface BoardSwaggerController {
             @ApiResponse(responseCode = "403", description = "삭제 권한 없음", content = @Content),
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음", content = @Content)
     })
-    @DeleteMapping("/api/boards/{boardId}")
+    @DeleteMapping("/{boardId}")
     ResponseEntity<Void> deleteBoard(
-            @PathVariable Long boardId,
-            HttpServletRequest request
+            @PathVariable Long boardId
     );
 
     /** 📌 5. 게시글 수정 */
@@ -72,18 +80,28 @@ public interface BoardSwaggerController {
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음", content = @Content),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 (제목/내용 없음)", content = @Content)
     })
-    @PutMapping("/api/boards/{boardId}")
+    @PutMapping("/{boardId}")
     ResponseEntity<Board> updateBoard(
             @PathVariable Long boardId,
-            @RequestBody BoardUpdateRequestDTO boardUpdateRequestDTO,
-            HttpServletRequest request
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "게시글 수정 요청 데이터",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = BoardUpdateRequestDTO.class),
+                            examples = @ExampleObject(
+                                    name = "게시글 수정 예제",
+                                    value = "{ \"title\": \"수정된 제목\", \"content\": \"수정된 내용입니다.\", \"tags\": [\"Spring\", \"Backend\"] }"
+                            )
+                    )
+            )
+            @RequestBody BoardUpdateRequestDTO boardUpdateRequestDTO
     );
 
     @Operation(summary = "게시물 갯수 조회", description = "게시글 갯수를 조회할 수 있습니다. JWT 인증이 필요합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "게시글 갯수 조회 성공"),
     })
-    @GetMapping("/api/boards/count")
+    @GetMapping("/count")
     ResponseEntity<Integer> countBoard(@RequestParam("type") String boardTypeName);
 }
 

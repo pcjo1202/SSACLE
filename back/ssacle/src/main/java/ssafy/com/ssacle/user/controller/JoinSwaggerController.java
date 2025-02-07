@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,7 +54,20 @@ public interface JoinSwaggerController {
     @Operation(summary = "회원 가입", description = "회원을 등록합니다.")
     @ApiResponse(responseCode = "201", description = "회원 가입에 성공하였습니다.")
     @PostMapping
-    ResponseEntity<Void> createUser(@RequestBody @Valid JoinDTO joinDTO);
+    ResponseEntity<Void> createUser(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "회원 가입 요청 데이터",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = JoinDTO.class),
+                            examples = @ExampleObject(
+                                    name = "회원 가입 예제",
+                                    value = "{ \"studentNumber\": \"1240587\", \"email\": \"spancer1@naver.com\", \"nickname\": \"KSH0610\", \"name\": \"김수현\", \"password\": \"rlatngus@1\", \"confirmpassword\": \"rlatngus@1\" }"
+                            )
+                    )
+            )
+            @RequestBody @Valid JoinDTO joinDTO
+    );
 
 
     @Operation(summary = "이메일 중복 확인", description = "입력한 이메일이 이미 등록되어 있는지 확인합니다.")
