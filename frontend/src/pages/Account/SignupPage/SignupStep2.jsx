@@ -53,8 +53,8 @@ const SignupStep2 = () => {
     }
     if (password !== confirmPassword) {
       setPasswordError(true)
-      confirmPasswordRef.current?.focus() // 🔥 불일치 시 포커스 이동
-      confirmPasswordRef.current?.classList.add('animate-shake') // 🔥 깜빡이게 애니메이션 추가
+      confirmPasswordRef.current?.focus() // 불일치 시 포커스 이동
+      confirmPasswordRef.current?.classList.add('animate-shake') // 깜빡이게 애니메이션 추가
       setTimeout(() => {
         confirmPasswordRef.current?.classList.remove('animate-shake') // 0.5초 후 제거
       }, 500)
