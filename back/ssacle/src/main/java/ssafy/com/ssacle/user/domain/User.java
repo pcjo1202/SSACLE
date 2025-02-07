@@ -32,6 +32,9 @@ public class User {
     List<UserTeam> userTeams = new ArrayList<>();
 
     public void addUserTeam(UserTeam userTeam){
+        if (this.userTeams == null) {
+            this.userTeams = new ArrayList<>();
+        }
         this.userTeams.add(userTeam);
     }
 
@@ -86,7 +89,7 @@ public class User {
     public static User createAdmin(String email, String password, String name) {
         return new User(
                 null,
-                null,
+                new ArrayList<>(),
                 email,
                 encodePassword(password),
                 name,
@@ -107,7 +110,7 @@ public class User {
     public static User createStudent(String email, String password, String name, String studentNumber, String nickname) {
         return new User(
                 null,
-                null,
+                new ArrayList<>(),
                 email,
                 encodePassword(password),
                 name,
@@ -128,7 +131,7 @@ public class User {
     public static User createAlumni(String email, String password, String name, String studentNumber, String nickname) {
         return new User(
                 null,
-                null,
+                new ArrayList<>(),
                 email,
                 encodePassword(password),
                 name,

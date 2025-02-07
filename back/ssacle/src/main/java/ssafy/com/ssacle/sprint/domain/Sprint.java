@@ -7,6 +7,7 @@ import ssafy.com.ssacle.global.utill.ValidationUtils;
 import ssafy.com.ssacle.team.domain.Team;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -74,6 +75,7 @@ public class Sprint {
         this.maxMembers=maxMembers;
         this.currentMembers=currentMembers;
         this.createdAt=createdAt;
+        this.teams = new ArrayList<>();
     }
 
     public void addTeam(Team team){

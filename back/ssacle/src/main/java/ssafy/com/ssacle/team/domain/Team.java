@@ -16,8 +16,6 @@ import java.util.List;
 @Table(name="team")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Team {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +23,16 @@ public class Team {
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<UserTeam> userTeams = new ArrayList<>();
+    private List<UserTeam> userTeams;
+
+    public void addUser(User user){
+        UserTeam userTeam = new UserTeam(user,this);
+
+        if (!this.userTeams.contains(userTeam)) {
+            this.userTeams.add(userTeam);
+            user.addUserTeam(userTeam);
+        }
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Setter
@@ -46,16 +53,11 @@ public class Team {
     @Setter
     private int point;
 
-    public Team(String name, Integer currentMembers){
+    protected Team(String name, Integer currentMembers){
         ValidationUtils.validationCount(currentMembers, UtilErrorCode.MEMBER_VALIDATION_COUNT_FAILED);
         this.name=name;
         this.currentMembers = currentMembers;
-    }
-
-    public void addUser(User user){
-        UserTeam userTeam = new UserTeam(user,this);
-        this.userTeams.add(userTeam);
-        user.addUserTeam(userTeam);
+        this.userTeams = new ArrayList<>();
     }
 
 }

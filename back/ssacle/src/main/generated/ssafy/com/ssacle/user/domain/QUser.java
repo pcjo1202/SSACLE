@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -29,9 +30,9 @@ public class QUser extends EntityPathBase<User> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final BooleanPath is_graduate = createBoolean("is_graduate");
-
     public final BooleanPath isDelete = createBoolean("isDelete");
+
+    public final BooleanPath isGraduate = createBoolean("isGraduate");
 
     public final NumberPath<Integer> level = createNumber("level", Integer.class);
 
@@ -46,6 +47,8 @@ public class QUser extends EntityPathBase<User> {
     public final EnumPath<Role> role = createEnum("role", Role.class);
 
     public final StringPath studentNumber = createString("studentNumber");
+
+    public final ListPath<ssafy.com.ssacle.userteam.domain.UserTeam, ssafy.com.ssacle.userteam.domain.QUserTeam> userTeams = this.<ssafy.com.ssacle.userteam.domain.UserTeam, ssafy.com.ssacle.userteam.domain.QUserTeam>createList("userTeams", ssafy.com.ssacle.userteam.domain.UserTeam.class, ssafy.com.ssacle.userteam.domain.QUserTeam.class, PathInits.DIRECT2);
 
     public QUser(String variable) {
         super(User.class, forVariable(variable));
