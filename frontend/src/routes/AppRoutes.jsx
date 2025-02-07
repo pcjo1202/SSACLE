@@ -67,7 +67,7 @@ const router = createBrowserRouter([
 
       // 싸프린트 Page
       {
-        path: '/sprint',
+        path: '/ssaprint',
         children: [
           { index: true, element: <SsaprintPage /> },
           { path: ':sprintId', element: <h1>sprintId</h1> },
