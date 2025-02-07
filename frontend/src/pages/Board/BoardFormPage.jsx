@@ -143,7 +143,9 @@ const BoardFormPage = () => {
         {/* 태그 입력 (사용자 직접 입력 가능) */}
         <div>
           <label className="block mb-2">태그 입력</label>
-          <div className="flex flex-wrap gap-2 border p-2 rounded">
+          <div
+            className={`flex flex-wrap gap-2 p-2 rounded ${formData.tags.length === 0 ? 'border' : ''}`}
+          >
             {formData.tags.map((tag) => (
               <span
                 key={tag}

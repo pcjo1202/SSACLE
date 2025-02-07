@@ -55,7 +55,7 @@ const BoardDetailPage = () => {
         {/* 태그 표시 */}
         <div className="mt-2 flex gap-2">
           {post.tags?.map((tag, index) => (
-            <span key={index} className="bg-gray-200 px-2 py-1 rounded text-sm">
+            <span key={index} className="bg-gray-100 px-2 py-1 rounded text-sm">
               {tag}
             </span>
           ))}

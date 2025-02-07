@@ -77,6 +77,35 @@ const StudyBoardPage = () => {
           onTabChange={setActiveTab}
         />
       </section>
+      {/* 배너 */}
+      <section>
+        <div className="bg-ssacle-sky w-full h-32 rounded-lg mb-4 flex justify-center items-center">
+          {activeTab === 'legend' ? (
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-ssacle-black font-semibold mb-2">
+                🏆 명예의 전당이란 ?
+              </p>
+              <p className="text-ssacle-black font-normal text-sm">
+                명예의 전당은 싸피 교육생들의 다양한 기업 합격 후기, 자기소개서
+                작성 꿀팁, 면접 후기 등을 볼 수 있는 곳입니다.
+              </p>
+              <p className="text-ssacle-blue font-semibold text-sm">
+                * 명예의 전당 글을 열람하기 위해선 피클이 필요해요 🥒 !
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-ssacle-black font-semibold mb-2">
+                Q 질의응답이란 ?
+              </p>
+              <p className="text-ssacle-black font-normal text-sm">
+                질의응답은 싸피 교육생들이 자기주도적 학습을 하며 궁금했던 내용,
+                구글링을 해도 나오지 않던 내용을 질의하고 답변하는 곳입니다.
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
       <div className="flex flex-row justify-between">
         {/* 글 작성 버튼 */}
         <section>
