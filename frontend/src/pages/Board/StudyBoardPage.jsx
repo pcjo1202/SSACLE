@@ -4,6 +4,7 @@ import BoardTab from '@/components/Board/List/BoardTab'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { posts as mockPosts } from '@/mocks/boardData'
+import PayModal from '@/components/Board/Modal/PayModal'
 
 const studyTabs = [
   { id: 'legend', label: '명예의 전당' },
@@ -21,6 +22,14 @@ const StudyBoardPage = () => {
   // 페이지네이션 관련 상태 추가
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+
+  // 피클 차감 모달
+  // 피클 결제 모달 표시 여부
+  const [showPayModal, setShowPayModal] = useState(false)
+  // 선택된 게시글 id
+  const [selectPostId, setSelectPostId] = useState(null)
+  // 사용자의 현재 피클 수 (실제로는 API에서 받아와야 함)
+  const [userPickle, setUserPickle] = useState(256)
 
   // 게시글 목록 불러오기
   // activeTab이 변경될 때마다 해당하는 게시글 목록을 새로 불러옴
@@ -49,6 +58,36 @@ const StudyBoardPage = () => {
     }
     fetchPosts()
   }, [activeTab, currentPage]) // activeTab이 변경될 때마다 실행
+
+  // 게시글 클릭 핸들러
+  const handlePostClick = (postId) => {
+    if (activeTab === 'legend') {
+      setSelectPostId(postId)
+      setShowPayModal(true)
+    } else {
+      navigate(`/board/edu/${postIds}`)
+    }
+  }
+
+  // 피클 결제 확인
+  const handlePayConfirm = async () => {
+    try {
+      const requiredPickles = 5
+      if (userPickle >= requiredPickles) {
+        setUserPickle((prev) => prev - requiredPickles)
+        setShowPayModal(false)
+        navigate(`/board/edu/${selectPostId}`)
+      }
+    } catch (error) {
+      console.error('피클 차감 중 오류가 발생했습니다:', error)
+      alert('처리 중 오류가 발생했습니다. 다시 시도해주세요.')
+    }
+  }
+  // 모달 취소
+  const handlePayCancel = () => {
+    setShowPayModal(false)
+    setSelectPostId(null)
+  }
 
   // 글 작성 페이지로 이동
   // 현재 탭 정보 유지 및 state로 전달하여 글 유형 지정
@@ -120,7 +159,12 @@ const StudyBoardPage = () => {
       </div>
       <div className="border-b my-3"></div>
       <section>
-        <BoardList posts={posts} type={activeTab} boardType="edu" />
+        <BoardList
+          posts={posts}
+          type={activeTab}
+          boardType="edu"
+          onPostClick={handlePostClick}
+        />
       </section>
       <section>
         {/* 페이지네이션 추가 */}
@@ -130,6 +174,13 @@ const StudyBoardPage = () => {
           totalPages={totalPages}
         />
       </section>
+      <PayModal
+        isOpen={showPayModal}
+        onClose={handlePayCancel}
+        onConfirm={handlePayConfirm}
+        requiredPickle={5}
+        currentPickle={userPickle}
+      />
     </main>
   )
 }
