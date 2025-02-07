@@ -9,9 +9,9 @@ export const fetchCheckEmail = (email) =>
 export const fetchSendVerification = (email, webhookUrl) =>
   axios.post(AUTH_END_POINT.SEND_VERIFICATION(email), { email, webhookUrl })
 
-// 4. 비밀번호 형식 체크 (POST) 🔥 [보안 강화: GET → POST 변경]
+// 4. 비밀번호 형식 체크 (GET)
 export const fetchCheckPassword = (password, confirmPassword) =>
-  axios.post(AUTH_END_POINT.CHECK_PASSWORD(password, confirmPassword), { password, confirmPassword })
+  axios.get(AUTH_END_POINT.CHECK_PASSWORD(password, confirmPassword))
 
 // 5. 닉네임 중복 체크 (GET)
 export const fetchCheckNickname = (nickname) =>

@@ -1,61 +1,54 @@
 import axios from 'axios'
 
+const BASE_URL = 'http://localhost:5174/'
+
 // Axios 인스턴스 생성
 const httpCommon = axios.create({
-  baseURL: 'http://localhost:5174/',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: BASE_URL,
+  headers: { 'Content-Type': 'application/json' },
   timeout: 5000,
   withCredentials: true,
 })
 
-// 요청 인터셉터: 모든 요청에 `Authorization` 헤더 추가
-httpCommon.interceptors.request.use(
-  (config) => {
-    const accessToken = localStorage.getItem('accessToken') // 저장된 액세스 토큰 가져오기
-    if (accessToken) {
-      config.headers['Authorization'] = `Bearer ${accessToken}` // 헤더에 추가
-    }
-    return config
-  },
-  (error) => Promise.reject(error)
-)
+// Access Token 저장 함수 (Bearer 제거)
+const saveAccessToken = (token) => {
+  if (token) localStorage.setItem('accessToken', token.replace('Bearer ', ''))
+}
 
-// 응답 인터셉터: 공통적인 에러 처리 + 액세스 토큰 갱신
+// Access Token 갱신 함수
+const refreshAccessToken = async () => {
+  try {
+    const { headers } = await axios.post(`${BASE_URL}/api/v1/refreshtoken`, {}, { withCredentials: true })
+    const newAccessToken = headers['authorization']
+    saveAccessToken(newAccessToken)
+    return newAccessToken
+  } catch (error) {
+    console.error('❌ 토큰 갱신 실패:', error)
+    window.location.href = '/login'
+    throw error
+  }
+}
+
+// 요청 인터셉터: Access Token 추가
+httpCommon.interceptors.request.use((config) => {
+  const accessToken = localStorage.getItem('accessToken')
+  if (accessToken) config.headers['Authorization'] = `Bearer ${accessToken}`
+  return config
+})
+
+// 응답 인터셉터: 401 처리 + 토큰 갱신
 httpCommon.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    saveAccessToken(response.headers['authorization']) // 새 토큰이 오면 저장
+    return response
+  },
   async (error) => {
-    if (error.response) {
-      const { status, config } = error.response
+    if (error.response?.status === 401) {
+      console.error('🔄 401 Unauthorized: 액세스 토큰 갱신 시도')
 
-      // 401 Unauthorized: 액세스 토큰 만료 → 리프레시 토큰으로 갱신
-      if (status === 401) {
-        console.error('🔄 401 Unauthorized: 액세스 토큰 갱신 시도')
-
-        try {
-          // 액세스 토큰 갱신 요청 (body 없이 요청)
-          const { data } = await axios.post('http://localhost:5174/api/v1/refreshtoken')
-
-          // 새로운 액세스 & 리프레시 토큰 저장
-          localStorage.setItem('accessToken', data.accessToken)
-          localStorage.setItem('refreshToken', data.refreshToken) // 새 리프레시 토큰도 저장
-
-          // 원래 요청을 새로운 액세스 토큰으로 재시도
-          config.headers['Authorization'] = `Bearer ${data.accessToken}`
-          return httpCommon(config) // 기존 요청 다시 보내기
-        } catch (refreshError) {
-          console.error('❌ 토큰 갱신 실패:', refreshError)
-          window.location.href = '/login' // 로그인 페이지로 이동
-          return Promise.reject(refreshError)
-        }
-      }
-
-      // 500 이상 서버 오류 → 에러 페이지로 이동
-      if (status >= 500) {
-        console.error('🚨 서버 오류 발생!')
-        window.location.href = '/error'
-      }
+      const newAccessToken = await refreshAccessToken()
+      error.config.headers['Authorization'] = `Bearer ${newAccessToken.replace('Bearer ', '')}`
+      return httpCommon(error.config)
     }
     return Promise.reject(error)
   }
