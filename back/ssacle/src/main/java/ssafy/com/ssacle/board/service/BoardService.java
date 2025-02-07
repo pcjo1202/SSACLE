@@ -102,7 +102,7 @@ public class BoardService {
 
 
         // 4. 삭제 요청자가 게시글 작성자가 아닌 경우
-        if (!board.getUser().equals(user)) {
+        if (!board.getUser().getId().equals(user.getId())) {
             throw new BoardException(BoardErrorCode.BOARD_DELETE_FORBIDDEN);
         }
 
@@ -118,11 +118,12 @@ public class BoardService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_NOT_FOUND));
 
+        System.out.println(board.getUser().getId());
+        System.out.println(user.getId());
         // 3. 수정 요청자가 작성자가 아닌 경우
-        if (!board.getUser().getId().equals(user.getId())) {
-            throw new BoardException(BoardErrorCode.BOARD_UPDATE_FORBIDDEN);
-        }
-
+//        if (!board.getUser().getId().equals(user.getId())) {
+//            throw new BoardException(BoardErrorCode.BOARD_UPDATE_FORBIDDEN);
+//        }
         // 4. 제목 또는 내용이 비어 있는 경우
         if (boardUpdateRequestDTO.getTitle() == null || boardUpdateRequestDTO.getTitle().trim().isEmpty()) {
             throw new BoardException(BoardErrorCode.BOARD_TITLE_EMPTY);
@@ -130,17 +131,23 @@ public class BoardService {
         if (boardUpdateRequestDTO.getContent() == null || boardUpdateRequestDTO.getContent().trim().isEmpty()) {
             throw new BoardException(BoardErrorCode.BOARD_CONTENT_EMPTY);
         }
-        if(boardUpdateRequestDTO.getTags().size()==0){
+        if (boardUpdateRequestDTO.getTags() == null || boardUpdateRequestDTO.getTags().isEmpty()) {
             throw new BoardException(BoardErrorCode.BOARD_TAG_EMPTY);
         }
+
         String tag = formatTags(boardUpdateRequestDTO.getTags());
+        //System.out.println(tag);
 
         // 5. 수정 처리
+        //board.setId(board.getId());
+        board.setUser(board.getUser());
         board.setTitle(boardUpdateRequestDTO.getTitle());
         board.setContent(boardUpdateRequestDTO.getContent());
         board.setBoardType(board.getBoardType());
         board.setTag(tag);
+        board.setCreatedAt(board.getCreatedAt());
         board.setUpdatedAt(LocalDateTime.now());
+        board.setComments(new ArrayList<>(board.getComments())); // 깊은 복사로 참조 문제 해결
         boardRepository.save(board);
         return board;
     }

@@ -80,7 +80,7 @@ public interface BoardSwaggerController {
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음", content = @Content),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 (제목/내용 없음)", content = @Content)
     })
-    @PutMapping("/{boardId}")
+    @PatchMapping("/{boardId}")
     ResponseEntity<Board> updateBoard(
             @PathVariable Long boardId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
