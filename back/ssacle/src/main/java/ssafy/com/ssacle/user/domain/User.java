@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import ssafy.com.ssacle.board.domain.Board;
+import ssafy.com.ssacle.comment.domain.Comment;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -75,6 +77,11 @@ public class User {
     @ColumnDefault("false")
     private boolean isDelete;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Board> boards;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
 
     // ** 관리자 생성자 **
@@ -93,7 +100,9 @@ public class User {
                 Role.ADMIN,
                 null,
                 null,
-                false
+                false,
+                new ArrayList<>(),
+                new ArrayList<>()
         );
     }
 
@@ -113,7 +122,9 @@ public class User {
                 Role.STUDENT,
                 null,
                 null,
-                false
+                false,
+                new ArrayList<>(),
+                new ArrayList<>()
         );
     }
 
@@ -133,7 +144,9 @@ public class User {
                 Role.ALUMNI,
                 null,
                 null,
-                false
+                false,
+                new ArrayList<>(),
+                new ArrayList<>()
         );
     }
     private static String encodePassword(String rawPassword) {

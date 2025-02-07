@@ -46,7 +46,7 @@ public class UserService {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return userRepository.findByEmail(userEmail)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(()->new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
     }
 
     /** ✅ 로그인 및 Access/Refresh Token 생성 */
