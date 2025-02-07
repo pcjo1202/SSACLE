@@ -6,14 +6,14 @@ import { fetchSendVerification } from '@/services/userService'
 const SignupStep1 = () => {
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
-  const [webhookUrl, setWebhookUrl] = useState('')
+  const [webhook, setWebhook] = useState('')
   const [email, setEmail] = useState('')
   const [showCodeInput, setShowCodeInput] = useState(false)
   const [errorMessage, setErrorMessage] = useState('') // 오류 메시지 상태 유지
 
   // 인증 코드 요청 Mutation
   const mutation = useMutation({
-    mutationFn: () => fetchSendVerification(email, webhookUrl),
+    mutationFn: () => fetchSendVerification(email, webhook),
     onSuccess: () => {
       setShowCodeInput(true) // 성공 시 인증 코드 입력창 표시
       setErrorMessage('') // 성공하면 오류 메시지 초기화
@@ -26,7 +26,7 @@ const SignupStep1 = () => {
 
   // 인증 코드 요청 버튼 클릭 시 실행할 함수 (입력값 검증 추가)
   const handleSendVerification = () => {
-    if (!webhookUrl || !email) {
+    if (!webhook || !email) {
       setErrorMessage('웹훅 URL과 이메일을 모두 입력해주세요.') // 입력 검증 추가
       return
     }
@@ -35,9 +35,9 @@ const SignupStep1 = () => {
 
   return (
     <div className="w-full h-screen flex justify-center items-center">
-      <div className="w-[80%] max-w-[1200px] flex flex-col md:flex-row items-center justify-between">
+      <div className="min-w-[75rem] flex flex-col md:flex-row items-center justify-center gap-10">
         {/* 좌측 컨텐츠 */}
-        <div className="w-full md:w-[45%] bg-white p-12 rounded-lg shadow-md text-center">
+        <div className="min-w-max bg-white p-12 rounded-lg shadow-md text-center">
           <h2 className="text-lg font-bold text-ssacle-blue mb-4">
             SSAFY인 인증하는 방법
           </h2>
@@ -60,13 +60,13 @@ const SignupStep1 = () => {
                   채널을 만든 서버를 켠 상태에서 좌측 상단 MatterMost 로고 클릭
                 </li>
                 <li>‘통합’ 클릭</li>
-                <li>'전체 Incoming WebhookUrl' 메뉴 클릭</li>
-                <li>'Incoming WebhookUrl 추가하기' 버튼 클릭</li>
+                <li>'전체 Incoming Webhook' 메뉴 클릭</li>
+                <li>'Incoming Webhook 추가하기' 버튼 클릭</li>
                 <li>
                   ‘제목’ 자유롭게 입력 후 ‘채널’을 클릭하여 방금 만든 채널을
                   선택 후 저장
                 </li>
-                <li>화면에 뜨는 URL 복사하여 우측 WebhookUrl URL에 붙여넣기</li>
+                <li>화면에 뜨는 URL 복사하여 우측 Webhook URL에 붙여넣기</li>
                 <li>
                   MM 가입한 이메일을 입력 후 인증 코드 받기 버튼을 누르면
                   만들어놓은 채널에 인증 코드가 전송됩니다!
@@ -95,7 +95,7 @@ const SignupStep1 = () => {
         </div>
   
         {/* 우측 회원가입 폼 */}
-        <div className="w-full md:w-[45%] flex flex-col items-center">
+        <div className="min-w-[25rem] flex flex-col items-center">
           <h1 className="text-ssacle-blue text-3xl font-bold text-center mb-10">
             회원가입
           </h1>
@@ -104,8 +104,8 @@ const SignupStep1 = () => {
           <input
             type='url'
             placeholder='Webhook URL'
-            value={webhookUrl}
-            onChange={(e) => setWebhookUrl(e.target.value)}
+            value={webhook}
+            onChange={(e) => setWebhook(e.target.value)}
             className='w-full max-w-[400px] h-12 bg-ssacle-gray-sm rounded-full px-6 text-ssacle-blue text-medium text-base focus:outline-ssacle-blue mb-4'
           />
 
@@ -144,7 +144,7 @@ const SignupStep1 = () => {
           {showCodeInput && (
             <button
               className="w-full max-w-[400px] h-12 bg-ssacle-blue rounded-full px-6 text-white text-center text-xl font-bold mb-4"
-              onClick={() => navigate('step2')}
+              onClick={() => navigate('step2', { state: { email } })}
             >
               SSAFY인 인증하기
             </button>

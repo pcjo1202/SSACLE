@@ -1,7 +1,33 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { fetchCheckNickname } from '@/services/userService'
 
 const SignupStep2 = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // 닉네임 상태 추가
+  const [nickname, setNickname] = useState('')
+  const [isNicknameValid, setIsNicknameValid] = useState(false) // 닉네임 인증 상태
+
+  // 닉네임 중복 확인 Mutation
+  const nicknameMutation = useMutation({
+    mutationFn: () => fetchCheckNickname(nickname),
+    onSuccess: (data) => {
+      if (data) {
+        alert('이미 사용 중인 닉네임입니다.')
+        setIsNicknameValid(false)
+      } else {
+        setIsNicknameValid(true)
+      }
+    },
+    onError: (error) => {
+      console.error('닉네임 중복 확인 상태:', error)
+      alert('닉네임 확인 중 오류가 발생했습니다. 다시 시도해주세요.')
+    },
+  })
+
   return (
     <>
       <div className="w-full h-auto flex justify-center items-center mt-24">
@@ -18,14 +44,14 @@ const SignupStep2 = () => {
               <label className="col-span-2 text-ssacle-black text-xl font-medium py-2">
                 학번 *
               </label>
-              <div className="col-span-4 col-start-3">
-                <div className="h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-lg text-ssacle-black">
-                  1234567
-                </div>
-                <p className="text-ssacle-blue text-sm mt-1">
-                  인증이 완료되었습니다.
-                </p>
-              </div>
+              <input
+                type="text"
+                placeholder="학번을 입력하세요."
+                className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
+              />
+              <button className="col-span-1 col-start-6 h-12 bg-ssacle-blue rounded-full text-white text-base font-bold mb-4">
+                중복확인
+              </button>
 
               {/* 이메일 */}
               <label className="col-span-2 text-ssacle-black text-xl font-medium py-2">
@@ -49,11 +75,18 @@ const SignupStep2 = () => {
               </label>
               <input
                 type="text"
-                placeholder="싸클에서 사용할 닉네임을 입력해 주세요."
+                placeholder="사용할 닉네임을 입력해 주세요."
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
                 className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
               />
-              <button className="col-span-1 col-start-6 h-12 bg-ssacle-blue rounded-full text-white text-base font-bold mb-4">
-                중복확인
+
+              <button
+                className="col-span-1 col-start-6 h-12 bg-ssacle-blue rounded-full text-white text-base font-bold mb-4"
+                onClick={() => nicknameMutation.mutate()} // ✅ 닉네임 중복 확인 실행
+                disabled={nicknameMutation.isLoading} // 로딩 중이면 버튼 비활성화
+              >
+                {nicknameMutation.isLoading ? '확인 중...' : '중복확인'}
               </button>
             </div>
             <div className="border-b-2 border-ssacle-gray-sm my-6" />
@@ -74,7 +107,7 @@ const SignupStep2 = () => {
               </label>
               <input
                 type="password"
-                placeholder="비밀번호를 한번 더 입력해 주세요"
+                placeholder="비밀번호를 한번 더 입력해 주세요."
                 className="col-span-4 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
               />
             </div>
