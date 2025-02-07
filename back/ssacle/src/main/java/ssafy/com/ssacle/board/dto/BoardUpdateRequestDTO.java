@@ -18,6 +18,6 @@ public class BoardUpdateRequestDTO {
     @NotBlank
     private String content;
 
-    @NotEmpty
+    @NotEmpty(message = "태그는 최소 1개 이상 입력해야 합니다.")
     private List<String> tags;
 }

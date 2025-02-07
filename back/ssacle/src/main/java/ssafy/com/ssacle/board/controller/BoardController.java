@@ -52,7 +52,7 @@ public class BoardController implements BoardSwaggerController{
     @Override
     public ResponseEntity<Board> updateBoard(Long boardId, BoardUpdateRequestDTO boardUpdateRequestDTO) {
         User user = userService.getAuthenticatedUser();
-        log.info("{}", user.getName());
+        log.info("{}, {}", user.getName(), user.getNickname());
         return ResponseEntity.ok().body(boardService.updateBoard(boardId, boardUpdateRequestDTO,user));
     }
 
