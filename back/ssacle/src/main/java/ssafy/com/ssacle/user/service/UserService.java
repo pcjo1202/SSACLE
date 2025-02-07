@@ -42,10 +42,17 @@ public class UserService {
     @Value("${spring.jwt.refreshExpireMs}")
     private long refreshExpireMs;
 
+    public User getAuthenticatedUser() {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return userRepository.findByEmail(userEmail)
+                .orElseThrow(RuntimeException::new);
+    }
+
     /** ✅ 로그인 및 Access/Refresh Token 생성 */
     @Transactional
     public String authenticateAndGenerateTokens(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
-        User user = getAuthenticatedUser(loginDTO);
+        User user = getUserFromToken(loginDTO);
         Optional<RefreshToken> existingToken = refreshRepository.findByUser(user);
         if (existingToken.isPresent()) {
             throw new CannotLoginException(LoginErrorCode.ALREADY_LOGGED_IN);
@@ -118,7 +125,7 @@ public class UserService {
 
     /** ✅ 사용자 인증 */
     @Transactional
-    public User getAuthenticatedUser(LoginDTO loginDTO) {
+    public User getUserFromToken(LoginDTO loginDTO) {
         User user = userRepository.findByEmail(loginDTO.getEmail())
                 .orElseThrow(() -> new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
 
