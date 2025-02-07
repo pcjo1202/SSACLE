@@ -7,9 +7,9 @@ const QuestionCardPage = () => {
     <div className="flex w-full gap-2">
       <div className="flex flex-col w-full gap-2">
         <QuestionCardSection />
-        <SharedSection />
+        {/* <SharedSection /> */}
       </div>
-      <ParticipantSection />
+      <ParticipantSection sharingStatus={false} />
     </div>
   )
 }

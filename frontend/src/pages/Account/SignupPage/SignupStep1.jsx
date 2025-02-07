@@ -9,28 +9,28 @@ const SignupStep1 = () => {
   const [webhookUrl, setWebhookUrl] = useState('')
   const [email, setEmail] = useState('')
   const [showCodeInput, setShowCodeInput] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('') // ✅ 오류 메시지 상태 유지
+  const [errorMessage, setErrorMessage] = useState('') // 오류 메시지 상태 유지
 
-  // ✅ 인증 코드 요청 Mutation
+  // 인증 코드 요청 Mutation
   const mutation = useMutation({
     mutationFn: () => fetchSendVerification(email, webhookUrl),
     onSuccess: () => {
-      setShowCodeInput(true) // ✅ 성공 시 인증 코드 입력창 표시
-      setErrorMessage('') // ✅ 성공하면 오류 메시지 초기화
+      setShowCodeInput(true) // 성공 시 인증 코드 입력창 표시
+      setErrorMessage('') // 성공하면 오류 메시지 초기화
     },
     onError: (error) => {
-      setErrorMessage('인증 코드 전송에 실패했습니다. 다시 시도해주세요.') // ✅ 오류 메시지 출력
+      setErrorMessage('인증 코드 전송에 실패했습니다. 다시 시도해주세요.') // 오류 메시지 출력
       console.error('❌ 인증 코드 전송 실패:', error)
     },
   })
 
-  // ✅ 인증 코드 요청 버튼 클릭 시 실행할 함수 (입력값 검증 추가)
+  // 인증 코드 요청 버튼 클릭 시 실행할 함수 (입력값 검증 추가)
   const handleSendVerification = () => {
     if (!webhookUrl || !email) {
-      setErrorMessage('웹훅 URL과 이메일을 모두 입력해주세요.') // ✅ 입력 검증 추가
+      setErrorMessage('웹훅 URL과 이메일을 모두 입력해주세요.') // 입력 검증 추가
       return
     }
-    mutation.mutate() // ✅ 검증 통과 시 요청 실행
+    mutation.mutate() // 검증 통과 시 요청 실행
   }
 
   return (
@@ -126,7 +126,7 @@ const SignupStep1 = () => {
             className={`w-full max-w-[400px] h-12 rounded-full text-center text-xl font-bold mb-4 transition-colors duration-300 ${
               mutation.isPending ? 'bg-gray-400' : 'bg-ssacle-blue text-white'
             }`}
-            onClick={handleSendVerification} // ✅ 입력값 검증 후 요청 실행
+            onClick={handleSendVerification} // 입력값 검증 후 요청 실행
             disabled={mutation.isPending}
           >
             {mutation.isPending ? '전송 중...' : 'Mattermost로 인증 코드 받기'}

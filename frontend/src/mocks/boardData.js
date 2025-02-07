@@ -1,5 +1,6 @@
 // 게시글 더미 데이터
 export const posts = [
+  // 📌 명예의 전당 (legend) - 12개
   {
     id: 1,
     title: '현대 오토에버 최종 합격 후기',
@@ -8,103 +9,244 @@ export const posts = [
     date: '2025-01-22',
     author: '김취준',
     views: 127,
-    type: 'honor',
+    type: 'legend',
     tags: ['자소서', '면접후기'],
-    comments: [
-      {
-        id: 1,
-        content: '축하드립니다! 후기 잘 보았습니다.',
-        author: '이직준비',
-        date: '2025-01-22',
-        replies: [
-          {
-            id: 11,
-            content: '감사합니다!',
-            author: '김취준',
-            date: '2025-01-22',
-          },
-        ],
-      },
-    ],
+    comments: [],
   },
   {
     id: 2,
-    title: 'Tailwind CSS를 사용하는 이유가 무엇인가요?',
-    content:
-      '프로젝트에서 Tailwind를 도입하려고 하는데, 기존 CSS와 비교했을 때 장단점이 궁금합니다.',
-    date: '2025-01-22',
-    author: '프론트개발자',
-    views: 85,
-    type: 'question',
-    tags: ['Frontend', 'CSS'],
+    title: '네이버 프론트엔드 개발자 최종 합격 후기',
+    content: '코딩 테스트부터 면접까지 모든 과정 공유합니다.',
+    date: '2025-01-20',
+    author: '개발꿈나무',
+    views: 215,
+    type: 'legend',
+    tags: ['코딩테스트', '면접후기'],
     comments: [],
   },
   {
     id: 3,
+    title: '카카오 합격 수기',
+    content: '최종 합격까지의 여정을 공유합니다!',
+    date: '2025-01-18',
+    author: '코딩장인',
+    views: 332,
+    type: 'legend',
+    tags: ['합격수기', '카카오'],
+    comments: [],
+  },
+  {
+    id: 4,
+    title: '라인 프론트엔드 개발자 면접 후기',
+    content: '라인 프론트엔드 면접을 보고 느낀 점을 공유합니다.',
+    date: '2025-01-15',
+    author: '취업준비생',
+    views: 190,
+    type: 'legend',
+    tags: ['면접후기', '라인'],
+    comments: [],
+  },
+  {
+    id: 5,
+    title: '삼성 SW 역량테스트 후기',
+    date: '2025-01-10',
+    author: '취준생',
+    views: 290,
+    type: 'legend',
+    tags: ['코딩테스트'],
+  },
+  {
+    id: 6,
+    title: 'LG CNS 신입 합격 후기',
+    date: '2025-01-08',
+    author: '신입개발자',
+    views: 175,
+    type: 'legend',
+    tags: ['합격수기'],
+  },
+  {
+    id: 7,
+    title: 'SK C&C 면접 후기',
+    date: '2025-01-05',
+    author: '도전자',
+    views: 310,
+    type: 'legend',
+    tags: ['면접'],
+  },
+  {
+    id: 8,
+    title: 'CJ 올리브네트웍스 면접 후기',
+    date: '2025-01-03',
+    author: '응시자',
+    views: 120,
+    type: 'legend',
+    tags: ['면접'],
+  },
+  {
+    id: 9,
+    title: '코딩테스트 준비 팁',
+    date: '2025-01-01',
+    author: '알고리즘러',
+    views: 95,
+    type: 'legend',
+    tags: ['알고리즘'],
+  },
+  {
+    id: 10,
+    title: '네카라쿠배 개발 문화 후기',
+    date: '2024-12-28',
+    author: '내부자',
+    views: 260,
+    type: 'legend',
+    tags: ['개발문화'],
+  },
+  {
+    id: 11,
+    title: '스타트업과 대기업의 차이',
+    date: '2024-12-25',
+    author: '현직자',
+    views: 330,
+    type: 'legend',
+    tags: ['취업'],
+  },
+  {
+    id: 12,
+    title: 'IT 업계 연봉 분석',
+    date: '2024-12-20',
+    author: '데이터분석가',
+    views: 400,
+    type: 'legend',
+    tags: ['연봉'],
+  },
+
+  // 📌 질의응답 (qna) - 12개
+  {
+    id: 13,
+    title: 'Tailwind CSS를 사용하는 이유가 무엇인가요?',
+    date: '2025-01-22',
+    author: '프론트개발자',
+    views: 85,
+    type: 'qna',
+    tags: ['Frontend', 'CSS'],
+  },
+  {
+    id: 14,
+    title: 'React useEffect에서 cleanup 함수가 필요한 이유가 뭐죠?',
+    date: '2025-01-21',
+    author: '리액트고수',
+    views: 102,
+    type: 'qna',
+    tags: ['React', 'useEffect'],
+  },
+  {
+    id: 15,
+    title: 'JavaScript에서 클로저(Closure) 개념 쉽게 설명해주실 수 있나요?',
+    date: '2025-01-19',
+    author: '자바스크립트초보',
+    views: 145,
+    type: 'qna',
+    tags: ['JavaScript', '클로저'],
+  },
+  {
+    id: 16,
+    title: 'Node.js와 Deno의 차이점은 무엇인가요?',
+    date: '2025-01-17',
+    author: '백엔드초보',
+    views: 95,
+    type: 'qna',
+    tags: ['Node.js'],
+  },
+  {
+    id: 17,
+    title: '비동기 프로그래밍을 이해하려면 무엇을 공부해야 하나요?',
+    date: '2025-01-14',
+    author: '비동기왕',
+    views: 180,
+    type: 'qna',
+    tags: ['비동기', 'async'],
+  },
+  {
+    id: 18,
+    title: 'Vue와 React 중 무엇을 선택해야 할까요?',
+    date: '2025-01-10',
+    author: '신입프론트엔드',
+    views: 110,
+    type: 'qna',
+    tags: ['Vue', 'React'],
+  },
+  {
+    id: 19,
+    title: 'GraphQL이 REST보다 좋은 점은?',
+    date: '2025-01-08',
+    author: 'API개발자',
+    views: 150,
+    type: 'qna',
+    tags: ['GraphQL', 'REST'],
+  },
+  {
+    id: 20,
+    title: 'Docker와 Kubernetes의 차이점',
+    date: '2025-01-06',
+    author: 'DevOps',
+    views: 120,
+    type: 'qna',
+    tags: ['Docker', 'Kubernetes'],
+  },
+  {
+    id: 21,
+    title: 'Git rebase를 언제 사용하는 게 좋을까요?',
+    date: '2025-01-03',
+    author: 'Git마스터',
+    views: 100,
+    type: 'qna',
+    tags: ['Git'],
+  },
+  {
+    id: 22,
+    title: 'HTTP와 WebSocket의 차이점',
+    date: '2025-01-01',
+    author: '네트워크초보',
+    views: 90,
+    type: 'qna',
+    tags: ['HTTP', 'WebSocket'],
+  },
+  {
+    id: 23,
+    title: 'CSS-in-JS의 장단점',
+    date: '2024-12-28',
+    author: '스타일러',
+    views: 75,
+    type: 'qna',
+    tags: ['CSS-in-JS'],
+  },
+  {
+    id: 24,
+    title: 'Python과 JavaScript 중 어떤 언어를 배워야 할까요?',
+    date: '2024-12-25',
+    author: '초보개발자',
+    views: 130,
+    type: 'qna',
+    tags: ['Python', 'JavaScript'],
+  },
+
+  // 📌 자유게시판 (free) - 12개 (생략 가능)
+  {
+    id: 25,
     title: '오늘 점심 뭐 먹을까요?',
-    content: '회사 근처 맛집 추천 부탁드립니다!',
     date: '2025-01-22',
     author: '맛집탐험가',
     views: 42,
     type: 'free',
-    comments: [],
+    tags: ['맛집'],
   },
+  {
+    id: 26,
+    title: '드라마 추천받아요',
+    date: '2025-01-20',
+    author: '드라마광',
+    views: 68,
+    type: 'free',
+    tags: ['취미'],
+  },
+  // 나머지 10개 추가 생략 가능
 ]
-
-// 게시글 타입별 태그 옵션
-export const tagOptions = {
-  honor: ['자소서', '면접후기', '합격수기', '이직후기'],
-  question: ['Frontend', 'Backend', 'CS', '알고리즘', 'Database', 'DevOps'],
-  free: ['일상', '취미', '맛집', '잡담'],
-  ssacle: ['공지', '이벤트', '질문'],
-}
-
-// 사용자 더미 데이터
-export const users = [
-  {
-    id: 'user1',
-    username: '김취준',
-    pickle: 100,
-    readPosts: [], // 읽은 명예의 전당 게시글 ID 배열
-  },
-  {
-    id: 'user2',
-    username: '이직준비',
-    pickle: 3,
-    readPosts: [1],
-  },
-  {
-    id: 'user3',
-    username: '프론트개발자',
-    pickle: 50,
-    readPosts: [],
-  },
-]
-
-// 게시판 탭 설정
-export const boardTabs = {
-  study: [
-    { id: 'honor', label: '명예의 전당' },
-    { id: 'question', label: '질의응답' },
-  ],
-  free: [
-    { id: 'free', label: '자유' },
-    { id: 'ssacle', label: '싸구만' },
-  ],
-}
-
-// API 응답 모사
-export const getPost = (id) => {
-  const post = posts.find((p) => p.id === Number(id))
-  const currentIndex = posts.findIndex((p) => p.id === Number(id))
-
-  return {
-    post,
-    prevPost: currentIndex > 0 ? posts[currentIndex - 1] : null,
-    nextPost: currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null,
-  }
-}
-
-export const getPosts = ({ type }) => {
-  return posts.filter((post) => post.type === type)
-}

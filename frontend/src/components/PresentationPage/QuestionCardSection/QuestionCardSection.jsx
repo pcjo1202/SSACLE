@@ -1,44 +1,45 @@
-import QuestionCard from '@/components/PresentationPage/QuestionCard/QuestionCard'
 import { cn } from '@/lib/utils'
-import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useState } from 'react'
+import QuestionCardList from '@/components/PresentationPage/QuestionCardList/QuestionCardList'
+import QuestionCardToggleButton from '@/components/PresentationPage/QuestionCardToggleButton/QuestionCardToggleButton'
 
 const QuestionCardSection = () => {
   const [isOpen, setIsOpen] = useState(true)
+  const [isSelectedQuestion, setIsSelectedQuestion] = useState(false)
+  const [selectedQuestionId, setSelectedQuestionId] = useState(null)
+
+  const questionCardData = [
+    { id: 1, content: '질문내용1' },
+    { id: 2, content: '질문내용2' },
+    { id: 3, content: '질문내용3' },
+    { id: 4, content: '질문내용4' },
+    { id: 5, content: '질문내용5' },
+  ]
+  // const { questionCardData } = usePresentation()
+
+  // 질문카드 클릭 함수
+  const handleQuestionCardClick = (questionId) => {
+    setSelectedQuestionId(questionId)
+    setIsSelectedQuestion(true)
+  }
 
   return (
     <div
       className={cn(
-        'relative w-full border-[1px]  border-gray-500 rounded-md',
-        isOpen ? 'h-full basis-1/6' : 'h-0 basis-0'
+        'relative w-full border-gray-500 rounded-md transition-all duration-300 ease-in-out',
+        isOpen ? 'basis-2/12' : 'h-0 basis-0'
       )}
     >
-      <ul
-        className={cn(
-          'flex justify-center w-full gap-4 p-2 transition-all duration-300 ease-in-out',
-          isOpen ? 'h-full' : 'h-0 opacity-0 overflow-hidden'
-        )}
-      >
-        {Array.from({ length: 8 }).map((_, index) => (
-          <QuestionCard key={index} />
-        ))}
-      </ul>
-      <button
-        className="absolute p-1 -translate-x-1/2 bg-gray-500 rounded-md -top-5 left-1/2"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {isOpen ? (
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-xs">질문카드 열기</span>
-            <ChevronUp className="w-4 h-4 text-ssacle-gray" />
-          </div>
-        ) : (
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-xs">질문카드 닫기</span>
-            <ChevronDown className="w-4 h-4 text-ssacle-gray" />
-          </div>
-        )}
-      </button>
+      {/* 질문카드 목록 */}
+      <QuestionCardList
+        questionCardData={questionCardData}
+        isOpen={isOpen}
+        isSelectedQuestion={isSelectedQuestion}
+        selectedQuestionId={selectedQuestionId}
+        handleQuestionCardClick={handleQuestionCardClick}
+      />
+      {/* 질문카드 목록 열기/닫기 버튼 */}
+      <QuestionCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
     </div>
   )
 }
