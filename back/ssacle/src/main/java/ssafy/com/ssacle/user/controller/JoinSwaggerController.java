@@ -28,10 +28,11 @@ public interface JoinSwaggerController {
             @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
     })
     @Parameters(value = {
-            @Parameter(name = "email", description = "사용자 이메일", example = "spancer1@naver.com")
+            @Parameter(name = "email", description = "사용자 이메일", example = "spancer1@naver.com"),
+            @Parameter(name = "webhook", description = "사용자 웹훅 주소", example = "https://meeting.ssafy.com/hooks/wnkxsfwyupbf3yxk5jdq94ke3r"),
     })
     @PostMapping("/send-verification")
-    ResponseEntity<String> sendVerificationCode(@RequestParam("email") String email);
+    ResponseEntity<String> sendVerificationCode(@RequestParam("email") String email, @RequestParam("webhook") String webhook);
 
 
     @Operation(summary = "인증번호 검증", description = "사용자가 입력한 인증번호를 검증합니다.")
