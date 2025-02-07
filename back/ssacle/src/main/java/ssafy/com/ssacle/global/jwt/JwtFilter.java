@@ -32,9 +32,15 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         String requestURI = request.getRequestURI();
-        if(requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs") ||
-                requestURI.startsWith("/swagger-resources") || requestURI.startsWith("/v3/api-docs.yaml") || requestURI.startsWith("/swagger-ui.html") || requestURI.startsWith("/swagger-ui/index.html") ||
-                requestURI.startsWith("/api/v1/join") || requestURI.startsWith("/api/v1/login") || requestURI.startsWith("/api/v1/token")){
+        if(requestURI.startsWith("/swagger-ui") ||
+                requestURI.startsWith("/v3/api-docs") ||
+                requestURI.startsWith("/swagger-resources") ||
+                requestURI.startsWith("/v3/api-docs.yaml") ||
+                requestURI.startsWith("/swagger-ui.html") ||
+                requestURI.startsWith("/swagger-ui/index.html") ||
+                requestURI.startsWith("/api/v1/join") ||
+                requestURI.startsWith("/api/v1/login") ||
+                requestURI.startsWith("/api/v1/token")){
             filterChain.doFilter(request,response);
             return;
         }
