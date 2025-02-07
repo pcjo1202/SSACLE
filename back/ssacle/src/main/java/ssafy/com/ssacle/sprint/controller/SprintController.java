@@ -30,7 +30,7 @@ public class SprintController {
      */
     @PostMapping("/ssaprint/{sprintId}/join")
     public ResponseEntity<Void> joinSprint(@PathVariable Long sprintId) {
-        User user = userService.getAuthenticatedUser();
+        User user = userService.getAuthenticatedUserWithTeams();
 
         sprintService.joinSprint(sprintId, user);
         return ResponseEntity.status(201).build();
