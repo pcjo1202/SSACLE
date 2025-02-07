@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -18,6 +19,10 @@ public class QUser extends EntityPathBase<User> {
     private static final long serialVersionUID = 1420300670L;
 
     public static final QUser user = new QUser("user");
+
+    public final ListPath<ssafy.com.ssacle.board.domain.Board, ssafy.com.ssacle.board.domain.QBoard> boards = this.<ssafy.com.ssacle.board.domain.Board, ssafy.com.ssacle.board.domain.QBoard>createList("boards", ssafy.com.ssacle.board.domain.Board.class, ssafy.com.ssacle.board.domain.QBoard.class, PathInits.DIRECT2);
+
+    public final ListPath<ssafy.com.ssacle.comment.domain.Comment, ssafy.com.ssacle.comment.domain.QComment> comments = this.<ssafy.com.ssacle.comment.domain.Comment, ssafy.com.ssacle.comment.domain.QComment>createList("comments", ssafy.com.ssacle.comment.domain.Comment.class, ssafy.com.ssacle.comment.domain.QComment.class, PathInits.DIRECT2);
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 

@@ -1,0 +1,58 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    environment:
+      DB_PASSWORD: rlatngus@1
+      DB_URL: jdbc:mysql://localhost:3306/ssacle?autoReconnect=true&useUnicode=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      DB_USERNAME: root        # 사용할 데이터베이스 이름
+    ports:
+      - "3307:3306"  # 외부에서 3307 포트로 접근
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    ports:
+      - "8000:5000"  # Spring Boot 애플리케이션 포트 매핑
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      JWT_SECRET_KEY: ssafyssaclessafyssafyssaclessafyssafyssaclessafyssafyssaclessafy
+      ACCESS_EXPIRE_MS: 3600000
+      AWS_S3_ACCESSKEY: AKIAS5MOI473ET4N7GAX
+      AWS_S3_BUCKET: ssacle
+      AWS_S3_REGION: ap-northeast-2
+      AWS_S3_SECRETKEY: ZmDeQwTBOKcfeTQRHQ0ZRZ6hoZuao5it4QdJvyXO
+      MM_WEBHOOK_URL: https://meeting.ssafy.com/hooks/wnkxsfwyupbf3yxk5jdq94ke3r
+      REFRESH_EXPIRE_MS: 86400000
+      OPENVIDU_URL: http://openvidu-server:4443/
+      OPENVIDU_SECRET: MY_SECRET
+    depends_on:
+      - mysql
+      - openvidu-server
+    networks:
+      - app-network
+
+  openvidu-server:
+    image: openvidu/openvidu-dev:2.31.0
+    ports:
+      - "4443:4443"
+    environment:
+      OPENVIDU_URL: http://openvidu-server:4443/
+      OPENVIDU_SECRET: MY_SECRET
+      TZ: Asia/Seoul
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
