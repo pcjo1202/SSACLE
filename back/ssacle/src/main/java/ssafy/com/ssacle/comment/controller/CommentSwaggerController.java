@@ -61,8 +61,8 @@ public interface CommentSwaggerController {
             @ApiResponse(responseCode = "403", description = "댓글 수정 권한 없음"),
             @ApiResponse(responseCode = "404", description = "댓글을 찾을 수 없음")
     })
-    @PutMapping("/{commentId}")
-    ResponseEntity<Comment> updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDTO commentRequestDTO);
+    @PatchMapping("/{commentId}")
+    ResponseEntity<Void> updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDTO commentRequestDTO);
 
     /** 📌 4. 댓글 삭제 */
     @Operation(summary = "댓글 삭제", description = "사용자가 작성한 댓글을 삭제합니다. (로그인 필요)")
