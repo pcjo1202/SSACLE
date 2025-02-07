@@ -1,33 +1,32 @@
 // 회원 기능 -> authService
 export const AUTH_END_POINT = {
   // 이메일 관련 엔드포인트
-  CHECK_EMAIL: (email) => `/api/v1/join/check-email?email=${email}`, // 이메일 중복 확인
+  CHECK_EMAIL: (email) => `/join/check-email?email=${email}`, // 이메일 중복 확인
 
   // 비밀번호 & 닉네임 관련 엔드포인트
-  CHECK_PASSWORD: (password, confirmPassword) => 
-    `/api/v1/join/check-password?password=${password}&confirmpassword=${confirmPassword}`, // 비밀번호 확인
-  CHECK_NICKNAME: (nickname) => `/api/v1/join/check-nickname?nickname=${nickname}`, // 닉네임 중복 체크
+  CHECK_PASSWORD: (password, confirmPassword) =>
+    `/join/check-password?password=${password}&confirmpassword=${confirmPassword}`, // 비밀번호 확인
+  CHECK_NICKNAME: (nickname) => `/join/check-nickname?nickname=${nickname}`, // 닉네임 중복 체크
 
   // 관심사 체크 (변경 없음)
   CHECK_INTERESTS: (interests) =>
-    `/api/v1/auth/check-interest?${interests.map((i) => `interests=${i}`).join('&')}`,
+    `/auth/check-interest?${interests.map((i) => `interests=${i}`).join('&')}`,
 
   // 회원가입 & 로그인 기능
-  SIGNUP: '/api/v1/join', // 회원가입
-  LOGIN: '/api/v1/login', // 로그인
-  LOGOUT: '/api/v1/logout', // 로그아웃
+  SIGNUP: '/join', // 회원가입
+  LOGIN: '/login', // 로그인
+  LOGOUT: '/logout', // 로그아웃
 
   // 이메일 & 비밀번호 찾기 기능 추가
-  FIND_EMAIL: '/api/v1/login/find-email', // 이메일 찾기
-  FIND_PASSWORD: '/api/v1/login/find-password', // 비밀번호 찾기
+  FIND_EMAIL: '/login/find-email', // 이메일 찾기
+  FIND_PASSWORD: '/login/find-password', // 비밀번호 찾기
 
   // 인증 코드 전송 (웹훅 URL 포함)
-  SEND_VERIFICATION: (email) => `/api/v1/join/send-verification?email=${email}`, // 인증 코드 전송 (웹훅 URL 포함)
+  SEND_VERIFICATION: `/join/send-verification`, // 인증 코드 전송 (웹훅 URL 포함)
 
   // 토큰 재발급
-  REFRESH_TOKEN: '/api/v1/refreshtoken', // 액세스 & 리프레시 토큰 재발급
+  REFRESH_TOKEN: '/refreshtoken', // 액세스 & 리프레시 토큰 재발급
 }
-
 
 // 유저 관련 -> userService
 export const USER_END_POINT = {
@@ -40,60 +39,58 @@ export const USER_END_POINT = {
 // 메인페이지 -> mainService
 export const MAIN_END_POINT = {
   // GET 요청 - 로그인한 사용자의 기본 정보 조회
-  USER_INFO: (userId) => `/api/v1/user/${userId}`,
+  USER_INFO: (userId) => `/user/${userId}`,
 
   // GET 요청 - 참여중인 싸프린트, 싸드컵 리스트 조회
-  // NOW_MYSSAPRINT: '/api/v1/mylist',
-  NOW_MYSSAPRINT: '/api/v1/',
+  // NOW_MYSSAPRINT: '/mylist',
+  NOW_MYSSAPRINT: '/',
 
   // 싸프린트 관련 엔드포인트
   // POST 요청 - 관심사 기반 싸프린트 리스트 조회
-  // SSAPRINT_LIST: '/api/v1/ssaprint/interest',
-  SSAPRINT_LIST: '/api/v1/',
+  // SSAPRINT_LIST: '/ssaprint/interest',
+  SSAPRINT_LIST: '/',
 
   // 싸드컵 관련 엔드포인트
   // POST 요청 - 관심사 기반 싸드컵 리스트 조회
-  // SSADCUP_LIST: '/api/v1/ssadcup/interest',
-  SSADCUP_LIST: '/api/v1/',
+  // SSADCUP_LIST: '/ssadcup/interest',
+  SSADCUP_LIST: '/',
 
   // 싸밥 관련 엔드포인트
   // GET 요청 - 오늘의 싸밥(식단) 정보 조회
-  LUNCH_INFO: '/api/v1/lunch',
+  LUNCH_INFO: '/lunch',
 
   // PATCH 요청 - 싸밥 투표 (투표자 전용)
-  LUNCH_VOTE: '/api/v1/vote',
+  LUNCH_VOTE: '/vote',
 
   // GET 요청 - 싸밥 투표 결과 조회 (투표자 전용)
-  LUNCH_VOTE_RESULT: '/api/v1/vote/check-result',
+  LUNCH_VOTE_RESULT: '/vote/check-result',
 
   // AI 기사 관련
   // GET 요청 - 금일 AI 기사 전체 아티클 조회
-  AI_NEWS: (newId) => `/api/v1/news/${newId}`,
+  AI_NEWS: (newId) => `/news/${newId}`,
 }
 
 // 싸프린트 -> ssaprintService
 export const SSAPRINT_END_POINT = {
-  LIST: '/api/v1/ssaprint', // 전체 싸프린트 목록 조회
-  LIST_WITH_FILTER: (major, sub) =>
-    `/api/v1/ssaprint?major=${major}&sub=${sub}`, // 조건별 싸프린트 조회
-  DETAIL: (id) => `/api/v1/ssaprint/${id}`, // 특정 싸프린트 상세 조회 (참가 이전/이후/완료 동일)
+  LIST: '/ssaprint', // 전체 싸프린트 목록 조회
+  LIST_WITH_FILTER: (major, sub) => `/ssaprint?major=${major}&sub=${sub}`, // 조건별 싸프린트 조회
+  DETAIL: (id) => `/ssaprint/${id}`, // 특정 싸프린트 상세 조회 (참가 이전/이후/완료 동일)
 
-  CREATE: '/api/v1/ssaprint', // 싸프린트 생성
-  UPDATE: (id) => `/api/v1/ssaprint/${id}`, // 싸프린트 수정
-  DELETE: (id) => `/api/v1/ssaprint/${id}`, // 싸프린트 삭제
+  CREATE: '/ssaprint', // 싸프린트 생성
+  UPDATE: (id) => `/ssaprint/${id}`, // 싸프린트 수정
+  DELETE: (id) => `/ssaprint/${id}`, // 싸프린트 삭제
 
-  JOIN: (id) => `/api/v1/ssaprint/${id}/join`, // 싸프린트 참가
-  CANCEL: (id) => `/api/v1/ssaprint/${id}/cancel`, // 싸프린트 참가 취소
+  JOIN: (id) => `/ssaprint/${id}/join`, // 싸프린트 참가
+  CANCEL: (id) => `/ssaprint/${id}/cancel`, // 싸프린트 참가 취소
 
   PRESENTATION_PARTICIPANTS: (id) =>
-    `/api/v1/ssaprint/${id}/presentation/participants`, // 발표 참가자 목록 조회
-  PRESENTATION_CARDS: (id) => `/api/v1/ssaprint/${id}/presentation/cards`, // 발표 질문 카드 목록 조회
+    `/ssaprint/${id}/presentation/participants`, // 발표 참가자 목록 조회
+  PRESENTATION_CARDS: (id) => `/ssaprint/${id}/presentation/cards`, // 발표 질문 카드 목록 조회
   PRESENTATION_CARD_DETAIL: (id, cardId) =>
-    `/api/v1/ssaprint/${id}/presentation/cards/${cardId}`, // 특정 질문 카드 상세 조회
-  PRESENTATION_EXIT: (id) => `/api/v1/ssaprint/${id}/presentation/exit`, // 발표 종료
+    `/ssaprint/${id}/presentation/cards/${cardId}`, // 특정 질문 카드 상세 조회
+  PRESENTATION_EXIT: (id) => `/ssaprint/${id}/presentation/exit`, // 발표 종료
 
-  TODO_STATUS: (ssaprintId, todoId) =>
-    `/api/v1/ssaprint/${ssaprintId}/todo/${todoId}`, // TODO 상태 수정
+  TODO_STATUS: (ssaprintId, todoId) => `/ssaprint/${ssaprintId}/todo/${todoId}`, // TODO 상태 수정
 }
 
 // 싸드컵 -> ssadcupService
