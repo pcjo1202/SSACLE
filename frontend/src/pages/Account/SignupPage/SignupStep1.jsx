@@ -1,55 +1,36 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
 import { fetchSendVerification } from '@/services/userService'
-import { useMutation, useQuery } from '@tanstack/react-query'
 
 const SignupStep1 = () => {
   const navigate = useNavigate()
-  const [step, setStep] = useState(1) // 현재 단계를 관리하는 상태 (1단계 / 2단계)
-  const [webhookUrl, setWebhookUrl] = useState(
-    'https://meeting.ssafy.com/hooks/kb7fwmnuj7ymx81g1gsk4szaur'
-  ) // ✅ 웹훅 URL 상태 추가
-  const [email, setEmail] = useState('ssafy@ssafy.com') // ✅ 이메일 상태 추가
-  const [showCodeInput, setShowCodeInput] = useState(false) // 인증 코드 입력창 표시 여부
-  const [isLoading, setIsLoading] = useState(false) // ✅ 요청 중 상태
-  const [errorMessage, setErrorMessage] = useState('') // ✅ 오류 메시지 상태 추가
+  const [step, setStep] = useState(1)
+  const [webhookUrl, setWebhookUrl] = useState('')
+  const [email, setEmail] = useState('')
+  const [showCodeInput, setShowCodeInput] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('') // ✅ 오류 메시지 상태 유지
 
-  // useEffect(() => {
-  //   const test = async () => {
-  //     const resonse = await fetchSendVerification()
-
-  //     const data = resonse.json()
-  //   }
-
-  //   test()
-  // }, [])
-
-  const muatation = useMutation({
-    mutationFn: (email) => fetchSendVerification(email),
+  // ✅ 인증 코드 요청 Mutation
+  const mutation = useMutation({
+    mutationFn: () => fetchSendVerification(email, webhookUrl),
+    onSuccess: () => {
+      setShowCodeInput(true) // ✅ 성공 시 인증 코드 입력창 표시
+      setErrorMessage('') // ✅ 성공하면 오류 메시지 초기화
+    },
+    onError: (error) => {
+      setErrorMessage('인증 코드 전송에 실패했습니다. 다시 시도해주세요.') // ✅ 오류 메시지 출력
+      console.error('❌ 인증 코드 전송 실패:', error)
+    },
   })
 
-  console.log(muatation)
-
-  // ✅ 인증 코드 요청 함수
-  const handleSendVerification = async () => {
+  // ✅ 인증 코드 요청 버튼 클릭 시 실행할 함수 (입력값 검증 추가)
+  const handleSendVerification = () => {
     if (!webhookUrl || !email) {
-      setErrorMessage('웹훅 URL과 이메일을 모두 입력해주세요.')
+      setErrorMessage('웹훅 URL과 이메일을 모두 입력해주세요.') // ✅ 입력 검증 추가
       return
     }
-
-    setIsLoading(true)
-    setErrorMessage('')
-
-    try {
-      // await fetchSendVerification(email, webhookUrl)
-      muatation.mutate()
-      setShowCodeInput(true) // ✅ 성공하면 인증 코드 입력창 표시
-    } catch (error) {
-      setErrorMessage('인증 코드 전송에 실패했습니다. 다시 시도해주세요.')
-      console.error('❌ 인증 코드 전송 실패:', error)
-    } finally {
-      setIsLoading(false) // ✅ 요청 완료 후 로딩 상태 해제
-    }
+    mutation.mutate() // ✅ 검증 통과 시 요청 실행
   }
 
   return (
@@ -79,13 +60,13 @@ const SignupStep1 = () => {
                   채널을 만든 서버를 켠 상태에서 좌측 상단 MatterMost 로고 클릭
                 </li>
                 <li>‘통합’ 클릭</li>
-                <li>'전체 Incoming Webhook' 메뉴 클릭</li>
-                <li>'Incoming Webhook 추가하기' 버튼 클릭</li>
+                <li>'전체 Incoming WebhookUrl' 메뉴 클릭</li>
+                <li>'Incoming WebhookUrl 추가하기' 버튼 클릭</li>
                 <li>
                   ‘제목’ 자유롭게 입력 후 ‘채널’을 클릭하여 방금 만든 채널을
                   선택 후 저장
                 </li>
-                <li>화면에 뜨는 URL 복사하여 우측 Webhook URL에 붙여넣기</li>
+                <li>화면에 뜨는 URL 복사하여 우측 WebhookUrl URL에 붙여넣기</li>
                 <li>
                   MM 가입한 이메일을 입력 후 인증 코드 받기 버튼을 누르면
                   만들어놓은 채널에 인증 코드가 전송됩니다!
@@ -112,7 +93,7 @@ const SignupStep1 = () => {
             </button>
           </div>
         </div>
-
+  
         {/* 우측 회원가입 폼 */}
         <div className="w-full md:w-[45%] flex flex-col items-center">
           <h1 className="text-ssacle-blue text-3xl font-bold text-center mb-10">
@@ -121,11 +102,11 @@ const SignupStep1 = () => {
 
           {/* 웹훅 URL 입력 필드 */}
           <input
-            type="url"
-            placeholder="Webhook URL"
+            type='url'
+            placeholder='Webhook URL'
             value={webhookUrl}
-            onChange={(e) => setWebhookUrl(e.target.value)} // ✅ 입력값 업데이트
-            className="w-full max-w-[400px] h-12 bg-ssacle-gray-sm rounded-full px-6 text-ssacle-blue text-medium text-base focus:outline-ssacle-blue mb-4"
+            onChange={(e) => setWebhookUrl(e.target.value)}
+            className='w-full max-w-[400px] h-12 bg-ssacle-gray-sm rounded-full px-6 text-ssacle-blue text-medium text-base focus:outline-ssacle-blue mb-4'
           />
 
           {/* 이메일 입력 필드 */}
@@ -133,24 +114,22 @@ const SignupStep1 = () => {
             type="email"
             placeholder="Mattermost에 가입한 이메일"
             value={email}
-            onChange={(e) => setEmail(e.target.value)} // ✅ 입력값 업데이트
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full max-w-[400px] h-12 bg-ssacle-gray-sm rounded-full px-6 text-ssacle-blue text-medium text-base focus:outline-ssacle-blue mb-4"
           />
 
-          {/* 오류 메시지 출력 */}
-          {errorMessage && (
-            <p className="text-red-500 text-sm">{errorMessage}</p>
-          )}
+          {/* 오류 메시지 출력 (빨간색) */}
+          {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
 
           {/* 인증 코드 요청 버튼 */}
           <button
             className={`w-full max-w-[400px] h-12 rounded-full text-center text-xl font-bold mb-4 transition-colors duration-300 ${
-              isLoading ? 'bg-gray-400' : 'bg-ssacle-blue text-white'
+              mutation.isPending ? 'bg-gray-400' : 'bg-ssacle-blue text-white'
             }`}
-            onClick={handleSendVerification}
-            disabled={isLoading} // ✅ 로딩 중이면 버튼 비활성화
+            onClick={handleSendVerification} // ✅ 입력값 검증 후 요청 실행
+            disabled={mutation.isPending}
           >
-            {isLoading ? '전송 중...' : 'Mattermost로 인증 코드 받기'}
+            {mutation.isPending ? '전송 중...' : 'Mattermost로 인증 코드 받기'}
           </button>
 
           {/* 인증 코드 입력 필드 */}
@@ -165,7 +144,7 @@ const SignupStep1 = () => {
           {showCodeInput && (
             <button
               className="w-full max-w-[400px] h-12 bg-ssacle-blue rounded-full px-6 text-white text-center text-xl font-bold mb-4"
-              onClick={() => navigate('step2')} // ✅ 다음 단계로 이동
+              onClick={() => navigate('step2')}
             >
               SSAFY인 인증하기
             </button>

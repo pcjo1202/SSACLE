@@ -6,8 +6,8 @@ export const fetchCheckEmail = (email) =>
   axios.get(AUTH_END_POINT.CHECK_EMAIL(email))
 
 // 3. 인증 코드 전송 (웹훅 사용) (POST)
-export const fetchSendVerification = (email) =>
-  axios.post(AUTH_END_POINT.SEND_VERIFICATION, { email })
+export const fetchSendVerification = (email, webhook) =>
+  axios.post(AUTH_END_POINT.SEND_VERIFICATION, { email, webhook })
 
 // 4. 비밀번호 형식 체크 (GET)
 export const fetchCheckPassword = (password, confirmPassword) =>
