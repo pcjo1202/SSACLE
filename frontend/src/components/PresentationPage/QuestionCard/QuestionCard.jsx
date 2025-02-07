@@ -1,27 +1,34 @@
 import { cn } from '@/lib/utils'
 import { CircleHelp } from 'lucide-react'
-import { useState } from 'react'
 
-const QuestionCard = () => {
-  const [isOpen, setIsOpen] = useState(false)
+const QuestionCard = ({
+  isSelected,
+  handleQuestionCardClick,
+  question,
+  selectedQuestionId,
+}) => {
+  const { id, content } = question
 
   return (
     <li
-      onClick={() => setIsOpen(!isOpen)}
+      onClick={() => handleQuestionCardClick(id)}
       className={cn(
-        'w-1/5 border-[1px] border-gray-500 rounded-md flex-col px-3 py-2 bg-gray-500 cursor-pointer transition-all',
-        !isOpen && 'hover:bg-gray-300',
-        isOpen && 'w-full'
+        'w-1/5 h-full flex-col px-3 py-2 bg-gray-500 cursor-pointer transition-all',
+        isSelected
+          ? selectedQuestionId === id
+            ? 'w-full'
+            : 'hidden'
+          : 'hover:bg-gray-300'
       )}
     >
-      <div className="flex items-center justify-center h-full ">
-        {isOpen ? (
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-lg ">Q.</span>
-            <span>질문내용</span>
+      <div className="flex items-center justify-center h-full py-2">
+        {isSelected ? (
+          <div className="flex items-center justify-center h-full gap-2">
+            <span className="text-lg font-bold">Q.</span>
+            <span className="text-lg">{content}</span>
           </div>
         ) : (
-          <CircleHelp className="size-16 text-ssacle-gray" />
+          <CircleHelp className="size-14 text-ssacle-gray" />
         )}
       </div>
     </li>

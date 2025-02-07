@@ -7,7 +7,7 @@ const PresentingPage = () => {
       {/* 공유 영역 */}
       <SharedSection />
       {/* 참여자 영역 */}
-      <ParticipantSection />
+      <ParticipantSection sharingStatus={true} />
     </div>
   )
 }

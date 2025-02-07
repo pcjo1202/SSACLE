@@ -1,16 +1,18 @@
 import StreamVideoCard from '@/components/PresentationPage/StreamVideoCard/StreamVideoCard'
+import { cn } from '@/lib/utils'
 import { usePresentation } from '@/store/usePresentation'
 import { useMemo, useState } from 'react'
 
 const PAGE_SIZE = 4
 
-const ParticipantSection = () => {
+const ParticipantSection = ({ sharingStatus }) => {
   const [currentPage, setCurrentPage] = useState(0)
   const { stream } = usePresentation()
 
   const handlePrevPage = () => {
     setCurrentPage((prev) => (prev > 0 ? prev - 1 : 0))
   }
+
   const handleNextPage = () => {
     setCurrentPage((prev) =>
       prev < stream.length / PAGE_SIZE ? prev + 1 : prev
@@ -23,9 +25,11 @@ const ParticipantSection = () => {
   }, [currentPage, stream])
 
   return (
-    <div className="w-full h-full basis-1/5 border-[1px] border-gray-500 rounded-md overflow-y-auto flex flex-col">
-      <div className="flex flex-col justify-between h-full">
-        <section className="flex flex-col items-center justify-start flex-1 gap-2 p-2 overflow-hidden">
+    <div
+      className={cn('w-full h-full', sharingStatus ? 'basis-1/6' : 'basis-1/5')}
+    >
+      <div className="flex flex-col justify-around h-full">
+        <section className="flex flex-col items-center justify-between flex-1 overflow-hidden">
           {visitableStream.map((item, index) => (
             <StreamVideoCard key={index} data={item} />
           ))}
