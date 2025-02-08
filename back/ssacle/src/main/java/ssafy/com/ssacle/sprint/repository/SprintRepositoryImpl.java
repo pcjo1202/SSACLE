@@ -26,4 +26,5 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
 
         return Optional.ofNullable(result);
     }
+
 }

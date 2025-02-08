@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ssafy.com.ssacle.sprint.dto.SingleSprintResponse;
 import ssafy.com.ssacle.sprint.dto.SprintCreateRequest;
 import ssafy.com.ssacle.sprint.dto.SprintResponse;
 
@@ -41,4 +42,13 @@ public interface SprintSwaggerController {
     })
     @PostMapping("/ssaprint/{sprintId}/join")
     ResponseEntity<Void> joinSprint(@PathVariable Long sprintId);
+
+    @Operation(summary = "단일 스프린트 조회", description = "SprintId를 기반으로 특정 스프린트를 가져옵니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "스프린트 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "해당 스프린트를 찾을 수 없음"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @GetMapping("/ssaprint/{id}")
+    ResponseEntity<SingleSprintResponse> getSprintById(@Parameter(description = "조회할 Sprint ID", example = "1") @PathVariable Long id);
 }

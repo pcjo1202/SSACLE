@@ -3,6 +3,7 @@ package ssafy.com.ssacle.sprint.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ssafy.com.ssacle.sprint.dto.SingleSprintResponse;
 import ssafy.com.ssacle.sprint.dto.SprintCreateRequest;
 import ssafy.com.ssacle.sprint.dto.SprintResponse;
 import ssafy.com.ssacle.sprint.service.SprintService;
@@ -12,14 +13,14 @@ import ssafy.com.ssacle.user.service.UserService;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-public class SprintController {
+public class SprintController implements SprintSwaggerController{
     private final UserService userService;
     private final SprintService sprintService;
 
     /**
      * 스프린트 생성
      */
-    @PostMapping("/admin/ssaprints")
+    @Override
     public ResponseEntity<SprintResponse> createSprint(@RequestBody SprintCreateRequest request) {
         SprintResponse response = sprintService.createSprint(request);
 
@@ -29,11 +30,17 @@ public class SprintController {
     /**
      * 스프린트 참가
      */
-    @PostMapping("/ssaprint/{sprintId}/join")
+    @Override
     public ResponseEntity<Void> joinSprint(@PathVariable Long sprintId) {
         User user = userService.getAuthenticatedUserWithTeams();
-
         sprintService.joinSprint(sprintId, user);
+
         return ResponseEntity.status(201).build();
+    }
+
+    @Override
+    public ResponseEntity<SingleSprintResponse> getSprintById(@PathVariable Long id) {
+        SingleSprintResponse response = sprintService.getSprintById(id);
+        return ResponseEntity.ok(response);
     }
 }

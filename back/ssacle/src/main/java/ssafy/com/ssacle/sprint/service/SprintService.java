@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
+import ssafy.com.ssacle.sprint.dto.SingleSprintResponse;
 import ssafy.com.ssacle.sprint.dto.SprintCreateRequest;
 import ssafy.com.ssacle.sprint.dto.SprintResponse;
 import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
@@ -48,6 +49,14 @@ public class SprintService {
                 .addUser(user)
                 .participateSprint(sprint)
                 .build();
+
         teamRepository.save(team);
+    }
+
+    public SingleSprintResponse getSprintById(Long sprintId) {
+        Sprint sprint = sprintRepository.findById(sprintId)
+                .orElseThrow(SprintNotExistException::new);
+
+        return SingleSprintResponse.from(sprint);
     }
 }
