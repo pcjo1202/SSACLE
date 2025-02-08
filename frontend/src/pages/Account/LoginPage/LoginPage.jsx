@@ -47,7 +47,7 @@ const LoginPage = () => {
         <div className="flex justify-end items-center">
           <button
             onClick={() =>
-              navigate('/account/help', { state: { type: 'email' } })
+              navigate('/account/help', { state: { activeTab: 'email' } })
             }
             className="text-ssacle-black text-base font-medium mr-[0.5rem]"
           >
@@ -56,7 +56,7 @@ const LoginPage = () => {
           <div className="w-[0.0625rem] h-[1rem] bg-neutral-200 mx-[0.5rem]"></div>
           <button
             onClick={() =>
-              navigate('/account/help', { state: { type: 'password' } })
+              navigate('/account/help', { state: { activeTab: 'password' } })
             }
             className="text-ssacle-black text-base font-medium"
           >
