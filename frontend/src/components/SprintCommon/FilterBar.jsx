@@ -1,37 +1,53 @@
 import { useState } from 'react'
-import SprintPositionDropdown from './SprintPositionDropdown'
-import SprintTechStackDropdown from './SprintStackDropdown'
-import SprintSelectedTags from './SprintSelectedTags'
+import PositionDropdown from '@/components/SprintCommon/PositionDropdown'
+import StackDropdown from '@/components/SprintCommon/StackDropdown'
+import SelectedTags from '@/components/SprintCommon/SelectedTags'
 
-const SprintFilter = () => {
+const FilterBar = ({ domain, onFilterChange }) => {
+  // TODO: 추후 domain 활용 예정
+  // console.log(domain);
   const [selectedPositions, setSelectedPositions] = useState([])
   const [selectedStacks, setSelectedStacks] = useState([])
+  const [selectedStatus, setSelectedStatus] = useState('available')
+
+  const handleStatusChange = (status) => {
+    setSelectedStatus(status)
+    onFilterChange('status', status)
+  }
 
   return (
     <div className="flex flex-col gap-2 pb-1">
       {/* 상단 탭 (참여 가능 / 참여 완료) */}
       <div className="flex gap-6 text-[14px] font-medium">
-        <button className="text-black border-b-2 border-black">
+        <button
+          className={`border-b-2 ${selectedStatus === 'available' ? 'border-black' : 'border-transparent'}`}
+          onClick={() => handleStatusChange('available')}
+        >
           참여 가능
         </button>
-        <button className="text-gray-400">참여 완료</button>
+        <button
+          className={`border-b-2 ${selectedStatus === 'completed' ? 'border-black' : 'border-transparent'}`}
+          onClick={() => handleStatusChange('completed')}
+        >
+          참여 완료
+        </button>
       </div>
 
       {/* 구분선 */}
       <hr className="border-gray-200" />
 
-      {/* 필터 드롭다운 + 검색창 */}
+      {/* 필터 드롭다운 */}
       <div className="flex justify-between items-center">
         <div className="flex gap-2">
-          {/* 포지션 필터 */}
-          <SprintPositionDropdown
+          <PositionDropdown
             selectedPositions={selectedPositions}
             setSelectedPositions={setSelectedPositions}
+            onFilterChange={(value) => onFilterChange('position', value)}
           />
-          {/* 기술스택 필터 */}
-          <SprintTechStackDropdown
+          <StackDropdown
             selectedStacks={selectedStacks}
             setSelectedStacks={setSelectedStacks}
+            onFilterChange={(value) => onFilterChange('stack', value)}
           />
         </div>
 
@@ -41,19 +57,18 @@ const SprintFilter = () => {
             type="text"
             placeholder="검색어 입력"
             className="w-full border rounded px-3 py-1 bg-white pl-3 text-[12px] font-light"
+            onChange={(e) => onFilterChange('search', e.target.value)}
           />
         </div>
       </div>
 
-      {/* 구분선 */}
-      <hr className="border-gray-200" />
-
       {/* 선택된 태그 리스트 */}
-      <SprintSelectedTags
+      <SelectedTags
         selectedPositions={selectedPositions}
         setSelectedPositions={setSelectedPositions}
         selectedStacks={selectedStacks}
         setSelectedStacks={setSelectedStacks}
+        onFilterChange={onFilterChange}
       />
 
       {/* 구분선 */}
@@ -62,4 +77,4 @@ const SprintFilter = () => {
   )
 }
 
-export default SprintFilter
+export default FilterBar

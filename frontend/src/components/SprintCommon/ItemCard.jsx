@@ -1,8 +1,8 @@
-const SprintCard = ({ sprint }) => {
-  // 진행 기간 포맷팅 (연도가 같으면 월/일만 표시)
+const ItemCard = ({ item, domain }) => {
+  // 진행 기간 포맷팅
   const formatDate = (date) => {
     const d = new Date(date)
-    return `${d.getFullYear() === new Date().getFullYear() ? '' : d.getFullYear() + '년 '}${d.getMonth() + 1}월 ${d.getDate()}일`
+    return `${d.getFullYear() === new Date().getFullYear() ? '' : `${d.getFullYear()}년 `}${d.getMonth() + 1}월 ${d.getDate()}일`
   }
 
   // 모집 상태 결정
@@ -12,7 +12,7 @@ const SprintCard = ({ sprint }) => {
         label: '모집 마감',
         bgColor: 'bg-gray-300 text-gray-800',
         emoji: '🔒',
-        cardBg: 'bg-[#F4F4F4]', // 모집 마감 시 배경색 변경
+        cardBg: 'bg-[#F4F4F4]',
       }
     } else if (participation === recruit - 1) {
       return {
@@ -42,31 +42,35 @@ const SprintCard = ({ sprint }) => {
     }
   }
 
-  const recruitStatus = getRecruitStatus(sprint.participation, sprint.recruit)
+  const recruitStatus = getRecruitStatus(item.participation, item.recruit)
   const durationDays = Math.ceil(
-    (new Date(sprint.endAt) - new Date(sprint.startAt)) / (1000 * 60 * 60 * 24)
+    (new Date(item.endAt).getTime() - new Date(item.startAt).getTime()) /
+      (1000 * 60 * 60 * 24)
   )
   const durationStatus = getDurationStatus(durationDays)
+
+  // 모집 관련 정보 (싸프린트: 모집 인원, 싸드컵: 모집 팀 수)
+  const recruitLabel = domain === 'ssaprint' ? '모집 인원' : '모집 팀 수'
 
   return (
     <div
       className={`p-5 pt-6 pb-4 border rounded-xl shadow-md flex flex-col relative w-full ${recruitStatus.cardBg}`}
     >
-      {/* 그룹 1: 스프린트 제목 & 설명 */}
+      {/* 제목 & 설명 */}
       <div className="flex flex-col">
-        <h3 className="text-[16px] font-bold leading-tight">{sprint.name}</h3>
+        <h3 className="text-[16px] font-bold leading-tight">{item.name}</h3>
         <p className="text-[10px] text-gray-600 leading-tight mt-1">
-          {sprint.description}
+          {item.description}
         </p>
       </div>
 
-      {/* 그룹 2: 진행 기간 & 모집 인원 */}
+      {/* 진행 기간 & 모집 정보 */}
       <div className="mt-2 flex flex-col gap-1">
         {/* 진행 기간 */}
         <div className="flex items-center gap-1 text-[10px] font-medium text-gray-700">
           📅 <span className="font-semibold">진행 기간</span>
           <span className="mx-1">
-            {formatDate(sprint.startAt)} ~ {formatDate(sprint.endAt)}
+            {formatDate(item.startAt)} ~ {formatDate(item.endAt)}
           </span>
           <span
             className={`mx-1 px-2 py-0.5 rounded-md text-[9px] font-semibold ${durationStatus}`}
@@ -75,11 +79,12 @@ const SprintCard = ({ sprint }) => {
           </span>
         </div>
 
-        {/* 모집 인원 */}
+        {/* 모집 정보 */}
         <div className="flex items-center gap-1 text-[10px] font-medium text-gray-700">
-          {recruitStatus.emoji} <span className="font-semibold">모집 인원</span>
+          {recruitStatus.emoji}{' '}
+          <span className="font-semibold">{recruitLabel}</span>
           <span className="mx-1">
-            {sprint.participation}명 / {sprint.recruit}명
+            {item.participation}명 / {item.recruit}명
           </span>
           <span
             className={`mx-1 px-2 py-0.5 rounded-md text-[9px] font-semibold ${recruitStatus.bgColor}`}
@@ -89,30 +94,28 @@ const SprintCard = ({ sprint }) => {
         </div>
       </div>
 
-      {/* 그룹 3: 태그 (포지션, 기술 스택) */}
+      {/* 태그 (포지션, 기술 스택) */}
       <div className="mt-3 flex flex-col gap-1">
-        {/* 포지션 태그 */}
         <div className="flex">
-          <span className="bg-blue-100 text-blue-800 px-3 py-0.5 rounded-full text-[10px] font-medium w-auto text-center">
-            {sprint.majortopic_name}
+          <span className="bg-blue-100 text-blue-800 px-3 py-0.5 rounded-full text-[10px] font-medium">
+            {item.majortopic_name}
           </span>
         </div>
-        {/* 기술 스택 태그 */}
         <div className="flex">
-          <span className="bg-blue-100 text-blue-800 px-3 py-0.5 rounded-full text-[10px] font-medium w-auto text-center">
-            {sprint.subtopic_name}
+          <span className="bg-blue-100 text-blue-800 px-3 py-0.5 rounded-full text-[10px] font-medium">
+            {item.subtopic_name}
           </span>
         </div>
       </div>
 
-      {/* 썸네일 이미지 (우측 하단) */}
+      {/* 썸네일 이미지 */}
       <img
-        src={sprint.thumbnail}
-        alt="Sprint Thumbnail"
+        src={item.thumbnail}
+        alt="Thumbnail"
         className="absolute bottom-4 right-4 w-8 h-8 opacity-60"
       />
     </div>
   )
 }
 
-export default SprintCard
+export default ItemCard

@@ -1,11 +1,13 @@
-const SprintPagination = ({ currentPage, setCurrentPage, totalPages }) => {
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+  if (totalPages <= 1) return null // 페이지가 1개 이하라면 숨김 처리
+
   return (
     <div className="flex justify-center items-center gap-2 mt-4 mb-8">
       {/* 처음으로 이동 */}
       <button
         className="w-10 h-10 flex justify-center items-center rounded-lg bg-white border shadow-sm disabled:opacity-50"
         disabled={currentPage === 1}
-        onClick={() => setCurrentPage(1)}
+        onClick={() => onPageChange(1)}
       >
         «
       </button>
@@ -14,7 +16,7 @@ const SprintPagination = ({ currentPage, setCurrentPage, totalPages }) => {
       <button
         className="w-10 h-10 flex justify-center items-center rounded-lg bg-white border shadow-sm disabled:opacity-50"
         disabled={currentPage === 1}
-        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        onClick={() => onPageChange(currentPage - 1)}
       >
         ‹
       </button>
@@ -28,7 +30,7 @@ const SprintPagination = ({ currentPage, setCurrentPage, totalPages }) => {
               ? 'bg-blue-500 text-white'
               : 'bg-white border'
           }`}
-          onClick={() => setCurrentPage(index + 1)}
+          onClick={() => onPageChange(index + 1)}
         >
           {index + 1}
         </button>
@@ -38,7 +40,7 @@ const SprintPagination = ({ currentPage, setCurrentPage, totalPages }) => {
       <button
         className="w-10 h-10 flex justify-center items-center rounded-lg bg-white border shadow-sm disabled:opacity-50"
         disabled={currentPage === totalPages}
-        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+        onClick={() => onPageChange(currentPage + 1)}
       >
         ›
       </button>
@@ -47,7 +49,7 @@ const SprintPagination = ({ currentPage, setCurrentPage, totalPages }) => {
       <button
         className="w-10 h-10 flex justify-center items-center rounded-lg bg-white border shadow-sm disabled:opacity-50"
         disabled={currentPage === totalPages}
-        onClick={() => setCurrentPage(totalPages)}
+        onClick={() => onPageChange(totalPages)}
       >
         »
       </button>
@@ -55,4 +57,4 @@ const SprintPagination = ({ currentPage, setCurrentPage, totalPages }) => {
   )
 }
 
-export default SprintPagination
+export default Pagination
