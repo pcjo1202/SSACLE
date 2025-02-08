@@ -1,25 +1,31 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
-const PositionDropdown = ({ selectedPositions, setSelectedPositions, onFilterChange }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const positions = ['Front-end', 'Back-end', 'Mobile', 'Infra', 'DB'];
+const PositionDropdown = ({
+  selectedPositions,
+  setSelectedPositions,
+  onFilterChange,
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const positions = ['Front-end', 'Back-end', 'Mobile', 'Infra', 'DB']
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  const toggleDropdown = () => setIsOpen(!isOpen)
 
   const handleSelect = (position) => {
     const updatedPositions = selectedPositions.includes(position)
       ? selectedPositions.filter((p) => p !== position)
-      : [...selectedPositions, position];
+      : [...selectedPositions, position]
 
-    setSelectedPositions(updatedPositions);
-    onFilterChange('position', updatedPositions); // 필터 변경 반영
-  };
+    setSelectedPositions(updatedPositions)
+    onFilterChange('position', updatedPositions) // 필터 변경 반영
+  }
 
   return (
     <div className="relative">
       <button
         className={`border rounded px-3 py-1 flex items-center text-[12px] ${
-          isOpen ? 'border-blue-500 text-blue-500' : 'border-gray-300 text-gray-900'
+          isOpen
+            ? 'border-blue-500 text-blue-500'
+            : 'border-gray-300 text-gray-900'
         }`}
         onClick={toggleDropdown}
       >
@@ -46,7 +52,7 @@ const PositionDropdown = ({ selectedPositions, setSelectedPositions, onFilterCha
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default PositionDropdown;
+export default PositionDropdown

@@ -1,25 +1,31 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
-const StackDropdown = ({ selectedStacks, setSelectedStacks, onFilterChange }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const stacks = ['React', 'Vue', 'Node.js', 'Spring', 'MySQL', 'Docker'];
+const StackDropdown = ({
+  selectedStacks,
+  setSelectedStacks,
+  onFilterChange,
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const stacks = ['React', 'Vue', 'Node.js', 'Spring', 'MySQL', 'Docker']
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  const toggleDropdown = () => setIsOpen(!isOpen)
 
   const handleSelect = (stack) => {
     const updatedStacks = selectedStacks.includes(stack)
       ? selectedStacks.filter((s) => s !== stack)
-      : [...selectedStacks, stack];
+      : [...selectedStacks, stack]
 
-    setSelectedStacks(updatedStacks);
-    onFilterChange('stack', updatedStacks);
-  };
+    setSelectedStacks(updatedStacks)
+    onFilterChange('stack', updatedStacks)
+  }
 
   return (
     <div className="relative">
       <button
         className={`border rounded px-3 py-1 flex items-center text-[12px] ${
-          isOpen ? 'border-blue-500 text-blue-500' : 'border-gray-300 text-gray-900'
+          isOpen
+            ? 'border-blue-500 text-blue-500'
+            : 'border-gray-300 text-gray-900'
         }`}
         onClick={toggleDropdown}
       >
@@ -44,7 +50,7 @@ const StackDropdown = ({ selectedStacks, setSelectedStacks, onFilterChange }) =>
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default StackDropdown;
+export default StackDropdown

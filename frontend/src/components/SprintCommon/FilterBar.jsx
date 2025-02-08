@@ -1,17 +1,19 @@
-import { useState } from 'react';
-import PositionDropdown from '@/components/SprintCommon/PositionDropdown';
-import StackDropdown from '@/components/SprintCommon/StackDropdown';
-import SelectedTags from '@/components/SprintCommon/SelectedTags';
+import { useState } from 'react'
+import PositionDropdown from '@/components/SprintCommon/PositionDropdown'
+import StackDropdown from '@/components/SprintCommon/StackDropdown'
+import SelectedTags from '@/components/SprintCommon/SelectedTags'
 
 const FilterBar = ({ domain, onFilterChange }) => {
-  const [selectedPositions, setSelectedPositions] = useState([]);
-  const [selectedStacks, setSelectedStacks] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState('available');
+  // TODO: 추후 domain 활용 예정
+  // console.log(domain);
+  const [selectedPositions, setSelectedPositions] = useState([])
+  const [selectedStacks, setSelectedStacks] = useState([])
+  const [selectedStatus, setSelectedStatus] = useState('available')
 
   const handleStatusChange = (status) => {
-    setSelectedStatus(status);
-    onFilterChange('status', status);
-  };
+    setSelectedStatus(status)
+    onFilterChange('status', status)
+  }
 
   return (
     <div className="flex flex-col gap-2 pb-1">
@@ -72,7 +74,7 @@ const FilterBar = ({ domain, onFilterChange }) => {
       {/* 구분선 */}
       <hr className="border-gray-200 mt-0" />
     </div>
-  );
-};
+  )
+}
 
-export default FilterBar;
+export default FilterBar

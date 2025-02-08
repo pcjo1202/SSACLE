@@ -1,7 +1,7 @@
-import SsaprintLayout from '@/components/Ssaprint/SsaprintLayout';
+import SsaprintLayout from '@/components/Ssaprint/SsaprintLayout'
 
 const SsaprintPage = () => {
-  return <SsaprintLayout />;
-};
+  return <SsaprintLayout />
+}
 
-export default SsaprintPage;
+export default SsaprintPage

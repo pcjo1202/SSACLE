@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import ItemCard from '@/components/SprintCommon/ItemCard';
-import Pagination from '@/components/common/Pagination';
+import { useState } from 'react'
+import ItemCard from '@/components/SprintCommon/ItemCard'
+import Pagination from '@/components/common/Pagination'
 
 const ItemList = ({ items, domain }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 8
 
   // 현재 페이지에서 보여줄 데이터
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem)
 
   // 전체 페이지 수
-  const totalPages = Math.ceil(items.length / itemsPerPage);
+  const totalPages = Math.ceil(items.length / itemsPerPage)
 
   return (
     <div>
@@ -36,7 +36,7 @@ const ItemList = ({ items, domain }) => {
         onPageChange={setCurrentPage}
       />
     </div>
-  );
-};
+  )
+}
 
-export default ItemList;
+export default ItemList
