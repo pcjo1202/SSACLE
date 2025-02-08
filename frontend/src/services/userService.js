@@ -51,3 +51,11 @@ export const fetchRefreshToken = async () => {
     throw error
   }
 }
+
+// 이메일 찾기
+export const fetchFindEmail = async (studentNumber) =>
+  axios.post(AUTH_END_POINT.FIND_EMAIL, studentNumber)
+
+// 비밀번호 찾기
+export const fetchFindPassword = async (studentNumber, email) =>
+  axios.post(AUTH_END_POINT.FIND_PASSWORD, { studentNumber, email })
