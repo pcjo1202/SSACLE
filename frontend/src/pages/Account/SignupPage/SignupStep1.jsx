@@ -120,7 +120,7 @@ const SignupStep1 = () => {
 
           {/* 오류 메시지 출력 (빨간색) */}
           {errorMessage && (
-            <p className="text-red-500 text-sm">{errorMessage}</p>
+            <p className="text-red-500 text-center mb-4">{errorMessage}</p>
           )}
 
           {/* 인증 코드 요청 버튼 */}
