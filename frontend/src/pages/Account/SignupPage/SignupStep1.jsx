@@ -37,7 +37,7 @@ const SignupStep1 = () => {
     <div className="w-full h-screen flex justify-center items-center">
       <div className="min-w-[75rem] flex flex-col md:flex-row items-center justify-center gap-10">
         {/* 좌측 컨텐츠 */}
-        <div className="min-w-max bg-white p-12 rounded-lg shadow-md text-center">
+        <div className="min-w-[25rem] bg-white p-12 rounded-lg shadow-md text-center">
           <h2 className="text-lg font-bold text-ssacle-blue mb-4">
             SSAFY인 인증하는 방법
           </h2>
@@ -93,7 +93,7 @@ const SignupStep1 = () => {
             </button>
           </div>
         </div>
-  
+
         {/* 우측 회원가입 폼 */}
         <div className="min-w-[25rem] flex flex-col items-center">
           <h1 className="text-ssacle-blue text-3xl font-bold text-center mb-10">
@@ -102,11 +102,11 @@ const SignupStep1 = () => {
 
           {/* 웹훅 URL 입력 필드 */}
           <input
-            type='url'
-            placeholder='Webhook URL'
+            type="url"
+            placeholder="Webhook URL"
             value={webhook}
             onChange={(e) => setWebhook(e.target.value)}
-            className='w-full max-w-[400px] h-12 bg-ssacle-gray-sm rounded-full px-6 text-ssacle-blue text-medium text-base focus:outline-ssacle-blue mb-4'
+            className="w-full max-w-[400px] h-12 bg-ssacle-gray-sm rounded-full px-6 text-ssacle-blue text-medium text-base focus:outline-ssacle-blue mb-4"
           />
 
           {/* 이메일 입력 필드 */}
@@ -119,7 +119,9 @@ const SignupStep1 = () => {
           />
 
           {/* 오류 메시지 출력 (빨간색) */}
-          {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+          {errorMessage && (
+            <p className="text-red-500 text-sm">{errorMessage}</p>
+          )}
 
           {/* 인증 코드 요청 버튼 */}
           <button
