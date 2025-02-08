@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import { fetchLogin } from '@/services/userService'
+import { useMutation } from '@tanstack/react-query'
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -8,13 +10,26 @@ const LoginPage = () => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
+  const loginMutation = useMutation({
+    mutationFn: fetchLogin, // fetchLogin을 사용
+    onSuccess: (response) => {
+      if (response.status === 200) {
+        // ✅ 로그인 성공 처리
+        localStorage.setItem('accessToken', response.data?.accessToken) // 토큰 저장
+        navigate('/') // 메인 페이지 이동
+      }
+    },
+    onError: (error) => {
+      console.error('❌ 로그인 실패:', error)
+    },
+  })
+
+  // 🔥 로그인 버튼 클릭 시 실행
   const handleLogin = () => {
     if (!email || !password) {
-      setError('이메일과 비밀번호를 모두 입력해주세요.')
-    } else {
-      setError('')
-      // TODO: 로그인 처리 로직
+      return alert('이메일과 비밀번호를 모두 입력해주세요.')
     }
+    loginMutation.mutate({ email, password }) // useMutation 실행
   }
 
   return (
@@ -64,13 +79,20 @@ const LoginPage = () => {
           </button>
         </div>
 
-        {error && <div className="text-red-500 text-center">{error}</div>}
+        {/* {error && <div className="text-red-500 text-center">{error}</div>} */}
+        {/* 🔥 로그인 실패 시 에러 메시지 표시 */}
+        {loginMutation.isError && (
+          <div className="text-red-500 text-center">
+            로그인에 실패했습니다. 이메일 혹은 비밀번호를 확인해주세요.
+          </div>
+        )}
 
         <button
           onClick={handleLogin}
           className="w-full h-[3rem] bg-ssacle-blue rounded-full text-white text-xl font-bold"
+          disabled={loginMutation.isLoading}
         >
-          로그인
+          {loginMutation.isLoading ? '로그인 중...' : '로그인'}
         </button>
 
         <button
