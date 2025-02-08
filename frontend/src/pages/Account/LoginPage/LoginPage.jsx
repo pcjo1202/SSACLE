@@ -11,12 +11,11 @@ const LoginPage = () => {
   const [error, setError] = useState('')
 
   const loginMutation = useMutation({
-    mutationFn: fetchLogin, // fetchLogin을 사용
+    mutationFn: fetchLogin, 
     onSuccess: (response) => {
       if (response.status === 200) {
-        // ✅ 로그인 성공 처리
-        localStorage.setItem('accessToken', response.data?.accessToken) // 토큰 저장
-        navigate('/') // 메인 페이지 이동
+        localStorage.setItem('accessToken', response.data?.accessToken)
+        navigate('/main')
       }
     },
     onError: (error) => {
@@ -24,12 +23,12 @@ const LoginPage = () => {
     },
   })
 
-  // 🔥 로그인 버튼 클릭 시 실행
+  // 로그인 버튼 클릭 시 실행
   const handleLogin = () => {
     if (!email || !password) {
       return alert('이메일과 비밀번호를 모두 입력해주세요.')
     }
-    loginMutation.mutate({ email, password }) // useMutation 실행
+    loginMutation.mutate({ email, password })
   }
 
   return (
