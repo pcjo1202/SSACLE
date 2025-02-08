@@ -9,6 +9,7 @@ const SuccessPage = () => {
         회원가입이 완료되었습니다!
       </div>
       <div>
+        {/* 띄어쓰기 필요해서 빨간 줄 생겨요. */}
         <span className="text-ssacle-black text-xl font-sans">로그인하고, </span>
         <span className="text-ssacle-black text-xl font-medium font-sans">
           싸클
