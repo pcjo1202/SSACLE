@@ -20,7 +20,7 @@ const LoginPage = () => {
   return (
     <div className="min-w-max h-full flex justify-center items-center">
       <div className="flex flex-col gap-[1rem] w-[30rem] shrink-0 px-[1rem]">
-        <h1 className="text-ssacle-blue text-3xl font-bold text-center">
+        <h1 className="text-ssacle-blue text-3xl font-bold text-center mb-5">
           로그인
         </h1>
 
