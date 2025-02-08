@@ -13,9 +13,7 @@
       "@/store/*": ["./src/store/*"]
     },
     "jsx": "react-jsx",
-    "checkJs": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "checkJs": true
   },
   "exclude": ["node_modules", "dist"]
 }
