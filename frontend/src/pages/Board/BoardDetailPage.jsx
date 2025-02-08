@@ -4,6 +4,7 @@ import { posts as mockPosts } from '@/mocks/boardData'
 import CommentForm from '@/components/Board/Comment/CommentForm'
 import CommentList from '@/components/Board/Comment/CommentList'
 import BoardNav from '@/components/Board/Detail/BoardNav'
+import PayModal from '@/components/Board/Modal/PayModal'
 
 const BOARD_TITLES = {
   edu: '학습 게시판',
@@ -24,6 +25,12 @@ const BoardDetailPage = () => {
   const [loading, setLoading] = useState(true) // 로딩 상태
   const [comments, setComments] = useState([]) // 댓글 목록
   const [prevNextPosts, setPrevNextPosts] = useState({ prev: null, next: null }) // 이전, 다음 게시글
+
+  // 피클 결제 관련 상태
+  const [showPayModal, setShowPayModal] = useState(false)
+  const [selectedPostId, setSelectedPostId] = useState(null)
+  const [userPickle, setUserPickle] = useState(256) // 실제로는 API에서 받아와야 함
+  const [navigationTarget, setNavigationTarget] = useState(null)
 
   // 임시로 현재 사용자 ID 하드코딩 (실제로는 인증 시스템에서 가져와야 함)
   const currentUserId = 'user123'
@@ -90,10 +97,45 @@ const BoardDetailPage = () => {
 
   // 게시글 이동 핸들러
   const handlePostNavigate = (postId) => {
-    // 현재 탭 정보를 유지하면서 이동
-    navigate(`/board/${boardType}/${postId}`, {
-      state: { postType: post.type },
-    })
+    if (post.type === 'legend') {
+      setSelectedPostId(postId)
+      setNavigationTarget(postId)
+      setShowPayModal(true)
+    } else {
+      navigate(`/board/${boardType}/${postId}`, {
+        state: { postType: post.type },
+      })
+    }
+  }
+
+  // 피클 결제 확인 핸들러
+  const handlePayConfirm = async () => {
+    try {
+      const requiredPickles = 5
+      if (userPickle >= requiredPickles) {
+        setUserPickle((prev) => prev - requiredPickles)
+        setShowPayModal(false)
+
+        if (navigationTarget) {
+          navigate(`/board/${boardType}/${navigationTarget}`, {
+            state: { postType: post.type },
+          })
+        }
+      }
+    } catch (error) {
+      console.error('피클 차감 중 오류가 발생했습니다:', error)
+      alert('처리 중 오류가 발생했습니다. 다시 시도해주세요.')
+    } finally {
+      setNavigationTarget(null)
+      setSelectedPostId(null)
+    }
+  }
+
+  // 피클 결제 취소 핸들러
+  const handlePayCancel = () => {
+    setShowPayModal(false)
+    setSelectedPostId(null)
+    setNavigationTarget(null)
   }
 
   // 댓글 작성 핸들러
@@ -186,6 +228,15 @@ const BoardDetailPage = () => {
         prevPost={prevNextPosts.prev}
         nextPost={prevNextPosts.next}
         onNavigate={handlePostNavigate}
+      />
+
+      {/* 피클 결제 모달 */}
+      <PayModal
+        isOpen={showPayModal}
+        onClose={handlePayCancel}
+        onConfirm={handlePayConfirm}
+        requiredPickle={5}
+        currentPickle={userPickle}
       />
 
       {/* 목록으로 돌아가기 버튼 */}
