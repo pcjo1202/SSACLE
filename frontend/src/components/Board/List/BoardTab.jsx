@@ -8,8 +8,8 @@ const BoardTab = ({ tabs, activeTab, onTabChange }) => {
           className={`transition-colors
             ${
               activeTab === tab.id
-                ? ' text-ssacle-blue font-bold text-base ' // 활성 탭 스타일
-                : ' text-gray-300 text-sm' // 비활성 탭 스타일
+                ? ' text-ssacle-blue font-bold text-xl ' // 활성 탭 스타일
+                : ' text-gray-300 text-base' // 비활성 탭 스타일
             }`}
         >
           {tab.label}

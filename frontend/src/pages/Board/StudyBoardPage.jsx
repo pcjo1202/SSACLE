@@ -4,6 +4,7 @@ import BoardTab from '@/components/Board/List/BoardTab'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { posts as mockPosts } from '@/mocks/boardData'
+import PayModal from '@/components/Board/Modal/PayModal'
 
 const studyTabs = [
   { id: 'legend', label: '명예의 전당' },
@@ -21,6 +22,14 @@ const StudyBoardPage = () => {
   // 페이지네이션 관련 상태 추가
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+
+  // 피클 차감 모달
+  // 피클 결제 모달 표시 여부
+  const [showPayModal, setShowPayModal] = useState(false)
+  // 선택된 게시글 id
+  const [selectPostId, setSelectPostId] = useState(null)
+  // 사용자의 현재 피클 수 (실제로는 API에서 받아와야 함)
+  const [userPickle, setUserPickle] = useState(256)
 
   // 게시글 목록 불러오기
   // activeTab이 변경될 때마다 해당하는 게시글 목록을 새로 불러옴
@@ -50,6 +59,36 @@ const StudyBoardPage = () => {
     fetchPosts()
   }, [activeTab, currentPage]) // activeTab이 변경될 때마다 실행
 
+  // 게시글 클릭 핸들러
+  const handlePostClick = (postId) => {
+    if (activeTab === 'legend') {
+      setSelectPostId(postId)
+      setShowPayModal(true)
+    } else {
+      navigate(`/board/edu/${postId}`)
+    }
+  }
+
+  // 피클 결제 확인
+  const handlePayConfirm = async () => {
+    try {
+      const requiredPickles = 5
+      if (userPickle >= requiredPickles) {
+        setUserPickle((prev) => prev - requiredPickles)
+        setShowPayModal(false)
+        navigate(`/board/edu/${selectPostId}`)
+      }
+    } catch (error) {
+      console.error('피클 차감 중 오류가 발생했습니다:', error)
+      alert('처리 중 오류가 발생했습니다. 다시 시도해주세요.')
+    }
+  }
+  // 모달 취소
+  const handlePayCancel = () => {
+    setShowPayModal(false)
+    setSelectPostId(null)
+  }
+
   // 글 작성 페이지로 이동
   // 현재 탭 정보 유지 및 state로 전달하여 글 유형 지정
   const handleWrite = () => {
@@ -77,6 +116,35 @@ const StudyBoardPage = () => {
           onTabChange={setActiveTab}
         />
       </section>
+      {/* 배너 */}
+      <section>
+        <div className="bg-ssacle-sky w-full h-32 rounded-lg mb-4 flex justify-center items-center">
+          {activeTab === 'legend' ? (
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-ssacle-black font-semibold mb-2">
+                🏆 명예의 전당이란 ?
+              </p>
+              <p className="text-ssacle-black font-normal text-sm">
+                명예의 전당은 싸피 교육생들의 다양한 기업 합격 후기, 자기소개서
+                작성 꿀팁, 면접 후기 등을 볼 수 있는 곳입니다.
+              </p>
+              <p className="text-ssacle-blue font-semibold text-sm">
+                * 명예의 전당 글을 열람하기 위해선 피클이 필요해요 🥒 !
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-ssacle-black font-semibold mb-2">
+                Q 질의응답이란 ?
+              </p>
+              <p className="text-ssacle-black font-normal text-sm">
+                질의응답은 싸피 교육생들이 자기주도적 학습을 하며 궁금했던 내용,
+                구글링을 해도 나오지 않던 내용을 질의하고 답변하는 곳입니다.
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
       <div className="flex flex-row justify-between">
         {/* 글 작성 버튼 */}
         <section>
@@ -91,7 +159,12 @@ const StudyBoardPage = () => {
       </div>
       <div className="border-b my-3"></div>
       <section>
-        <BoardList posts={posts} type={activeTab} boardType="edu" />
+        <BoardList
+          posts={posts}
+          type={activeTab}
+          boardType="edu"
+          onPostClick={handlePostClick}
+        />
       </section>
       <section>
         {/* 페이지네이션 추가 */}
@@ -101,6 +174,13 @@ const StudyBoardPage = () => {
           totalPages={totalPages}
         />
       </section>
+      <PayModal
+        isOpen={showPayModal}
+        onClose={handlePayCancel}
+        onConfirm={handlePayConfirm}
+        requiredPickle={5}
+        currentPickle={userPickle}
+      />
     </main>
   )
 }
