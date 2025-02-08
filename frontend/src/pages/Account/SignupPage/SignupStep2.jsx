@@ -1,7 +1,73 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useState, useRef } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { fetchCheckNickname } from '@/services/userService'
 
 const SignupStep2 = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const confirmPasswordRef = useRef(null)
+
+  // 닉네임 상태
+  const [nickname, setNickname] = useState('')
+  const [isNicknameValid, setIsNicknameValid] = useState(false) // 닉네임 인증 상태
+
+  // 비밀번호 상태
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordError, setPasswordError] = useState(false) // 비밀번호 불일치 메시지
+
+  // 약관 동의 상태
+  const [termsChecked, setTermsChecked] = useState(false)
+  const [privacyChecked, setPrivacyChecked] = useState(false)
+  const [termsError, setTermsError] = useState(false)
+
+  // 닉네임 중복 확인 Mutation
+  const nicknameMutation = useMutation({
+    mutationFn: () => fetchCheckNickname(nickname),
+    onSuccess: (data) => {
+      if (data) {
+        alert('이미 사용 중인 닉네임입니다.')
+        setIsNicknameValid(false)
+      } else {
+        setIsNicknameValid(true)
+      }
+    },
+    onError: (error) => {
+      console.error('닉네임 중복 확인 상태:', error)
+      alert('닉네임 확인 중 오류가 발생했습니다. 다시 시도해주세요.')
+    },
+  })
+
+  // 비밀번호 확인 함수
+  const handleConfirmPasswordChange = (e) => {
+    setConfirmPassword(e.target.value)
+    if (password && e.target.value && password !== e.target.value) {
+      setPasswordError(true)
+    } else {
+      setPasswordError(false)
+    }
+  }
+
+  // 회원가입 버튼 클릭 시 최종 검증
+  const handleSignup = () => {
+    if (!password || !confirmPassword) {
+      setPasswordError(true)
+      confirmPasswordRef.current.focus()
+      return
+    }
+    if (password !== confirmPassword) {
+      setPasswordError(true)
+      confirmPasswordRef.current?.focus() // 불일치 시 포커스 이동
+      return
+    }
+    if (!termsChecked || !privacyChecked) {
+      setTermsError(true)
+      return
+    }
+    navigate('/account/signup/interest')
+  }
+
   return (
     <>
       <div className="w-full h-auto flex justify-center items-center mt-24">
@@ -18,14 +84,14 @@ const SignupStep2 = () => {
               <label className="col-span-2 text-ssacle-black text-xl font-medium py-2">
                 학번 *
               </label>
-              <div className="col-span-4 col-start-3">
-                <div className="h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-lg text-ssacle-black">
-                  1234567
-                </div>
-                <p className="text-ssacle-blue text-sm mt-1">
-                  인증이 완료되었습니다.
-                </p>
-              </div>
+              <input
+                type="text"
+                placeholder="학번을 입력하세요."
+                className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
+              />
+              <button className="col-span-1 col-start-6 h-12 bg-ssacle-blue rounded-full text-white text-base font-bold mb-4">
+                중복확인
+              </button>
 
               {/* 이메일 */}
               <label className="col-span-2 text-ssacle-black text-xl font-medium py-2">
@@ -49,11 +115,18 @@ const SignupStep2 = () => {
               </label>
               <input
                 type="text"
-                placeholder="싸클에서 사용할 닉네임을 입력해 주세요."
+                placeholder="사용할 닉네임을 입력해 주세요."
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
                 className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
               />
-              <button className="col-span-1 col-start-6 h-12 bg-ssacle-blue rounded-full text-white text-base font-bold mb-4">
-                중복확인
+
+              <button
+                className="col-span-1 col-start-6 h-12 bg-ssacle-blue rounded-full text-white text-base font-bold mb-4"
+                onClick={() => nicknameMutation.mutate()} // ✅ 닉네임 중복 확인 실행
+                disabled={nicknameMutation.isLoading} // 로딩 중이면 버튼 비활성화
+              >
+                {nicknameMutation.isLoading ? '확인 중...' : '중복확인'}
               </button>
             </div>
             <div className="border-b-2 border-ssacle-gray-sm my-6" />
@@ -66,6 +139,8 @@ const SignupStep2 = () => {
               <input
                 type="password"
                 placeholder="비밀번호를 입력해 주세요"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="col-span-4 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
               />
               {/* 비밀번호 재확인 */}
@@ -75,8 +150,18 @@ const SignupStep2 = () => {
               <input
                 type="password"
                 placeholder="비밀번호를 한번 더 입력해 주세요"
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange} // 실시간 검증 함수 호출
+                ref={confirmPasswordRef}
                 className="col-span-4 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
               />
+
+              {/* 비밀번호 불일치 메세지 */}
+              {passwordError && (
+                <p className="col-span-4 col-start-3 text-red-500 text-sm">
+                  비밀번호가 일치하지 않습니다.
+                </p>
+              )}
             </div>
             <div className="border-b-2 border-ssacle-gray-sm my-6" />
 
@@ -84,6 +169,8 @@ const SignupStep2 = () => {
             <label className="flex items-center space-x-2 px-2">
               <input
                 type="checkbox"
+                checked={termsChecked}
+                onChange={() => setTermsChecked(!termsChecked)}
                 className="w-5 h-5 text-ssacle-blue checked:bg-ssacle-blue checked:border-transparent"
               />
               <span className="text-ssacle-black text-base font-medium">
@@ -93,21 +180,26 @@ const SignupStep2 = () => {
             <label className="flex items-center space-x-2 mt-2 px-2">
               <input
                 type="checkbox"
+                checked={privacyChecked}
+                onChange={() => setPrivacyChecked(!privacyChecked)}
                 className="w-5 h-5 text-ssacle-blue checked:bg-ssacle-blue checked:border-transparent"
               />
               <span className="text-ssacle-black text-base font-medium">
                 개인정보 수집 / 이용 동의
               </span>
             </label>
-            <p className="text-[#f03939] text-sm px-2 mt-2 mb-10">
-              필수 약관은 동의가 필요합니다.
-            </p>
+            {/* 필수 약관 미동의 시 경고 메세지 */}
+            {termsError && (
+              <p className="text-[#f03939] text-sm px-2 mt-2 mb-10">
+                필수 약관은 동의가 필요합니다.
+              </p>
+            )}
 
             {/* 회원가입 버튼 */}
             <div className="grid grid-cols-6 gap-4 mb-12">
               <button
                 className="col-span-2 col-start-3 h-12 bg-ssacle-blue rounded-full px-6 text-white text-center text-xl font-bold mb-4"
-                onClick={() => navigate('/account/signup/interest')} // 다음 단계로 이동
+                onClick={handleSignup}
               >
                 회원가입
               </button>
