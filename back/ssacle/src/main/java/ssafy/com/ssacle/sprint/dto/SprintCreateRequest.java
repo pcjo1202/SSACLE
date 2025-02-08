@@ -1,6 +1,7 @@
 package ssafy.com.ssacle.sprint.dto;
 
 import lombok.Getter;
+import ssafy.com.ssacle.todo.dto.TodoRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,5 +16,5 @@ public class SprintCreateRequest {
     private LocalDateTime endAt;
     private LocalDateTime announceAt;
     private Integer maxMembers;
-    private List<String> todoList;
+    private List<TodoRequest> todos;
 }

@@ -13,8 +13,8 @@ import ssafy.com.ssacle.user.service.UserService;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class SprintController {
-    private final SprintService sprintService;
     private final UserService userService;
+    private final SprintService sprintService;
 
     /**
      * 스프린트 생성
@@ -22,6 +22,7 @@ public class SprintController {
     @PostMapping("/admin/ssaprints")
     public ResponseEntity<SprintResponse> createSprint(@RequestBody SprintCreateRequest request) {
         SprintResponse response = sprintService.createSprint(request);
+
         return ResponseEntity.status(201).body(response);
     }
 

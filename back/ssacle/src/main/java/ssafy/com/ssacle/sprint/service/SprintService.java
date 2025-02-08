@@ -13,15 +13,14 @@ import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.user.domain.User;
-import ssafy.com.ssacle.userteam.repository.UserTeamRepository;
 
 @Service
 @RequiredArgsConstructor
 public class SprintService {
     private final SprintRepository sprintRepository;
     private final TeamRepository teamRepository;
-    private final UserTeamRepository userTeamRepository;
 
+    @Transactional
     public SprintResponse createSprint(SprintCreateRequest request) {
         Sprint sprint = SprintBuilder.builder()
                 .name(request.getName())
@@ -32,9 +31,10 @@ public class SprintService {
                 .endAt(request.getEndAt())
                 .announceAt(request.getAnnounceAt())
                 .maxMembers(request.getMaxMembers())
+                .defaultTodos(request.getTodos())
                 .build();
 
-        sprintRepository.save(sprint);
+        sprintRepository.saveAndFlush(sprint);
 
         return new SprintResponse("싸프린트가 성공적으로 생성되었습니다.", sprint.getId());
     }

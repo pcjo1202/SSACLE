@@ -26,8 +26,8 @@ public class Sprint {
     private List<DefaultTodo> defaultTodos;
 
     public void addDefaultTodo(DefaultTodo defaultTodo){
-        this.defaultTodos.add(defaultTodo);
         defaultTodo.setSprint(this);
+        this.defaultTodos.add(defaultTodo);
     }
 
     @Column(name = "name", nullable = false, length=25)
