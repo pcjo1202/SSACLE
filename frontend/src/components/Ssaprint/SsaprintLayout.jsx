@@ -59,7 +59,7 @@ const SsaprintLayout = () => {
     }
 
     fetchData()
-  }, [filters, pagination.currentPage])
+  }, [filters, pagination.currentPage, pagination.pageSize])
 
   // // API 호출하여 싸프린트 목록 가져오기
   // useEffect(() => {

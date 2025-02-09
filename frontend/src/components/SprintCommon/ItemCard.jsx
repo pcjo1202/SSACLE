@@ -1,4 +1,15 @@
+import { useNavigate } from 'react-router-dom'
+
 const ItemCard = ({ item, domain }) => {
+  const navigate = useNavigate()
+
+  // 카드 클릭 시 상세 페이지 이동
+  const handleCardClick = () => {
+    if (domain === 'ssaprint') {
+      navigate(`/ssaprint/${item.id}`)
+    }
+  }
+
   // 진행 기간 포맷팅
   const formatDate = (date) => {
     const d = new Date(date)
@@ -54,7 +65,8 @@ const ItemCard = ({ item, domain }) => {
 
   return (
     <div
-      className={`p-5 pt-6 pb-4 border rounded-xl shadow-md flex flex-col relative w-full ${recruitStatus.cardBg}`}
+      className={`p-5 pt-6 pb-4 border rounded-xl shadow-md flex flex-col relative w-full cursor-pointer ${recruitStatus.cardBg}`}
+      onClick={handleCardClick} // 클릭 이벤트 추가
     >
       {/* 제목 & 설명 */}
       <div className="flex flex-col">
