@@ -35,9 +35,10 @@ public class CommentController implements  CommentSwaggerController{
     }
 
     @Override
-    public ResponseEntity<Comment> updateComment(Long commentId, CommentRequestDTO commentRequestDTO) {
+    public ResponseEntity<Void> updateComment(Long commentId, CommentRequestDTO commentRequestDTO) {
         User user = userService.getAuthenticatedUser();
-        return ResponseEntity.ok().body(commentService.updateComment(commentId,commentRequestDTO,user));
+        commentService.updateComment(commentId,commentRequestDTO,user);
+        return ResponseEntity.ok().build();
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ssafy.com.ssacle.board.domain.Board;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +26,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     void deleteById(@Param("id") Long id);
 
     @Transactional
-    @Query("UPDATE Board b SET b.title = :title, b.content = :content, b.updatedAt = CURRENT_TIMESTAMP WHERE b.id = :id")
-    void updateBoard(@Param("id") Long id, @Param("title") String title, @Param("content") String content);
+    @Modifying
+    @Query("UPDATE Board b SET b.title = :title, b.content = :content, b.tag=:tag, b.updatedAt = :updatedAt WHERE b.id = :id")
+    void updateBoard(@Param("id") Long id, @Param("title") String title, @Param("content") String content, @Param("tag") String tag,@Param("updatedAt") LocalDateTime updatedAt);
 
     @Query("SELECT COUNT(b) FROM Board b WHERE b.boardType.name = :boardTypeName")
     int countBoardsByBoardTypeName(@Param("boardTypeName") String boardTypeName);
