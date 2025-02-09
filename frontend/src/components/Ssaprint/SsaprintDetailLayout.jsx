@@ -1,4 +1,5 @@
 import SprintBasicInfo from '@/components/SprintCommon/SprintBasicInfo'
+import SprintSummary from '@/components/SprintCommon/SprintSummary'
 
 const SsaprintDetailLayout = ({ sprintData }) => {
   if (!sprintData || !sprintData.sprint) {
@@ -19,10 +20,22 @@ const SsaprintDetailLayout = ({ sprintData }) => {
         </span>
       </h2>
 
-      {/* 기본 정보 */}
-      <SprintBasicInfo sprint={sprintData.sprint} />
+      <div className="flex justify-between items-stretch gap-4 h-auto">
+        {/* 기본 정보 (가로 길이 증가) */}
+        <div className="flex-1 h-auto">
+          <SprintBasicInfo sprint={sprintData.sprint} />
+        </div>
 
-      {/* 요약 정보 */}
+        {/* 요약 정보 (높이 맞춤) */}
+        <div className="w-[18rem] flex-shrink-0 h-auto flex">
+          <SprintSummary
+            recommendedFor={sprintData.recommended_for}
+            benefits={sprintData.benefits}
+            participation={sprintData.sprint.participation}
+            recruit={sprintData.sprint.recruit}
+          />
+        </div>
+      </div>
 
       {/* 상세 정보 컨테이너 */}
     </div>
