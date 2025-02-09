@@ -122,22 +122,20 @@ export const BOARD_END_POINT = {
 
 // 댓글 -> commentService
 export const COMMENT_END_POINT = {
+  // 게시글 댓글 관련
+  LIST: (boardId) => `/board/${boardId}/comment`, // 게시글의 댓글 목록 조회
+  CREATE: (boardId) => `/board/${boardId}/comment`, // 댓글 작성
+  UPDATE: (boardId, commentId) => `/board/${boardId}/comments/${commentId}`, // 댓글 수정
+  DELETE: (boardId, commentId) => `/board/${boardId}/comments/${commentId}`, // 댓글 삭제
+
   // 대댓글 관련
-  REPLIES: {
-    LIST: (parentCommentId) => `/comment/reply/${parentCommentId}`, // 대댓글 조회
-    CREATE: (parentCommentId) => `/comment/reply/${parentCommentId}`, // 대댓글 작성
-  },
-
-  // 게시글의 댓글 관련
-  BOARD_COMMENTS: {
-    LIST: (boardId) => `/comment/board/${boardId}`, // 특정 게시글의 댓글 조회
-    CREATE: (boardId) => `/comment/board/${boardId}`, // 댓글 작성
-  },
-
-  // 댓글 수정/삭제
-  COMMENT: {
-    UPDATE: (commentId) => `/comment/${commentId}`, // 댓글 수정
-    DELETE: (commentId) => `/comment/${commentId}`, // 댓글 삭제
+  SUB_COMMENTS: {
+    COUNT: (boardId, commentId) =>
+      `/board/${boardId}/comments/${commentId}/subcomment/count`, // 대댓글 수 조회
+    LIST: (boardId, commentId) =>
+      `/board/${boardId}/comments/${commentId}/subcomment`, // 대댓글 목록 조회
+    CREATE: (boardId, commentId) =>
+      `/board/${boardId}/comments/${commentId}/subcomment/create`, // 대댓글 생성
   },
 }
 
