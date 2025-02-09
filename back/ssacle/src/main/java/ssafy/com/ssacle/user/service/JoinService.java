@@ -61,6 +61,10 @@ public class JoinService {
     }
 
     @Transactional
+    public boolean isStudentNumberDuplicate(String studentNumber){
+        return userRepository.existsByStudentNumber(studentNumber);
+    }
+    @Transactional
     public boolean isEmailDuplicate(String email) {
         return userRepository.existsByEmail(email);
     }
