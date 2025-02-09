@@ -38,6 +38,9 @@ public class SprintController implements SprintSwaggerController{
         return ResponseEntity.status(201).build();
     }
 
+    /**
+     * 단일 스프린트 조회
+     */
     @Override
     public ResponseEntity<SingleSprintResponse> getSprintById(@PathVariable Long id) {
         SingleSprintResponse response = sprintService.getSprintById(id);

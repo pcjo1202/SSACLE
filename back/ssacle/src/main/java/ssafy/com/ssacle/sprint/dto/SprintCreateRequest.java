@@ -9,9 +9,10 @@ import java.util.List;
 @Getter
 public class SprintCreateRequest {
     private String name;
-    private String description;
-    private String detail;
+    private String basicDescription;
+    private String detailDescription;
     private String tags;
+    private String recommendedFor;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
     private LocalDateTime announceAt;

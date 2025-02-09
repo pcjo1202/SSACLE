@@ -5,13 +5,13 @@ import ssafy.com.ssacle.todo.dto.TodoRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SprintBuilder {
     private String name;
-    private String description;
-    private String detail;
+    private String basicDescription;
+    private String detailDescription;
     private String tags;
+    private String recommendedFor;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
     private LocalDateTime announceAt;
@@ -26,8 +26,16 @@ public class SprintBuilder {
         this.name = name;
         return this;
     }
-    public SprintBuilder description(String description){
-        this.description = description;
+    public SprintBuilder basicDescription(String basicDescription){
+        this.basicDescription = basicDescription;
+        return this;
+    }
+    public SprintBuilder detailDescription(String detailDescription){
+        this.detailDescription = detailDescription;
+        return this;
+    }
+    public SprintBuilder recommendedFor(String recommendedFor){
+        this.recommendedFor = recommendedFor;
         return this;
     }
     public SprintBuilder startAt(LocalDateTime startAt){
@@ -40,10 +48,6 @@ public class SprintBuilder {
     }
     public SprintBuilder announceAt(LocalDateTime announceAt){
         this.announceAt = announceAt;
-        return this;
-    }
-    public SprintBuilder detail(String detail){
-        this.detail = detail;
         return this;
     }
     public SprintBuilder tags(String tags){
@@ -61,7 +65,7 @@ public class SprintBuilder {
     }
 
     public Sprint build(){
-        Sprint sprint = new Sprint(name, description, detail, tags, startAt, endAt, announceAt, 0, 1, maxMembers, 1, LocalDateTime.now());
+        Sprint sprint = new Sprint(name, basicDescription, detailDescription, tags, recommendedFor, startAt, endAt, announceAt, 0, 1, maxMembers, 1, LocalDateTime.now());
 
         if (defaultTodoRequests != null && !defaultTodoRequests.isEmpty()) {
             List<DefaultTodo> defaultTodos = defaultTodoRequests.stream()

@@ -33,14 +33,17 @@ public class Sprint {
     @Column(name = "name", nullable = false, length=25)
     private String name;
 
-    @Column(name = "description", nullable = false, length=100)
-    private String description;
+    @Column(name = "basic_description", nullable = false, length=100)
+    private String basicDescription;
 
-    @Column(name = "detail", nullable = false)
-    private String detail;
+    @Column(name = "detail_description", nullable = false)
+    private String detailDescription;
 
     @Column(name = "tags")
     private String tags;
+
+    @Column(name = "recommended_for", nullable = false)
+    private String recommendedFor;
 
     @Column(name = "start_at", nullable = false)
     private LocalDateTime startAt;
@@ -66,16 +69,17 @@ public class Sprint {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    protected Sprint(String name, String description, String detail, String tags, LocalDateTime startAt, LocalDateTime endAt, LocalDateTime announceAt, Integer status, Integer sequence, Integer maxMembers, Integer currentMembers, LocalDateTime createdAt){
+    protected Sprint(String name, String basicDescription, String detailDescription, String tags, String recommendedFor, LocalDateTime startAt, LocalDateTime endAt, LocalDateTime announceAt, Integer status, Integer sequence, Integer maxMembers, Integer currentMembers, LocalDateTime createdAt){
         ValidationUtils.validationCount(status, UtilErrorCode.STATUS_VALIDATION_COUNT_FAILED);
         ValidationUtils.validationCount(sequence, UtilErrorCode.SEQUENCE_VALIDATION_COUNT_FAILED);
         ValidationUtils.validationCount(maxMembers, UtilErrorCode.MEMBER_VALIDATION_COUNT_FAILED);
         ValidationUtils.validationCount(currentMembers, UtilErrorCode.MEMBER_VALIDATION_COUNT_FAILED);
 
         this.name=name;
-        this.description=description;
-        this.detail=detail;
+        this.basicDescription=basicDescription;
+        this.detailDescription=detailDescription;
         this.tags=tags;
+        this.recommendedFor=recommendedFor;
         this.startAt=startAt;
         this.endAt=endAt;
         this.announceAt=announceAt;

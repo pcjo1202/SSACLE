@@ -25,9 +25,10 @@ public class SprintService {
     public SprintResponse createSprint(SprintCreateRequest request) {
         Sprint sprint = SprintBuilder.builder()
                 .name(request.getName())
-                .description(request.getDescription())
-                .detail(request.getDetail())
+                .basicDescription(request.getBasicDescription())
+                .detailDescription(request.getDetailDescription())
                 .tags(request.getTags())
+                .recommendedFor(request.getRecommendedFor())
                 .startAt(request.getStartAt())
                 .endAt(request.getEndAt())
                 .announceAt(request.getAnnounceAt())
