@@ -111,10 +111,34 @@ export const ADMIN_END_POINT = {
 
 // 게시판 -> boardService
 export const BOARD_END_POINT = {
-  LIST: '/board/list',
-  POST: '/board/post',
-  COMMENT: '/board/comment',
-  SEARCH: '/board/search',
+  LIST: '/board', // 게시글 목록 조회
+  DETAIL: (boardId) => `/board/${boardId}`, // 게시글 상세 조회
+  COUNT: '/board/count', // 게시글 수 카운트
+  CREATE: '/board/create', // 게시글 생성
+  DELETE: (boardId) => `/board/${boardId}`, // 게시글 삭제
+  UPDATE: (boardId) => `/board/${boardId}`, // 게시글 수정정
+  // SEARCH: '/board/search',
+}
+
+// 댓글 -> commentService
+export const COMMENT_END_POINT = {
+  // 대댓글 관련
+  REPLIES: {
+    LIST: (parentCommentId) => `/comment/reply/${parentCommentId}`, // 대댓글 조회
+    CREATE: (parentCommentId) => `/comment/reply/${parentCommentId}`, // 대댓글 작성
+  },
+
+  // 게시글의 댓글 관련
+  BOARD_COMMENTS: {
+    LIST: (boardId) => `/comment/board/${boardId}`, // 특정 게시글의 댓글 조회
+    CREATE: (boardId) => `/comment/board/${boardId}`, // 댓글 작성
+  },
+
+  // 댓글 수정/삭제
+  COMMENT: {
+    UPDATE: (commentId) => `/comment/${commentId}`, // 댓글 수정
+    DELETE: (commentId) => `/comment/${commentId}`, // 댓글 삭제
+  },
 }
 
 // 노션 관련 -> notionService
