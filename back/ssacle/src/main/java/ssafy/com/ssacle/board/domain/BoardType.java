@@ -1,5 +1,6 @@
 package ssafy.com.ssacle.board.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -23,6 +24,7 @@ public class BoardType {
 
     /** 하위 소주제 목록 (하위 카테고리) */
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<BoardType> children;
 
     @Column(nullable = false, length = 512)
