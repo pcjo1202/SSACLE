@@ -23,6 +23,7 @@ export const AUTH_END_POINT = {
 
   // 인증 코드 전송 (웹훅 URL 포함)
   SEND_VERIFICATION: `/join/send-verification`, // 인증 코드 전송 (웹훅 URL 포함)
+  CHECK_CODE: '/join/verify-ssafy', // 인증 코드 확인
 
   // 토큰 재발급
   REFRESH_TOKEN: '/refreshtoken', // 액세스 & 리프레시 토큰 재발급

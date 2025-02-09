@@ -59,3 +59,7 @@ export const fetchFindEmail = async (studentNumber) =>
 // 비밀번호 찾기
 export const fetchFindPassword = async (studentNumber, email) =>
   axios.post(AUTH_END_POINT.FIND_PASSWORD, { studentNumber, email })
+
+// 인증 번호 검증
+export const fetchCheckCode = async (email, verificationCode) =>
+  axios.post(AUTH_END_POINT.CHECK_CODE, { email, verificationCode })
