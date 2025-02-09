@@ -88,92 +88,90 @@ const EmailPage = () => {
   }
 
   return (
-    // 제일 겉 컨테이너 -- 테두리 묶기
-    <div className="w-full h-auto flex justify-center items-center mt-24">
-      {/* 컬럼을 나눌 컨테이너 -- 컬럼 12개로 쪼개고 갭 4씩*/}
-      <div className="grid grid-cols-12 gap-4 w-full">
-        {/* 컬럼 4개만 사용하게 하기 */}
-        <div className="col-span-4 col-start-5">
-          <h1 className="text-ssacle-blue text-3xl font-bold text-center mb-10">
-            이메일 / 비밀번호 찾기
-          </h1>
-          {/* 탭 버튼 */}
-          <div className="flex justify-center border-b">
+    <div className="w-full h-screen flex justify-center items-center">
+      <div className="flex flex-col gap-4 w-[30rem] shrink-0 px-4">
+        <h1 className="text-ssacle-blue text-3xl font-bold text-center mb-5">
+          이메일 / 비밀번호 찾기
+        </h1>
+
+        {/* 탭 버튼 영역 */}
+        <div className="flex border-b">
+          <button
+            className={`w-1/2 py-2 text-center ${
+              activeTab === 'email'
+                ? 'border-b-2 border-ssacle-blue text-ssacle-black text-base font-medium'
+                : 'text-ssacle-gray text-base font-medium'
+            }`}
+            onClick={() => setActiveTab('email')}
+          >
+            이메일 찾기
+          </button>
+          <button
+            className={`w-1/2 py-2 text-center ${
+              activeTab === 'password'
+                ? 'border-b-2 border-ssacle-blue text-ssacle-black text-base font-medium'
+                : 'text-ssacle-gray text-base font-medium'
+            }`}
+            onClick={() => setActiveTab('password')}
+          >
+            비밀번호 찾기
+          </button>
+        </div>
+
+        {activeTab === 'email' ? (
+          <div className="flex flex-col gap-4">
+            <input
+              placeholder="싸피 학번을 입력 해주세요"
+              className="w-full h-12 bg-ssacle-gray-sm rounded-full px-6
+                           text-ssacle-blue text-base font-medium focus:outline-ssacle-blue"
+              value={studentNumber}
+              onChange={(e) => setStudentNumber(e.target.value)}
+            />
             <button
-              className={`w-1/2 px-4 py-2 text-center ${
-                activeTab === 'email'
-                  ? 'border-b-2 border-ssacle-blue text-ssacle-black text-base font-medium'
-                  : 'text-ssacle-gray text-base font-medium'
-              }`}
-              onClick={() => setActiveTab('email')}
+              onClick={handleFindEmail}
+              className="w-full h-12 bg-ssacle-blue rounded-full text-white text-xl font-bold"
             >
               이메일 찾기
             </button>
-            <button
-              className={`w-1/2 px-4 py-2 text-center ${
-                activeTab === 'password'
-                  ? 'border-b-2 border-ssacle-blue text-ssacle-black text-base font-medium'
-                  : 'text-ssacle-gray text-base font-medium'
-              }`}
-              onClick={() => setActiveTab('password')}
-            >
-              비밀번호 찾기
-            </button>
+
+            {/* 이메일 찾기 결과 */}
+            {foundEmail && (
+              <div className="text-center text-ssacle-blue font-medium">
+                찾으신 이메일: {foundEmail}
+              </div>
+            )}
           </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            <input
+              placeholder="싸피 학번을 입력 해주세요"
+              className="w-full h-12 bg-ssacle-gray-sm rounded-full px-6
+                           text-ssacle-blue text-base font-medium focus:outline-ssacle-blue"
+              value={pwStudentNumber}
+              onChange={(e) => setPwStudentNumber(e.target.value)}
+            />
+            <input
+              placeholder="이메일을 입력해 주세요"
+              className="w-full h-12 bg-ssacle-gray-sm rounded-full px-6
+                           text-ssacle-blue text-base font-medium focus:outline-ssacle-blue"
+              value={pwEmail}
+              onChange={(e) => setPwEmail(e.target.value)}
+            />
+            <button
+              onClick={handleFindPassword}
+              className="w-full h-12 bg-ssacle-blue rounded-full text-white text-xl font-bold"
+            >
+              이메일 인증하기
+            </button>
 
-          {/* 탭 버튼 시 나올 화면 */}
-          {activeTab === 'email' ? (
-            <div className="pt-10">
-              <input
-                placeholder="싸피 학번을 입력 해주세요"
-                className="w-full h-12 bg-ssacle-gray-sm rounded-full px-6 text-ssacle-blue text-base font-medium focus:outline-ssacle-blue mb-4"
-                value={studentNumber}
-                onChange={(e) => setStudentNumber(e.target.value)}
-              />
-              <button
-                onClick={handleFindEmail}
-                className="w-full h-12 bg-ssacle-blue rounded-full text-white text-xl font-bold mb-4"
-              >
-                이메일 찾기
-              </button>
-
-              {/* 이메일 찾기 성공 시, foundEmail로 표시 */}
-              {foundEmail && (
-                <div className="text-center text-ssacle-blue font-medium">
-                  찾으신 이메일: {foundEmail}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="pt-10">
-              <input
-                placeholder="싸피 학번을 입력 해주세요"
-                className="w-full h-12 bg-ssacle-gray-sm rounded-full px-6 text-ssacle-blue text-base font-medium focus:outline-ssacle-blue mb-4"
-                value={pwStudentNumber}
-                onChange={(e) => setPwStudentNumber(e.target.value)}
-              />
-              <input
-                placeholder="이메일을 입력해 주세요"
-                className="w-full h-12 bg-ssacle-gray-sm rounded-full px-6 text-ssacle-blue text-base font-medium focus:outline-ssacle-blue mb-4"
-                value={pwEmail}
-                onChange={(e) => setPwEmail(e.target.value)}
-              />
-              <button
-                onClick={handleFindPassword}
-                className="w-full h-12 bg-ssacle-blue rounded-full text-white text-xl font-bold mb-4"
-              >
-                이메일 인증하기
-              </button>
-
-              {/* 비밀번호 찾기 결과를 표시 (200 OK 시) */}
-              {pwResult && (
-                <div className="text-center text-ssacle-blue font-medium">
-                  조회 결과: {pwResult}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+            {/* 비밀번호 찾기 결과 */}
+            {pwResult && (
+              <div className="text-center text-ssacle-blue font-medium">
+                조회 결과: {pwResult}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
