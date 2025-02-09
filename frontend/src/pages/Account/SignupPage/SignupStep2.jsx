@@ -1,12 +1,23 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useState, useRef } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { fetchCheckNickname } from '@/services/userService'
+import {
+  fetchCheckNickname,
+  fetchCheckNumber,
+  fetchSignup,
+} from '@/services/userService'
 
 const SignupStep2 = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const confirmPasswordRef = useRef(null)
+
+  // 학번 상태
+  const [studentNumber, setStudentNumber] = useState('')
+  const [isStudentNumberValid, setIsStudentNumberValid] = useState(null) // 학번 인증 상태 (null: 미확인)
+
+  // 이름 상태
+  const [name, setName] = useState('')
 
   // 닉네임 상태
   const [nickname, setNickname] = useState('')
@@ -21,6 +32,9 @@ const SignupStep2 = () => {
   const [termsChecked, setTermsChecked] = useState(false)
   const [privacyChecked, setPrivacyChecked] = useState(false)
   const [termsError, setTermsError] = useState(false)
+
+  // Step1에서 받아온 이메일
+  const email = location.state?.email || ''
 
   // 닉네임 중복 확인 Mutation
   const nicknameMutation = useMutation({
@@ -39,18 +53,71 @@ const SignupStep2 = () => {
     },
   })
 
+  // 학번 중복 확인 Mutation
+  const studentNumberMutation = useMutation({
+    mutationFn: () => fetchCheckNumber(studentNumber),
+    onSuccess: (data) => {
+      if (data?.isDuplicate) {
+        setIsStudentNumberValid(false) // 중복됨
+      } else {
+        setIsStudentNumberValid(true) // 사용 가능
+      }
+    },
+    onError: (error) => {
+      console.error('학번 중복 확인 오류:', error)
+      alert('학번 확인 중 오류가 발생했습니다. 다시 시도해주세요.')
+    },
+  })
+
+  // 회원가입 Mutation
+  const signupMutation = useMutation({
+    mutationFn: () =>
+      fetchSignup({
+        studentNumber,
+        email,
+        nickname,
+        name,
+        password,
+        confirmPassword,
+      }),
+    onSuccess: () => {
+      alert('회원가입이 완료되었습니다.')
+      navigate('/account/signup/interest')
+    },
+    onError: (error) => {
+      console.error('회원가입 실패:', error)
+      alert('회원가입에 실패했습니다. 다시 시도해주세요.')
+    },
+  })
+
   // 비밀번호 확인 함수
   const handleConfirmPasswordChange = (e) => {
     setConfirmPassword(e.target.value)
-    if (password && e.target.value && password !== e.target.value) {
-      setPasswordError(true)
-    } else {
-      setPasswordError(false)
-    }
+    setPasswordError(password && e.target.value && password !== e.target.value)
   }
 
-  // 회원가입 버튼 클릭 시 최종 검증
   const handleSignup = () => {
+    // 🔥 필수 입력값 체크
+    if (!studentNumber) {
+      alert('학번을 입력해주세요.')
+      return
+    }
+    if (!isStudentNumberValid) {
+      alert('학번 중복 확인을 해주세요.')
+      return
+    }
+    if (!name) {
+      alert('이름을 입력해주세요.')
+      return
+    }
+    if (!nickname) {
+      alert('닉네임을 입력해주세요.')
+      return
+    }
+    if (!isNicknameValid) {
+      alert('닉네임 중복 확인을 해주세요.')
+      return
+    }
     if (!password || !confirmPassword) {
       setPasswordError(true)
       confirmPasswordRef.current.focus()
@@ -58,14 +125,16 @@ const SignupStep2 = () => {
     }
     if (password !== confirmPassword) {
       setPasswordError(true)
-      confirmPasswordRef.current?.focus() // 불일치 시 포커스 이동
+      confirmPasswordRef.current?.focus()
       return
     }
     if (!termsChecked || !privacyChecked) {
       setTermsError(true)
       return
     }
-    navigate('/account/signup/interest')
+
+    // 🔥 회원가입 API 실행
+    signupMutation.mutate()
   }
 
   return (
@@ -87,20 +156,41 @@ const SignupStep2 = () => {
               <input
                 type="text"
                 placeholder="학번을 입력하세요."
+                value={studentNumber}
+                onChange={(e) => setStudentNumber(e.target.value)}
                 className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
               />
-              <button className="col-span-1 col-start-6 h-12 bg-ssacle-blue rounded-full text-white text-base font-bold mb-4">
-                중복확인
+              <button
+                className="col-span-1 col-start-6 h-12 bg-ssacle-blue rounded-full text-white text-base font-bold mb-4"
+                onClick={() => studentNumberMutation.mutate()} //
+                disabled={studentNumberMutation.isLoading} //
+              >
+                {studentNumberMutation.isLoading ? '확인 중...' : '중복확인'}
               </button>
+
+              {/* 학번 인증 결과 메시지 */}
+              {isStudentNumberValid === true && (
+                <p className="col-span-4 col-start-3 text-ssacle-blue text-sm">
+                  인증이 완료되었습니다.
+                </p>
+              )}
+              {isStudentNumberValid === false && (
+                <p className="col-span-4 col-start-3 text-red-500 text-sm">
+                  이미 아이디가 존재합니다.
+                </p>
+              )}
 
               {/* 이메일 */}
               <label className="col-span-2 text-ssacle-black text-xl font-medium py-2">
                 이메일 *
               </label>
               <div className="col-span-4 col-start-3">
-                <div className="h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-lg text-ssacle-black">
-                  ssafy@ssafy.com
-                </div>
+                <input
+                  type="email"
+                  value={email}
+                  disabled // 🔥 이메일은 변경 불가능하게 설정
+                  className="h-12 w-full bg-ssacle-gray-sm rounded-full px-6 text-lg text-ssacle-black cursor-not-allowed"
+                />
                 <p className="text-ssacle-blue text-sm mt-1 mb-4">
                   인증이 완료되었습니다.
                 </p>
@@ -108,8 +198,22 @@ const SignupStep2 = () => {
             </div>
             <div className="border-b-2 border-ssacle-gray-sm my-6" />
 
+            {/* 이름 입력 */}
             <div className="grid grid-cols-6 gap-4">
-              {/* 닉네임 입력 */}
+              <label className="col-span-2 text-ssacle-black text-xl font-medium py-2">
+                이름 *
+              </label>
+              <input
+                type="text"
+                placeholder="이름을 입력하세요."
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="col-span-4 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
+              />
+            </div>
+
+            {/* 닉네임 입력 */}
+            <div className="grid grid-cols-6 gap-4">
               <label className="col-span-2 text-ssacle-black text-xl font-medium py-2">
                 닉네임 *
               </label>
@@ -200,6 +304,7 @@ const SignupStep2 = () => {
               <button
                 className="col-span-2 col-start-3 h-12 bg-ssacle-blue rounded-full px-6 text-white text-center text-xl font-bold mb-4"
                 onClick={handleSignup}
+                disabled={signupMutation.isLoading}
               >
                 회원가입
               </button>

@@ -4,9 +4,11 @@ export const AUTH_END_POINT = {
   CHECK_EMAIL: (email) => `/join/check-email?email=${email}`, // 이메일 중복 확인
 
   // 비밀번호 & 닉네임 관련 엔드포인트
-  CHECK_PASSWORD: (password, confirmPassword) =>
-    `/join/check-password?password=${password}&confirmpassword=${confirmPassword}`, // 비밀번호 확인
-  CHECK_NICKNAME: (nickname) => `/join/check-nickname?nickname=${nickname}`, // 닉네임 중복 체크
+  CHECK_PASSWORD: '/join/check-password', // 비밀번호 확인
+  CHECK_NICKNAME: '/join/check-nickname', // 닉네임 확인
+
+  // 학번 중복 체크
+  CHECK_STUDENT_NUMBER: '/join/check-studentNumber',
 
   // 관심사 체크 (변경 없음)
   CHECK_INTERESTS: (interests) =>
@@ -22,7 +24,7 @@ export const AUTH_END_POINT = {
   FIND_PASSWORD: '/login/find-password', // 비밀번호 찾기
 
   // 인증 코드 전송 (웹훅 URL 포함)
-  SEND_VERIFICATION: `/join/send-verification`, // 인증 코드 전송 (웹훅 URL 포함)
+  SEND_VERIFICATION: '/join/send-verification', // 인증 코드 전송 (웹훅 URL 포함)
   CHECK_CODE: '/join/verify-ssafy', // 인증 코드 확인
 
   // 토큰 재발급
