@@ -31,8 +31,8 @@ public class BoardController implements BoardSwaggerController{
     }
 
     @Override
-    public ResponseEntity<BoardResponseDTO> getBoardById(Long id) {
-        return ResponseEntity.ok().body(boardService.getBoardById(id));
+    public ResponseEntity<BoardResponseDTO> getBoardById(Long boardId) {
+        return ResponseEntity.ok().body(boardService.getBoardById(boardId));
     }
 
     @Override
