@@ -3,6 +3,7 @@ import SprintBasicInfo from '@/components/SprintCommon/SprintBasicInfo'
 import SprintSummary from '@/components/SprintCommon/SprintSummary'
 import SprintParticipationModal from '@/components/SprintCommon/SprintParticipationModal'
 import Button from '@/components/common/Button'
+import SprintDetail from "@/components/SprintCommon/SprintDetail";
 
 const SsaprintDetailLayout = ({ sprintData }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -41,11 +42,16 @@ const SsaprintDetailLayout = ({ sprintData }) => {
           />
         </div>
       </div>
-      <div>
-        <div>{/* 상세 정보 컨테이너 */}</div>
-        <div>
-          {/* 참여하기 버튼 */}
-          <Button className="w-full mt-2" onClick={() => setIsOpen(true)}>
+      
+      <div className="flex justify-between items-start gap-4 h-auto">
+        {/* 상세 정보 */}
+        <div className="flex-1">
+          <SprintDetail sprint={sprintData.sprint} />
+        </div>
+
+        {/* 참여 버튼 */}
+        <div className="w-[18rem] flex-shrink-0">
+          <Button className="w-full" onClick={() => setIsOpen(true)}>
             스프린트 참여하기
           </Button>
         </div>
