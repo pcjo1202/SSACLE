@@ -1,7 +1,12 @@
+import { useState } from 'react'
 import SprintBasicInfo from '@/components/SprintCommon/SprintBasicInfo'
 import SprintSummary from '@/components/SprintCommon/SprintSummary'
+import SprintParticipationModal from '@/components/SprintCommon/SprintParticipationModal'
+import Button from '@/components/common/Button'
 
 const SsaprintDetailLayout = ({ sprintData }) => {
+  const [isOpen, setIsOpen] = useState(false)
+
   if (!sprintData || !sprintData.sprint) {
     return (
       <p className="text-gray-500 text-center">
@@ -21,12 +26,12 @@ const SsaprintDetailLayout = ({ sprintData }) => {
       </h2>
 
       <div className="flex justify-between items-stretch gap-4 h-auto">
-        {/* 기본 정보 (가로 길이 증가) */}
+        {/* 기본 정보 */}
         <div className="flex-1 h-auto">
           <SprintBasicInfo sprint={sprintData.sprint} />
         </div>
 
-        {/* 요약 정보 (높이 맞춤) */}
+        {/* 요약 정보 */}
         <div className="w-[18rem] flex-shrink-0 h-auto flex">
           <SprintSummary
             recommendedFor={sprintData.recommended_for}
@@ -36,8 +41,27 @@ const SsaprintDetailLayout = ({ sprintData }) => {
           />
         </div>
       </div>
+      <div>
+        <div>{/* 상세 정보 컨테이너 */}</div>
+        <div>
+          {/* 참여하기 버튼 */}
+          <Button className="w-full mt-2" onClick={() => setIsOpen(true)}>
+            스프린트 참여하기
+          </Button>
+        </div>
+      </div>
 
-      {/* 상세 정보 컨테이너 */}
+      {/* 모달 표시 */}
+      {isOpen && (
+        <SprintParticipationModal
+          onClose={() => setIsOpen(false)}
+          onConfirm={() => {
+            setIsOpen(false)
+            // eslint-disable-next-line no-console
+            console.log('스프린트 참여 완료!') // 참여중 페이지로 이동할 예정
+          }}
+        />
+      )}
     </div>
   )
 }
