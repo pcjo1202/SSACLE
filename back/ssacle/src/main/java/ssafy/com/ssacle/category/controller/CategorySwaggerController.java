@@ -26,6 +26,7 @@ public interface CategorySwaggerController {
             @RequestBody CategoryCreateRequest request
     );
 
+
     @Operation(summary = "전체 카테고리 조회", description = "모든 카테고리를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "카테고리 목록 조회 성공"),
@@ -34,13 +35,6 @@ public interface CategorySwaggerController {
     @GetMapping("/all")
     ResponseEntity<List<CategoryTreeResponseDTO>> getAllCategories();
 
-    @Operation(summary = "상위 카테고리 조회", description = "부모가 없는 상위 카테고리를 조회합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "상위 카테고리 목록 조회 성공"),
-            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
-    })
-    @GetMapping("/parents")
-    ResponseEntity<List<CategoryResponseDTO>> getParentCategories();
 
     @Operation(summary = "하위 카테고리 조회", description = "특정 상위 카테고리의 하위 카테고리를 조회합니다.")
     @ApiResponses(value = {
@@ -52,5 +46,12 @@ public interface CategorySwaggerController {
     ResponseEntity<List<CategoryResponseDTO>> getSubCategories(@PathVariable Long parentId);
 
 
+    @Operation(summary = "상위 카테고리 조회", description = "부모가 없는 상위 카테고리를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상위 카테고리 목록 조회 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @GetMapping("/parents")
+    ResponseEntity<List<CategoryResponseDTO>> getParentCategories();
 
 }

@@ -50,9 +50,7 @@ public class UserService {
     }
     public User getAuthenticatedUserWithTeams() {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println("==================");
-        System.out.println(userEmail);
-        System.out.println("==================");
+
         return userRepository.findUserWithTeamsByEmail(userEmail)
                 .orElseThrow(RuntimeException::new);
     }

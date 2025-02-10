@@ -29,5 +29,5 @@ public class Todo {
     private LocalDate date;
 
     @Column(name = "is_done", nullable = false)
-    private boolean isDone = false;
+    private boolean isDone;
 }

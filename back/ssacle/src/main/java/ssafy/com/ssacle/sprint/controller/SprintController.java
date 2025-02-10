@@ -21,9 +21,7 @@ public class SprintController implements SprintSwaggerController{
     private final UserService userService;
     private final SprintService sprintService;
 
-    /**
-     * 스프린트 생성
-     */
+    /** 스프린트 생성 */
     @Override
     public ResponseEntity<SprintResponse> createSprint(@RequestBody SprintCreateRequest request) {
         SprintResponse response = sprintService.createSprint(request);
@@ -31,9 +29,7 @@ public class SprintController implements SprintSwaggerController{
         return ResponseEntity.status(201).body(response);
     }
 
-    /**
-     * 스프린트 참가
-     */
+    /** 스프린트 참가 */
     @Override
     public ResponseEntity<Void> joinSprint(@PathVariable Long sprintId) {
         User user = userService.getAuthenticatedUserWithTeams();
@@ -42,27 +38,21 @@ public class SprintController implements SprintSwaggerController{
         return ResponseEntity.status(201).build();
     }
 
-    /**
-     * 단일 스프린트 조회
-     */
+    /** 단일 스프린트 조회 */
     @Override
     public ResponseEntity<SingleSprintResponse> getSprintById(@PathVariable Long id) {
         SingleSprintResponse response = sprintService.getSprintById(id);
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 조건별 스프린트 조회
-     */
+    /** 조건별 스프린트 조회 */
     @Override
     public ResponseEntity<Page<SingleSprintResponse>> getSprints(@RequestParam String category, Pageable pageable) {
         Page<Sprint> sprints = sprintService.getSprintsByLeafCategory(category, pageable);
         return ResponseEntity.ok(sprints.map(SingleSprintResponse::from));
     }
 
-    /**
-     * 스프린트 입장 페이지에 필요한 단일 스프린트 조회
-     */
+    /** 스프린트 입장 페이지에 필요한 단일 스프린트 조회 */
     @Override
     public ResponseEntity<SprintDetailResponse> getSprintDetails(@PathVariable Long sprintId) {
         SprintDetailResponse response = sprintService.getSprintDetail(sprintId);

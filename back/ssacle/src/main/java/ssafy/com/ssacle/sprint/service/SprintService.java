@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ssafy.com.ssacle.category.domain.Category;
+import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.dto.SingleSprintResponse;
@@ -27,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SprintService {
     private final SprintRepository sprintRepository;
-    private final DefaultTodoRepository defaultTodoRepository;
+    private final CategoryRepository categoryRepository;
     private final TeamRepository teamRepository;
 
     @Transactional
@@ -44,6 +46,12 @@ public class SprintService {
                 .maxMembers(request.getMaxMembers())
                 .defaultTodos(request.getTodos())
                 .build();
+
+        if (request.getCategoryIds() != null && !request.getCategoryIds().isEmpty()) {
+            List<Category> categories = categoryRepository.findAllById(request.getCategoryIds());
+            categories.forEach(sprint::addCategory);
+        }
+
 
         sprintRepository.saveAndFlush(sprint);
 

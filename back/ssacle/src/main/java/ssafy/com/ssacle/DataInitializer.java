@@ -19,9 +19,11 @@ public class DataInitializer {
     void initializeUsers(UserRepository userRepository) {
         if (userRepository.count() == 0) { // 기존 데이터가 없을 경우에만 추가
             User admin = User.createAdmin("admin@example.com", "admin123", "AdminUser");
+            User admin2 = User.createAdmin("admin2@example.com", "admin1234", "AdminUser2");
             User user = User.createStudent("user@example.com", "user123", "John Doe", "1234567", "johndoe");
 
             userRepository.save(admin);
+            userRepository.save(admin2);
             userRepository.save(user);
 
             System.out.println("default data added");

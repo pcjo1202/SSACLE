@@ -18,4 +18,5 @@ public class SprintCreateRequest {
     private LocalDateTime announceAt;
     private Integer maxMembers;
     private List<TodoRequest> todos;
+    private List<Long> categoryIds;
 }
