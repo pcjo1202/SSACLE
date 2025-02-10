@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# QueryDSL 자동 생성된 Q 클래스 제외
+src/main/generated/
+*.qtype
+
