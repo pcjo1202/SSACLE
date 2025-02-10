@@ -1,10 +1,8 @@
 import axios from 'axios'
 
-const BASE_URL = 'http://localhost:5174/'
-
 // Axios 인스턴스 생성
 const httpCommon = axios.create({
-  baseURL: BASE_URL,
+  baseURL: '/api/v1',
   headers: { 'Content-Type': 'application/json' },
   timeout: 5000,
   withCredentials: true,
