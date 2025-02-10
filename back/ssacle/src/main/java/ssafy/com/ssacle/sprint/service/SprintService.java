@@ -2,6 +2,8 @@ package ssafy.com.ssacle.sprint.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
@@ -66,6 +68,10 @@ public class SprintService {
                 .orElseThrow(SprintNotExistException::new);
 
         return SingleSprintResponse.from(sprint);
+    }
+
+    public Page<Sprint> getSprintsByLeafCategory(String leafCategory, Pageable pageable) {
+        return sprintRepository.findSprintsByLeafCategory(leafCategory, pageable);
     }
 
     public SprintDetailResponse getSprintDetail(Long sprintId){

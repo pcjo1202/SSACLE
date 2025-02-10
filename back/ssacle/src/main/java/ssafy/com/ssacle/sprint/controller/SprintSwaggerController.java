@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,4 +69,16 @@ public interface SprintSwaggerController {
             @Parameter(description = "조회할 Sprint ID", example = "1")
             @PathVariable Long sprintId
     );
+
+    @Operation(summary = "카테고리별 Sprint 조회", description = "카테고리로 Sprint 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "스프린트 목록 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
+    })
+    @GetMapping
+    ResponseEntity<Page<SingleSprintResponse>> getSprints(
+            @Parameter(description = "카테고리명 (예: useState, React 등)")
+            @RequestParam String category,
+            Pageable pageable);
 }
