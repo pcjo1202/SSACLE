@@ -13,10 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ssafy.com.ssacle.user.dto.*;
 
 @Tag(name = "Join API", description = "회원가입 API입니다.")
@@ -74,7 +71,7 @@ public interface JoinSwaggerController {
             description = "회원 가입 요청 데이터",
             required = true,
             content = @Content(
-                    schema = @Schema(implementation = JoinDTO.class),
+                    schema = @Schema(implementation = JoinRequestDTO.class),
                     examples = @ExampleObject(
                             name = "회원 가입 예제",
                             value = "{ \"studentNumber\": \"1240587\", \"email\": \"spancer1@naver.com\", \"nickname\": \"KSH0610\", \"name\": \"김수현\", \"password\": \"rlatngus@1\", \"confirmpassword\": \"rlatngus@1\" }"
@@ -82,9 +79,14 @@ public interface JoinSwaggerController {
             )
     )
     @PostMapping
-    ResponseEntity<Void> createUser(
-            @RequestBody @Valid JoinDTO joinDTO
+    ResponseEntity<JoinResponseDTO> createUser(
+            @RequestBody @Valid JoinRequestDTO joinDTO
     );
+
+    @Operation(summary = "관심 카테고리 선택", description = "회원이 관심 있는 카테고리를 선택합니다.")
+    @ApiResponse(responseCode = "200", description = "관심 카테고리 선택 성공")
+    @PostMapping("/{userId}/interest-categories")
+    ResponseEntity<Void> selectInterestCategories(@PathVariable Long userId, @RequestBody SelectInterestDTO selectInterestDTO);
 
     @Operation(summary = "학번 중복 확인", description = "입력한 학번이 이미 등록되어 있는지 확인합니다.")
     @ApiResponse(responseCode = "200", description = "학번 중복 확인에 성공하였습니다.")

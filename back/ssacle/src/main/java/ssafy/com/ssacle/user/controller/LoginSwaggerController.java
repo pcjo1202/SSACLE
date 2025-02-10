@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ssafy.com.ssacle.user.dto.FindEmailDTO;
 import ssafy.com.ssacle.user.dto.FindPasswordDTO;
-import ssafy.com.ssacle.user.dto.LoginDTO;
+import ssafy.com.ssacle.user.dto.LoginRequestDTO;
 
 @Tag(name = "Login & Logout API", description = "로그인 & 로그아웃 API입니다.")
 public interface LoginSwaggerController {
@@ -26,7 +26,7 @@ public interface LoginSwaggerController {
             description = "로그인 요청 데이터",
             required = true,
             content = @Content(
-                    schema = @Schema(implementation = LoginDTO.class),
+                    schema = @Schema(implementation = LoginRequestDTO.class),
                     examples = @ExampleObject(
                             name = "로그인 예제",
                             value = "{ \"email\": \"spancer1@naver.com\", \"password\": \"rlatngus@1\" }"
@@ -35,7 +35,7 @@ public interface LoginSwaggerController {
     )
     @PostMapping("/login")
     ResponseEntity<String> login(
-            @RequestBody @Valid LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response
+            @RequestBody @Valid LoginRequestDTO loginDTO, HttpServletRequest request, HttpServletResponse response
     );
 
 
