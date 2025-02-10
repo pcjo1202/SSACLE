@@ -42,21 +42,29 @@ const SignupStep2 = () => {
 
   // 닉네임 중복 확인 Mutation
   const nicknameMutation = useMutation({
-    mutationFn: () => fetchCheckNickname(nickname),
-    onSuccess: (data) => {
-      if (!nickname.trim()) return // 닉네임이 비어있으면 중단
-      setNicknameChecked(true) // 응답이 오면 확인 여부 true 설정
-      if (data === true) {
-        // 서버에서 true 반환하면 중복됨
-        setIsNicknameValid(false)
-        setNicknameError('이미 사용 중인 닉네임입니다.') // 오류 메시지 표시
-      } else {
-        setIsNicknameValid(true)
-        setNicknameError('') // 오류 메시지 초기화
-      }
+    mutationFn: async () => {
+      console.log('🟡 닉네임 중복 체크 요청:', nickname) // 요청 닉네임 로그
+      const response = await fetchCheckNickname(nickname)
+      // console.log('🟢 닉네임 중복 체크 응답 (원본):', response) // 응답 로그 추가
+      return response // 🚀 서버 응답 반환
     },
+    onSuccess: (response) => {
+      console.log("🟢 닉네임 중복 체크 최종 응답:", response); // 응답 확인
+    
+      if (!nickname.trim()) return; // 닉네임이 비어있으면 중단
+    
+      const isDuplicate = response.data; // 서버 응답 값 (true: 중복, false: 사용 가능)
+      // console.log("🟠 중복 여부:", isDuplicate); // 디버깅용 로그
+    
+      setIsNicknameValid(() => !isDuplicate); // 함수형 업데이트 적용
+      setNicknameChecked(() => true); // 함수형 업데이트 적용
+      setNicknameError(() => (isDuplicate ? "이미 사용 중인 닉네임입니다." : "")); // 함수형 업데이트 적용
+    
+    },
+    
+
     onError: (error) => {
-      console.error('닉네임 중복 확인 오류:', error)
+      console.error('❌ 닉네임 중복 확인 오류:', error)
       alert('닉네임 확인 중 오류가 발생했습니다. 다시 시도해주세요.')
     },
   })
@@ -97,8 +105,10 @@ const SignupStep2 = () => {
     onError: (error) => {
       // console.error('회원가입 실패:', error)
       // alert('회원가입에 실패했습니다. 다시 시도해주세요.')
-      console.error('회원가입 실패:', error.response?.data || error.message) // ✅ 응답 메시지 확인
-      alert(`회원가입 실패: ${error.response?.data?.message || '다시 시도해주세요.'}`)
+      console.error('회원가입 실패:', error.response?.data || error.message) // 응답 메시지 확인
+      alert(
+        `회원가입 실패: ${error.response?.data?.message || '다시 시도해주세요.'}`
+      )
     },
   })
 
@@ -301,16 +311,16 @@ const SignupStep2 = () => {
               </button>
 
               {/* 닉네임 인증 결과 메시지 */}
-              {nicknameChecked && ( // 응답이 오면 메시지 표시
+              {nicknameChecked && (
                 <>
+                  {isNicknameValid === false && (
+                    <p className="col-span-4 col-start-3 text-red-500 text-sm">
+                      ❌ {nicknameError}
+                    </p>
+                  )}
                   {isNicknameValid === true && (
                     <p className="col-span-4 col-start-3 text-ssacle-blue text-sm">
                       사용 가능한 닉네임입니다.
-                    </p>
-                  )}
-                  {isNicknameValid === false && (
-                    <p className="col-span-4 col-start-3 text-red-500 text-sm">
-                      {nicknameError}
                     </p>
                   )}
                 </>
