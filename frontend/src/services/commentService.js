@@ -14,35 +14,26 @@ export const fetchCreateComment = async (boardId, content) => {
 }
 
 // 댓글 수정 (PATCH)
-export const fetchUpdateComment = async (boardId, commentId, content) => {
-  return httpCommon.patch(COMMENT_END_POINT.UPDATE(boardId, commentId), {
+export const fetchUpdateComment = async (commentId, content) => {
+  return httpCommon.patch(COMMENT_END_POINT.UPDATE(commentId), {
     content,
   })
 }
 
 // 댓글 삭제 (DELETE)
-export const fetchDeleteComment = async (boardId, commentId) => {
-  return httpCommon.delete(COMMENT_END_POINT.DELETE(boardId, commentId))
-}
-
-// 대댓글 수 조회 (GET)
-export const fetchSubCommentCount = async (boardId, commentId) => {
-  return httpCommon.get(
-    COMMENT_END_POINT.SUB_COMMENTS.COUNT(boardId, commentId)
-  )
+export const fetchDeleteComment = async (commentId) => {
+  return httpCommon.delete(COMMENT_END_POINT.DELETE(commentId))
 }
 
 // 대댓글 목록 조회 (GET)
-export const fetchSubComments = async (boardId, commentId) => {
-  return httpCommon.get(COMMENT_END_POINT.SUB_COMMENTS.LIST(boardId, commentId))
+export const fetchSubComments = async (parentCommentId) => {
+  return httpCommon.get(COMMENT_END_POINT.SUB_COMMENTS.LIST(parentCommentId))
 }
 
 // 대댓글 생성 (POST)
-export const fetchCreateSubComment = async (boardId, commentId, content) => {
+export const fetchCreateSubComment = async (parentCommentId, content) => {
   return httpCommon.post(
-    COMMENT_END_POINT.SUB_COMMENTS.CREATE(boardId, commentId),
-    {
-      content,
-    }
+    COMMENT_END_POINT.SUB_COMMENTS.CREATE(parentCommentId),
+    { content }
   )
 }
