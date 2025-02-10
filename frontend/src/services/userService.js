@@ -9,21 +9,22 @@ export const fetchCheckEmail = (email) =>
 export const fetchSendVerification = (email, webhook) =>
   axios.post(AUTH_END_POINT.SEND_VERIFICATION, { email, webhook })
 
-// 4. 비밀번호 형식 체크 (GET)
+// 비밀번호 확인 (POST)
 export const fetchCheckPassword = (password, confirmPassword) =>
-  axios.get(AUTH_END_POINT.CHECK_PASSWORD(password, confirmPassword))
+  axios.post(AUTH_END_POINT.CHECK_PASSWORD, { password, confirmPassword })
 
-// 5. 닉네임 중복 체크 (GET)
+// 닉네임 중복 확인 (POST)
 export const fetchCheckNickname = (nickname) =>
-  axios.get(AUTH_END_POINT.CHECK_NICKNAME(nickname))
+  axios.post(AUTH_END_POINT.CHECK_NICKNAME, { nickname })
 
 // 6. 관심사 체크 (GET)
 export const fetchCheckInterest = (interests) =>
   axios.get(AUTH_END_POINT.CHECK_INTERESTS(interests))
 
 // 7. 회원가입 (POST)
-export const fetchRegister = (userData) =>
-  axios.post(AUTH_END_POINT.SIGNUP, userData)
+export const fetchSignup = async (userData) => {
+  return axios.post(AUTH_END_POINT.SIGNUP, userData)
+}
 
 // 8. 로그인 (POST)
 export const fetchLogin = (credentials) =>
@@ -59,3 +60,11 @@ export const fetchFindEmail = async (studentNumber) =>
 // 비밀번호 찾기
 export const fetchFindPassword = async (studentNumber, email) =>
   axios.post(AUTH_END_POINT.FIND_PASSWORD, { studentNumber, email })
+
+// 인증 번호 검증 (POST)
+export const fetchCheckCode = async (email, verificationCode) =>
+  axios.post(AUTH_END_POINT.CHECK_CODE, { email, verificationCode })
+
+// 학번 중복 확인 (POST)
+export const fetchCheckNumber = async (studentNumber) =>
+  axios.post(AUTH_END_POINT.CHECK_STUDENT_NUMBER, { studentNumber })

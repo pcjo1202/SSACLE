@@ -18,7 +18,11 @@ const saveAccessToken = (token) => {
 // Access Token 갱신 함수
 const refreshAccessToken = async () => {
   try {
-    const { headers } = await axios.post(`${BASE_URL}/api/v1/refreshtoken`, {}, { withCredentials: true })
+    const { headers } = await axios.post(
+      `${BASE_URL}/api/v1/refreshtoken`,
+      {},
+      { withCredentials: true }
+    )
     const newAccessToken = headers['authorization']
     saveAccessToken(newAccessToken)
     return newAccessToken
@@ -47,7 +51,8 @@ httpCommon.interceptors.response.use(
       console.error('🔄 401 Unauthorized: 액세스 토큰 갱신 시도')
 
       const newAccessToken = await refreshAccessToken()
-      error.config.headers['Authorization'] = `Bearer ${newAccessToken.replace('Bearer ', '')}`
+      error.config.headers['Authorization'] =
+        `Bearer ${newAccessToken.replace('Bearer ', '')}`
       return httpCommon(error.config)
     }
     return Promise.reject(error)
