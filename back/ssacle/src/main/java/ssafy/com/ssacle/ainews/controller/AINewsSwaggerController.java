@@ -14,7 +14,7 @@ import java.util.List;
 
 @Tag(name = "AINews API", description = "AINews 관련 API입니다.")
 public interface AINewsSwaggerController {
-    @GetMapping
+    @GetMapping("/aiNews")
     @Operation(summary = "최신 AI 뉴스 조회", description = "AI 뉴스를 최신순으로 조회합니다.")
     ResponseEntity<List<AINewsResponseDTO>> getLatestNews();
 
