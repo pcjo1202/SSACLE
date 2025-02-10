@@ -1,22 +1,11 @@
 package ssafy.com.ssacle.user.controller;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ssafy.com.ssacle.global.jwt.JwtFilter;
-import ssafy.com.ssacle.global.jwt.JwtTokenUtil;
-import ssafy.com.ssacle.user.domain.User;
-import ssafy.com.ssacle.user.dto.JoinDTO;
-import ssafy.com.ssacle.user.dto.LoginDTO;
-import ssafy.com.ssacle.user.exception.CannotLoginException;
+import ssafy.com.ssacle.user.dto.*;
 import ssafy.com.ssacle.user.service.JoinService;
-import ssafy.com.ssacle.user.service.UserService;
 import ssafy.com.ssacle.user.service.VerificationCodeService;
 
 @RestController
@@ -27,14 +16,14 @@ public class JoinController implements JoinSwaggerController{
     private final VerificationCodeService verificationCodeService;
 
     @Override
-    public ResponseEntity<String> sendVerificationCode(String email, String webhook) {
-        joinService.sendVerificationCode(email, webhook);
+    public ResponseEntity<String> sendVerificationCode(VerificationRequestDTO request) {
+        joinService.sendVerificationCode(request.getEmail(), request.getWebhook());
         return ResponseEntity.ok("Verification code sent.");
     }
 
     @Override
-    public ResponseEntity<String> verifyCode(String email, String verificationCode) {
-        boolean isValid = verificationCodeService.verifyCode(email, verificationCode);
+    public ResponseEntity<String> verifyCode(VerificationCodeDTO request) {
+        boolean isValid = verificationCodeService.verifyCode(request.getEmail(), request.getVerificationCode());
         if (isValid) {
             return ResponseEntity.ok("Verification code confirmed.");
         }
@@ -42,26 +31,35 @@ public class JoinController implements JoinSwaggerController{
     }
 
     @Override
-    public ResponseEntity<Void> createUser(JoinDTO joinDTO) {
-        joinService.join(joinDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-
-    @Override
-    public ResponseEntity<Boolean> checkEmailDuplicate(@RequestParam("email") String email) {
-        return ResponseEntity.ok().body(joinService.isEmailDuplicate(email));
+    public ResponseEntity<JoinResponseDTO> createUser(JoinRequestDTO joinDTO) {
+        JoinResponseDTO response = joinService.join(joinDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Override
-    public ResponseEntity<Boolean> checkPassword(@RequestParam("password") String password, @RequestParam("confirmpassword") String confirmpassword) {
-        return ResponseEntity.ok().body(joinService.checkPassword(password,confirmpassword));
+    public ResponseEntity<Boolean> checkStudentNumberDuplicate(CheckStudentNumberDTO checkStudentNumberDTO) {
+        return ResponseEntity.ok().body(joinService.isStudentNumberDuplicate(checkStudentNumberDTO.getStudentNumber()));
     }
 
     @Override
-    public ResponseEntity<Boolean> checkNicknameDuplicate(@RequestParam("nickname") String nickname) {
-        return ResponseEntity.ok().body(joinService.isNicknameDuplicate(nickname));
+    public ResponseEntity<Boolean> checkEmailDuplicate(CheckEmailDTO checkEmailDTO) {
+        return ResponseEntity.ok().body(joinService.isEmailDuplicate(checkEmailDTO.getEmail()));
     }
 
+    @Override
+    public ResponseEntity<Boolean> checkPassword(CheckPasswordDTO checkPasswordDTO) {
+        return ResponseEntity.ok().body(joinService.checkPassword(checkPasswordDTO.getPassword(),checkPasswordDTO.getConfirmpassword()));
+    }
+
+    @Override
+    public ResponseEntity<Boolean> checkNicknameDuplicate(CheckNickNameDTO checkNickNameDTO) {
+        return ResponseEntity.ok().body(joinService.isNicknameDuplicate(checkNickNameDTO.getNickname()));
+    }
+
+    @Override
+    public ResponseEntity<Void> selectInterestCategories(@PathVariable Long userId, @RequestBody SelectInterestDTO selectInterestDTO) {
+        joinService.selectInterestCategories(userId, selectInterestDTO);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 
 }

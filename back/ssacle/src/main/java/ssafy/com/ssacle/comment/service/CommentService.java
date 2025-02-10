@@ -35,10 +35,9 @@ public class CommentService {
     private final JwtTokenUtil jwtTokenUtil;
 
     /** 📌 1. 특정 게시글의 댓글 조회 (최신순) */
+    @Transactional
     public List<CommentResponseDTO> getCommentsByBoard(Long boardId) {
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new CommentException(CommentErrorCode.BOARD_NOT_FOUND));
-        List<Comment> commentList = commentRepository.findByBoardOrderByCreatedAtDesc(board);
+        List<Comment> commentList = commentRepository.findTopLevelComments(boardId);
 
         return commentList.stream()
                 .map(this::convertToDTO)
@@ -80,20 +79,18 @@ public class CommentService {
 
     /** 📌 3. 댓글 수정 */
     @Transactional
-    public Comment updateComment(Long commentId, CommentRequestDTO commentRequestDTO, User user) {
+    public void updateComment(Long commentId, CommentRequestDTO commentRequestDTO, User user) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_NOT_FOUND));
 
 
-        if (!user.equals(comment.getBoard().getUser())) {
-            throw new BoardException(BoardErrorCode.BOARD_UPDATE_FORBIDDEN);
+        if(!comment.getUser().getId().equals(user.getId())) {
+            throw new CommentException(CommentErrorCode.COMMENT_UPDATE_FORBIDDEN);
         }
 
         validateCommentContent(commentRequestDTO.getContent());
 
-        comment.setContent(commentRequestDTO.getContent());
-        comment.setUpdatedAt(LocalDateTime.now());
-        return commentRepository.save(comment);
+        commentRepository.updateComment(commentId,commentRequestDTO.getContent(), LocalDateTime.now());
     }
 
     /** 📌 4. 댓글 삭제 */
@@ -102,8 +99,8 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_NOT_FOUND));
 
-        if (!user.equals(comment.getBoard().getUser())) {
-            throw new BoardException(BoardErrorCode.BOARD_DELETE_FORBIDDEN);
+        if(!comment.getUser().getId().equals(user.getId())) {
+            throw new CommentException(CommentErrorCode.COMMENT_UPDATE_FORBIDDEN);
         }
 
         commentRepository.deleteById(commentId);
@@ -173,13 +170,6 @@ public class CommentService {
                 .time(comment.getCreatedAt())
                 .child(childComments)
                 .build();
-    }
-
-    private User validateUser(HttpServletRequest request) {
-        String accessToken = userService.resolveToken(request);
-        String email = jwtTokenUtil.getUserEmailFromToken(accessToken);
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_CREATION_FORBIDDEN));
     }
 
     private void validateCommentContent(String content) {

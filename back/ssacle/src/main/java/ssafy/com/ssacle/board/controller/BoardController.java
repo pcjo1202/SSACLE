@@ -31,8 +31,8 @@ public class BoardController implements BoardSwaggerController{
     }
 
     @Override
-    public ResponseEntity<BoardResponseDTO> getBoardById(Long id) {
-        return ResponseEntity.ok().body(boardService.getBoardById(id));
+    public ResponseEntity<BoardResponseDTO> getBoardById(Long boardId) {
+        return ResponseEntity.ok().body(boardService.getBoardById(boardId));
     }
 
     @Override
@@ -50,10 +50,11 @@ public class BoardController implements BoardSwaggerController{
     }
 
     @Override
-    public ResponseEntity<Board> updateBoard(Long boardId, BoardUpdateRequestDTO boardUpdateRequestDTO) {
+    public ResponseEntity<Void> updateBoard(Long boardId, BoardUpdateRequestDTO boardUpdateRequestDTO) {
         User user = userService.getAuthenticatedUser();
-        log.info("{}", user.getName());
-        return ResponseEntity.ok().body(boardService.updateBoard(boardId, boardUpdateRequestDTO,user));
+        log.info("{}, {}", user.getName(), user.getNickname());
+        boardService.updateBoard(boardId, boardUpdateRequestDTO,user);
+        return ResponseEntity.ok().build();
     }
 
     @Override

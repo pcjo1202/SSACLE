@@ -16,7 +16,7 @@ import ssafy.com.ssacle.user.domain.RefreshToken;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.dto.FindEmailDTO;
 import ssafy.com.ssacle.user.dto.FindPasswordDTO;
-import ssafy.com.ssacle.user.dto.LoginDTO;
+import ssafy.com.ssacle.user.dto.LoginRequestDTO;
 import ssafy.com.ssacle.user.exception.CannotLoginException;
 import ssafy.com.ssacle.user.exception.LoginErrorCode;
 import ssafy.com.ssacle.user.repository.RefreshRepository;
@@ -59,7 +59,7 @@ public class UserService {
 
     /** ✅ 로그인 및 Access/Refresh Token 생성 */
     @Transactional
-    public String authenticateAndGenerateTokens(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
+    public String authenticateAndGenerateTokens(LoginRequestDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
         User user = getUserFromToken(loginDTO);
         Optional<RefreshToken> existingToken = refreshRepository.findByUser(user);
         if (existingToken.isPresent()) {
@@ -133,7 +133,7 @@ public class UserService {
 
     /** ✅ 사용자 인증 */
     @Transactional
-    public User getUserFromToken(LoginDTO loginDTO) {
+    public User getUserFromToken(LoginRequestDTO loginDTO) {
         User user = userRepository.findByEmail(loginDTO.getEmail())
                 .orElseThrow(() -> new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
 

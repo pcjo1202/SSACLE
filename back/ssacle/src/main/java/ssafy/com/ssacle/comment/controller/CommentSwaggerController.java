@@ -38,19 +38,19 @@ public interface CommentSwaggerController {
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음"),
             @ApiResponse(responseCode = "400", description = "댓글 내용이 비어 있음")
     })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "댓글 작성 요청 데이터",
+            required = true,
+            content = @Content(
+                    schema = @Schema(implementation = CommentRequestDTO.class),
+                    examples = @ExampleObject(
+                            name = "댓글 예제",
+                            value = "{ \"content\": \"이것은 테스트 댓글입니다.\" }"
+                    )
+            )
+    )
     @PostMapping("/board/{boardId}")
     ResponseEntity<Void> createComment(@PathVariable Long boardId,
-                                       @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                                               description = "댓글 작성 요청 데이터",
-                                               required = true,
-                                               content = @Content(
-                                                       schema = @Schema(implementation = CommentRequestDTO.class),
-                                                       examples = @ExampleObject(
-                                                               name = "댓글 예제",
-                                                               value = "{ \"content\": \"이것은 테스트 댓글입니다.\" }"
-                                                       )
-                                               )
-                                       )
                                        @RequestBody CommentRequestDTO commentRequestDTO
     );
 
@@ -61,8 +61,8 @@ public interface CommentSwaggerController {
             @ApiResponse(responseCode = "403", description = "댓글 수정 권한 없음"),
             @ApiResponse(responseCode = "404", description = "댓글을 찾을 수 없음")
     })
-    @PutMapping("/{commentId}")
-    ResponseEntity<Comment> updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDTO commentRequestDTO);
+    @PatchMapping("/{commentId}")
+    ResponseEntity<Void> updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDTO commentRequestDTO);
 
     /** 📌 4. 댓글 삭제 */
     @Operation(summary = "댓글 삭제", description = "사용자가 작성한 댓글을 삭제합니다. (로그인 필요)")
@@ -83,19 +83,19 @@ public interface CommentSwaggerController {
             @ApiResponse(responseCode = "404", description = "부모 댓글을 찾을 수 없음"),
             @ApiResponse(responseCode = "400", description = "댓글 내용이 비어 있음")
     })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "대댓글 작성 요청 데이터",
+            required = true,
+            content = @Content(
+                    schema = @Schema(implementation = CommentRequestDTO.class),
+                    examples = @ExampleObject(
+                            name = "대댓글 예제",
+                            value = "{ \"content\": \"이것은 대댓글입니다.\" }"
+                    )
+            )
+    )
     @PostMapping("/reply/{parentCommentId}")
     ResponseEntity<Void> createReply(@PathVariable Long parentCommentId,
-                                     @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                                             description = "대댓글 작성 요청 데이터",
-                                             required = true,
-                                             content = @Content(
-                                                     schema = @Schema(implementation = CommentRequestDTO.class),
-                                                     examples = @ExampleObject(
-                                                             name = "대댓글 예제",
-                                                             value = "{ \"content\": \"이것은 대댓글입니다.\" }"
-                                                     )
-                                             )
-                                     )
                                      @RequestBody CommentRequestDTO commentRequestDTO
     );
 
