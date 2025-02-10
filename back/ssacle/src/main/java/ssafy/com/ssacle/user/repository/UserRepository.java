@@ -1,6 +1,8 @@
 package ssafy.com.ssacle.user.repository;
 
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import ssafy.com.ssacle.user.domain.User;
 
 import java.util.Optional;
@@ -16,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByStudentNumber(String studentNumber);
 
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.userTeams WHERE u.email = :email")
+    Optional<User> findUserWithTeamsByEmail(@Param("email") String email);
 }

@@ -48,6 +48,14 @@ public class UserService {
         return userRepository.findByEmail(userEmail)
                 .orElseThrow(()->new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
     }
+    public User getAuthenticatedUserWithTeams() {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println("==================");
+        System.out.println(userEmail);
+        System.out.println("==================");
+        return userRepository.findUserWithTeamsByEmail(userEmail)
+                .orElseThrow(RuntimeException::new);
+    }
 
     /** ✅ 로그인 및 Access/Refresh Token 생성 */
     @Transactional

@@ -14,11 +14,11 @@ import ssafy.com.ssacle.board.domain.Board;
 import ssafy.com.ssacle.comment.domain.Comment;
 import ssafy.com.ssacle.usercategory.domain.UserCategory;
 import ssafy.com.ssacle.vote.domain.Vote;
+import ssafy.com.ssacle.userteam.domain.UserTeam;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "user")
@@ -30,6 +30,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    List<UserTeam> userTeams = new ArrayList<>();
+
+    public void addUserTeam(UserTeam userTeam){
+        if (this.userTeams == null) {
+            this.userTeams = new ArrayList<>();
+        }
+        this.userTeams.add(userTeam);
+    }
 
     @Column(name = "email", nullable = false, length = 255, unique = true)
     private String email;
@@ -49,8 +60,7 @@ public class User {
     private String nickname;
 
     @Column(name = "level")
-    @ColumnDefault("1")
-    private int level;
+    private int level = 1;
 
     @Column(name = "experience")
     @ColumnDefault("0")
@@ -62,7 +72,7 @@ public class User {
 
     @Column(name = "is_graduate")
     @ColumnDefault("false")
-    private boolean is_graduate;
+    private boolean isGraduate;
 
     @Enumerated(EnumType.STRING) // ENUM 타입 명시
     @Column(name = "role", nullable = false)
@@ -98,6 +108,7 @@ public class User {
     public static User createAdmin(String email, String password, String name) {
         return new User(
                 null,
+                new ArrayList<>(),
                 email,
                 encodePassword(password),
                 name,
@@ -122,6 +133,7 @@ public class User {
     public static User createStudent(String email, String password, String name, String studentNumber, String nickname) {
         return new User(
                 null,
+                new ArrayList<>(),
                 email,
                 encodePassword(password),
                 name,
@@ -146,6 +158,7 @@ public class User {
     public static User createAlumni(String email, String password, String name, String studentNumber, String nickname) {
         return new User(
                 null,
+                new ArrayList<>(),
                 email,
                 encodePassword(password),
                 name,
