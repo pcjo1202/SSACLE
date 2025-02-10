@@ -4,19 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 
-/**
- * GPT 응답 데이터 (추가적인 데이터 포함)
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GptFullResponse {
+public class GptFullRawResponse {
     private String basicDescription;
     private String detailDescription;
     private String tags;
     private String recommendedFor;
-    private List<TodoResponse> todos;
+    private List<RawTodoResponse> todos;
 }

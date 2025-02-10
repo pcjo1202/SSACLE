@@ -8,9 +8,11 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,9 +25,6 @@ public class GptService {
     private static final String GPT_API_URL = "https://api.openai.com/v1/chat/completions";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    /**
-     * GPT API로부터 Todo 리스트를 가져오는 메서드
-     */
     public GptFullResponse generateTodos(LocalDateTime startAt, LocalDateTime endAt, String topic) {
         int duration = (int) ChronoUnit.DAYS.between(startAt.toLocalDate(), endAt.toLocalDate());
 
@@ -52,7 +51,24 @@ public class GptService {
 
         try {
             String jsonString = response.getBody().getChoices().get(0).getMessage().getContent();
-            return objectMapper.readValue(jsonString, GptFullResponse.class);
+            GptFullRawResponse fullResponse = objectMapper.readValue(jsonString, GptFullRawResponse.class);
+
+            LocalDate startDate = startAt.toLocalDate();
+            List<TodoResponse> updatedTodos = fullResponse.getTodos().stream()
+                    .map(rawTodo -> new TodoResponse(
+                            startDate.plusDays(rawTodo.getDay() - 1),
+                            rawTodo.getTasks()
+                    ))
+                    .collect(Collectors.toList());
+
+            return new GptFullResponse(
+                    fullResponse.getBasicDescription(),
+                    fullResponse.getDetailDescription(),
+                    fullResponse.getTags(),
+                    fullResponse.getRecommendedFor(),
+                    updatedTodos
+            );
+
         } catch (Exception e) {
             log.error("JSON 파싱 오류: {}", e.getMessage());
             return null;
