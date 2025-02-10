@@ -16,9 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
     boolean existsByNickname(String nickname);
 
-    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.userTeams WHERE u.email = :email")
-    Optional<User> findUserWithTeamsByEmail(@Param("email") String email);
-  
     boolean existsByStudentNumber(String studentNumber);
 
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.userTeams WHERE u.email = :email")
+    Optional<User> findUserWithTeamsByEmail(@Param("email") String email);
 }
