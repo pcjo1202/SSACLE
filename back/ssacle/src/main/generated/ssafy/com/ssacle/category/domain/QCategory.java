@@ -34,6 +34,8 @@ public class QCategory extends EntityPathBase<Category> {
 
     public final QCategory parent;
 
+    public final ssafy.com.ssacle.sprint.domain.QSprint sprint;
+
     public QCategory(String variable) {
         this(Category.class, forVariable(variable), INITS);
     }
@@ -53,6 +55,7 @@ public class QCategory extends EntityPathBase<Category> {
     public QCategory(Class<? extends Category> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.parent = inits.isInitialized("parent") ? new QCategory(forProperty("parent"), inits.get("parent")) : null;
+        this.sprint = inits.isInitialized("sprint") ? new ssafy.com.ssacle.sprint.domain.QSprint(forProperty("sprint")) : null;
     }
 
 }

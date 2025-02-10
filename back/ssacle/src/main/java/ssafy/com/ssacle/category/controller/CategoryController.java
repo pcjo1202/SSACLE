@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ssafy.com.ssacle.category.domain.Category;
+import ssafy.com.ssacle.category.dto.CategoryCreateRequest;
 import ssafy.com.ssacle.category.dto.CategoryResponseDTO;
 import ssafy.com.ssacle.category.service.CategoryService;
 
@@ -14,6 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryController implements CategorySwaggerController {
     private final CategoryService categoryService;
+
+    @Override
+    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryCreateRequest request) {
+        return ResponseEntity.status(201).body(categoryService.createCategory(request));
+    }
 
     @Override
     public ResponseEntity<List<CategoryResponseDTO>> getAllCategories() {

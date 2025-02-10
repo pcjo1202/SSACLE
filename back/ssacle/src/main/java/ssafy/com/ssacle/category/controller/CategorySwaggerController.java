@@ -11,13 +11,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import ssafy.com.ssacle.category.domain.Category;
+import ssafy.com.ssacle.category.dto.CategoryCreateRequest;
 import ssafy.com.ssacle.category.dto.CategoryResponseDTO;
 
 import java.util.List;
 
 @Tag(name = "Category API", description = "카테고리 관련 API입니다.")
 public interface CategorySwaggerController {
+
+    @Operation(summary = "카테고리 생성", description = "입력된 데이터를 기반으로 새로운 카테고리를 생성합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "카테고리 생성 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @PostMapping
+    ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryCreateRequest request);
+
 
     @Operation(summary = "전체 카테고리 조회", description = "모든 카테고리를 조회합니다.")
     @ApiResponses(value = {
