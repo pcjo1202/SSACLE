@@ -1,2 +1,9 @@
-package ssafy.com.ssacle.ainews.repository;public interface AINewsRepository {
+package ssafy.com.ssacle.ainews.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import ssafy.com.ssacle.ainews.domain.AINews;
+import java.util.List;
+
+public interface AINewsRepository extends JpaRepository<AINews, Long> {
+    List<AINews> findAllByOrderByCreatedAtDesc(); // 최신순 정렬된 뉴스 조회
 }

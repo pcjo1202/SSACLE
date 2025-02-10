@@ -37,6 +37,7 @@ public class SecurityConfig {
                                 "/api/*/refreshtoken",
                                 "/api/sessions/**"
                         ).permitAll()
+                        .requestMatchers("/api/*/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
