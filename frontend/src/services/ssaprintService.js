@@ -2,6 +2,7 @@ import httpCommon from './http-common'
 import { SSAPRINT_END_POINT } from './endPoints'
 
 import { mockSsaprintData } from '@/mocks/ssaprintMockData'
+import { mockSsaprintDetailData } from '@/mocks/ssaprintDetailMockData'
 
 /**
  * ✅ 참여 가능 스프린트 목록을 불러오는 함수 (비동기 API처럼 동작)
@@ -74,8 +75,24 @@ export const fetchCompletedSsaprintList = async (page = 0, size = 10) => {
 // };
 
 // ✅ 싸프린트 상세 조회
-export const fetchSsaprintDetail = (id) =>
-  httpCommon.get(SSAPRINT_END_POINT.DETAIL(id))
+export const fetchSsaprintDetail = async (id) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockSsaprintDetailData)
+    }, 500)
+  })
+}
+
+// // ✅ 싸프린트 상세 조회
+// export const fetchSsaprintDetail = async (id) => {
+//   try {
+//     const response = await httpCommon.get(SSAPRINT_END_POINT.DETAIL(id));
+//     return response.data;
+//   } catch (error) {
+//     console.error(`스프린트 ${id} 상세 정보를 가져오는 중 오류 발생`, error);
+//     return null;
+//   }
+// };
 
 // ✅ 싸프린트 참가
 export const joinSsaprint = (id) => httpCommon.post(SSAPRINT_END_POINT.JOIN(id))
