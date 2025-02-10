@@ -60,8 +60,15 @@ export const fetchRefreshToken = async () => {
 }
 
 // 이메일 찾기
-export const fetchFindEmail = async (studentNumber) =>
-  axios.post(AUTH_END_POINT.FIND_EMAIL, studentNumber)
+export const fetchFindEmail = async (studentNumber) => {
+  return axios2.post('/api/v1/login/find-email', 
+    { studentNumber }, // 객체로 감싸서 전달
+    {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true,
+    }
+  )
+}
 
 // 비밀번호 찾기
 export const fetchFindPassword = async (studentNumber, email) =>
