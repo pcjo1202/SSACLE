@@ -1,7 +1,7 @@
 package ssafy.com.ssacle.userteam.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ssafy.com.ssacle.team.domain.Team;
+import ssafy.com.ssacle.userteam.domain.UserTeam;
 
-public interface UserTeamRepository extends JpaRepository<Team, Long> {
+public interface UserTeamRepository extends JpaRepository<UserTeam, Long> {
 }
