@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.category.domain.Category;
-import ssafy.com.ssacle.category.dto.CategoryCreateRequest;
 import ssafy.com.ssacle.category.dto.CategoryResponseDTO;
-import ssafy.com.ssacle.category.exception.UpperCategoryNotFoundException;
+import ssafy.com.ssacle.category.dto.CategoryTreeResponseDTO;
+import ssafy.com.ssacle.category.exception.CategoryNotExistException;
+import ssafy.com.ssacle.category.exception.MiddleCategoryNotFoundException;
+import ssafy.com.ssacle.category.exception.TopCategoryNotFoundException;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
 
 import java.util.List;
@@ -18,55 +20,59 @@ import java.util.stream.Collectors;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public List<CategoryResponseDTO> findAllCategories() {
-        return categoryRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public CategoryResponseDTO createCategory(String param1, String param2, String param3, String image) {
+        Category parentCategory = null;
+
+        if (param1 != null && param2 == null) {
+            return saveCategory(param1, parentCategory, null);
+        }
+
+        parentCategory = categoryRepository.findByCategoryName(param1)
+                .orElseThrow(TopCategoryNotFoundException::new);
+        if (param2 != null && param3 == null) {
+            return saveCategory(param2, parentCategory, image);
+        }
+
+        parentCategory = categoryRepository.findByCategoryName(param2)
+                .orElseThrow(MiddleCategoryNotFoundException::new);
+        if (param3 != null) {
+            return saveCategory(param3, parentCategory, null);
+        }
+
+        throw new CategoryNotExistException();
+    }
+
+    public List<CategoryTreeResponseDTO> findAllCategories() {
+        return CategoryTreeResponseDTO.from(categoryRepository.findAll());
     }
 
     public List<CategoryResponseDTO> findParentCategories() {
         return categoryRepository.findByParentIsNull()
                 .stream()
-                .map(this::convertToDTO)
+                .map(CategoryResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
     public List<CategoryResponseDTO> findSubCategories(Long parentId) {
         return categoryRepository.findByParentId(parentId)
                 .stream()
-                .map(this::convertToDTO)
+                .map(CategoryResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
-    public CategoryResponseDTO createCategory(CategoryCreateRequest request) {
-        Category parentCategory = null;
-
-        // 1. 상위 카테고리가 있을 경우 찾기
-        if (request.getParentCategoryName() != null) {
-            parentCategory = categoryRepository.findByCategoryName(request.getParentCategoryName())
-                    .orElseThrow(UpperCategoryNotFoundException::new);
-        }
-
-        // 2. 새 카테고리 생성
+    private CategoryResponseDTO saveCategory(String categoryName, Category parent, String image) {
         Category newCategory = new Category(
                 null,
-                parentCategory,
+                parent,
                 null,
                 null,
-                request.getCategoryName(),
-                request.isLeaf(),
-                request.getImage()
+                categoryName,
+                parent != null,  // 부모가 있으면 최하위 가능성이 있음
+                image
         );
 
         Category savedCategory = categoryRepository.save(newCategory);
-        return convertToDTO(savedCategory);
+        return CategoryResponseDTO.from(savedCategory);
     }
 
-    private CategoryResponseDTO convertToDTO(Category category) {
-        return CategoryResponseDTO.builder()
-                .categoryName(category.getCategoryName())
-                .image(category.getImage())
-                .build();
-    }
 }

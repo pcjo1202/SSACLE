@@ -40,6 +40,6 @@ public class Category {
     @Column(name = "is_leaf")
     private boolean isLeaf;
 
-    @Column(name = "image", nullable = false, length = 1024)
+    @Column(name = "image", nullable = true, length = 1024)
     private String image;
 }
