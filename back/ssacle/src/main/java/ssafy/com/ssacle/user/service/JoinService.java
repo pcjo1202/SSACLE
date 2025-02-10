@@ -18,12 +18,12 @@ public class JoinService {
     private final MattermostService mattermostService;
     private final VerificationCodeService verificationCodeService;
     private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
-    public void sendVerificationCode(String email) {
+    public void sendVerificationCode(String email, String webhook) {
         if (!email.matches(EMAIL_REGEX)) {
             throw new CannotJoinException(JoinErrorCode.INVALID_EMAIL_FORMAT);
         }
         String code = verificationCodeService.generateVerificationCode(email);
-        mattermostService.sendVerificationCode(email, code);
+        mattermostService.sendVerificationCode(email, webhook, code);
     }
     public void join(JoinDTO joinDTO){
         if(!verificationCodeService.isEmailVerified(joinDTO.getEmail())){

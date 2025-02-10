@@ -27,8 +27,8 @@ public class JoinController implements JoinSwaggerController{
     private final VerificationCodeService verificationCodeService;
 
     @Override
-    public ResponseEntity<String> sendVerificationCode(String email) {
-        joinService.sendVerificationCode(email);
+    public ResponseEntity<String> sendVerificationCode(String email, String webhook) {
+        joinService.sendVerificationCode(email, webhook);
         return ResponseEntity.ok("Verification code sent.");
     }
 
