@@ -31,9 +31,9 @@ public class JoinController implements JoinSwaggerController{
     }
 
     @Override
-    public ResponseEntity<Void> createUser(JoinDTO joinDTO) {
-        joinService.join(joinDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<JoinResponseDTO> createUser(JoinRequestDTO joinDTO) {
+        JoinResponseDTO response = joinService.join(joinDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Override
@@ -54,6 +54,12 @@ public class JoinController implements JoinSwaggerController{
     @Override
     public ResponseEntity<Boolean> checkNicknameDuplicate(CheckNickNameDTO checkNickNameDTO) {
         return ResponseEntity.ok().body(joinService.isNicknameDuplicate(checkNickNameDTO.getNickname()));
+    }
+
+    @Override
+    public ResponseEntity<Void> selectInterestCategories(@PathVariable Long userId, @RequestBody SelectInterestDTO selectInterestDTO) {
+        joinService.selectInterestCategories(userId, selectInterestDTO);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }

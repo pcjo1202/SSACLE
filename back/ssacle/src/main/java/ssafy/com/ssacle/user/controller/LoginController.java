@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ssafy.com.ssacle.user.dto.FindEmailDTO;
 import ssafy.com.ssacle.user.dto.FindPasswordDTO;
-import ssafy.com.ssacle.user.dto.LoginDTO;
+import ssafy.com.ssacle.user.dto.LoginRequestDTO;
 import ssafy.com.ssacle.user.service.UserService;
 
 @RestController
@@ -20,7 +20,7 @@ public class LoginController implements LoginSwaggerController{
     private final UserService userService;
 
     @Override
-    public ResponseEntity<String> login(@RequestBody @Valid LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<String> login(@RequestBody @Valid LoginRequestDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
         String result = userService.authenticateAndGenerateTokens(loginDTO, request, response);
         return ResponseEntity.ok(result);
     }

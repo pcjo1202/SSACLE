@@ -91,9 +91,9 @@ public class User {
     @JsonIgnore
     private List<Vote> votes;
 
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JsonIgnore
-//    private List<UserCategory> userCategories;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<UserCategory> userCategories;
     // ** 관리자 생성자 **
     public static User createAdmin(String email, String password, String name) {
         return new User(
@@ -113,8 +113,8 @@ public class User {
                 false,
                 new ArrayList<>(),
                 new ArrayList<>(),
+                new ArrayList<>(),
                 new ArrayList<>()
-//                new ArrayList<>()
         );
     }
 
@@ -137,8 +137,8 @@ public class User {
                 false,
                 new ArrayList<>(),
                 new ArrayList<>(),
+                new ArrayList<>(),
                 new ArrayList<>()
-//                new ArrayList<>()
         );
     }
 
@@ -161,8 +161,8 @@ public class User {
                 false,
                 new ArrayList<>(),
                 new ArrayList<>(),
+                new ArrayList<>(),
                 new ArrayList<>()
-//                new ArrayList<>()
         );
     }
     private static String encodePassword(String rawPassword) {
@@ -173,9 +173,9 @@ public class User {
         this.votes.add(vote);
         vote.setUser(this);
     }
-//
-//    public void addCategory(UserCategory userCategory){
-//        this.userCategories.add(userCategory);
-//        userCategory.setUser(this);
-//    }
+
+    public void addCategory(UserCategory userCategory){
+        this.userCategories.add(userCategory);
+        userCategory.setUser(this);
+    }
 }
