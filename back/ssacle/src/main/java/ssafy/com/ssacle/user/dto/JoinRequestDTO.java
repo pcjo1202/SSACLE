@@ -12,7 +12,7 @@ import ssafy.com.ssacle.user.domain.Role;
 @Getter @Setter
 @Builder
 @Jacksonized
-public class JoinDTO {
+public class JoinRequestDTO {
     @NotBlank(message = "studentNumber is required")
     private String studentNumber;
 

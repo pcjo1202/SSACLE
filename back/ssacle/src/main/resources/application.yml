@@ -1,3 +1,8 @@
+# server:
+#   port: 5000
+#   ssl:
+#    enabled: false
+
 spring:
   datasource:
     url: ${DB_URL}
@@ -6,14 +11,14 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-    ddl-auto: none
+      ddl-auto: update
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
     properties:
       hibernate:
         storage_engine: innodb
-        format_sql: true
-        use_sql_comments: true
+        format_sql: false
+        use_sql_comments: false
     open-in-view: false
     show_sql: true
   jwt:
@@ -47,3 +52,6 @@ cloud:
 mattermost:
   webhook:
     url: ${MM_WEBHOOK_URL}
+
+openvidu_url : ${OPENVIDU_URL}
+openvidu_secret : ${OPENVIDU_SECRET}

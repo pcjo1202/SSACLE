@@ -9,9 +9,6 @@ import ssafy.com.ssacle.gpt.service.GptService;
 
 import java.time.LocalDateTime;
 
-/**
- * GPT 기반 Todo 생성 컨트롤러 (실제 API 구현)
- */
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/gpt")
@@ -21,7 +18,7 @@ public class GptController implements GptSwaggerController {
     private final GptService gptService;
 
     /**
-     * GPT 기반 Todo 생성 (실제 구현)
+     * GPT 기반 Todo 생성
      */
     @Override
     public ResponseEntity<GptFullResponse> generateTodos(LocalDateTime startAt, LocalDateTime endAt, String topic) {

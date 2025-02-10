@@ -1,4 +1,4 @@
-package ssafy.com.ssacle.user.dto;
+package ssafy.com.ssacle.category.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -8,10 +8,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class LoginDTO {
+public class CategoryResponseDTO {
     @NotBlank
-    private String email;
+    private String categoryName;
 
     @NotBlank
-    private String password;
+    private String image;
 }

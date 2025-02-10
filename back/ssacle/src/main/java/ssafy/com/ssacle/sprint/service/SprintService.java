@@ -2,23 +2,32 @@ package ssafy.com.ssacle.sprint.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.dto.SingleSprintResponse;
 import ssafy.com.ssacle.sprint.dto.SprintCreateRequest;
+import ssafy.com.ssacle.sprint.dto.SprintDetailResponse;
 import ssafy.com.ssacle.sprint.dto.SprintResponse;
 import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.repository.TeamRepository;
+import ssafy.com.ssacle.todo.domain.QDefaultTodo;
+import ssafy.com.ssacle.todo.dto.DefaultTodoResponse;
+import ssafy.com.ssacle.todo.repository.DefaultTodoRepository;
 import ssafy.com.ssacle.user.domain.User;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class SprintService {
     private final SprintRepository sprintRepository;
+    private final DefaultTodoRepository defaultTodoRepository;
     private final TeamRepository teamRepository;
 
     @Transactional
@@ -59,5 +68,23 @@ public class SprintService {
                 .orElseThrow(SprintNotExistException::new);
 
         return SingleSprintResponse.from(sprint);
+    }
+
+    public Page<Sprint> getSprintsByLeafCategory(String leafCategory, Pageable pageable) {
+        return sprintRepository.findSprintsByLeafCategory(leafCategory, pageable);
+    }
+
+    public SprintDetailResponse getSprintDetail(Long sprintId){
+        Sprint sprint = sprintRepository.findWithTodosById(sprintId)
+                .orElseThrow(SprintNotExistException::new);
+
+        SingleSprintResponse sprintResponse = SingleSprintResponse.from(sprint);
+
+        List<DefaultTodoResponse> todos = DefaultTodoResponse.fromEntities(sprint.getDefaultTodos());
+
+        return SprintDetailResponse.builder()
+                .sprint(sprintResponse)
+                .todos(todos)
+                .build();
     }
 }

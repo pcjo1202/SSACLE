@@ -10,6 +10,10 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import ssafy.com.ssacle.board.domain.Board;
+import ssafy.com.ssacle.comment.domain.Comment;
+import ssafy.com.ssacle.usercategory.domain.UserCategory;
+import ssafy.com.ssacle.vote.domain.Vote;
 import ssafy.com.ssacle.userteam.domain.UserTeam;
 
 import java.time.LocalDateTime;
@@ -85,6 +89,21 @@ public class User {
     @ColumnDefault("false")
     private boolean isDelete;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Board> boards;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Vote> votes;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<UserCategory> userCategories;
     // ** 관리자 생성자 **
     public static User createAdmin(String email, String password, String name) {
         return new User(
@@ -102,7 +121,11 @@ public class User {
                 Role.ADMIN,
                 null,
                 null,
-                false
+                false,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>()
         );
     }
 
@@ -123,7 +146,11 @@ public class User {
                 Role.STUDENT,
                 null,
                 null,
-                false
+                false,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>()
         );
     }
 
@@ -144,11 +171,24 @@ public class User {
                 Role.ALUMNI,
                 null,
                 null,
-                false
+                false,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>()
         );
     }
     private static String encodePassword(String rawPassword) {
         return new BCryptPasswordEncoder().encode(rawPassword);
     }
 
+    public void addVote(Vote vote){
+        this.votes.add(vote);
+        vote.setUser(this);
+    }
+
+    public void addCategory(UserCategory userCategory){
+        this.userCategories.add(userCategory);
+        userCategory.setUser(this);
+    }
 }

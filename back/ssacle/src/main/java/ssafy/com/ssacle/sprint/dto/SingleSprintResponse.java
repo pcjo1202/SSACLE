@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 public class SingleSprintResponse {
     private Long id;
     private String name;
-    private String description;
-    private String detail;
+    private String basicDescription;
+    private String detailDescription;
     private String tags;
     private String recommendedFor;
     private LocalDateTime startAt;
@@ -27,8 +27,8 @@ public class SingleSprintResponse {
     public SingleSprintResponse(Sprint sprint) {
         this.id = sprint.getId();
         this.name = sprint.getName();
-        this.description = sprint.getBasicDescription();
-        this.detail = sprint.getDetailDescription();
+        this.basicDescription = sprint.getBasicDescription();
+        this.detailDescription = sprint.getDetailDescription();
         this.tags = sprint.getTags();
         this.recommendedFor=sprint.getRecommendedFor();
         this.startAt = sprint.getStartAt();
