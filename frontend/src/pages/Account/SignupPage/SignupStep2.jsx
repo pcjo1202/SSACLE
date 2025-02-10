@@ -15,6 +15,7 @@ const SignupStep2 = () => {
   // 학번 상태
   const [studentNumber, setStudentNumber] = useState('')
   const [isStudentNumberValid, setIsStudentNumberValid] = useState(null) // 학번 인증 상태 (null: 미확인)
+  const [studentNumberError, setStudentNumberError] = useState('') //  학번 입력 오류 메시지 추가
 
   // 이름 상태
   const [name, setName] = useState('')
@@ -40,15 +41,15 @@ const SignupStep2 = () => {
   const nicknameMutation = useMutation({
     mutationFn: () => fetchCheckNickname(nickname),
     onSuccess: (data) => {
-      if (data) {
-        alert('이미 사용 중인 닉네임입니다.')
+      if (data === true) {
         setIsNicknameValid(false)
+        alert('이미 사용 중인 닉네임입니다.')
       } else {
-        setIsNicknameValid(true)
+        setIsNicknameValid(true) // 사용 가능
       }
     },
     onError: (error) => {
-      console.error('닉네임 중복 확인 상태:', error)
+      console.error('닉네임 중복 확인 오류:', error)
       alert('닉네임 확인 중 오류가 발생했습니다. 다시 시도해주세요.')
     },
   })
@@ -57,10 +58,12 @@ const SignupStep2 = () => {
   const studentNumberMutation = useMutation({
     mutationFn: () => fetchCheckNumber(studentNumber),
     onSuccess: (data) => {
-      if (data?.isDuplicate) {
-        setIsStudentNumberValid(false) // 중복됨
+      if (!studentNumber.trim()) return
+      if (data === true) {
+        // 서버에서 true 반환하면 중복됨
+        setIsStudentNumberValid(false)
       } else {
-        setIsStudentNumberValid(true) // 사용 가능
+        setIsStudentNumberValid(true)
       }
     },
     onError: (error) => {
@@ -90,6 +93,23 @@ const SignupStep2 = () => {
     },
   })
 
+  // 학번 중복 확인 버튼 클릭 시 실행 함수 (빈 값 체크 추가)
+  const handleCheckStudentNumber = () => {
+    if (!studentNumber.trim()) {
+      setStudentNumberError('학번을 입력해주세요.')
+      return
+    }
+    studentNumberMutation.mutate()
+  }
+
+  // 학번 입력 시 오류 메시지 초기화
+  const handleStudentNumberChange = (e) => {
+    const newValue = e.target.value
+    setStudentNumber(newValue)
+    setStudentNumberError('') // 오류 메시지 초기화
+    setIsStudentNumberValid(null) // 학번 인증 상태 초기화 (null로 변경)
+  }
+
   // 비밀번호 확인 함수
   const handleConfirmPasswordChange = (e) => {
     setConfirmPassword(e.target.value)
@@ -97,9 +117,10 @@ const SignupStep2 = () => {
   }
 
   const handleSignup = () => {
-    // 🔥 필수 입력값 체크
-    if (!studentNumber) {
-      alert('학번을 입력해주세요.')
+    // 필수 입력값 체크
+    if (!studentNumber.trim()) {
+      setStudentNumberError('학번을 입력해주세요.')
+      // alert('학번을 입력해주세요.')
       return
     }
     if (!isStudentNumberValid) {
@@ -133,7 +154,7 @@ const SignupStep2 = () => {
       return
     }
 
-    // 🔥 회원가입 API 실행
+    // 회원가입 API 실행
     signupMutation.mutate()
   }
 
@@ -157,18 +178,26 @@ const SignupStep2 = () => {
                 type="text"
                 placeholder="학번을 입력하세요."
                 value={studentNumber}
-                onChange={(e) => setStudentNumber(e.target.value)}
+                onChange={handleStudentNumberChange}
                 className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
               />
               <button
-                className="col-span-1 col-start-6 h-12 bg-ssacle-blue rounded-full text-white text-base font-bold mb-4"
-                onClick={() => studentNumberMutation.mutate()} //
-                disabled={studentNumberMutation.isLoading} //
+                className={`col-span-1 col-start-6 h-12 rounded-full text-white font-bold mb-4 transition-all
+    ${!studentNumber.trim() || studentNumberMutation.isLoading ? 'bg-ssacle-gray cursor-not-allowed' : 'bg-ssacle-blue'}`}
+                onClick={handleCheckStudentNumber}
+                disabled={
+                  !studentNumber.trim() || studentNumberMutation.isLoading
+                }
               >
                 {studentNumberMutation.isLoading ? '확인 중...' : '중복확인'}
               </button>
 
               {/* 학번 인증 결과 메시지 */}
+              {studentNumberError && (
+                <p className="col-span-4 col-start-3 text-red-500 text-sm">
+                  {studentNumberError}
+                </p>
+              )}
               {isStudentNumberValid === true && (
                 <p className="col-span-4 col-start-3 text-ssacle-blue text-sm">
                   인증이 완료되었습니다.
