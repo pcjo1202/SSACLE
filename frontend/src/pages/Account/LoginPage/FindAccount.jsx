@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { fetchFindEmail, fetchFindPassword } from '@/services/userService'
 import { useMutation } from '@tanstack/react-query'
@@ -7,6 +7,9 @@ const EmailPage = () => {
   const location = useLocation()
   const [activeTab, setActiveTab] = useState('email')
   const [errorMessage, setErrorMessage] = useState('')
+
+  const studentNumRef = useRef(null)
+  const emailRef = useRef(null)
 
   // 이메일 찾기용 상태
   const [studentNumber, setStudentNumber] = useState('') // 학번 입력값
@@ -75,6 +78,13 @@ const EmailPage = () => {
       setPwErrorMessage(statusMessage)
     },
   })
+  // [이메일] 학번에서 엔터키
+  const handleKeyDownEmail = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      handleFindEmail()
+    }
+  }
 
   // "이메일 찾기" 버튼 클릭 시 실행할 함수
   const handleFindEmail = () => {
@@ -83,6 +93,22 @@ const EmailPage = () => {
       return
     }
     findEmailMutation.mutate(studentNumber)
+  }
+
+  // [비밀번호] 학번에서 엔터키 (이메일로)
+  const handlefocusEmail = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault() // 기본 동작 방지
+      emailRef.current?.focus()
+    }
+  }
+
+  // [비밀번호] 이메일에서 엔터키
+  const handleKeyDownPw = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      handleFindPassword()
+    }
   }
 
   // 비밀번호 찾기 버튼
@@ -141,6 +167,7 @@ const EmailPage = () => {
                            text-ssacle-blue text-base font-medium focus:outline-ssacle-blue"
               value={studentNumber}
               onChange={(e) => setStudentNumber(e.target.value)}
+              onKeyDown={handleKeyDownEmail}
             />
             <button
               onClick={handleFindEmail}
@@ -163,18 +190,22 @@ const EmailPage = () => {
         ) : (
           <div className="flex flex-col gap-4">
             <input
+              ref={studentNumRef}
               placeholder="싸피 학번을 입력 해주세요"
               className="w-full h-12 bg-ssacle-gray-sm rounded-full px-6
                            text-ssacle-blue text-base font-medium focus:outline-ssacle-blue"
               value={pwStudentNumber}
               onChange={(e) => setPwStudentNumber(e.target.value)}
+              onKeyDown={handlefocusEmail}
             />
             <input
+              ref={emailRef}
               placeholder="이메일을 입력해 주세요"
               className="w-full h-12 bg-ssacle-gray-sm rounded-full px-6
                            text-ssacle-blue text-base font-medium focus:outline-ssacle-blue"
               value={pwEmail}
               onChange={(e) => setPwEmail(e.target.value)}
+              onKeyDown={handleKeyDownPw}
             />
             <button
               onClick={handleFindPassword}
