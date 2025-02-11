@@ -120,17 +120,28 @@ const SignupStep2 = () => {
 
       const userId = response?.data?.userId
       const nickname = response?.data?.nickname
-      if (userId) {
-        localStorage.setItem('userId', userId)
-        localStorage.setItem('userNickname', nickname)
-        // alert('✅ 회원가입이 완료되었습니다.');
-        navigate('/account/signup/interest') // ✅ 정상적으로 Interest 페이지로 이동
-      } else {
-        alert('❌ 회원가입 응답이 올바르지 않습니다.')
+
+      if (!userId) {
+        // ✅ userId가 없는 경우 예외 처리 추가
+        console.error('❌ userId가 응답에 없음:', response)
+        alert('❌ 회원가입 응답이 올바르지 않습니다. 다시 시도해주세요.')
+        return
       }
+
+      localStorage.setItem('userId', userId)
+      if (nickname) {
+        localStorage.setItem('userNickname', nickname)
+      }
+
+      navigate('/account/signup/interest')
     },
     onError: (error) => {
-      const errorMessage = error.response?.data?.message || '다시 시도해주세요.'
+      const errorMessage =
+        error.response?.data?.message ||
+        (error.message === 'Network Error'
+          ? '서버와 연결할 수 없습니다. 인터넷 연결을 확인해주세요.'
+          : '다시 시도해주세요.')
+
       console.error('❌ 회원가입 실패:', errorMessage)
 
       // 특정 오류 메시지에 따라 사용자 친화적인 메시지 출력 후 페이지 이동
@@ -226,9 +237,19 @@ const SignupStep2 = () => {
       setTermsError(true)
       return false
     }
+    const userData = {
+      studentNumber,
+      email,
+      nickname,
+      name,
+      password,
+      confirmpassword,
+    }
+
+    console.log('📤 회원가입 요청 데이터 확인:', userData)
 
     // 회원가입 API 실행
-    signupMutation.mutate()
+    signupMutation.mutate(userData)
   }
 
   return (
