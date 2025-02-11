@@ -31,15 +31,12 @@ public class SecurityConfig {
                                 "/swagger-ui/index.html/**",
                                 "/webjars/**"
                         ).permitAll()
-                                .requestMatchers(
-                                        "/api/**"
-                                ).permitAll()
-//                        .requestMatchers(
-//                                "/api/*/join/**",
-//                                "/api/*/login/**",
-//                                "/api/*/refreshtoken",
-//                                "/api/sessions/**"
-//                        ).permitAll()
+                        .requestMatchers(
+                                "/api/*/join/**",
+                                "/api/*/login/**",
+                                "/api/*/refreshtoken",
+                                "/api/sessions/**"
+                        ).permitAll()
                         .requestMatchers("/api/*/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
