@@ -23,9 +23,7 @@ import ssafy.com.ssacle.user.repository.RefreshRepository;
 import ssafy.com.ssacle.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +60,8 @@ public class UserService {
         Optional<RefreshToken> existingToken = refreshRepository.findByUser(user);
         if (existingToken.isPresent()) {
             refreshRepository.deleteByUser(user);
+            refreshRepository.flush();
+
             throw new CannotLoginException(LoginErrorCode.ALREADY_LOGGED_IN);
         }
         String accessToken = jwtTokenUtil.generateAccessToken(user, accessExpireMs);

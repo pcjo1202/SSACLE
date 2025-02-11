@@ -25,7 +25,7 @@ public class SwaggerConfig {
         SecurityScheme securityScheme = new SecurityScheme()
                 .type(SecurityScheme.Type.APIKEY) // API Key 타입으로 설정
                 .in(SecurityScheme.In.HEADER)    // 헤더로 전달
-                .name("access-token")            // 헤더 이름을 access-token으로 지정
+                .name("Authorization")            // 헤더 이름을 Authorization 지정 - 개발자 : 성호
                 .description("Enter your JWT Access Token");
 
         SecurityRequirement securityRequirement = new SecurityRequirement().addList("AccessTokenAuth");

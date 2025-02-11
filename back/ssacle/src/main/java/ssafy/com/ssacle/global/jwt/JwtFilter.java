@@ -25,6 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+//        System.out.println("---------------filter--------------");
         String requestURI = request.getRequestURI();
         if(requestURI.startsWith("/swagger-ui") ||
                 requestURI.startsWith("/v3/api-docs") ||
@@ -38,12 +39,18 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
+//        System.out.println(request.getHeader("Authorization"));
         String accessToken = userService.resolveToken(request);
+//        System.out.println("accessToken: "+accessToken);
+//        System.out.println(jwtTokenUtil.isValidToken(accessToken));
+
+        // 토큰이 유효한 경우
         if (accessToken != null && jwtTokenUtil.isValidToken(accessToken)) {
             authenticateUser(accessToken, request);
             response.setHeader("Authorization", "Bearer " + accessToken);
             //request.setAttribute("Authorization", "Bearer " + accessToken);
         } else {
+            // 유효하지 않은 경우 리프레시 토큰으로 토큰 재발급
             String newAccessToken = userService.refreshAccessTokenFromRequest(request, response);
             if (newAccessToken != null) {
                 response.setHeader("Authorization", "Bearer " + newAccessToken);

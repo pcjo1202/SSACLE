@@ -24,7 +24,6 @@ class SprintTest {
                 .name("Java Sprint")
                 .basicDescription("Java 학습을 위한 스프린트")
                 .detailDescription("Spring Boot 학습 과정")
-                .tags("Java, Spring")
                 .recommendedFor("for me")
                 .startAt(LocalDateTime.now())
                 .endAt(LocalDateTime.now().plusDays(7))
@@ -36,7 +35,6 @@ class SprintTest {
         assertNotNull(sprint);
         assertEquals("Java Sprint", sprint.getName());
         assertEquals(10, sprint.getMaxMembers());
-        assertEquals("Java, Spring", sprint.getTags());
     }
 
     @Test
@@ -47,7 +45,6 @@ class SprintTest {
                 .name("Backend Sprint")
                 .basicDescription("백엔드 기술 학습")
                 .detailDescription("JPA와 Spring Security 집중 학습")
-                .tags("Spring, JPA, Security")
                 .recommendedFor("for me")
                 .startAt(LocalDateTime.now())
                 .endAt(LocalDateTime.now().plusDays(10))
@@ -92,7 +89,6 @@ class SprintTest {
                 .name("AI Sprint")
                 .basicDescription("AI 연구 프로젝트")
                 .detailDescription("딥러닝 및 머신러닝 활용")
-                .tags("AI, Deep Learning")
                 .recommendedFor("for me")
                 .startAt(LocalDateTime.now())
                 .endAt(LocalDateTime.now().plusDays(14))
