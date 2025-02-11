@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ssafy.com.ssacle.SprintCategory.domain.SprintCategory;
+import ssafy.com.ssacle.SprintCategory.repository.SprintCategoryRepository;
 import ssafy.com.ssacle.category.domain.Category;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.sprint.domain.Sprint;
@@ -31,6 +33,7 @@ public class SprintService {
     private final SprintRepository sprintRepository;
     private final CategoryRepository categoryRepository;
     private final TeamRepository teamRepository;
+    private final SprintCategoryRepository sprintCategoryRepository;
 
     @Transactional
     public SprintResponse createSprint(SprintCreateRequest request) {
@@ -47,13 +50,15 @@ public class SprintService {
                 .defaultTodos(request.getTodos())
                 .build();
 
+        sprintRepository.save(sprint); // Sprint 먼저 저장 (ID 필요)
+
         if (request.getCategoryIds() != null && !request.getCategoryIds().isEmpty()) {
             List<Category> categories = categoryRepository.findAllById(request.getCategoryIds());
-            categories.forEach(sprint::addCategory);
+            categories.forEach(category -> {
+                SprintCategory sprintCategory = new SprintCategory(sprint, category);
+                sprintCategoryRepository.save(sprintCategory);
+            });
         }
-
-
-        sprintRepository.saveAndFlush(sprint);
 
         return new SprintResponse("싸프린트가 성공적으로 생성되었습니다.", sprint.getId());
     }
@@ -78,8 +83,14 @@ public class SprintService {
         return SingleSprintResponse.from(sprint);
     }
 
-    public Page<Sprint> getSprintsByLeafCategory(String leafCategory, Pageable pageable) {
-        return sprintRepository.findSprintsByLeafCategory(leafCategory, pageable);
+    @Transactional
+    public Page<Sprint> getSprintsByStatus(Integer status, Pageable pageable) {
+        return sprintRepository.findSprintsByStatus(status, pageable);
+    }
+
+    @Transactional
+    public Page<Sprint> getSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
+        return sprintRepository.findSprintsByCategoryAndStatus(categoryId, status, pageable);
     }
 
     public SprintDetailResponse getSprintDetail(Long sprintId){

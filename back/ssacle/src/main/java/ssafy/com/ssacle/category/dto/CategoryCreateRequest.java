@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class CategoryCreateRequest {
-    private String image; // 이미지 (중간 카테고리일 경우만 사용)
+    private String image;
 }

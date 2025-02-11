@@ -2,6 +2,7 @@ package ssafy.com.ssacle.sprint.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ssafy.com.ssacle.SprintCategory.domain.SprintCategory;
 import ssafy.com.ssacle.category.domain.Category;
 import ssafy.com.ssacle.global.exception.UtilErrorCode;
 import ssafy.com.ssacle.global.utill.ValidationUtils;
@@ -20,8 +21,8 @@ public class Sprint {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL)
-    private List<Category> categories;
+    @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SprintCategory> sprintCategories;
 
     @OneToMany(mappedBy = "sprint")
     private List<Team> teams;
@@ -94,6 +95,7 @@ public class Sprint {
         this.createdAt=createdAt;
         this.teams = new ArrayList<>();
         this.defaultTodos = new ArrayList<>();
+        this.sprintCategories = new ArrayList<>();
     }
 
     public void addTeam(Team team){
@@ -101,9 +103,8 @@ public class Sprint {
         team.setSprint(this);
     }
 
-    public void addCategory(Category category){
-        this.categories.add(category);
-        category.setSprint(this);
+    public void addCategory(Category category) {
+        this.sprintCategories.add(new SprintCategory(this, category));
     }
 
 }

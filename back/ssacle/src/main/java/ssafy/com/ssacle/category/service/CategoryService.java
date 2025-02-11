@@ -67,7 +67,7 @@ public class CategoryService {
                 null,
                 null,
                 categoryName,
-                parent != null,  // 부모가 있으면 최하위 가능성이 있음
+                parent != null,
                 image
         );
 

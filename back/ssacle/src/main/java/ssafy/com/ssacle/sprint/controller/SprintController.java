@@ -45,11 +45,22 @@ public class SprintController implements SprintSwaggerController{
         return ResponseEntity.ok(response);
     }
 
-    /** 조건별 스프린트 조회 */
+    /** 필터링 조건으로 스프린트 조회 */
     @Override
-    public ResponseEntity<Page<SingleSprintResponse>> getSprints(@RequestParam String category, Pageable pageable) {
-        Page<Sprint> sprints = sprintService.getSprintsByLeafCategory(category, pageable);
-        return ResponseEntity.ok(sprints.map(SingleSprintResponse::from));
+    public ResponseEntity<Page<SingleSprintResponse>> getSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
+        Page<SingleSprintResponse> sprintResponses;
+
+        if (categoryId == null) {
+            // 카테고리 ID가 없으면 상태만 필터링
+            sprintResponses = sprintService.getSprintsByStatus(status, pageable)
+                    .map(SingleSprintResponse::from);
+        } else {
+            // 카테고리 ID가 있으면 카테고리 + 상태 필터링
+            sprintResponses = sprintService.getSprintsByCategoryAndStatus(categoryId, status, pageable)
+                    .map(SingleSprintResponse::from);
+        }
+
+        return ResponseEntity.ok(sprintResponses);
     }
 
     /** 스프린트 입장 페이지에 필요한 단일 스프린트 조회 */

@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import ssafy.com.ssacle.SprintCategory.domain.SprintCategory;
 import ssafy.com.ssacle.board.domain.BoardType;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,10 +31,8 @@ public class Category {
     @JsonIgnore
     private List<Category> children;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sprint_id")
-    @Setter
-    private Sprint sprint;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SprintCategory> sprintCategories = new ArrayList<>();
 
     @Column(name = "category_name", nullable = false, length = 255)
     private String categoryName;

@@ -24,8 +24,6 @@ public class QSprint extends EntityPathBase<Sprint> {
 
     public final StringPath basicDescription = createString("basicDescription");
 
-    public final ListPath<ssafy.com.ssacle.category.domain.Category, ssafy.com.ssacle.category.domain.QCategory> categories = this.<ssafy.com.ssacle.category.domain.Category, ssafy.com.ssacle.category.domain.QCategory>createList("categories", ssafy.com.ssacle.category.domain.Category.class, ssafy.com.ssacle.category.domain.QCategory.class, PathInits.DIRECT2);
-
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final NumberPath<Integer> currentMembers = createNumber("currentMembers", Integer.class);
@@ -45,6 +43,8 @@ public class QSprint extends EntityPathBase<Sprint> {
     public final StringPath recommendedFor = createString("recommendedFor");
 
     public final NumberPath<Integer> sequence = createNumber("sequence", Integer.class);
+
+    public final ListPath<ssafy.com.ssacle.SprintCategory.domain.SprintCategory, ssafy.com.ssacle.SprintCategory.domain.QSprintCategory> sprintCategories = this.<ssafy.com.ssacle.SprintCategory.domain.SprintCategory, ssafy.com.ssacle.SprintCategory.domain.QSprintCategory>createList("sprintCategories", ssafy.com.ssacle.SprintCategory.domain.SprintCategory.class, ssafy.com.ssacle.SprintCategory.domain.QSprintCategory.class, PathInits.DIRECT2);
 
     public final DateTimePath<java.time.LocalDateTime> startAt = createDateTime("startAt", java.time.LocalDateTime.class);
 

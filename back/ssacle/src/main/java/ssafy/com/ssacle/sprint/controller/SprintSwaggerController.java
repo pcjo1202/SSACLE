@@ -17,9 +17,6 @@ import ssafy.com.ssacle.sprint.dto.SprintCreateRequest;
 import ssafy.com.ssacle.sprint.dto.SprintDetailResponse;
 import ssafy.com.ssacle.sprint.dto.SprintResponse;
 
-/**
- * Sprint API 명세
- */
 @Tag(name = "Sprint API", description = "Sprint 관련 API입니다.")
 public interface SprintSwaggerController {
 
@@ -70,15 +67,20 @@ public interface SprintSwaggerController {
             @PathVariable Long sprintId
     );
 
-    @Operation(summary = "카테고리별 Sprint 조회", description = "카테고리로 Sprint 목록을 조회합니다.")
+    @Operation(summary = "카테고리별 Sprint 조회", description = "카테고리 ID(선택)와 상태를 기준으로 Sprint 목록을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "스프린트 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content),
             @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
     })
-    @GetMapping
-    ResponseEntity<Page<SingleSprintResponse>> getSprints(
-            @Parameter(description = "카테고리명 (예: useState, React 등)")
-            @RequestParam String category,
-            Pageable pageable);
+    @GetMapping("/search")
+    ResponseEntity<Page<SingleSprintResponse>> getSprintsByCategoryAndStatus(
+            @Parameter(description = "카테고리 ID (선택)", example = "1")
+            @RequestParam(required = false) Long categoryId,
+
+            @Parameter(description = "스프린트 상태 (0: 시작 전, 1: 진행 중, 2: 완료)", example = "0")
+            @RequestParam Integer status,
+
+            Pageable pageable
+    );
 }

@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface SprintRepositoryCustom {
     Optional<Sprint> findByIdWithTeams(Long sprintId);
-    Page<Sprint> findSprintsByLeafCategory(String leafCategoryName, Pageable pageable);
+    Page<Sprint> findSprintsByStatus(Integer status, Pageable pageable);
+    Page<Sprint> findSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable);
 }
