@@ -1,6 +1,5 @@
 import { cn } from '@/lib/utils'
 import StreamVideoPageButton from '@/components/PresentationPage/StreamVideoPageButton/StreamVideoPageButton'
-import ScreenShareView from '@/components/PresentationPage/ScreenShareView/ScreenShareView'
 
 const VideoLayout = ({
   children,
@@ -18,7 +17,7 @@ const VideoLayout = ({
         isScreenSharing ? 'flex-col-reverse' : 'flex-col'
       )}
     >
-      {isScreenSharing && <ScreenShareView />}
+      {/*{isScreenSharing && <ScreenShareView />}*/}
       <div className="flex flex-col justify-center w-full h-full gap-4 overflow-hidden">
         <div
           className={cn(
