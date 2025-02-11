@@ -31,6 +31,8 @@ const InterestPage = () => {
     },
     onSuccess: () => {
       alert('관심사가 성공적으로 저장되었습니다!')
+      localStorage.removeItem('userId')
+      localStorage.removeItem('userNickname')
       navigate('/account/signup/success')
     },
     onError: (error) => {
