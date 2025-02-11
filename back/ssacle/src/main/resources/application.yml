@@ -55,3 +55,7 @@ mattermost:
 
 openvidu_url : ${OPENVIDU_URL}
 openvidu_secret : ${OPENVIDU_SECRET}
+
+server:
+  address: 0.0.0.0
+  port: 8080
