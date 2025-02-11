@@ -233,7 +233,7 @@ const SignupStep2 = () => {
   return (
     <>
       <div className="w-full h-auto flex justify-center items-center mt-24">
-        <div className="grid grid-cols-12 gap-4 w-full">
+        <div className="grid grid-cols-12 gap-4 shrink-0">
           <div className="col-span-6 col-start-4">
             <h1 className="text-ssacle-blue text-3xl font-bold text-center mb-10">
               회원가입
