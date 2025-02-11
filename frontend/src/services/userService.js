@@ -40,7 +40,7 @@ export const fetchLogin = (credentials) =>
 export const fetchLogout = async () => {
   try {
     await axios.post(AUTH_END_POINT.LOGOUT)
-    window.location.href = '/login' // 성공 후 페이지 이동
+
   } catch (error) {
     console.error('❌ 로그아웃 실패:', error)
   }
@@ -48,7 +48,8 @@ export const fetchLogout = async () => {
 
 // 이메일 찾기
 export const fetchFindEmail = async (studentNumber) => {
-  return axios2.post('/api/v1/login/find-email', 
+  return axios2.post(
+    '/api/v1/login/find-email',
     { studentNumber }, // 객체로 감싸서 전달
     {
       headers: { 'Content-Type': 'application/json' },
