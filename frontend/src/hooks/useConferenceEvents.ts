@@ -1,10 +1,21 @@
-import { useState, useCallback } from 'react'
-import { Subscriber, Connection, SessionEventMap } from 'openvidu-browser'
+import { useCallback, useState } from 'react'
+import { Connection, SessionEventMap, Subscriber } from 'openvidu-browser'
+import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 
 export function useConferenceEvents() {
-  const [subscribers, setSubscribers] = useState<Subscriber[]>([])
+  const { subscribers, session, setSubscribers } = useOpenviduStateStore()
   const [connections, setConnections] = useState<Connection[]>([])
 
+  // ✅ 스트림 생성 핸들러
+  const handleStreamCreated = useCallback(
+    (event: SessionEventMap['streamCreated']) => {
+      const subscriber = session?.subscribe(event.stream, undefined)
+      if (subscriber) {
+        setSubscribers((prev: Subscriber[]) => [...prev, subscriber])
+      }
+    },
+    [session, setSubscribers]
+  )
   // ✅ 스트림 삭제 핸들러
   const handleStreamDestroyed = useCallback(
     async (event: SessionEventMap['streamDestroyed']) => {
@@ -45,6 +56,7 @@ export function useConferenceEvents() {
     connections,
     setSubscribers,
     setConnections,
+    handleStreamCreated,
     handleStreamDestroyed,
     handleConnectionCreated,
     handleConnectionDestroyed,

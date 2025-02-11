@@ -9,7 +9,9 @@ const SessionInitializer = () => {
   const { data: sessionId, isSuccess: isSessionSuccess } = useQuery({
     queryKey: ['sessionId'],
     queryFn: async () => {
-      const response = await axios.post(`${BACKEND_SERVER_URL}/api/sessions`)
+      const response = await axios.post(`${BACKEND_SERVER_URL}/api/sessions`, {
+        sessionId: 'testSessionId',
+      })
       return response.data // 실제 데이터만 반환
     },
   })

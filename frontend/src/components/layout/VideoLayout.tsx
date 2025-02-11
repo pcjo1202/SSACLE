@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils'
 import StreamVideoPageButton from '@/components/PresentationPage/StreamVideoPageButton/StreamVideoPageButton'
 import { ReactNode, useMemo, useState, Children } from 'react'
+import ScreenShareView from '@/components/PresentationPage/ScreenShareView/ScreenShareView'
 
 const VideoLayout = ({
   children,
@@ -13,7 +14,7 @@ const VideoLayout = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(0)
 
-  const itemPerPage = 6
+  const itemPerPage = isScreenSharing ? 3 : 6
 
   // 자식 요소 배열로 변환
   const chilrendArray = Children.toArray(children)
@@ -26,22 +27,23 @@ const VideoLayout = ({
   )
 
   return (
-    <section
-      className={cn(
-        'flex w-full h-full ',
-        isScreenSharing ? 'flex-col-reverse' : 'flex-col'
-      )}
-    >
-      {/*{isScreenSharing && <ScreenShareView />}*/}
-      <div className="flex flex-col justify-center w-full h-full gap-4 overflow-auto">
+    <section className="flex w-full h-full gap-4 ">
+      {isScreenSharing && <ScreenShareView />}
+      <div
+        className={cn(
+          'flex flex-col justify-center w-full h-full gap-4 ',
+          isScreenSharing && 'basis-1/4'
+        )}
+      >
         <div
           className={cn(
             'grid mx-auto min-h-96 h-full ',
-
-            'grid-cols-2 place-items-center', // 기본적으로 1열
-            slicedChildren.length > 4
-              ? 'grid-cols-3 w-full' // 4개 이상일 때 반응형 그리드
-              : 'grid-cols-2 w-9/12'
+            'grid-cols-1 place-items-center w-full',
+            !isScreenSharing &&
+              (slicedChildren.length > 4
+                ? 'grid-cols-3 w-full' // 4개 이상일 때 반응형 그리드
+                : 'grid-cols-2 w-9/12'),
+            !isScreenSharing && slicedChildren.length === 1 && 'grid-cols-1'
           )}
         >
           {slicedChildren}

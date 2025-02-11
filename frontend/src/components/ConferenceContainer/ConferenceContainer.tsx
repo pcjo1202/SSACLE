@@ -1,15 +1,11 @@
-import {
-  OpenVidu,
-  Publisher,
-  Session,
-  Subscriber,
-  Connection,
-} from 'openvidu-browser'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { OpenVidu, Publisher, Session, Subscriber } from 'openvidu-browser'
+import { useCallback, useEffect, useRef } from 'react'
 import VideoLayout from '@/components/layout/VideoLayout'
 import StreamVideoCard from '@/components/PresentationPage/StreamVideoCard/StreamVideoCard'
 import { useConferenceEvents } from '@/hooks/useConferenceEvents'
-import { useOpenViduStore } from '@/store/useOpenViduStore'
+import { useStreamStore } from '@/store/useStreamStore'
+import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
+import { useConnect } from '@/hooks/useConnect'
 
 const ConferenceContainer = ({
   sessionId,
@@ -18,38 +14,14 @@ const ConferenceContainer = ({
   sessionId: string
   token: string
 }) => {
-  const [session, setSession] = useState<Session | null>(null)
-  const [publisher, setPublisher] = useState<Publisher | null>(null)
-  const [isScreenSharing, setIsScreenSharing] = useState<boolean>(false)
-  const [currentPage, setCurrentPage] = useState<number>(0)
-  const {
-    setPublisher: setOpenViduPublisher,
-    isMicOn: openViduIsMicOn,
-    isCameraOn: openViduIsCameraOn,
-  } = useOpenViduStore()
+  const { publisher, subscribers } = useOpenviduStateStore()
+  const { isScreenSharing } = useStreamStore()
 
+  const { joinSession, leaveSession } = useConnect()
   const publisherRef = useRef<HTMLVideoElement | null>(null)
   const subscribersRefs = useRef<HTMLVideoElement[]>([])
 
-  const {
-    subscribers,
-    connections,
-    handleStreamDestroyed,
-    handleConnectionCreated,
-    handleConnectionDestroyed,
-    setSubscribers,
-  } = useConferenceEvents() // 컨퍼런스 이벤트 훅
-
-  // ✅ 스트림 생성 핸들러
-  const handleStreamCreated = useCallback(
-    (event) => {
-      const subscriber = session?.subscribe(event.stream, undefined)
-      if (subscriber) {
-        setSubscribers((prev) => [...prev, subscriber])
-      }
-    },
-    [session, setSubscribers]
-  )
+  const { connections } = useConferenceEvents()
 
   // 비디오 스트림 업데이트
   const updateSubscriberVideos = async () => {
@@ -59,69 +31,21 @@ const ConferenceContainer = ({
         videoElement.srcObject = subscriber.stream.getMediaStream()
       }
     })
-  }
 
-  const leaveSession = () => {
-    if (session) {
-      session.disconnect()
-      setSession(null)
-      setPublisher(null)
-    }
-  }
-
-  const publisherInitialize = async (OV: OpenVidu, newSession: Session) => {
-    try {
-      const newPublisher = await OV.initPublisher(undefined, {
-        videoSource: undefined,
-        audioSource: undefined,
-        publishAudio: openViduIsMicOn,
-        publishVideo: openViduIsCameraOn,
-        resolution: '1280x720',
-        frameRate: 30,
-        insertMode: 'APPEND',
-        mirror: true,
-      })
-
-      setOpenViduPublisher(newPublisher)
-      await newSession.publish(newPublisher)
-
-      setPublisher(newPublisher)
-      setSession(newSession)
-
-      if (publisherRef.current) {
-        publisherRef.current.srcObject = newPublisher.stream.getMediaStream()
-      }
-      return newPublisher
-    } catch (error) {
-      console.error('Publisher 초기화 실패:', error)
-      throw error
-    }
+    console.log('🔹 subscribersRefs - in conference container', subscribersRefs)
   }
 
   useEffect(() => {
-    const joinSession = async () => {
-      try {
-        const openvidu = new OpenVidu()
-        const newSession = openvidu.initSession()
-
-        newSession.on('streamCreated', handleStreamCreated)
-        newSession.on('streamDestroyed', handleStreamDestroyed)
-        newSession.on('connectionCreated', handleConnectionCreated)
-        newSession.on('connectionDestroyed', handleConnectionDestroyed)
-
-        console.log('🔹 newSession', newSession)
-        await newSession.connect(token)
-        const newPublisher = await publisherInitialize(openvidu, newSession)
-
-        if (publisherRef.current) {
-          publisherRef.current.srcObject = newPublisher.stream.getMediaStream()
-        }
-      } catch (error) {
-        console.error('❌ 세션 연결 실패:', error)
-      }
+    if (sessionId && token) {
+      joinSession(token) //
+        .then((newPublisher: Publisher | undefined) => {
+          console.log('🔹 newPublisher - in conference container', newPublisher)
+          publisherRef.current &&
+            (publisherRef.current.srcObject =
+              newPublisher?.stream.getMediaStream())
+        })
     }
 
-    sessionId && token && joinSession()
     return () => leaveSession()
   }, [])
 
@@ -132,29 +56,20 @@ const ConferenceContainer = ({
   return (
     <div className="w-full h-[calc(100vh-11rem)]">
       <VideoLayout
-        // connectCount={connections.length} // 컨퍼런스 참여자 수
-        connectCount={8} // 컨퍼런스 참여자 수
+        connectCount={connections.length} // 컨퍼런스 참여자 수
         isScreenSharing={isScreenSharing}
       >
         {/* 발행자 영상 */}
-        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
-        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
-        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
-        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
-        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
-        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
-        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
-        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
+        {publisher && <StreamVideoCard ref={publisherRef} />}
         {/* 참여자 영상 */}
         {subscribers?.map((subscriber) => (
           <StreamVideoCard
             key={subscriber.stream.streamId}
-            ref={(el) => {
-              if (el) {
-                subscribersRefs.current[subscriber.stream.streamId] = el
+            ref={(element) => {
+              if (element) {
+                subscribersRefs.current[subscriber.stream.streamId] = element
               }
             }}
-            streamData={subscriber.stream.getMediaStream()}
           />
         ))}
       </VideoLayout>

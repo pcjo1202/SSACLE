@@ -1,6 +1,10 @@
 import { cn } from '@/lib/utils'
 
-const StreamVideoCard = ({ ref, streamData = {} }) => {
+interface StreamVideoCardProps {
+  ref: React.RefObject<HTMLVideoElement>
+}
+
+const StreamVideoCard = ({ ref }: StreamVideoCardProps) => {
   // const { stream, name } = data
 
   return (
