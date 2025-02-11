@@ -30,8 +30,6 @@ public class QCategory extends EntityPathBase<Category> {
 
     public final StringPath image = createString("image");
 
-    public final BooleanPath isLeaf = createBoolean("isLeaf");
-
     public final QCategory parent;
 
     public final ListPath<ssafy.com.ssacle.SprintCategory.domain.SprintCategory, ssafy.com.ssacle.SprintCategory.domain.QSprintCategory> sprintCategories = this.<ssafy.com.ssacle.SprintCategory.domain.SprintCategory, ssafy.com.ssacle.SprintCategory.domain.QSprintCategory>createList("sprintCategories", ssafy.com.ssacle.SprintCategory.domain.SprintCategory.class, ssafy.com.ssacle.SprintCategory.domain.QSprintCategory.class, PathInits.DIRECT2);

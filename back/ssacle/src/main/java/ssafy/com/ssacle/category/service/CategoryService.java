@@ -67,7 +67,6 @@ public class CategoryService {
                 null,
                 null,
                 categoryName,
-                parent != null,
                 image
         );
 

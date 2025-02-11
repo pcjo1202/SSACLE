@@ -37,9 +37,6 @@ public class Category {
     @Column(name = "category_name", nullable = false, length = 255)
     private String categoryName;
 
-    @Column(name = "is_leaf")
-    private boolean isLeaf;
-
     @Column(name = "image", nullable = true, length = 1024)
     private String image;
 }
