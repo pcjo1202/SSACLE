@@ -6,6 +6,7 @@ import { useMutation } from '@tanstack/react-query'
 const EmailPage = () => {
   const location = useLocation()
   const [activeTab, setActiveTab] = useState('email')
+  const [errorMessage, setErrorMessage] = useState('')
 
   // 이메일 찾기용 상태
   const [studentNumber, setStudentNumber] = useState('') // 학번 입력값
@@ -19,7 +20,6 @@ const EmailPage = () => {
   // 로그인 페이지에서 전달된 `state.activeTab` 값이 있으면 반영
   useEffect(() => {
     if (location.state?.activeTab) {
-      console.log('📌 [useEffect] Active Tab:', location.state.activeTab)      
       setActiveTab(location.state.activeTab)
     }
   }, [location.state])
@@ -28,22 +28,20 @@ const EmailPage = () => {
   const findEmailMutation = useMutation({
     mutationFn: fetchFindEmail,
     onSuccess: (response) => {
-      console.log('✅ [findEmailMutation onSuccess] response:', response)
       if (response.status === 200) {
         setFoundEmail(response.data)
+        setErrorMessage('')
       }
     },
     onError: (error) => {
       console.error('❌ [findEmailMutation onError]:', error)
-      console.log('❗ [Error Response Data]', error?.response?.data)
       setFoundEmail('') // 혹시 이전 상태가 남았으면 초기화
-      const status = error?.response?.status
-      if (status === 404) {
-        alert('해당 학번으로 등록된 이메일을 찾을 수 없습니다.')
-      } else if (status === 500) {
-        alert('서버 에러가 발생했습니다.')
-      } else {
-        alert('이메일 찾기에 실패했습니다.')
+
+      let statusMessage =
+        error?.response?.data?.message || '이메일 찾기에 실패했습니다.'
+      if (statusMessage === 'User not found') {
+        statusMessage = '등록된 사용자를 찾을 수 없습니다.'
+        setErrorMessage(statusMessage)
       }
     },
   })
@@ -52,7 +50,6 @@ const EmailPage = () => {
   const findPasswordMutation = useMutation({
     mutationFn: fetchFindPassword,
     onSuccess: (response) => {
-      console.log('✅ [findPasswordMutation onSuccess] response:', response)
       if (response.status === 200) {
         setPwResult(response.data)
       }
@@ -75,21 +72,23 @@ const EmailPage = () => {
   // "이메일 찾기" 버튼 클릭 시 실행할 함수
   const handleFindEmail = () => {
     if (!studentNumber.trim()) {
-      console.log('📌 [handleFindEmail] studentNumber 입력값:', studentNumber)
       alert('싸피 학번을 입력해주세요!')
       return
     }
-    console.log('📌 [handleFindEmail] API 요청 시작:', studentNumber)
     findEmailMutation.mutate(studentNumber)
   }
 
   // 비밀번호 찾기 버튼
   const handleFindPassword = () => {
-    console.log('📌 [handleFindPassword] 학번:', pwStudentNumber, '| 이메일:', pwEmail)
     if (!pwStudentNumber.trim() || !pwEmail.trim()) {
       return alert('학번과 이메일을 모두 입력해주세요!')
     }
-    console.log('📌 [handleFindPassword] API 요청 시작:', { studentNumber: pwStudentNumber, email: pwEmail })
+
+    console.log('📌 [handleFindPassword] API 요청 시작:', {
+      studentNumber: pwStudentNumber,
+      email: pwEmail,
+    })
+
     findPasswordMutation.mutate({
       studentNumber: pwStudentNumber,
       email: pwEmail,
@@ -144,11 +143,15 @@ const EmailPage = () => {
             </button>
 
             {/* 이메일 찾기 결과 */}
-            {foundEmail && (
+            {foundEmail ? (
               <div className="text-center text-ssacle-blue font-medium">
                 찾으신 이메일: {foundEmail}
               </div>
-            )}
+            ) : errorMessage ? (
+              <div className="text-center text-red-500 font-medium">
+                {errorMessage}
+              </div>
+            ) : null}
           </div>
         ) : (
           <div className="flex flex-col gap-4">
