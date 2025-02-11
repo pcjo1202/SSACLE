@@ -5,13 +5,11 @@ interface StreamVideoCardProps {
 }
 
 const StreamVideoCard = ({ ref }: StreamVideoCardProps) => {
-  // const { stream, name } = data
-
   return (
     <div
       className={cn(
         'relative w-full  shadow-md border-[1px] border-gray-600',
-        'aspect-video z-10 '
+        'z-10 '
       )}
     >
       {/* 참여자 영상 */}
