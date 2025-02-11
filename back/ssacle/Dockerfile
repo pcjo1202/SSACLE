@@ -1,5 +1,5 @@
-# OpenJDK 23을 기반 이미지로 사용
-FROM openjdk:23-jdk-slim
+# OpenJDK 17을 기반 이미지로 사용
+FROM openjdk:17-jdk-slim
 
 # 작업 디렉토리 설정
 WORKDIR /app
