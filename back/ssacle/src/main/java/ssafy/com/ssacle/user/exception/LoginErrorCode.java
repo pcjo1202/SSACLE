@@ -12,7 +12,7 @@ public enum LoginErrorCode implements ErrorCode {
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "LOGIN_400_1", "User not found"),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "LOGIN_401_1", "Invalid password"),
     CANNOT_LOGIN(HttpStatus.FORBIDDEN, "LOGIN_403_1", "Cannot login due to restricted access"),
-    ALREADY_LOGGED_IN(HttpStatus.FORBIDDEN, "LOGIN_403_2", "User is already logged in"),
+    ALREADY_LOGGED_IN(HttpStatus.FORBIDDEN, "LOGIN_409_2", "다른 화면에서 로그인했습니다. 다시 로그인해 주세요"),
     ALREADY_LOGGED_OUT(HttpStatus.UNAUTHORIZED, "LOGIN_401_2", "User is already logged out"),
 
     // Access Token 관련 에러 (TOKEN_ACCESS_401)
