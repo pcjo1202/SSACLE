@@ -76,10 +76,10 @@ const ConferenceContainer = ({
         audioSource: undefined,
         publishAudio: openViduIsMicOn,
         publishVideo: openViduIsCameraOn,
-        resolution: '640x640',
+        resolution: '1280x720',
         frameRate: 30,
         insertMode: 'APPEND',
-        mirror: false,
+        mirror: true,
       })
 
       setOpenViduPublisher(newPublisher)
@@ -132,10 +132,18 @@ const ConferenceContainer = ({
   return (
     <div className="w-full h-[calc(100vh-11rem)]">
       <VideoLayout
-        streamSize={connections.length} // 연결된 사용자 수
+        // connectCount={connections.length} // 컨퍼런스 참여자 수
+        connectCount={8} // 컨퍼런스 참여자 수
         isScreenSharing={isScreenSharing}
       >
         {/* 발행자 영상 */}
+        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
+        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
+        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
+        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
+        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
+        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
+        <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
         <StreamVideoCard ref={publisherRef} streamData={publisherRef.current} />
         {/* 참여자 영상 */}
         {subscribers?.map((subscriber) => (
