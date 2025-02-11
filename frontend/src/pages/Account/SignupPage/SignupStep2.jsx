@@ -108,27 +108,27 @@ const SignupStep2 = () => {
     //     confirmpassword,
     //   }),
     mutationFn: async (userData) => {
-      console.log("📤 회원가입 요청 데이터:", userData)
-      
+      console.log('📤 회원가입 요청 데이터:', userData)
+
       const response = await fetchSignup(userData)
-    
-      console.log("📥 회원가입 응답:", response)
-      return response; // ✅ 정상적으로 응답을 반환함
-    }
+
+      console.log('📥 회원가입 응답:', response)
+      return response // ✅ 정상적으로 응답을 반환함
+    },
     onSuccess: (response) => {
       console.log('✅ 회원가입 성공:', response)
 
-    const userId = response?.data?.userId
-    const nickname = response?.data?.nickname
-    if (userId) {
-      localStorage.setItem('userId', userId)
-      localStorage.setItem('userNickname', nickname)
-      // alert('✅ 회원가입이 완료되었습니다.');
-      navigate('/account/signup/interest'); // ✅ 정상적으로 Interest 페이지로 이동
-    } else {
-      alert('❌ 회원가입 응답이 올바르지 않습니다.')
-    }
-  },
+      const userId = response?.data?.userId
+      const nickname = response?.data?.nickname
+      if (userId) {
+        localStorage.setItem('userId', userId)
+        localStorage.setItem('userNickname', nickname)
+        // alert('✅ 회원가입이 완료되었습니다.');
+        navigate('/account/signup/interest') // ✅ 정상적으로 Interest 페이지로 이동
+      } else {
+        alert('❌ 회원가입 응답이 올바르지 않습니다.')
+      }
+    },
     onError: (error) => {
       const errorMessage = error.response?.data?.message || '다시 시도해주세요.'
       console.error('❌ 회원가입 실패:', errorMessage)
