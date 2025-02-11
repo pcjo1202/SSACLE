@@ -50,7 +50,7 @@ httpCommon.interceptors.request.use((config) => {
 // 응답 인터셉터: 401 처리 + 토큰 갱신
 httpCommon.interceptors.response.use(
   (response) => {
-    const authHeader = response.headers['authorization'] // ✅ 공백 제거
+    const authHeader = response.headers['authorization'] // 공백 제거
     if (authHeader) saveAccessToken(authHeader)
     else console.log('❌ 응답 헤더에 Authorization 없음')
     return response
