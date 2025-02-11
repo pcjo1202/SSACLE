@@ -4,6 +4,7 @@ import {
   fetchLunchInfo,
   fetchVoteLunch,
   fetchLunchVoteResult,
+  fetchAiNews,
 } from '@/services/mainService'
 
 const SsabapVote = () => {
@@ -119,16 +120,12 @@ const SsabapVote = () => {
   }
 
   // 오늘의 메뉴가 없는 경우
-  if (
-    !lunchData ||
-    !Array.isArray(lunchData.menu) ||
-    lunchData.menu.length === 0
-  ) {
+  if (!lunchData || !Array.isArray(lunchData) || lunchData.length === 0) {
     return <div>오늘의 메뉴 정보가 없습니다.</div>
   }
 
-  const menu1 = lunchData.menu[0]
-  const menu2 = lunchData.menu[1]
+  const menu1 = lunchData[0]
+  const menu2 = lunchData[1]
 
   return (
     <div>
