@@ -3,7 +3,6 @@ import { cn } from '@/lib/utils'
 const StreamVideoCard = ({ ref, streamData = {} }) => {
   // const { stream, name } = data
 
-  console.log('🔹 ref', ref?.current)
   return (
     <div
       className={cn(

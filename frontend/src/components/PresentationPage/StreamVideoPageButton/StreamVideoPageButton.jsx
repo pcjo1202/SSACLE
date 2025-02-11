@@ -1,20 +1,24 @@
-import { useState } from 'react'
-
-const StreamVideoPageButton = ({ streamSize }) => {
-  const PAGE_SIZE = 6
-  const [currentPage, setCurrentPage] = useState(0)
-
+const StreamVideoPageButton = ({
+  connectCount,
+  currentPage,
+  itemPerPage,
+  setCurrentPage,
+}) => {
   const handlePrevPage = () => {
     setCurrentPage((prev) => (prev > 0 ? prev - 1 : 0))
   }
 
   const handleNextPage = () => {
     setCurrentPage((prev) =>
-      prev < streamSize.length / PAGE_SIZE ? prev + 1 : prev
+      prev < connectCount / itemPerPage ? prev + 1 : prev
     )
   }
+
+  console.log('connectCount', connectCount)
+  console.log('currentPage', currentPage)
+  console.log('itemPerPage', itemPerPage)
   return (
-    streamSize > PAGE_SIZE && (
+    connectCount > itemPerPage && (
       <div className="flex items-center justify-center gap-2 ">
         <button
           disabled={currentPage === 0}
@@ -25,7 +29,7 @@ const StreamVideoPageButton = ({ streamSize }) => {
           이전
         </button>
         <button
-          disabled={currentPage === Math.floor(streamSize / PAGE_SIZE)}
+          disabled={currentPage === Math.floor(connectCount / itemPerPage)}
           onClick={handleNextPage}
           className="disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="다음 페이지"
