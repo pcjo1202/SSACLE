@@ -27,11 +27,7 @@ const News = () => {
     return <div>뉴스 데이터가 없습니다.</div>
   }
 
-  const news1 = aiNewsData[0]
-  const news2 = aiNewsData[1]
-  const news3 = aiNewsData[2]
-  const news4 = aiNewsData[3]
-  const selectedNews = [news1, news2, news3, news4]
+  const selectedNews = aiNewsData.slice(0, 4)
 
   return (
     <div>
