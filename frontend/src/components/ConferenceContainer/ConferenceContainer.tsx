@@ -7,71 +7,56 @@ import { useStreamStore } from '@/store/useStreamStore'
 import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import { useConnect } from '@/hooks/useConnect'
 
-const ConferenceContainer = ({
-  sessionId,
-  token,
-}: {
-  sessionId: string
+interface ConferenceContainerProps {
   token: string
-}) => {
+}
+
+const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
   const { publisher, subscribers } = useOpenviduStateStore()
   const { isScreenSharing } = useStreamStore()
 
-  const { joinSession, leaveSession } = useConnect()
-  const publisherRef = useRef<HTMLVideoElement | null>(null)
-  const subscribersRefs = useRef<HTMLVideoElement[]>([])
+  const { initializeSession, joinSession, leaveSession } = useConnect()
 
   const { connections } = useConferenceEvents()
 
-  // 비디오 스트림 업데이트
-  const updateSubscriberVideos = async () => {
-    subscribers.forEach((subscriber) => {
-      const videoElement = subscribersRefs.current[subscriber.stream.streamId]
-      if (videoElement) {
-        videoElement.srcObject = subscriber.stream.getMediaStream()
+  useEffect(() => {
+    const join = async () => {
+      if (token) {
+        await initializeSession() ///
+          .then((session) => {
+            joinSession(session, token)
+          })
       }
-    })
-
-    console.log('🔹 subscribersRefs - in conference container', subscribersRefs)
-  }
-
-  useEffect(() => {
-    if (sessionId && token) {
-      joinSession(token) //
-        .then((newPublisher: Publisher | undefined) => {
-          console.log('🔹 newPublisher - in conference container', newPublisher)
-          publisherRef.current &&
-            (publisherRef.current.srcObject =
-              newPublisher?.stream.getMediaStream())
-        })
     }
-
+    join()
     return () => leaveSession()
-  }, [])
-
-  useEffect(() => {
-    updateSubscriberVideos()
-  }, [subscribers])
+  }, [token])
 
   return (
-    <div className="w-full h-[calc(100vh-11rem)]">
+    <div className="w-full h-full">
       <VideoLayout
-        connectCount={connections.length} // 컨퍼런스 참여자 수
+        connectCount={subscribers.length + (publisher ? 1 : 0)} // 컨퍼런스 참여자 수
+        // connectCount={12} // 컨퍼런스 참여자 수
         isScreenSharing={isScreenSharing}
       >
         {/* 발행자 영상 */}
-        {publisher && <StreamVideoCard ref={publisherRef} />}
-        {/* 참여자 영상 */}
-        {subscribers?.map((subscriber) => (
-          <StreamVideoCard
-            key={subscriber.stream.streamId}
-            ref={(element) => {
-              if (element) {
-                subscribersRefs.current[subscriber.stream.streamId] = element
+        {publisher && (
+          <>
+            <StreamVideoCard
+              ref={(el: HTMLVideoElement) =>
+                el && publisher.addVideoElement(el)
               }
-            }}
-          />
-        ))}
+            />
+          </>
+        )}
+        {/* 참여자 영상 */}
+        {subscribers &&
+          subscribers.map((sub, index) => (
+            <StreamVideoCard
+              key={index}
+              ref={(el: HTMLVideoElement) => el && sub.addVideoElement(el)}
+            />
+          ))}
       </VideoLayout>
     </div>
   )

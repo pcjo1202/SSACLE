@@ -15,7 +15,6 @@ export const useConnect = () => {
   const {
     OV,
     session,
-    publisher,
     subscribers,
     mainStreamManager,
     setOV,
@@ -24,14 +23,8 @@ export const useConnect = () => {
     setSubscribers,
     setMainStreamManager,
   } = useOpenviduStateStore()
-
-  const {
-    connections,
-    handleStreamCreated,
-    handleStreamDestroyed,
-    handleConnectionCreated,
-    handleConnectionDestroyed,
-  } = useConferenceEvents() // 컨퍼런스 이벤트 훅
+  const { handleConnectionCreated, handleConnectionDestroyed } =
+    useConferenceEvents() // 컨퍼런스 이벤트 훅
 
   const [currentVideoDevice, setCurrentVideoDevice] = useState()
 
@@ -72,37 +65,66 @@ export const useConnect = () => {
     }
   }, [OV, currentVideoDevice, mainStreamManager, session])
 
-  const joinSession = async (token: string) => {
+  const initializeSession = async () => {
+    const openvidu = new OpenVidu()
+    openvidu.enableProdMode()
+
+    const newSession = openvidu.initSession()
+
+    // 📌 🔹 새로운 사용자가 들어왔을 때 처리 (subscriber 추가)
+    newSession.on('streamCreated', (event) => {
+      const newSubscriber = newSession.subscribe(event.stream, undefined)
+      useOpenviduStateStore
+        .getState()
+        .setSubscribers((prev: StreamManager[]) => [...prev, newSubscriber])
+    })
+
+    // 📌 🔹 사용자가 입장했을 때
+    newSession.on('connectionCreated', (event) => {
+      console.log('새로운 사용자가 입장:', event.connection.connectionId)
+    })
+
+    // 📌 🔹 사용자가 퇴장했을 때
+    newSession.on('connectionDestroyed', (event) => {
+      console.log('사용자가 퇴장:', event.connection.connectionId)
+      setSubscribers(
+        subscribers.filter(
+          (sub) =>
+            sub.stream.connection.connectionId !== event.connection.connectionId
+        )
+      )
+    })
+
+    setOV(openvidu)
+    setSession(newSession)
+
+    return newSession
+  }
+
+  const joinSession = async (session: Session, token: string) => {
     try {
-      //   if (session) leaveSession() // 이미 세션이 있으면 세션 나가기
-
-      /** OpenVidu 인스턴스 생성 */
-      const openvidu = new OpenVidu()
-      openvidu.enableProdMode() // 프로덕션 모드 활성화 : 불필요한 로그 비활성화
-
-      setOV(openvidu)
-      const newSession = openvidu.initSession()
-
-      /** 이벤트 핸들러 설정 */
-      newSession.on('streamCreated', handleStreamCreated)
-      newSession.on('streamDestroyed', handleStreamDestroyed)
-      newSession.on('connectionCreated', handleConnectionCreated)
-      newSession.on('connectionDestroyed', handleConnectionDestroyed)
-
-      console.log('🔹 token - useConnect', token)
+      console.log('joinSession', session)
       if (!token) throw new Error('토큰이 유효하지 않습니다.')
+      if (!session) throw new Error('세션이 초기화되지 않았습니다.')
       /** 세션 연결 */
-      await newSession.connect(token)
-
+      await session?.connect(token)
       /** 퍼블리셔 초기화 */
-      const newPublisher = await publisherInitialize(openvidu, newSession)
+      const OV = new OpenVidu()
+      // 퍼블리셔 초기화
+      const newPublisher = OV.initPublisher(undefined, {
+        videoSource: undefined,
+        audioSource: undefined,
+        publishAudio: isMicOn,
+        publishVideo: isCameraOn,
+        resolution: '1280x720',
+        frameRate: 30,
+        insertMode: 'APPEND',
+        mirror: true,
+      })
 
       setPublisher(newPublisher) // 퍼블리셔 설정
-      await newSession.publish(newPublisher) // 세션에 퍼블리셔 발행
-      setSession(newSession) // 세션 설정
       setMainStreamManager(newPublisher) // 메인 스트림 매니저 설정
-
-      return newPublisher
+      await session.publish(newPublisher) // 세션에 퍼블리셔 발행
     } catch (error) {
       console.error('❌ 세션 연결 실패:', error)
     }
@@ -120,26 +142,5 @@ export const useConnect = () => {
     setPublisher(null)
   }, [session])
 
-  const publisherInitialize = async (OV: OpenVidu, newSession: Session) => {
-    try {
-      // 퍼블리셔 초기화
-      const newPublisher = OV.initPublisher(undefined, {
-        videoSource: undefined,
-        audioSource: undefined,
-        publishAudio: isMicOn,
-        publishVideo: isCameraOn,
-        resolution: '1280x720',
-        frameRate: 30,
-        insertMode: 'APPEND',
-        mirror: true,
-      })
-
-      return newPublisher
-    } catch (error) {
-      console.error('Publisher 초기화 실패:', error)
-      throw error
-    }
-  }
-
-  return { joinSession, leaveSession, switchCamera }
+  return { initializeSession, joinSession, leaveSession, switchCamera }
 }

@@ -11,12 +11,12 @@ interface OpenviduStateStore {
   OV: OpenVidu | null
   session: Session | null
   publisher: Publisher | null
-  subscribers: Subscriber[]
+  subscribers: StreamManager[]
   mainStreamManager: StreamManager | null
   setOV: (OV: OpenVidu | null) => void
   setSession: (session: Session | null) => void
   setPublisher: (publisher: Publisher | null) => void
-  setSubscribers: (subscribers: Subscriber[]) => void
+  setSubscribers: (subscribers: StreamManager[]) => void
   setMainStreamManager: (mainStreamManager: StreamManager | null) => void
 }
 
@@ -29,7 +29,15 @@ export const useOpenviduStateStore = create<OpenviduStateStore>((set, get) => ({
   setOV: (OV: OpenVidu | null) => set({ OV }),
   setSession: (session: Session | null) => set({ session }),
   setPublisher: (publisher: Publisher | null) => set({ publisher }),
-  setSubscribers: (subscribers: Subscriber[]) => set({ subscribers }),
+  setSubscribers: (
+    subscribers: StreamManager[] | ((prev: StreamManager[]) => StreamManager[])
+  ) =>
+    set((state) => ({
+      subscribers:
+        typeof subscribers === 'function'
+          ? subscribers(state.subscribers)
+          : subscribers,
+    })),
   setMainStreamManager: (mainStreamManager: StreamManager | null) =>
     set({ mainStreamManager }),
 }))
