@@ -56,11 +56,11 @@ const SignupStep2 = () => {
       const isDuplicate = response.data // 서버 응답 값 (true: 중복, false: 사용 가능)
       // console.log("🟠 중복 여부:", isDuplicate); // 디버깅용 로그
 
-      setIsNicknameValid(() => !isDuplicate) // 함수형 업데이트 적용
-      setNicknameChecked(() => true) // 함수형 업데이트 적용
+      setIsNicknameValid(() => !isDuplicate)
+      setNicknameChecked(() => true)
       setNicknameError(() =>
         isDuplicate ? '이미 사용 중인 닉네임입니다.' : ''
-      ) // 함수형 업데이트 적용
+      )
     },
 
     onError: (error) => {
