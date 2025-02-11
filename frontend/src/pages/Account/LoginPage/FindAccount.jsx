@@ -16,6 +16,7 @@ const EmailPage = () => {
   const [pwStudentNumber, setPwStudentNumber] = useState('')
   const [pwEmail, setPwEmail] = useState('')
   const [pwResult, setPwResult] = useState('') // 서버에서 응답받은 문자열(성공 시 비밀번호 or 안내문)을 표시하기 위한 state
+  const [pwErrorMessage, setPwErrorMessage] = useState('') // 비밀번호 찾기 오류 메시지 상태
 
   // 로그인 페이지에서 전달된 `state.activeTab` 값이 있으면 반영
   useEffect(() => {
@@ -52,20 +53,26 @@ const EmailPage = () => {
     onSuccess: (response) => {
       if (response.status === 200) {
         setPwResult(response.data)
+        setPwErrorMessage('')
       }
     },
     onError: (error) => {
       console.error('❌ 비밀번호 찾기 실패:', error)
       console.log('❗ [Error Response Data]', error?.response?.data)
       setPwResult('')
-      // 서버에서 400, 404, 500을 내려줄 수 있으므로, 적절히 메시지 처리
-      if (error?.response?.status === 400) {
-        alert('이메일 혹은 학번이 잘못되었습니다.')
-      } else if (error?.response?.status === 404) {
-        alert('등록된 계정을 찾을 수 없습니다.')
-      } else {
-        alert('서버 에러가 발생했습니다.')
+      setPwResult('') // 기존 결과 초기화
+
+      let statusMessage =
+        error?.response?.data?.message || '비밀번호 찾기에 실패했습니다.'
+
+      if (statusMessage === 'User not found') {
+        statusMessage = '등록된 사용자를 찾을 수 없습니다.'
+      } else if (statusMessage === 'Invalid email or student number') {
+        statusMessage = '이메일 혹은 학번이 잘못되었습니다.'
+      } else if (error?.response?.status === 500) {
+        statusMessage = '서버 에러가 발생했습니다.'
       }
+      setPwErrorMessage(statusMessage)
     },
   })
 
@@ -177,11 +184,15 @@ const EmailPage = () => {
             </button>
 
             {/* 비밀번호 찾기 결과 */}
-            {pwResult && (
+            {pwResult ? (
               <div className="text-center text-ssacle-blue font-medium">
                 조회 결과: {pwResult}
               </div>
-            )}
+            ) : pwErrorMessage ? (
+              <div className="text-center text-red-500 font-medium">
+                {pwErrorMessage}
+              </div>
+            ) : null}
           </div>
         )}
       </div>
