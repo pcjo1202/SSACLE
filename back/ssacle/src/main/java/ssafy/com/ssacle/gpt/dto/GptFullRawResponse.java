@@ -12,7 +12,6 @@ import java.util.List;
 public class GptFullRawResponse {
     private String basicDescription;
     private String detailDescription;
-    private String tags;
     private String recommendedFor;
     private List<RawTodoResponse> todos;
 }

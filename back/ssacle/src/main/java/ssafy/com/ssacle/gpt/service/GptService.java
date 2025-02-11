@@ -64,7 +64,6 @@ public class GptService {
             return new GptFullResponse(
                     fullResponse.getBasicDescription(),
                     fullResponse.getDetailDescription(),
-                    fullResponse.getTags(),
                     fullResponse.getRecommendedFor(),
                     updatedTodos
             );
@@ -87,7 +86,6 @@ public class GptService {
                     "3. The response JSON object must include:\n" +
                     "   - `basicDescription`: A one-line summary ending with \"course.\"\n" +
                     "   - `detailDescription`: A detailed explanation with at least 100 characters, including core concepts, practical applications, and expected outcomes.\n" +
-                    "   - `tags`: Two related keywords separated by a comma.\n" +
                     "   - `recommendedFor`: Three sentences describing the target audience, separated by a comma.\n" +
                     "   - `todos`: A structured daily learning plan.\n\n" +
 
@@ -105,7 +103,6 @@ public class GptService {
                     "{\n" +
                     "  \"basicDescription\": \"React Beginner Course.\",\n" +
                     "  \"detailDescription\": \"This course covers essential React concepts, including components, state management, event handling, and React Hooks. Through hands-on practice, learners will develop real-world UI building skills.\",\n" +
-                    "  \"tags\": \"React,Frontend\",\n" +
                     "  \"recommendedFor\": \"People new to React or frontend development, Those who want to build a portfolio through hands-on projects, Developers looking to understand React fundamentals and apply them to real projects.\",\n" +
                     "  \"todos\": [\n" +
                     "    { \n" +

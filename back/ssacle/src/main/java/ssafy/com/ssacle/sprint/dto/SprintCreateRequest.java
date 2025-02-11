@@ -11,7 +11,6 @@ public class SprintCreateRequest {
     private String name;
     private String basicDescription;
     private String detailDescription;
-    private String tags;
     private String recommendedFor;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
