@@ -129,15 +129,52 @@ const InterestPage = () => {
         </div>
 
         {/* 저장 버튼 */}
-        <button
+        {/* <button
           className={`mt-10 mb-24 px-10 py-3 text-white text-xl font-bold font-noto-sans-kr rounded-full transition-all ${
             userId ? 'bg-ssacle-black' : 'bg-ssacle-gray cursor-not-allowed'
           }`}
           onClick={() => userId && saveInterestsMutation.mutate()}
           disabled={!userId}
+          title={
+            !userId
+              ? '인증 코드가 만료되었어요! 마이페이지에서 수정해야해요!'
+              : ''
+          }
         >
           {saveInterestsMutation.isLoading ? '저장 중...' : '저장하기'}
-        </button>
+        </button> */}
+        <div className="relative group flex flex-col items-center">
+          <button
+            className={`mt-10 mb-3 px-10 py-3 text-white text-xl font-bold font-noto-sans-kr rounded-full transition-all ${
+              userId ? 'bg-ssacle-black' : 'bg-ssacle-gray cursor-not-allowed'
+            }`}
+            onClick={() => userId && saveInterestsMutation.mutate()}
+            disabled={!userId}
+          >
+            {saveInterestsMutation.isLoading ? '저장 중...' : '저장하기'}
+          </button>
+          {/* 🔥 userId가 없을 때만 로그인 버튼 표시 */}
+          {!userId && (
+            <button
+              className="px-10 py-3 text-white text-xl font-bold font-noto-sans-kr rounded-full bg-ssacle-blue transition-all"
+              onClick={() => {
+                localStorage.removeItem('userId')
+                localStorage.removeItem('userNickname')
+                navigate('/account/signup/success')
+              }}
+            >
+              넘어가기
+            </button>
+          )}
+
+          {/* 🔥 툴팁: userId가 없을 때만 표시 */}
+          {!userId && (
+            <div className="🔥 absolute left-1/2 transform -translate-x-1/2 -top-10 bg-black text-white text-sm rounded-md px-4 py-2 min-w-[13rem] opacity-0 group-hover:opacity-100 transition-opacity text-center">
+              <p>인증 코드가 만료되었어요!</p>
+              <p>마이페이지에서 수정해야해요!</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
