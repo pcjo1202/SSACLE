@@ -61,6 +61,7 @@ public class UserService {
         User user = getUserFromToken(loginDTO);
         Optional<RefreshToken> existingToken = refreshRepository.findByUser(user);
         if (existingToken.isPresent()) {
+            refreshRepository.deleteByUser(user);
             throw new CannotLoginException(LoginErrorCode.ALREADY_LOGGED_IN);
         }
         String accessToken = jwtTokenUtil.generateAccessToken(user, accessExpireMs);
