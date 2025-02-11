@@ -50,8 +50,6 @@ public class QSprint extends EntityPathBase<Sprint> {
 
     public final NumberPath<Integer> status = createNumber("status", Integer.class);
 
-    public final StringPath tags = createString("tags");
-
     public final ListPath<ssafy.com.ssacle.team.domain.Team, ssafy.com.ssacle.team.domain.QTeam> teams = this.<ssafy.com.ssacle.team.domain.Team, ssafy.com.ssacle.team.domain.QTeam>createList("teams", ssafy.com.ssacle.team.domain.Team.class, ssafy.com.ssacle.team.domain.QTeam.class, PathInits.DIRECT2);
 
     public QSprint(String variable) {

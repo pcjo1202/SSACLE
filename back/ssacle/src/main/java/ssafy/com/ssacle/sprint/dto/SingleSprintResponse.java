@@ -12,7 +12,6 @@ public class SingleSprintResponse {
     private String name;
     private String basicDescription;
     private String detailDescription;
-    private String tags;
     private String recommendedFor;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
@@ -29,7 +28,6 @@ public class SingleSprintResponse {
         this.name = sprint.getName();
         this.basicDescription = sprint.getBasicDescription();
         this.detailDescription = sprint.getDetailDescription();
-        this.tags = sprint.getTags();
         this.recommendedFor=sprint.getRecommendedFor();
         this.startAt = sprint.getStartAt();
         this.endAt = sprint.getEndAt();

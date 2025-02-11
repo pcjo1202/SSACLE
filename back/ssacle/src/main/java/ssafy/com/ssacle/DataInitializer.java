@@ -4,28 +4,71 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.Transactional;
+import ssafy.com.ssacle.ainews.domain.AINews;
+import ssafy.com.ssacle.ainews.repository.AINewsRepository;
+import ssafy.com.ssacle.board.domain.Board;
+import ssafy.com.ssacle.board.domain.BoardType;
+import ssafy.com.ssacle.board.exception.BoardErrorCode;
+import ssafy.com.ssacle.board.exception.BoardException;
+import ssafy.com.ssacle.board.repository.BoardRepository;
+import ssafy.com.ssacle.board.repository.BoardTypeRepository;
+import ssafy.com.ssacle.category.domain.Category;
+import ssafy.com.ssacle.category.exception.CategoryErrorCode;
+import ssafy.com.ssacle.category.exception.CategoryException;
+import ssafy.com.ssacle.category.repository.CategoryRepository;
+import ssafy.com.ssacle.comment.domain.Comment;
+import ssafy.com.ssacle.comment.repository.CommentRepository;
+import ssafy.com.ssacle.lunch.domain.Lunch;
+import ssafy.com.ssacle.lunch.repository.LunchRepository;
 import ssafy.com.ssacle.user.domain.User;
+import ssafy.com.ssacle.user.exception.CannotLoginException;
+import ssafy.com.ssacle.user.exception.LoginErrorCode;
 import ssafy.com.ssacle.user.repository.UserRepository;
+import ssafy.com.ssacle.usercategory.domain.UserCategory;
+import ssafy.com.ssacle.usercategory.repository.UserCategoryRepository;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 @Configuration
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner initDatabase(UserRepository userRepository) {
-        return args -> initializeUsers(userRepository);
+    CommandLineRunner initDatabase(
+            UserRepository userRepository,
+            CategoryRepository categoryRepository,
+            UserCategoryRepository userCategoryRepository,
+            BoardTypeRepository boardTypeRepository,
+            BoardRepository boardRepository,
+            CommentRepository commentRepository,
+            AINewsRepository aiNewsRepository,
+            LunchRepository lunchRepository) {
+
+        return args -> {
+            initializeUsers(userRepository);
+            initializeCategory(categoryRepository);
+            initializeUserCategories(userRepository, categoryRepository, userCategoryRepository);
+            initializeBoardType(boardTypeRepository);
+            initializeBoard(boardRepository, boardTypeRepository, userRepository);
+            initializeComments(commentRepository, boardRepository, userRepository);
+            initializeReplies(commentRepository, userRepository);
+            initializeAINews(aiNewsRepository);
+            initializeLunch(lunchRepository);
+        };
     }
 
     @Transactional
-    void initializeUsers(UserRepository userRepository) {
+    public void initializeUsers(UserRepository userRepository) {
         if (userRepository.count() == 0) { // 기존 데이터가 없을 경우에만 추가
             User admin = User.createAdmin("admin@example.com", "admin123", "AdminUser");
             User admin2 = User.createAdmin("admin2@example.com", "admin1234", "AdminUser2");
             User user = User.createStudent("user@example.com", "user123", "John Doe", "1234567", "johndoe");
-
             userRepository.save(admin);
             userRepository.save(admin2);
             userRepository.save(user);
-
             System.out.println("default data added");
         } else {
             System.out.println("default data already exists");

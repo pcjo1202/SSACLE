@@ -6,18 +6,12 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ssafy.com.ssacle.user.domain.User;
-import ssafy.com.ssacle.user.exception.CannotLoginException;
-import ssafy.com.ssacle.user.exception.LoginErrorCode;
-import ssafy.com.ssacle.user.repository.UserRepository;
 import ssafy.com.ssacle.user.service.UserService;
 
 import java.io.IOException;
@@ -31,6 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+//        System.out.println("---------------filter--------------");
         String requestURI = request.getRequestURI();
         if(requestURI.startsWith("/swagger-ui") ||
                 requestURI.startsWith("/v3/api-docs") ||
@@ -44,13 +39,18 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
+//        System.out.println(request.getHeader("Authorization"));
         String accessToken = userService.resolveToken(request);
+//        System.out.println("accessToken: "+accessToken);
+//        System.out.println(jwtTokenUtil.isValidToken(accessToken));
 
+        // 토큰이 유효한 경우
         if (accessToken != null && jwtTokenUtil.isValidToken(accessToken)) {
             authenticateUser(accessToken, request);
             response.setHeader("Authorization", "Bearer " + accessToken);
             //request.setAttribute("Authorization", "Bearer " + accessToken);
         } else {
+            // 유효하지 않은 경우 리프레시 토큰으로 토큰 재발급
             String newAccessToken = userService.refreshAccessTokenFromRequest(request, response);
             if (newAccessToken != null) {
                 response.setHeader("Authorization", "Bearer " + newAccessToken);

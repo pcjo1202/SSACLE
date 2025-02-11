@@ -46,7 +46,29 @@ public class BoardService {
                     .time(board.getCreatedAt())
                     .tags(splitTags(board.getTag()))
                     .build();
+            list.add(boardResponseDTO);
         }
+        return list;
+    }
+
+    @Transactional
+    public List<BoardResponseDTO> getBoardsbyBoardTypeName(String name) {
+        BoardType boardType = boardTypeRepository.findByName(name)
+                .orElseThrow(() -> new BoardException(BoardErrorCode.INVALID_BOARD_TYPE));
+        List<Board> boards = boardRepository.findByBoardTypeId(boardType.getId());
+        List<BoardResponseDTO> list = new ArrayList<>();
+
+        for(Board board : boards){
+            BoardResponseDTO boardResponseDTO = BoardResponseDTO.builder()
+                    .title(board.getTitle())
+                    .content(board.getContent())
+                    .writerInfo(board.getUser().getNickname())
+                    .time(board.getCreatedAt())
+                    .tags(splitTags(board.getTag()))
+                    .build();
+            list.add(boardResponseDTO);
+        }
+
         return list;
     }
 

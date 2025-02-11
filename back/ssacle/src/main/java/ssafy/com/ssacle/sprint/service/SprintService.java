@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.SprintCategory.domain.SprintCategory;
 import ssafy.com.ssacle.SprintCategory.repository.SprintCategoryRepository;
 import ssafy.com.ssacle.category.domain.Category;
+import ssafy.com.ssacle.category.dto.CategoryResponse;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
@@ -20,11 +21,13 @@ import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.repository.TeamRepository;
+import ssafy.com.ssacle.todo.domain.DefaultTodo;
 import ssafy.com.ssacle.todo.domain.QDefaultTodo;
 import ssafy.com.ssacle.todo.dto.DefaultTodoResponse;
 import ssafy.com.ssacle.todo.repository.DefaultTodoRepository;
 import ssafy.com.ssacle.user.domain.User;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -41,7 +44,6 @@ public class SprintService {
                 .name(request.getName())
                 .basicDescription(request.getBasicDescription())
                 .detailDescription(request.getDetailDescription())
-                .tags(request.getTags())
                 .recommendedFor(request.getRecommendedFor())
                 .startAt(request.getStartAt())
                 .endAt(request.getEndAt())
@@ -50,7 +52,7 @@ public class SprintService {
                 .defaultTodos(request.getTodos())
                 .build();
 
-        sprintRepository.save(sprint); // Sprint 먼저 저장 (ID 필요)
+        sprintRepository.save(sprint);
 
         if (request.getCategoryIds() != null && !request.getCategoryIds().isEmpty()) {
             List<Category> categories = categoryRepository.findAllById(request.getCategoryIds());
@@ -93,17 +95,33 @@ public class SprintService {
         return sprintRepository.findSprintsByCategoryAndStatus(categoryId, status, pageable);
     }
 
-    public SprintDetailResponse getSprintDetail(Long sprintId){
-        Sprint sprint = sprintRepository.findWithTodosById(sprintId)
+    public SprintDetailResponse getSprintDetail(Long sprintId) {
+        // Sprint 기본 정보 가져오기 (defaultTodos 없이)
+        Sprint sprint = sprintRepository.findById(sprintId)
                 .orElseThrow(SprintNotExistException::new);
 
-        SingleSprintResponse sprintResponse = SingleSprintResponse.from(sprint);
+        // defaultTodos 조회
+        List<DefaultTodo> defaultTodos = sprintRepository.findWithDefaultTodosById(sprintId)
+                .map(Sprint::getDefaultTodos)
+                .orElse(Collections.emptyList());
 
-        List<DefaultTodoResponse> todos = DefaultTodoResponse.fromEntities(sprint.getDefaultTodos());
+        // sprintCategories 조회
+        List<SprintCategory> sprintCategories = sprintRepository.findWithSprintCategoriesById(sprintId)
+                .map(Sprint::getSprintCategories)
+                .orElse(Collections.emptyList());
+
+        // 변환 작업 수행
+        SingleSprintResponse sprintResponse = SingleSprintResponse.from(sprint);
+        List<DefaultTodoResponse> todos = DefaultTodoResponse.fromEntities(defaultTodos);
+        List<CategoryResponse> categories = sprintCategories.stream()
+                .map(sprintCategory -> CategoryResponse.from(sprintCategory.getCategory()))
+                .toList();
 
         return SprintDetailResponse.builder()
                 .sprint(sprintResponse)
                 .todos(todos)
+                .categories(categories)
                 .build();
     }
+
 }
