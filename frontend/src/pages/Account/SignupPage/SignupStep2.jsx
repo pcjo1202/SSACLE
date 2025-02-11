@@ -110,6 +110,7 @@ const SignupStep2 = () => {
     onSuccess: () => {
       const userId = response.data.userId
       localStorage.setItem('userId', userId)
+      localStorage.setItem('userNickname', nickname)
       // alert('✅ 회원가입이 완료되었습니다.')
       navigate('/account/signup/interest')
     },

@@ -6,7 +6,7 @@ import { fetchSaveInterest } from '@/services/userService'
 const InterestPage = () => {
   const navigate = useNavigate()
   const [selected, setSelected] = useState(new Set())
-  const userNickname = '싸피인' // 실제 데이터와 연결 필요
+  const userNickname = localStorage.getItem('userNickname')
   const userId = localStorage.getItem('userId')
 
   const toggleSelection = (interest) => {
