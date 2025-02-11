@@ -54,7 +54,7 @@ const SsaprintJourneyLayout = ({ sprint }) => {
           <p>📅 캘린더 컴포넌트 자리 (추후 추가 예정)</p>
         </div>
 
-        {/* To-Do 리스트 - 항상 오른쪽에 고정 */}
+        {/* To-Do 리스트 */}
         <div className="lg:w-[26%]">
           <SprintPresentationSession sprint={sprint} />
           <div className="mt-6">

@@ -21,7 +21,7 @@ const SprintPresentationSession = ({ sprint }) => {
         {presentationDate.format('YYYY년 M월 D일 A h시 ~')}
       </p>
 
-      {/* D-Day & 입장 버튼을 같은 줄에 정렬 */}
+      {/* D-Day & 입장 버튼 */}
       <div className="mt-6 flex items-center justify-between">
         <span className="text-blue-600 text-md font-bold">
           {dDay === 0 ? 'D-DAY' : `D-DAY ${dDay + 1}`}
