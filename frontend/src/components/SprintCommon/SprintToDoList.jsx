@@ -5,10 +5,10 @@ const SprintToDoList = ({ todos }) => {
   const [tasks, setTasks] = useState([])
   const [newTask, setNewTask] = useState('')
 
-  // ✅ 오늘 날짜 포맷 (YYYY-MM-DD) (배열 구조 분해 할당 적용)
+  // 오늘 날짜 포맷 (YYYY-MM-DD) 
   const [today] = useMemo(() => new Date().toISOString().split('T'), [])
 
-  // ✅ todos 데이터에서 오늘 날짜의 To-Do 찾기
+  // todos 데이터에서 오늘 날짜의 To-Do 찾기
   useEffect(() => {
     const todayTasks = todos.find((day) => day.date === today)
     if (todayTasks) {
@@ -18,9 +18,9 @@ const SprintToDoList = ({ todos }) => {
     } else {
       setTasks([])
     }
-  }, [todos, today]) // `today`를 의존성 배열에 포함하여 ESLint 경고 해결
+  }, [todos, today])
 
-  // ✅ 체크박스 변경 이벤트
+  // 체크박스 변경 이벤트
   const handleToggle = (taskIndex) => {
     setTasks((prevTasks) =>
       prevTasks.map((task, index) =>
@@ -29,12 +29,12 @@ const SprintToDoList = ({ todos }) => {
     )
   }
 
-  // ✅ 할 일 삭제
+  // 할 일 삭제
   const handleDeleteTask = (taskIndex) => {
     setTasks((prevTasks) => prevTasks.filter((_, index) => index !== taskIndex))
   }
 
-  // ✅ 새 할 일 추가
+  // 새 할 일 추가
   const handleAddTask = () => {
     if (!newTask.trim()) return
     setTasks((prevTasks) => [...prevTasks, { text: newTask, completed: false }])
