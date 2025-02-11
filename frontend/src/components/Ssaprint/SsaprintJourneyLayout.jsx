@@ -2,6 +2,7 @@ import SprintProgressStatus from '@/components/SprintCommon/SprintProgressStatus
 import JoinSprintInfo from '@/components/SprintCommon/JoinSprintInfo'
 import SprintDetail from '@/components/SprintCommon/SprintDetail'
 import SprintToDoList from '@/components/SprintCommon/SprintToDoList'
+import SprintPresentationSession from '@/components/SprintCommon/SprintPresentationSession'
 import { useState } from 'react'
 
 const SsaprintJourneyLayout = ({ sprint }) => {
@@ -55,7 +56,10 @@ const SsaprintJourneyLayout = ({ sprint }) => {
 
         {/* To-Do 리스트 - 항상 오른쪽에 고정 */}
         <div className="lg:w-[26%]">
-          <SprintToDoList todos={sprint.todos} />
+          <SprintPresentationSession sprint={sprint} />
+          <div className="mt-6">
+            <SprintToDoList todos={sprint.todos} />
+          </div>
         </div>
       </div>
     </div>
