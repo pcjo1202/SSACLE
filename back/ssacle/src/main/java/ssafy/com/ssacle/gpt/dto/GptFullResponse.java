@@ -16,7 +16,6 @@ import java.util.List;
 public class GptFullResponse {
     private String basicDescription;
     private String detailDescription;
-    private String tags;
     private String recommendedFor;
     private List<TodoResponse> todos;
 }

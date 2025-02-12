@@ -10,7 +10,6 @@ public class SprintBuilder {
     private String name;
     private String basicDescription;
     private String detailDescription;
-    private String tags;
     private String recommendedFor;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
@@ -50,22 +49,17 @@ public class SprintBuilder {
         this.announceAt = announceAt;
         return this;
     }
-    public SprintBuilder tags(String tags){
-        this.tags = tags;
-        return this;
-    }
     public SprintBuilder maxMembers(Integer maxMembers){
         this.maxMembers = maxMembers;
         return this;
     }
-
     public SprintBuilder defaultTodos(List<TodoRequest> defaultTodoRequests) {
         this.defaultTodoRequests = defaultTodoRequests;
         return this;
     }
 
     public Sprint build(){
-        Sprint sprint = new Sprint(name, basicDescription, detailDescription, tags, recommendedFor, startAt, endAt, announceAt, 0, 1, maxMembers, 1, LocalDateTime.now());
+        Sprint sprint = new Sprint(name, basicDescription, detailDescription, recommendedFor, startAt, endAt, announceAt, 0, 1, maxMembers, 1, LocalDateTime.now());
 
         if (defaultTodoRequests != null && !defaultTodoRequests.isEmpty()) {
             List<DefaultTodo> defaultTodos = defaultTodoRequests.stream()

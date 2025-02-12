@@ -63,10 +63,10 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
         List<Sprint> results = queryFactory
                 .selectDistinct(sprint)
                 .from(sprint)
-                .join(sprintCategory).on(sprintCategory.sprint.eq(sprint)) // 중간 테이블 조인
-                .join(sprintCategory.category, category) // 카테고리 조인
-                .where(category.id.eq(categoryId) // categoryId 조건 추가
-                        .and(sprint.status.eq(status))) // status 조건 추가
+                .join(sprintCategory).on(sprintCategory.sprint.eq(sprint))
+                .join(sprintCategory.category, category)
+                .where(category.id.eq(categoryId)
+                        .and(sprint.status.eq(status)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
