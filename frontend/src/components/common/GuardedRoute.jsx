@@ -30,7 +30,7 @@ const GuardedRoute = () => {
           // 403 발생 시 자동 로그아웃 처리
           localStorage.removeItem('accessToken')
           localStorage.removeItem('userNickname')
-          window.location.href = '/account/login'
+          navigate('/account/login', { replace: true })
         }
         return false
       }
