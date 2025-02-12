@@ -12,7 +12,10 @@ import { useCallback, useState } from 'react'
 import { useConferenceEvents } from '@/hooks/useConferenceEvents'
 
 export const useConnect = () => {
-  const { isMicOn, isCameraOn, isScreenSharing } = useStreamStore()
+  const isMicOn = useStreamStore((state) => state.isMicOn)
+  const isCameraOn = useStreamStore((state) => state.isCameraOn)
+  const setIsScreenSharing = useStreamStore((state) => state.setIsScreenSharing)
+
   const {
     OV,
     session,
@@ -91,10 +94,33 @@ export const useConnect = () => {
         ) {
           const screenSubscriber = newSession.subscribe(event.stream, undefined)
           setScreenPublisher(screenSubscriber as unknown as Publisher)
+          setIsScreenSharing(true)
+          console.log('구독함', screenSubscriber)
         }
       } else {
         const newSubscriber = newSession.subscribe(event.stream, undefined)
         setSubscribers((prev: Subscriber[]) => [...prev, newSubscriber])
+      }
+    })
+
+    newSession.on('streamDestroyed', (event) => {
+      setSubscribers(
+        subscribers.filter(
+          (sub: Subscriber) =>
+            sub.stream.connection.connectionId !==
+            event.stream.connection.connectionId
+        )
+      )
+
+      if (
+        screenPublisher &&
+        event.stream.connection.connectionId ===
+          screenPublisher.stream.connection.connectionId
+      ) {
+        console.log('화면 공유 스트림 종료')
+        session?.unsubscribe(event.stream as unknown as Subscriber)
+        setScreenPublisher(null)
+        setIsScreenSharing(false)
       }
     })
 
@@ -106,21 +132,7 @@ export const useConnect = () => {
     // 사용자가 퇴장했을 때
     newSession.on('connectionDestroyed', (event) => {
       console.log('사용자가 퇴장:', event.connection.connectionId)
-      setSubscribers(
-        subscribers.filter(
-          (sub: Subscriber) =>
-            sub.stream.connection.connectionId !== event.connection.connectionId
-        )
-      )
-
-      if (
-        screenPublisher &&
-        event.connection.connectionId ===
-          screenPublisher.stream.connection.connectionId
-      ) {
-        setScreenPublisher(null)
-      }
-      // handleConnectionDestroyed(event)
+      handleConnectionDestroyed(event)
     })
 
     setOV(openvidu)

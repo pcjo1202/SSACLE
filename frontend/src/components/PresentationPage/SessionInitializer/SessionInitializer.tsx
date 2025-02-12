@@ -7,7 +7,7 @@ const SessionInitializer = () => {
   const { data: token, isSuccess } = useQuery({
     queryKey: ['sessionId'],
     queryFn: async () => {
-      const sessionId = await fetchSessionId('dd')
+      const sessionId = await fetchSessionId('d1d111dd2s11s1112d')
       const token = await fetchToken(sessionId)
       return token // 실제 데이터만 반환
     },
