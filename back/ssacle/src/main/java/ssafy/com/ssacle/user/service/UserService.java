@@ -44,7 +44,7 @@ public class UserService {
 
     public User getAuthenticatedUser() {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-
+        System.out.println(userEmail);
         return userRepository.findByEmail(userEmail)
                 .orElseThrow(()->new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
     }

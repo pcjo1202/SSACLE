@@ -20,12 +20,20 @@ import ssafy.com.ssacle.comment.domain.Comment;
 import ssafy.com.ssacle.comment.repository.CommentRepository;
 import ssafy.com.ssacle.lunch.domain.Lunch;
 import ssafy.com.ssacle.lunch.repository.LunchRepository;
+import ssafy.com.ssacle.sprint.domain.Sprint;
+import ssafy.com.ssacle.sprint.domain.SprintBuilder;
+import ssafy.com.ssacle.sprint.repository.SprintRepository;
+import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
+import ssafy.com.ssacle.team.domain.Team;
+import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.exception.CannotLoginException;
 import ssafy.com.ssacle.user.exception.LoginErrorCode;
 import ssafy.com.ssacle.user.repository.UserRepository;
 import ssafy.com.ssacle.usercategory.domain.UserCategory;
 import ssafy.com.ssacle.usercategory.repository.UserCategoryRepository;
+import ssafy.com.ssacle.userteam.domain.UserTeam;
+import ssafy.com.ssacle.userteam.repository.UserTeamRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -45,7 +53,10 @@ public class DataInitializer {
             BoardRepository boardRepository,
             CommentRepository commentRepository,
             AINewsRepository aiNewsRepository,
-            LunchRepository lunchRepository) {
+            LunchRepository lunchRepository,
+            SprintRepository sprintRepository,
+            TeamRepository teamRepository,
+            UserTeamRepository userTeamRepository) {
 
         return args -> {
             initializeUsers(userRepository);
@@ -57,6 +68,8 @@ public class DataInitializer {
             initializeReplies(commentRepository, userRepository);
             initializeAINews(aiNewsRepository);
             initializeLunch(lunchRepository);
+            initializeSprints(sprintRepository);
+            initializeTeams(sprintRepository,teamRepository,userRepository,userTeamRepository);
         };
     }
 
@@ -81,22 +94,18 @@ public class DataInitializer {
             // 상위 카테고리 생성
             Category backEnd = Category.builder()
                     .categoryName("Back-end")
-                    .isLeaf(false)
                     .build();
 
             Category frontEnd = Category.builder()
                     .categoryName("Front-end")
-                    .isLeaf(false)
                     .build();
 
             Category infra = Category.builder()
                     .categoryName("Infra")
-                    .isLeaf(false)
                     .build();
 
             Category database = Category.builder()
                     .categoryName("DataBase")
-                    .isLeaf(false)
                     .build();
 
             categoryRepository.save(backEnd);
@@ -106,41 +115,41 @@ public class DataInitializer {
 
             // Back-end 하위 카테고리
             List<Category> backEndChildren = List.of(
-                    Category.builder().categoryName("Spring").parent(backEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/Spring.jpeg").build(),
-                    Category.builder().categoryName("Django").parent(backEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/django.png").build(),
-                    Category.builder().categoryName("Node.js").parent(backEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/node.png").build(),
-                    Category.builder().categoryName("NestJS").parent(backEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/nest.png").build(),
-                    Category.builder().categoryName("Ruby on Rails").parent(backEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/ruby.png").build(),
-                    Category.builder().categoryName("ASP.NET").parent(backEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/asp.png").build()
+                    Category.builder().categoryName("Spring").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/Spring.jpeg").build(),
+                    Category.builder().categoryName("Django").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/django.png").build(),
+                    Category.builder().categoryName("Node.js").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/node.png").build(),
+                    Category.builder().categoryName("NestJS").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/nest.png").build(),
+                    Category.builder().categoryName("Ruby on Rails").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/ruby.png").build(),
+                    Category.builder().categoryName("ASP.NET").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/asp.png").build()
             );
 
             // Front-end 하위 카테고리
             List<Category> frontEndChildren = List.of(
-                    Category.builder().categoryName("React").parent(frontEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/react.png").build(),
-                    Category.builder().categoryName("Vue.js").parent(frontEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/vue.png").build(),
-                    Category.builder().categoryName("Angular").parent(frontEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/angular.png").build(),
-                    Category.builder().categoryName("Svelte").parent(frontEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/svelte.png").build(),
-                    Category.builder().categoryName("Next.js").parent(frontEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/next.png").build()
+                    Category.builder().categoryName("React").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/react.png").build(),
+                    Category.builder().categoryName("Vue.js").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/vue.png").build(),
+                    Category.builder().categoryName("Angular").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/angular.png").build(),
+                    Category.builder().categoryName("Svelte").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/svelte.png").build(),
+                    Category.builder().categoryName("Next.js").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/next.png").build()
 
             );
 
             // Infra 하위 카테고리
             List<Category> infraChildren = List.of(
-                    Category.builder().categoryName("Docker").parent(infra).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/docker.png").build(),
-                    Category.builder().categoryName("Kubernetes").parent(infra).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/kuber.png").build(),
-                    Category.builder().categoryName("AWS").parent(infra).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/aws.png").build(),
-                    Category.builder().categoryName("Azure").parent(infra).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/azure.jpeg").build(),
-                    Category.builder().categoryName("Google Cloud").parent(infra).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/google+cloud.png").build()
+                    Category.builder().categoryName("Docker").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/docker.png").build(),
+                    Category.builder().categoryName("Kubernetes").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/kuber.png").build(),
+                    Category.builder().categoryName("AWS").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/aws.png").build(),
+                    Category.builder().categoryName("Azure").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/azure.jpeg").build(),
+                    Category.builder().categoryName("Google Cloud").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/google+cloud.png").build()
             );
 
             // DataBase 하위 카테고리
             List<Category> databaseChildren = List.of(
-                    Category.builder().categoryName("MySQL").parent(database).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mysql.png").build(),
-                    Category.builder().categoryName("PostgreSQL").parent(database).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/postgresql.png").build(),
-                    Category.builder().categoryName("MongoDB").parent(database).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mongodb.png").build(),
-                    Category.builder().categoryName("Redis").parent(database).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/redis.png").build(),
-                    Category.builder().categoryName("Oracle").parent(database).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/oracle.png").build(),
-                    Category.builder().categoryName("MariaDB").parent(database).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mariadb.png").build()
+                    Category.builder().categoryName("MySQL").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mysql.png").build(),
+                    Category.builder().categoryName("PostgreSQL").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/postgresql.png").build(),
+                    Category.builder().categoryName("MongoDB").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mongodb.png").build(),
+                    Category.builder().categoryName("Redis").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/redis.png").build(),
+                    Category.builder().categoryName("Oracle").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/oracle.png").build(),
+                    Category.builder().categoryName("MariaDB").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mariadb.png").build()
             );
 
             // 모든 카테고리 저장
@@ -687,5 +696,85 @@ public class DataInitializer {
             System.out.println("No parent comments found. Initialize comments first.");
         }
     }
+
+    @Transactional
+    public void initializeSprints(SprintRepository sprintRepository) {
+        if (sprintRepository.count() == 0) {
+            Sprint sprint1 = SprintBuilder.builder()
+                    .name("React Sprint")
+                    .basicDescription("React 기본 개념 학습")
+                    .detailDescription("React의 useState, useEffect 및 Component 설계 학습")
+                    .tags("React, Hooks, Frontend")
+                    .recommendedFor("초급 프론트엔드 개발자")
+                    .startAt(LocalDateTime.now().minusDays(7))
+                    .endAt(LocalDateTime.now().minusDays(6))
+                    .announceAt(LocalDateTime.now())
+                    .maxMembers(10)
+                    .build();
+
+            Sprint sprint2 = SprintBuilder.builder()
+                    .name("Spring Boot Sprint")
+                    .basicDescription("Spring Boot API 개발")
+                    .detailDescription("Spring Boot를 활용한 REST API 설계 및 JPA 활용 학습")
+                    .tags("Spring Boot, JPA, Backend")
+                    .recommendedFor("초급 백엔드 개발자")
+                    .startAt(LocalDateTime.now().minusDays(7))
+                    .endAt(LocalDateTime.now().minusDays(6))
+                    .announceAt(LocalDateTime.now())
+                    .maxMembers(8)
+                    .build();
+
+            Sprint sprint3 = SprintBuilder.builder()
+                    .name("DevOps Sprint")
+                    .basicDescription("CI/CD 및 Kubernetes 학습")
+                    .detailDescription("Jenkins, Docker, Kubernetes를 활용한 배포 자동화 학습")
+                    .tags("CI/CD, DevOps, Infra")
+                    .recommendedFor("클라우드 및 인프라 엔지니어 지망생")
+                    .startAt(LocalDateTime.now().minusDays(7))
+                    .endAt(LocalDateTime.now().minusDays(6))
+                    .announceAt(LocalDateTime.now())
+                    .maxMembers(6)
+                    .build();
+
+            sprintRepository.saveAll(List.of(sprint1, sprint2, sprint3));
+            System.out.println("✅ 스프린트 더미 데이터가 추가되었습니다.");
+        } else {
+            System.out.println("✅ 스프린트 데이터가 이미 존재합니다.");
+        }
+    }
+
+    @Transactional
+    public void initializeTeams(SprintRepository sprintRepository, TeamRepository teamRepository, UserRepository userRepository, UserTeamRepository userTeamRepository) {
+        if (teamRepository.count() == 0) {
+            List<Sprint> sprints = sprintRepository.findAllWithTeams();
+            List<User> users = userRepository.findAllWithUserTeams();
+            List<Team> teams = new ArrayList<>();
+            List<UserTeam> userTeams = new ArrayList<>();
+
+            for (User user : users) {
+                // 랜덤한 스프린트 배정 (스프린트가 존재할 경우)
+                if (!sprints.isEmpty()) {
+                    Sprint assignedSprint = sprints.get(new Random().nextInt(sprints.size()));
+
+                    // SprintTeamBuilder를 활용하여 팀 생성
+                    Team team = SprintTeamBuilder.builder()
+                            .addUser(user)
+                            .participateSprint(assignedSprint)
+                            .build();
+
+                    teams.add(team);
+                    userTeams.add(new UserTeam(user, team));
+                }
+            }
+
+            teamRepository.saveAll(teams);
+            userTeamRepository.saveAll(userTeams);
+
+            System.out.println("✅ SprintTeamBuilder를 이용한 1인 팀 및 스프린트 배정 완료");
+        } else {
+            System.out.println("✅ 팀 데이터가 이미 존재합니다.");
+        }
+    }
+
 
 }
