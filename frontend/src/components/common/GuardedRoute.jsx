@@ -29,7 +29,7 @@ const GuardedRoute = () => {
         // 403 발생 시 자동 로그아웃 처리
         localStorage.removeItem('accessToken')
         localStorage.removeItem('userNickname')
-        navigate('/account/login', { replace: true })
+        // navigate('/account/login', { replace: true })
 
         return false
       }

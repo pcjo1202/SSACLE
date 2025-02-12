@@ -21,6 +21,7 @@ import BoardDetailPage from '@/pages/Board/BoardDetailPage'
 import BoardFormPage from '@/pages/Board/BoardFormPage'
 import FreeBoardPage from '@/pages/Board/FreeBoardPage'
 import GuardedRoute from '@/components/common/GuardedRoute'
+import UnGuardedRoute from '@/components/common/UnGuardedRoute'
 
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
       // 계정 인증 관련 (로그인, 회원가입, 관심사 등록 등)
       {
         path: '/account',
+        element: <UnGuardedRoute />,
         children: [
           // 로그인 page
           { path: 'login', element: <LoginPage /> },
