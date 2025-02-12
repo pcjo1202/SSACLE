@@ -13,10 +13,11 @@ import {
 import { usePresentationStore } from '@/store/usePresentationStore'
 import { useStreamStore } from '@/store/useStreamStore'
 import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
+import useScreenShare from './useScreenShare'
 
 export const usePresentationControls = () => {
   const { isChatOpen, setIsChatOpen } = usePresentationStore()
-  const { publisher } = useOpenviduStateStore()
+  const { cameraPublisher } = useOpenviduStateStore()
   const {
     isMicOn,
     isCameraOn,
@@ -25,6 +26,8 @@ export const usePresentationControls = () => {
     setIsCameraOn,
     setIsScreenSharing,
   } = useStreamStore()
+
+  const { startScreenShare, stopScreenShare } = useScreenShare()
 
   const leftControl = {
     id: 'effects',
@@ -43,7 +46,7 @@ export const usePresentationControls = () => {
       title: '마이크',
       style: isMicOn ? '' : 'text-red-500',
       activeFunction: () => {
-        publisher?.publishAudio(!isMicOn)
+        cameraPublisher?.publishAudio(!isMicOn)
         setIsMicOn(!isMicOn)
       },
     },
@@ -53,18 +56,17 @@ export const usePresentationControls = () => {
       style: isCameraOn ? '' : 'text-red-500',
       title: '카메라',
       activeFunction: () => {
-        publisher?.publishVideo(!isCameraOn)
+        cameraPublisher?.publishVideo(!isCameraOn)
         setIsCameraOn(!isCameraOn)
       },
     },
     {
       id: 'screen',
       icon: isScreenSharing ? ScreenShareOffIcon : ScreenShareIcon,
-      title: '화면공유',
-      style: isScreenSharing ? '' : 'text-green-500',
+      title: isScreenSharing ? '화면공유중' : '화면공유',
+      style: isScreenSharing ? 'text-green-500' : '',
       activeFunction: () => {
-        // publisher?.publishScreenShare(!isScreenSharing)
-        setIsScreenSharing(!isScreenSharing)
+        isScreenSharing ? stopScreenShare() : startScreenShare()
       },
     },
     {
