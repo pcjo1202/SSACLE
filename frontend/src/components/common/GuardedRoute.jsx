@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react'
 import { Outlet, Navigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import httpCommon from '@/services/http-common'
 
 const GuardedRoute = () => {
   const [isValidating, setIsValidating] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const queryClient = useQueryClient()
+
+  // 컴포넌트 마운트 시 validateToken 쿼리 초기화
+  useEffect(() => {
+    queryClient.removeQueries(['validateToken'])
+  }, [])
 
   const { data, isLoading } = useQuery({
     queryKey: ['validateToken'],
@@ -18,9 +24,14 @@ const GuardedRoute = () => {
         }
         return response.data
       } catch (error) {
-        // 인증 실패 시 토큰과 닉네임 모두 제거
-        localStorage.removeItem('accessToken')
-        localStorage.removeItem('userNickname')
+        if (error.response?.status === 403) {
+          console.warn('인증 실패: 토큰 삭제 후 로그인 페이지로 이동')
+
+          // 403 발생 시 자동 로그아웃 처리
+          localStorage.removeItem('accessToken')
+          localStorage.removeItem('userNickname')
+          window.location.href = '/account/login'
+        }
         return false
       }
     },
