@@ -13,13 +13,14 @@ import {
 import { usePresentationStore } from '@/store/usePresentationStore'
 import { useStreamStore } from '@/store/useStreamStore'
 import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
-import useScreenShare from './useScreenShare'
+import useScreenShare from '@/hooks/useScreenShare'
+import { useModal } from '@/hooks/useModal'
+import { ModalSteps } from '@/constants/modalStep'
 
 export const usePresentationControls = () => {
   const { cameraPublisher, screenPublisher } = useOpenviduStateStore()
-  const { isMicOn, isCameraOn, isScreenSharing, setIsMicOn, setIsCameraOn } =
-    useStreamStore()
-
+  const { isMicOn, isCameraOn, isScreenSharing } = useStreamStore()
+  const { openModal, setModalStep } = useModal()
   const { startScreenShare, stopScreenShare } = useScreenShare()
 
   const leftControl = {
@@ -97,7 +98,8 @@ export const usePresentationControls = () => {
     title: '나가기',
     style: 'text-red-500',
     activeFunction: () => {
-      console.log('나가기')
+      openModal()
+      setModalStep(ModalSteps.ENDING.END_CAUTION)
     },
   }
 
