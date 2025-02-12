@@ -90,4 +90,36 @@ export const mockActiveSsaprintDetailData = {
       name: '일기제목',
     },
   ],
+  questions: [
+    {
+      id: 1,
+      description: 'string',
+      createdAt: '2025-02-12T06:27:55.939Z',
+      opened: true,
+    },
+    {
+      id: 2,
+      description: '질문22222222222222',
+      createdAt: '2025-02-12T06:27:55.939Z',
+      opened: true,
+    },
+    {
+      id: 3,
+      description: '질문3',
+      createdAt: '2025-02-12T06:27:55.939Z',
+      opened: true,
+    },
+    {
+      id: 4,
+      description: '질문4',
+      createdAt: '2025-02-12T06:27:55.939Z',
+      opened: true,
+    },
+    {
+      id: 5,
+      description: '질문5',
+      createdAt: '2025-02-12T06:27:55.939Z',
+      opened: true,
+    },
+  ],
 }
