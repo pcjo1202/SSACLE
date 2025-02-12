@@ -28,10 +28,6 @@ const VideoLayout = ({
     startIndex + itemPerPage
   )
 
-  console.log('chilrendArray', chilrendArray)
-  console.log('slicedChildren', slicedChildren)
-  console.log('connectCount', connectCount)
-
   const totalPages = Math.ceil(chilrendArray.length / itemPerPage)
 
   const handlePageChange = (page: number) => {
@@ -41,7 +37,7 @@ const VideoLayout = ({
   }
 
   return (
-    <section className="flex w-full h-full">
+    <section className="flex w-full h-full gap-3">
       {isScreenSharing && <ScreenShareView />}
       <div
         className={cn(
@@ -51,7 +47,7 @@ const VideoLayout = ({
       >
         <div
           className={cn(
-            'grid mx-auto min-h-96 h-full ap-4',
+            'grid mx-auto min-h-96 h-full ap-4 transition-all duration-300',
             'w-full',
             'grid-cols-1',
             !isScreenSharing && connectCount > 4
