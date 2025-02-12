@@ -24,14 +24,13 @@ const GuardedRoute = () => {
         }
         return response.data
       } catch (error) {
-        if (error.response?.status === 403) {
-          console.warn('인증 실패: 토큰 삭제 후 로그인 페이지로 이동')
+        console.warn('인증 실패: 토큰 삭제 후 로그인 페이지로 이동')
 
-          // 403 발생 시 자동 로그아웃 처리
-          localStorage.removeItem('accessToken')
-          localStorage.removeItem('userNickname')
-          navigate('/account/login', { replace: true })
-        }
+        // 403 발생 시 자동 로그아웃 처리
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('userNickname')
+        navigate('/account/login', { replace: true })
+
         return false
       }
     },
