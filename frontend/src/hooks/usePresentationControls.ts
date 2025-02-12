@@ -16,16 +16,9 @@ import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import useScreenShare from './useScreenShare'
 
 export const usePresentationControls = () => {
-  const { isChatOpen, setIsChatOpen } = usePresentationStore()
-  const { cameraPublisher } = useOpenviduStateStore()
-  const {
-    isMicOn,
-    isCameraOn,
-    isScreenSharing,
-    setIsMicOn,
-    setIsCameraOn,
-    setIsScreenSharing,
-  } = useStreamStore()
+  const { cameraPublisher, screenPublisher } = useOpenviduStateStore()
+  const { isMicOn, isCameraOn, isScreenSharing, setIsMicOn, setIsCameraOn } =
+    useStreamStore()
 
   const { startScreenShare, stopScreenShare } = useScreenShare()
 
@@ -46,8 +39,11 @@ export const usePresentationControls = () => {
       title: '마이크',
       style: isMicOn ? '' : 'text-red-500',
       activeFunction: () => {
-        cameraPublisher?.publishAudio(!isMicOn)
-        setIsMicOn(!isMicOn)
+        cameraPublisher && cameraPublisher?.publishAudio(!isMicOn)
+        screenPublisher && screenPublisher?.publishAudio(!isMicOn)
+        useStreamStore.setState(({ isMicOn }) => ({
+          isMicOn: !isMicOn,
+        }))
       },
     },
     {
@@ -56,8 +52,12 @@ export const usePresentationControls = () => {
       style: isCameraOn ? '' : 'text-red-500',
       title: '카메라',
       activeFunction: () => {
-        cameraPublisher?.publishVideo(!isCameraOn)
-        setIsCameraOn(!isCameraOn)
+        if (!isScreenSharing && cameraPublisher) {
+          cameraPublisher?.publishVideo(!isCameraOn)
+          useStreamStore.setState(({ isCameraOn }) => ({
+            isCameraOn: !isCameraOn,
+          }))
+        }
       },
     },
     {
@@ -66,7 +66,9 @@ export const usePresentationControls = () => {
       title: isScreenSharing ? '화면공유중' : '화면공유',
       style: isScreenSharing ? 'text-green-500' : '',
       activeFunction: () => {
-        isScreenSharing ? stopScreenShare() : startScreenShare()
+        isScreenSharing
+          ? confirm('화면공유를 끝내겠습니까?') && stopScreenShare()
+          : startScreenShare()
       },
     },
     {
@@ -82,7 +84,9 @@ export const usePresentationControls = () => {
       icon: MessageSquareIcon,
       title: '채팅',
       activeFunction: () => {
-        setIsChatOpen(!isChatOpen)
+        usePresentationStore.setState(({ isChatOpen }) => ({
+          isChatOpen: !isChatOpen,
+        }))
       },
     },
   ]

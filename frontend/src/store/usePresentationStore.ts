@@ -13,7 +13,6 @@ export const usePresentationStore = create<PresentationStore>((set) => ({
 
   // 질문 카드 설정
   setQuestionCard: (questionCard) => set({ questionCard }),
-
   // 채팅 상태 설정
-  setIsChatOpen: (isChatOpen) => set({ isChatOpen }),
+  setIsChatOpen: () => set((state) => ({ isChatOpen: !state.isChatOpen })),
 }))

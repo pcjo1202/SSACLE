@@ -37,7 +37,7 @@ const VideoLayout = ({
   }
 
   return (
-    <section className="flex w-full h-full gap-3">
+    <section className="flex w-full h-full gap-1">
       {isScreenSharing && <ScreenShareView />}
       <div
         className={cn(
