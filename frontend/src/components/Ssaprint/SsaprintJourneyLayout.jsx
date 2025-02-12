@@ -49,7 +49,6 @@ const SsaprintJourneyLayout = ({ sprint }) => {
         </div>
       </div>
 
-      {/* ✅ 두꺼운 구분선 추가 */}
       <div className="border-t-4 border-gray-200 w-full"></div>
 
       {/* 두 번째 줄 - 캘린더 + To-Do List */}

@@ -12,7 +12,7 @@ const SprintQuestionCards = ({ sprintId }) => {
 
   const cardsPerPage = 4
 
-  // ✅ 질문 목록 가져오기
+  // 질문 목록 가져오기
   const loadQuestions = useCallback(async () => {
     try {
       const fetchedQuestions = await fetchSsaprintQuestions(sprintId)
@@ -25,15 +25,15 @@ const SprintQuestionCards = ({ sprintId }) => {
 
   useEffect(() => {
     loadQuestions()
-  }, [loadQuestions]) // ✅ useCallback으로 감싸면 안전
+  }, [loadQuestions])
 
-  // ✅ 항상 4개의 카드가 보이도록 빈 카드 추가
+  // 항상 4개의 카드가 보이도록 빈 카드 추가
   const paddedQuestions =
     questions.length >= cardsPerPage
       ? questions
       : [...questions, ...Array(cardsPerPage - questions.length).fill(null)]
 
-  // ✅ 페이지별 4개씩 보여주기 위해 그룹화
+  // 페이지별 4개씩 보여주기 위해 그룹화
   const paginatedQuestions = []
   for (let i = 0; i < paddedQuestions.length; i += cardsPerPage) {
     const page = paddedQuestions.slice(i, i + cardsPerPage)
@@ -43,14 +43,14 @@ const SprintQuestionCards = ({ sprintId }) => {
     paginatedQuestions.push(page)
   }
 
-  // ✅ 다음 페이지로 이동
+  // 다음 페이지로 이동
   const handleNext = () => {
     if (currentIndex < paginatedQuestions.length - 1) {
       setCurrentIndex((prev) => prev + 1)
     }
   }
 
-  // ✅ 이전 페이지로 이동
+  // 이전 페이지로 이동
   const handlePrev = () => {
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1)
@@ -59,14 +59,13 @@ const SprintQuestionCards = ({ sprintId }) => {
 
   return (
     <div className="mt-1 w-full flex flex-col items-start">
-      {/* 🔹 제목 & 버튼 배치 (간격 조정) */}
       <div className="flex items-center w-full ml-1 mb-3 gap-4">
         <h3 className="text-lg font-bold">질문 카드 📝</h3>
         <AddQuestionButton onClick={() => setIsModalOpen(true)} />
       </div>
 
       <div className="flex items-center w-full">
-        {/* 🔹 왼쪽 이동 버튼 */}
+        {/* 왼쪽 이동 버튼 */}
         <button
           onClick={handlePrev}
           className={`p-2 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 shadow-md 
@@ -76,7 +75,7 @@ const SprintQuestionCards = ({ sprintId }) => {
           <ChevronLeft size={24} className="text-gray-600" />
         </button>
 
-        {/* 🔹 질문 카드 리스트 */}
+        {/* 질문 카드 리스트 */}
         <div className="flex gap-6 overflow-hidden w-full px-6 justify-center">
           {paginatedQuestions[currentIndex]?.map((q, index) => (
             <div
@@ -95,7 +94,7 @@ const SprintQuestionCards = ({ sprintId }) => {
           ))}
         </div>
 
-        {/* 🔹 오른쪽 이동 버튼 */}
+        {/* 오른쪽 이동 버튼 */}
         <button
           onClick={handleNext}
           className={`p-2 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 shadow-md 
@@ -106,12 +105,12 @@ const SprintQuestionCards = ({ sprintId }) => {
         </button>
       </div>
 
-      {/* 🔹 질문 추가 모달 */}
+      {/* 질문 추가 모달 */}
       {isModalOpen && (
         <SprintQuestionEditModal
           sprintId={sprintId}
           onClose={() => setIsModalOpen(false)}
-          onQuestionAdded={loadQuestions} // ✅ 질문 추가 후 목록 갱신
+          onQuestionAdded={loadQuestions} // 질문 추가 후 목록 갱신
         />
       )}
     </div>
