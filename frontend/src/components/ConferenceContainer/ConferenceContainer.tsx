@@ -2,7 +2,7 @@ import VideoLayout from '@/components/layout/VideoLayout'
 import StreamVideoCard from '@/components/PresentationPage/StreamVideoCard/StreamVideoCard'
 import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import { useConnect } from '@/hooks/useConnect'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 interface ConferenceContainerProps {
   token: string
@@ -26,10 +26,14 @@ const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
     return () => leaveSession()
   }, [])
 
+  const sessionConnection = useMemo<Number>(() => {
+    return subscribers.length + (cameraPublisher ? 1 : 0)
+  }, [subscribers, cameraPublisher])
+
   return (
     <div className="w-full h-full">
       <VideoLayout
-        connectCount={subscribers.length + (cameraPublisher ? 1 : 0)} // 컨퍼런스 참여자 수
+        connectCount={sessionConnection} // 컨퍼런스 참여자 수
       >
         {/* 발행자 영상 */}
         {cameraPublisher && (

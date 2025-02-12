@@ -7,7 +7,7 @@ import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 
 interface VideoLayoutProps {
   children: ReactNode
-  connectCount: number
+  connectCount: Number
 }
 
 const VideoLayout = ({ children, connectCount }: VideoLayoutProps) => {
