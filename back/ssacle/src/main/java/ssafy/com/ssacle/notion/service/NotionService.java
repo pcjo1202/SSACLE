@@ -3,6 +3,7 @@ package ssafy.com.ssacle.notion.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.notion.exception.NotionCreatePageException;
 import ssafy.com.ssacle.todo.dto.DefaultTodoResponse;
@@ -15,12 +16,10 @@ public class NotionService {
 
     private final NotionClient notionClient;
 
-    // SSACLE 메인 페이지 ID (메인 데이터베이스)
-    private static final String SSACLE_MAIN_PAGE_ID = "198b70c7-4ec7-803a-98b8-f8539a227052";
+    @Value("${NOTION_MAIN_PAGE_ID}")
+    private String SSACLE_MAIN_PAGE_ID;
 
-    /**
-     * SSACLE 메인 페이지에서 계층적으로 데이터베이스 & 페이지를 탐색하고 생성
-     */
+    /** SSACLE 메인 페이지에서 계층적으로 데이터베이스 & 페이지를 탐색하고 생성*/
     public String createCategoryStructure(String category1, String category2, String category3, String teamName) {
         // '대' 카테고리 데이터베이스 탐색 및 생성
         System.out.println("========대 카테고리 ============");
@@ -41,12 +40,10 @@ public class NotionService {
         return createTeamPage(smallDatabaseId, teamName);
     }
 
-    /**
-     * 특정 데이터베이스(갤러리) 내부에서 특정 이름의 페이지가 존재하는지 확인하고 없으면 생성
-     */
+    /** 페이지 내부에서 특정 이름의 페이지가 존재하는지 확인하고 없으면 생성 */
     private String findOrCreatePage(String databaseId, String pageName) {
         // 데이터베이스 내부에서 해당 페이지 검색
-        String searchResponse = searchForCategory(pageName);
+        String searchResponse = findPage(pageName);
         String existingPageId = extractPageId(searchResponse, pageName);
 
         if (existingPageId != null) {
@@ -58,10 +55,8 @@ public class NotionService {
         return createPage(databaseId, pageName);
     }
 
-    /**
-     * Notion에서 특정 이름의 페이지/데이터베이스 검색
-     */
-    private String searchForCategory(String category) {
+    /** Notion에서 특정 이름의 페이지 검색 */
+    private String findPage(String category) {
         String queryJson = """
         {
             "query": "%s",
@@ -72,9 +67,7 @@ public class NotionService {
         return notionClient.searchDatabase(queryJson);
     }
 
-    /**
-     * 특정 데이터베이스 내부에 새 페이지 생성
-     */
+    /** 새 페이지 생성 */
     private String createPage(String databaseId, String pageName) {
         System.out.println("📌 새 페이지 생성: " + pageName);
         String requestBody = """
@@ -89,9 +82,7 @@ public class NotionService {
         return extractPageIdFromResponse(notionClient.createPage(requestBody));
     }
 
-    /**
-     * '소' 카테고리 내부에 팀 페이지 생성
-     */
+    /** '소' 카테고리 내부에 팀 페이지 생성 */
     private String createTeamPage(String databaseId, String teamName) {
         System.out.println("📌 팀 페이지 생성: " + teamName);
         String requestBody = """
@@ -112,9 +103,8 @@ public class NotionService {
         System.out.println("🔗 팀 페이지 URL: " + teamUrl);
         return teamUrl;
     }
-    /**
-     * 날짜별 페이지 생성 (팀 페이지 내)
-     */
+
+    /** 날짜별 페이지 생성 (팀 페이지 내) */
     public void createDailyPages(String teamPageId, List<DefaultTodoResponse> defaultTodoResponses) {
         System.out.println("--------- 팀별 날짜 페이지 생성 메서드 ---------------");
         if (teamPageId.startsWith("https://www.notion.so/")) {
@@ -138,10 +128,7 @@ public class NotionService {
         }
     }
 
-
-    /**
-     * Notion 검색 응답에서 주어진 이름과 일치하는 Page ID 추출
-     */
+    /** Notion 검색 응답에서 주어진 이름과 일치하는 Page ID 추출 */
     private String extractPageId(String jsonResponse, String expectedName) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -176,16 +163,12 @@ public class NotionService {
         return null;
     }
 
-    /**
-     * 페이지 ID에서 URL 변환
-     */
+    /** 페이지 ID에서 URL 변환 */
     private String getNotionPageUrl(String teamId) {
         return "https://www.notion.so/" + teamId.replace("-", "");
     }
 
-    /**
-     * Notion API 응답에서 페이지 ID 추출
-     */
+    /** Notion API 응답에서 페이지 ID 추출 */
     private String extractPageIdFromResponse(String responseJson) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -196,6 +179,8 @@ public class NotionService {
             return null;
         }
     }
+
+    /** Notion URL에서 페이지 ID 추출 */
     private String extractPageIdFromUrl(String notionUrl) {
         return notionUrl.substring(notionUrl.lastIndexOf("/") + 1, notionUrl.length()).replaceAll("-", "");
     }

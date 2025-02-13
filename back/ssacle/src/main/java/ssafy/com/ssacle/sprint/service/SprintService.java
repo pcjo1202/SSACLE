@@ -85,10 +85,13 @@ public class SprintService {
         // 스프린트 <-> 팀 <-> 사용자팀 <-> 사용자 연동
         Team team = saveTeamAndTeamUser(user, sprint);
         // 팀 <-> 노션 연동
-        team.setNotionURL(saveNotion(user.getName(), defaultTodos, categories));
+        String notionUrl = saveNotion(user.getName(), defaultTodos, categories);
+        team.setNotionURL(notionUrl);
+
         // 팀 <-> 투두 연동
         saveTodo(team, defaultTodos);
     }
+
     private String saveNotion(String teamName, List<DefaultTodoResponse> defaultTodoResponses, List<CategoryNameAndLevelResponseDTO> categoryNameAndLevelResponseDTOS){
 
         String category1 = categoryNameAndLevelResponseDTOS.get(0).getCategoryName();

@@ -79,81 +79,86 @@ public class DataInitializer {
     public void initializeCategory(CategoryRepository categoryRepository) {
         if (categoryRepository.count() == 0) {
             // 상위 카테고리 생성
-            Category backEnd = Category.builder()
-                    .categoryName("Back-end")
-                    .level(1)
-                    .build();
+            Category backEnd = Category.builder().categoryName("Back-end").level(1).build();
+            Category frontEnd = Category.builder().categoryName("Front-end").level(1).build();
+            Category infra = Category.builder().categoryName("Infra").level(1).build();
+            Category database = Category.builder().categoryName("Database").level(1).build();
+            Category mobile = Category.builder().categoryName("Mobile").level(1).build();
+            Category devOps = Category.builder().categoryName("DevOps").level(1).build();
+            Category aiMl = Category.builder().categoryName("AI/ML").level(1).build();
+            Category security = Category.builder().categoryName("Security").level(1).build();
 
-            Category frontEnd = Category.builder()
-                    .categoryName("Front-end")
-                    .level(1)
-                    .build();
+            categoryRepository.saveAll(List.of(backEnd, frontEnd, infra, database, mobile, devOps, aiMl, security));
 
-            Category infra = Category.builder()
-                    .categoryName("Infra")
-                    .level(1)
-                    .build();
+            // Back-end 중간 카테고리
+            Category spring = Category.builder().categoryName("Spring").parent(backEnd).level(2).build();
+            Category django = Category.builder().categoryName("Django").parent(backEnd).level(2).build();
+            Category nodejs = Category.builder().categoryName("Node.js").parent(backEnd).level(2).build();
+            Category nestjs = Category.builder().categoryName("NestJS").parent(backEnd).level(2).build();
+            Category flask = Category.builder().categoryName("Flask").parent(backEnd).level(2).build();
+            Category laravel = Category.builder().categoryName("Laravel").parent(backEnd).level(2).build();
 
-            Category database = Category.builder()
-                    .categoryName("DataBase")
-                    .level(1)
-                    .build();
-
-            categoryRepository.save(backEnd);
-            categoryRepository.save(frontEnd);
-            categoryRepository.save(infra);
-            categoryRepository.save(database);
+            categoryRepository.saveAll(List.of(spring, django, nodejs, nestjs, flask, laravel));
 
             // Back-end 하위 카테고리
             List<Category> backEndChildren = List.of(
-                    Category.builder().categoryName("Spring").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/Spring.jpeg").level(2).build(),
-                    Category.builder().categoryName("Django").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/django.png").level(2).build(),
-                    Category.builder().categoryName("Node.js").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/node.png").level(2).build(),
-                    Category.builder().categoryName("NestJS").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/nest.png").level(2).build(),
-                    Category.builder().categoryName("Ruby on Rails").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/ruby.png").level(2).build(),
-                    Category.builder().categoryName("ASP.NET").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/asp.png").level(2).build()
+                    Category.builder().categoryName("Spring Boot").parent(spring).level(3).build(),
+                    Category.builder().categoryName("Spring MVC").parent(spring).level(3).build(),
+                    Category.builder().categoryName("Spring Security").parent(spring).level(3).build(),
+                    Category.builder().categoryName("Django ORM").parent(django).level(3).build(),
+                    Category.builder().categoryName("Django REST Framework").parent(django).level(3).build(),
+                    Category.builder().categoryName("Express.js").parent(nodejs).level(3).build(),
+                    Category.builder().categoryName("NestJS Modules").parent(nestjs).level(3).build(),
+                    Category.builder().categoryName("Flask RESTful").parent(flask).level(3).build(),
+                    Category.builder().categoryName("Eloquent ORM").parent(laravel).level(3).build()
             );
+
+            categoryRepository.saveAll(backEndChildren);
+
+            // Front-end 중간 카테고리
+            Category react = Category.builder().categoryName("React").parent(frontEnd).level(2).build();
+            Category vue = Category.builder().categoryName("Vue.js").parent(frontEnd).level(2).build();
+            Category angular = Category.builder().categoryName("Angular").parent(frontEnd).level(2).build();
+            Category svelte = Category.builder().categoryName("Svelte").parent(frontEnd).level(2).build();
+
+            categoryRepository.saveAll(List.of(react, vue, angular, svelte));
 
             // Front-end 하위 카테고리
             List<Category> frontEndChildren = List.of(
-                    Category.builder().categoryName("React").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/react.png").level(2).build(),
-                    Category.builder().categoryName("Vue.js").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/vue.png").level(2).build(),
-                    Category.builder().categoryName("Angular").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/angular.png").level(2).build(),
-                    Category.builder().categoryName("Svelte").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/svelte.png").level(2).build(),
-                    Category.builder().categoryName("Next.js").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/next.png").level(2).build()
-
+                    Category.builder().categoryName("useState").parent(react).level(3).build(),
+                    Category.builder().categoryName("useEffect").parent(react).level(3).build(),
+                    Category.builder().categoryName("React Context API").parent(react).level(3).build(),
+                    Category.builder().categoryName("Vue Router").parent(vue).level(3).build(),
+                    Category.builder().categoryName("Vuex").parent(vue).level(3).build(),
+                    Category.builder().categoryName("Angular DI").parent(angular).level(3).build(),
+                    Category.builder().categoryName("Svelte Stores").parent(svelte).level(3).build()
             );
 
-            // Infra 하위 카테고리
-            List<Category> infraChildren = List.of(
-                    Category.builder().categoryName("Docker").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/docker.png").level(2).build(),
-                    Category.builder().categoryName("Kubernetes").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/kuber.png").level(2).build(),
-                    Category.builder().categoryName("AWS").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/aws.png").level(2).build(),
-                    Category.builder().categoryName("Azure").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/azure.jpeg").level(2).build(),
-                    Category.builder().categoryName("Google Cloud").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/google+cloud.png").level(2).build()
-            );
-
-            // DataBase 하위 카테고리
-            List<Category> databaseChildren = List.of(
-                    Category.builder().categoryName("MySQL").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mysql.png").level(2).build(),
-                    Category.builder().categoryName("PostgreSQL").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/postgresql.png").level(2).build(),
-                    Category.builder().categoryName("MongoDB").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mongodb.png").level(2).build(),
-                    Category.builder().categoryName("Redis").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/redis.png").level(2).build(),
-                    Category.builder().categoryName("Oracle").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/oracle.png").level(2).build(),
-                    Category.builder().categoryName("MariaDB").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mariadb.png").level(2).build()
-            );
-
-            // 모든 카테고리 저장
-            categoryRepository.saveAll(backEndChildren);
             categoryRepository.saveAll(frontEndChildren);
-            categoryRepository.saveAll(infraChildren);
+
+            // Database 중간 및 하위 카테고리
+            Category mysql = Category.builder().categoryName("MySQL").parent(database).level(2).build();
+            Category postgresql = Category.builder().categoryName("PostgreSQL").parent(database).level(2).build();
+            Category mongodb = Category.builder().categoryName("MongoDB").parent(database).level(2).build();
+            Category redis = Category.builder().categoryName("Redis").parent(database).level(2).build();
+
+            categoryRepository.saveAll(List.of(mysql, postgresql, mongodb, redis));
+
+            List<Category> databaseChildren = List.of(
+                    Category.builder().categoryName("Indexing").parent(mysql).level(3).build(),
+                    Category.builder().categoryName("ACID").parent(postgresql).level(3).build(),
+                    Category.builder().categoryName("Sharding").parent(mongodb).level(3).build(),
+                    Category.builder().categoryName("Cache Strategies").parent(redis).level(3).build()
+            );
+
             categoryRepository.saveAll(databaseChildren);
 
-            System.out.println("Default category data added");
+            System.out.println("Extended category data added");
         } else {
-            System.out.println("Default category data already exists");
+            System.out.println("Category data already exists");
         }
     }
+
 
     @Transactional
     public void initializeUserCategories(UserRepository userRepository, CategoryRepository categoryRepository, UserCategoryRepository userCategoryRepository) {
