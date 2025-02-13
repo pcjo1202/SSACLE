@@ -1,29 +1,21 @@
 import DateInput from '@/components/AdminPage/SsaprintManagement/SsaprintCreate/DateInput'
 import DetailsForm from '@/components/AdminPage/SsaprintManagement/SsaprintCreate/DetailForm'
-import SelectDropdown from '@/components/AdminPage/SsaprintManagement/SsaprintCreate/SelectDropdown'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import CategorySelect from '@/components/AdminPage/SsaprintManagement/SsaprintCreate/CategorySelect'
 
 const SsaprintCreate = () => {
-  const [selectedMain, setSelectedMain] = useState('')
-  const [selectedMid, setSelectedMid] = useState('')
-  const [selectedSub, setSelectedSub] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [showDetails, setShowDetails] = useState(
     localStorage.getItem('showDetails') === 'true'
   )
   const navigate = useNavigate()
-
-  const handleSubmit = () => {
-    localStorage.removeItem('showDetails')
-    navigate('/admin/user')
-  }
-
-  // 상세 정보 입력 폼 상태 변경 시 로컬스토리지 업데이트
+  // ✅ 상세 정보 입력 폼 상태 변경 시 로컬스토리지 업데이트
   const toggleDetails = () => {
     if (showDetails) {
-      handleSubmit()
+      localStorage.removeItem('showDetails')
+      navigate('/admin/user')
     } else {
       setShowDetails(true)
       localStorage.setItem('showDetails', 'true')
@@ -44,24 +36,7 @@ const SsaprintCreate = () => {
         <div className="border-t-4 border-ssacle-gray-sm my-4"></div>
 
         <div className="flex flex-wrap justify-between">
-          <SelectDropdown
-            label="대주제"
-            value={selectedMain}
-            setValue={setSelectedMain}
-            options={[]}
-          />
-          <SelectDropdown
-            label="중주제"
-            value={selectedMid}
-            setValue={setSelectedMid}
-            options={[]}
-          />
-          <SelectDropdown
-            label="소주제"
-            value={selectedSub}
-            setValue={setSelectedSub}
-            options={[]}
-          />
+          <CategorySelect />
         </div>
 
         <div className="flex justify-between mt-4">
