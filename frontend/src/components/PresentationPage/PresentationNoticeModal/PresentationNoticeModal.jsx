@@ -30,9 +30,9 @@ const PresentationNoticeModal = () => {
           </DialogTitle>
           <DialogDescription className="flex flex-col gap-2 text-sm text-center whitespace-pre-wrap">
             {description.map((d) => (
-              <p className="text-sm font-KR" key={d}>
+              <span className="text-sm font-KR" key={d}>
                 {d}
-              </p>
+              </span>
             ))}
           </DialogDescription>
         </DialogHeader>
