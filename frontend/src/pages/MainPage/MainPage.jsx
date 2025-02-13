@@ -24,10 +24,10 @@ const MainPage = () => {
   })
 
   // 현재 참여중인 싸프린트 / 싸드컵 현황
-  // const { data: currentSprintsData, isLoading: isSprintsLoading } = useQuery({
-  //   queryKey: ['currentSprints'],
-  //   queryFn: fetchNowMySsaprint,
-  // })
+  const { data: currentSprintsData, isLoading: isSprintsLoading } = useQuery({
+    queryKey: ['currentSprints'],
+    queryFn: fetchNowMySsaprint,
+  })
 
   // AI 뉴스 조회
   const { data: aiNewsData, isLoading: isNewsLoading } = useQuery({
@@ -36,7 +36,7 @@ const MainPage = () => {
     retry: false,
   })
 
-  if (isUserLoading || isNewsLoading) {
+  if (isUserLoading || isNewsLoading || isSprintsLoading) {
     return <div>로딩 중...</div>
   }
 
@@ -48,7 +48,7 @@ const MainPage = () => {
           <Profile userData={userData} />
         </section>
         <section className="basis-3/5">
-          <MySsaprintList currentSprintsData={currentSprints} />
+          <MySsaprintList currentSprintsData={currentSprintsData} />
         </section>
       </div>
       {/* 모집중인 싸프린트 */}

@@ -10,7 +10,8 @@ export const fetchUserInfo = async () => {
 
 // 참여 중인 싸프린트, 싸드컵 리스트 조회 (GET 요청)
 export const fetchNowMySsaprint = async () => {
-  return httpCommon.get(MAIN_END_POINT.NOW_MYSSAPRINT)
+  const response = await httpCommon.get(MAIN_END_POINT.NOW_MYSSAPRINT)
+  return response.data
 }
 
 // 관심사 기반 싸프린트 리스트 조회 (POST 요청)
