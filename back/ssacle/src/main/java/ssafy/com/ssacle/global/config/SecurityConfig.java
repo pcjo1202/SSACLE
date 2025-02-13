@@ -35,7 +35,8 @@ public class SecurityConfig {
                                 "/api/*/join/**",
                                 "/api/*/login/**",
                                 "/api/*/refreshtoken",
-                                "/api/sessions/**"
+                                "/api/sessions/**",
+                                "/api/video/**"
                         ).permitAll()
                         .requestMatchers("/api/*/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

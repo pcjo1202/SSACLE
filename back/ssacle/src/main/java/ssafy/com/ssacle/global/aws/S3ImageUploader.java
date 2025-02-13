@@ -42,8 +42,8 @@ public class S3ImageUploader {
         return s3Client;
     }
 
-    public String upload(MultipartFile file) {
-        String fileName = generateFileName(file.getOriginalFilename());
+    public String uploadUser(MultipartFile file) {
+        String fileName = "image/user/"+generateFileName(file.getOriginalFilename());
         Path tempFilePath = saveTempFile(file);
 
         try {

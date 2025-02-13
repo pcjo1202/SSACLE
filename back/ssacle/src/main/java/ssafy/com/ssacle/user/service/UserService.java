@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import ssafy.com.ssacle.global.aws.S3ImageUploader;
 import ssafy.com.ssacle.global.jwt.JwtFilter;
 import ssafy.com.ssacle.global.jwt.JwtTokenUtil;
 import ssafy.com.ssacle.sprint.dto.SprintSummaryResponse;
@@ -18,10 +20,7 @@ import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.user.domain.RefreshToken;
 import ssafy.com.ssacle.user.domain.User;
-import ssafy.com.ssacle.user.dto.FindEmailDTO;
-import ssafy.com.ssacle.user.dto.FindPasswordDTO;
-import ssafy.com.ssacle.user.dto.LoginRequestDTO;
-import ssafy.com.ssacle.user.dto.UserResponseDTO;
+import ssafy.com.ssacle.user.dto.*;
 import ssafy.com.ssacle.user.exception.CannotLoginException;
 import ssafy.com.ssacle.user.exception.LoginErrorCode;
 import ssafy.com.ssacle.user.repository.RefreshRepository;
@@ -44,6 +43,7 @@ public class UserService {
     private final TeamRepository teamRepository;
     private final SprintRepository sprintRepository;
     private final TokenService tokenService;
+    private final S3ImageUploader s3ImageUploader;
 
     @Value("${spring.jwt.accessExpireMs}")
     private long accessExpireMs;
@@ -132,6 +132,19 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public ProfileUpdateResponseDTO updateProfile(User user, ProfileUpdateRequestDTO profileUpdateRequestDTO, MultipartFile file){
+        if (file != null && !file.isEmpty()) {
+            String profileUrl = s3ImageUploader.uploadUser(file);
+            user.setProfile(profileUrl);
+        }
+        if(profileUpdateRequestDTO.getNickname() !=null){
+            user.setNickname(profileUpdateRequestDTO.getNickname());
+        }
+        userRepository.save(user);
+        return new ProfileUpdateResponseDTO("사용자 정보 업데이트 성공", user.getId());
+    }
+
     /** ✅ Request에서 Access Token 추출 */
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
@@ -190,6 +203,18 @@ public class UserService {
                 .toList();
     }
 
+    @Transactional
+    public UpdatePasswordResponseDTO updatePassword(User user, UpdatePasswordRequestDTO updatePasswordRequestDTO){
+        if(!BCrypt.checkpw(updatePasswordRequestDTO.getCurrentPassword(), user.getPassword())){
+            throw new RuntimeException("실패1");
+        }
+        if(!updatePasswordRequestDTO.getNewPassword().equals(updatePasswordRequestDTO.getConfirmPassword())){
+            throw new RuntimeException("실패2");
+        }
+        user.updatePassword(updatePasswordRequestDTO.getNewPassword());
+        userRepository.save(user);
+        return new UpdatePasswordResponseDTO("비밀번호 변경 성공", user.getId());
+    }
     private String generateTempPassword() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
         StringBuilder tempPassword = new StringBuilder();

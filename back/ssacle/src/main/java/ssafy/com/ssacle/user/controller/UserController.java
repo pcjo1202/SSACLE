@@ -1,14 +1,16 @@
 package ssafy.com.ssacle.user.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import ssafy.com.ssacle.sprint.dto.SprintSummaryResponse;
 import ssafy.com.ssacle.user.domain.User;
-import ssafy.com.ssacle.user.dto.UserResponseDTO;
+import ssafy.com.ssacle.user.dto.*;
 import ssafy.com.ssacle.user.service.UserService;
 
 import java.util.List;
@@ -31,5 +33,19 @@ public class UserController implements UserSwaggerController{
     public ResponseEntity<List<SprintSummaryResponse>> getUserParticipateSprint() {
         User user = userService.getAuthenticatedUser();
         return ResponseEntity.ok().body(userService.getParicipateSprint(user));
+    }
+
+    @Override
+    public ResponseEntity<UpdatePasswordResponseDTO> updatePassword(UpdatePasswordRequestDTO updatePasswordRequestDTO) {
+        User user = userService.getAuthenticatedUser();
+        UpdatePasswordResponseDTO updatePasswordResponseDTO = userService.updatePassword(user, updatePasswordRequestDTO);
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ProfileUpdateResponseDTO> updateProfile(ProfileUpdateRequestDTO profileUpdateRequestDTO, MultipartFile image) {
+        User user = userService.getAuthenticatedUser();
+        ProfileUpdateResponseDTO profileUpdateResponseDTO = userService.updateProfile(user, profileUpdateRequestDTO, image);
+        return null;
     }
 }
