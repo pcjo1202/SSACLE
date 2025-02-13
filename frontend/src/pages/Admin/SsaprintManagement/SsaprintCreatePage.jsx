@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const SaaprintCreate = () => {
   const [selectedMain, setSelectedMain] = useState('')
@@ -8,7 +9,32 @@ const SaaprintCreate = () => {
   const [endDate, setEndDate] = useState('')
   const [isStartDateSelected, setIsStartDateSelected] = useState(false)
   const [isEndDateSelected, setIsEndDateSelected] = useState(false)
-  const [showDetails, setShowDetails] = useState(false)
+  const [showDetails, setShowDetails] = useState(false) // 상세 정보 입력 폼 상태
+  const navigate = useNavigate()
+
+  // useEffect를 사용하여 localStorage에서 상태 불러오기
+  useEffect(() => {
+    const storedShowDetails = localStorage.getItem('showDetails')
+    if (storedShowDetails === 'true') {
+      setShowDetails(true)
+    }
+  }, [])
+
+  const handleSubmit = () => {
+    localStorage.removeItem('showDetails')
+    navigate('/admin/user')
+  }
+
+  // 상세 정보 입력 폼 상태 변경 시 localStorage 저장
+  const toggleDetails = () => {
+    if (showDetails) {
+      handleSubmit()
+    } else {
+      const newState = !showDetails
+      setShowDetails(newState)
+      localStorage.setItem('showDetails', newState)
+    }
+  }
 
   // 시작일 변경 핸들러
   const handleStartDateChange = (e) => {
@@ -99,7 +125,6 @@ const SaaprintCreate = () => {
               value={startDate}
               onChange={handleStartDateChange}
             />
-            {/*🔥 선택 여부에 따라 색상 변경*/}
           </div>
           <div className="relative w-[48%]">
             <input
@@ -162,7 +187,7 @@ const SaaprintCreate = () => {
 
       <div className="flex flex-col items-center space-y-4">
         <button
-          onClick={() => setShowDetails(!showDetails)}
+          onClick={toggleDetails}
           className="w-60 bg-ssacle-blue text-white text-lg font-bold rounded-full py-3"
         >
           {showDetails ? '등록' : '상세 정보 생성하기'}
