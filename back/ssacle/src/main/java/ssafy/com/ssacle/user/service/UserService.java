@@ -69,12 +69,7 @@ public class UserService {
     public String authenticateAndGenerateTokens(LoginRequestDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
         User user = getUserFromToken(loginDTO);
         Optional<RefreshToken> existingToken = refreshRepository.findByUser(user);
-        if (existingToken.isPresent()) {
-            refreshRepository.deleteByUser(user);
-            refreshRepository.flush();
 
-            throw new CannotLoginException(LoginErrorCode.ALREADY_LOGGED_IN);
-        }
         String accessToken = jwtTokenUtil.generateAccessToken(user, accessExpireMs);
         String refreshToken = jwtTokenUtil.generateRefreshToken(user, refreshExpireMs);
 

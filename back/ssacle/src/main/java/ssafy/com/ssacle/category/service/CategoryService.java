@@ -36,9 +36,10 @@ public class CategoryService {
         if (param2 != null && param3 == null) {
             if (image != null && !image.isEmpty()) {
                 String profileUrl = s3ImageUploader.uploadCategory(image);
-                return saveCategory(param2, parentCategory, profileUrl);
+                return saveCategory(param2, parentCategory, profileUrl,2);
             }
-            return saveCategory(param2, parentCategory, null, 2);        }
+            return saveCategory(param2, parentCategory, null, 2);
+        }
 
         parentCategory = categoryRepository.findByCategoryName(param2)
                 .orElseThrow(MiddleCategoryNotFoundException::new);
