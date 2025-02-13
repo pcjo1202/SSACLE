@@ -20,6 +20,7 @@ public class Todo {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="team_id")
     @JsonIgnore
+    @Setter
     private Team team;
 
     @Column(name="content", nullable = false, length = 1024)

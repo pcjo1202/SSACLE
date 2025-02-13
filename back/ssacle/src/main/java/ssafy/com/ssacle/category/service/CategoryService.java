@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ssafy.com.ssacle.category.domain.Category;
+import ssafy.com.ssacle.category.dto.CategoryNameAndLevelResponseDTO;
 import ssafy.com.ssacle.category.dto.CategoryResponseDTO;
 import ssafy.com.ssacle.category.dto.CategoryTreeResponseDTO;
 import ssafy.com.ssacle.category.exception.CategoryNotExistException;
@@ -27,7 +28,7 @@ public class CategoryService {
         Category parentCategory = null;
 
         if (param1 != null && param2 == null) {
-            return saveCategory(param1, parentCategory, null);
+            return saveCategory(param1, parentCategory, null, 1);
         }
 
         parentCategory = categoryRepository.findByCategoryName(param1)
@@ -37,13 +38,12 @@ public class CategoryService {
                 String profileUrl = s3ImageUploader.uploadCategory(image);
                 return saveCategory(param2, parentCategory, profileUrl);
             }
-            return saveCategory(param2, parentCategory, null);
-        }
+            return saveCategory(param2, parentCategory, null, 2);        }
 
         parentCategory = categoryRepository.findByCategoryName(param2)
                 .orElseThrow(MiddleCategoryNotFoundException::new);
         if (param3 != null) {
-            return saveCategory(param3, parentCategory, null);
+            return saveCategory(param3, parentCategory, null,3);
         }
 
         throw new CategoryNotExistException();
@@ -67,13 +67,14 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    private CategoryResponseDTO saveCategory(String categoryName, Category parent, String image) {
+    private CategoryResponseDTO saveCategory(String categoryName, Category parent, String image, Integer level) {
         Category newCategory = new Category(
                 null,
                 parent,
                 null,
                 null,
                 categoryName,
+                level,
                 image
         );
 

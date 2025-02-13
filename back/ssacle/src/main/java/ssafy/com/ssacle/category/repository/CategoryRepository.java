@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public interface CategoryRepository extends JpaRepository<Category, Long>, CategoryRepositoryCustom {
 
     @EntityGraph(attributePaths = {"children"})
     List<Category>findAll();
@@ -21,7 +21,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findByParentId(Long parentId);
     List<Category> findByParent(Category parent);
 
-
     // 특정 카테고리 이름으로 조회
     Optional<Category> findByCategoryName(String categoryName);
+
 }

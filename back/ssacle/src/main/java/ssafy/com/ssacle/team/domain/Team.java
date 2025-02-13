@@ -44,6 +44,13 @@ public class Team {
     @OneToMany(mappedBy = "team", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Todo> todos;
 
+    public void addTodo(Todo todo){
+        if(this.todos == null)
+            this.todos = new ArrayList<>();
+        this.todos.add(todo);
+        todo.setTeam(this);
+    }
+
     @Column(unique = true, nullable = false, length = 20)
     private String name;
 
