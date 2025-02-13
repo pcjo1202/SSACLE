@@ -112,13 +112,14 @@ export const ADMIN_END_POINT = {
     // DETAIL: '',
     CREATE: {
       CATEGORY_ALL: '/category/all', // 전체 카테고리 조회
-    }
+    },
   },
 }
 
 // 게시판 -> boardService
 export const BOARD_END_POINT = {
   LIST: '/board', // 게시글 목록 조회
+  LIST_TYPE: (boardType) => `/board/boardtype?name=${boardType}`, // 게시글 타입별 조회
   DETAIL: (boardId) => `/board/${boardId}`, // 게시글 상세 조회
   COUNT: '/board/count', // 게시글 수 카운트
   CREATE: '/board/create', // 게시글 생성
