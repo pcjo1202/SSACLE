@@ -9,6 +9,7 @@ import {
   MicOffIcon,
   CameraOffIcon,
   ScreenShareOffIcon,
+  SendIcon,
 } from 'lucide-react'
 import { usePresentationStore } from '@/store/usePresentationStore'
 import { useStreamStore } from '@/store/useStreamStore'
@@ -78,6 +79,20 @@ export const usePresentationControls = () => {
       title: '참여자',
       activeFunction: () => {
         console.log('참여자')
+      },
+      isDropdown: true,
+      dropDownItems: {
+        title: '참여자',
+        items: [
+          {
+            name: '박창조',
+            icon: SendIcon,
+          },
+          {
+            name: '홍길동',
+            icon: SendIcon,
+          },
+        ],
       },
     },
     {

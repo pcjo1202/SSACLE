@@ -21,5 +21,6 @@ export const ModalSteps = {
     END_CAUTION: 'end_caution',
     END_COMPLETE: 'end_complete',
     WAITING_END: 'waiting_end',
+    NAVIGATION_BLOCK: 'navigation_block',
   },
 }

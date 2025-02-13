@@ -151,8 +151,22 @@ const useModalStepConfig = () => {
     },
     // ! 종료 주의 모달
     [ModalSteps.ENDING.END_CAUTION]: {
-      title: ['아직 싸프린트가 진행되고 있습니다.'],
+      title: ['⚠️ 아직 싸프린트가 진행되고 있습니다.'],
       description: ['진행 중에 나가면 패널티가 부여됩니다.'],
+      buttons: [
+        CommonButtons.EXIT,
+        {
+          text: '계속 진행',
+          onClick: closeModal,
+          style: 'bg-ssacle-blue',
+          variant: '',
+        },
+      ],
+    },
+    // 새로운 모달 스텝 추가
+    [ModalSteps.ENDING.NAVIGATION_BLOCK]: {
+      title: ['⚠️ 페이지를 벗어나시겠습니까?'],
+      description: ['진행 중에 페이지를 벗어나면 패널티가 부여됩니다.'],
       buttons: [
         CommonButtons.EXIT,
         {
