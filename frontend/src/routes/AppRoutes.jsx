@@ -22,8 +22,6 @@ import BoardFormPage from '@/pages/Board/BoardFormPage'
 import FreeBoardPage from '@/pages/Board/FreeBoardPage'
 import GuardedRoute from '@/components/common/GuardedRoute'
 import UnGuardedRoute from '@/components/common/UnGuardedRoute'
-import SsaprintDetailPage from '@/pages/Ssaprint/SsaprintDetailPage'
-import SsaprintJourneyPage from '@/pages/Ssaprint/SsaprintJourneyPage'
 import SsaprintCreatePage from '@/pages/Admin/SsaprintManagement/SsaprintCreatePage'
 
 const router = createBrowserRouter([
