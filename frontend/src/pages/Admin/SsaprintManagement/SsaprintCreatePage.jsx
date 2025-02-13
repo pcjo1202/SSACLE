@@ -3,6 +3,8 @@ import DetailsForm from '@/components/AdminPage/SsaprintManagement/SsaprintCreat
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CategorySelect from '@/components/AdminPage/SsaprintManagement/SsaprintCreate/CategorySelect'
+import CategoryModal from '@/components/AdminPage/SsaprintManagement/SsaprintCreate/CategoryModal'
+import { CirclePlus } from 'lucide-react'
 
 const SsaprintCreate = () => {
   const [startDate, setStartDate] = useState('')
@@ -10,8 +12,10 @@ const SsaprintCreate = () => {
   const [showDetails, setShowDetails] = useState(
     localStorage.getItem('showDetails') === 'true'
   )
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const navigate = useNavigate()
-  // ✅ 상세 정보 입력 폼 상태 변경 시 로컬스토리지 업데이트
+  
+  // 상세 정보 입력 폼 상태 변경 시 로컬스토리지 업데이트
   const toggleDetails = () => {
     if (showDetails) {
       localStorage.removeItem('showDetails')
@@ -37,6 +41,17 @@ const SsaprintCreate = () => {
 
         <div className="flex flex-wrap justify-between">
           <CategorySelect />
+        </div>
+
+        {/* + 버튼 추가 */}
+        <div className="flex justify-center mt-4">
+          <button
+            className="flex items-center text-ssacle-blue hover:text-blue-700 transition-colors text-sm"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <CirclePlus size={16} color="#5195F7" className="mr-2" />
+            카테고리 추가
+          </button>
         </div>
 
         <div className="flex justify-between mt-4">
@@ -66,6 +81,9 @@ const SsaprintCreate = () => {
           뒤로가기
         </button>
       </div>
+
+      {/* 모달 창 렌더링 */}
+      {isModalOpen && <CategoryModal onClose={() => setIsModalOpen(false)} />}
     </div>
   )
 }
