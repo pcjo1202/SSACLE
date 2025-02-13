@@ -39,6 +39,9 @@ public class Category {
     @Column(name = "category_name", nullable = false, length = 255)
     private String categoryName;
 
+    @Column(name = "level", nullable = false)
+    private Integer level; // 1. 상, 2. 중, 3. 하
+
     @Column(name = "image", nullable = true, length = 1024)
     private String image;
 }

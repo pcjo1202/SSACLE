@@ -11,7 +11,7 @@ public enum TeamErrorCode implements ErrorCode {
 
     TEAM_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "TEAM_400_1", "팀을 생성하려면 팀 이름이 필요합니다."),
     USER_REQUIRED(HttpStatus.BAD_REQUEST, "TEAM_400_2", "팀을 생성하려면 유저가 필요합니다."),
-    SPRINT_REQUIRED(HttpStatus.BAD_REQUEST, "TEAM_400_3", "팀을 생성하려면 스프린트가 필요합니다.");
+    TEAM_NOT_FOUND(HttpStatus.BAD_REQUEST, "TEAM_400_3", "팀을 찾을수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
