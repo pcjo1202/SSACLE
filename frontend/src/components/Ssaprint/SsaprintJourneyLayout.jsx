@@ -4,6 +4,7 @@ import SprintDetail from '@/components/SprintCommon/SprintDetail'
 import SprintToDoList from '@/components/SprintCommon/SprintToDoList'
 import SprintPresentationSession from '@/components/SprintCommon/SprintPresentationSession'
 import SprintCalendar from '@/components/SprintCommon/SprintCalendar'
+import SprintQuestionCards from '@/components/SprintCommon/SprintQuestionCards'
 import { useState } from 'react'
 
 const SsaprintJourneyLayout = ({ sprint }) => {
@@ -48,7 +49,6 @@ const SsaprintJourneyLayout = ({ sprint }) => {
         </div>
       </div>
 
-      {/* ✅ 두꺼운 구분선 추가 */}
       <div className="border-t-4 border-gray-200 w-full"></div>
 
       {/* 두 번째 줄 - 캘린더 + To-Do List */}
@@ -65,6 +65,11 @@ const SsaprintJourneyLayout = ({ sprint }) => {
             <SprintToDoList todos={sprint.todos} />
           </div>
         </div>
+      </div>
+
+      {/* 세 번째 줄 - 질문카드 */}
+      <div className="flex w-full shadow-md rounded-lg p-4 mb-10">
+        <SprintQuestionCards questions={sprint.sprint.id} />
       </div>
     </div>
   )
