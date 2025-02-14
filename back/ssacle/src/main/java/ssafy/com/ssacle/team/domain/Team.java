@@ -55,7 +55,7 @@ public class Team {
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Diary> diaries;
 
-    @Columnn(nullable = false, length = 20)
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
 
     @Column(name = "current_members", columnDefinition = "TINYINT UNSIGNED", nullable = false)
