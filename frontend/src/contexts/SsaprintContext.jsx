@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 
 const DEFAULT_END_TIME = 'T20:00:00'
 const DEFAULT_START_TIME = 'T00:00:00'
@@ -8,27 +8,34 @@ const SsaprintContext = createContext()
 
 // Provider 컴포넌트
 export const SsaprintProvider = ({ children }) => {
-  const [selectedMain, setSelectedMain] = useState({ id: null, name: '' })
-  const [selectedMid, setSelectedMid] = useState({ id: null, name: '' })
-  const [selectedSub, setSelectedSub] = useState({ id: null, name: '' })
+  // localStorage에서 데이터 불러오기 (초기값 설정)
+  const getStoredData = (key, defaultValue) => {
+    const storedValue = localStorage.getItem(key)
+    return storedValue ? JSON.parse(storedValue) : defaultValue
+  }
+
+  const [selectedMain, setSelectedMain] = useState(
+    getStoredData('selectedMain', { id: null, name: '' })
+  )
+  const [selectedMid, setSelectedMid] = useState(
+    getStoredData('selectedMid', { id: null, name: '' })
+  )
+  const [selectedSub, setSelectedSub] = useState(
+    getStoredData('selectedSub', { id: null, name: '' })
+  )
 
   // LocalDateTime 변환 함수 (종료 날짜는 20:00:00 설정)
   const formatToLocalDateTime = (dateString, isEndDate = false) => {
     if (!dateString) return null
     const date = new Date(dateString)
-
-    // ✅ 종료 날짜는 20:00:00, 시작 날짜는 현재 시간 유지
-    if (isEndDate) {
-      date.setHours(20, 0, 0, 0) 
-    }
-
-    return date.toISOString()
+    const timePart = isEndDate ? 'T20:00:00.000' : 'T00:00:00.000'
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}${timePart}`
   }
 
   // 화면 출력용 (YYYY-MM-DD)
   const formatToDisplayDate = (dateString) => {
     if (!dateString) return ''
-    if (dateString.includes('T')) return dateString.split('T')[0] // ✅ LocalDateTime 형식이면 변환
+    if (dateString.includes('T')) return dateString.split('T')[0] // LocalDateTime 형식이면 변환
     return dateString
   }
 
@@ -39,21 +46,68 @@ export const SsaprintProvider = ({ children }) => {
     return tomorrow.toISOString().split('T')[0]
   }
 
-  // 상태 저장 (raw 값)
-  const [rawStartDate, setRawStartDate] = useState('')
-  const [rawEndDate, setRawEndDate] = useState('')
+  // 날짜 상태 저장
+  const [rawStartDate, setRawStartDate] = useState(
+    getStoredData('startDate', '')
+  )
+  const [rawEndDate, setRawEndDate] = useState(getStoredData('endDate', ''))
 
   // context에 LocalDateTime 형식으로 저장
   const startDate = rawStartDate ? formatToLocalDateTime(rawStartDate) : ''
   const endDate = rawEndDate ? formatToLocalDateTime(rawEndDate, true) : ''
 
-  // 목데이터 추가 (기본 설명, 상세 설명, 권장 사항, todos)
-  const [description, setDescription] = useState({
-    basic: '기본 설명 예제 데이터입니다.',
-    detailed: '상세 설명 예제 데이터입니다.',
-    recommended: '권장 사항 예제 데이터입니다.',
-    todos: 'TODO 리스트 예제 데이터입니다.',
-  })
+  // ✅ GPT 데이터가 저장될 description 상태 (🔥 초기 목데이터 삭제)
+  const [description, setDescription] = useState(
+    getStoredData('description', {
+      basicDescription: '',
+      detailDescription: '',
+      recommendedFor: '',
+      todos: '',
+    })
+  )
+  // 변경될 때 localStorage에 저장 (자동 저장)
+  useEffect(() => {
+    console.log('🔥 description이 변경됨:', description)
+    localStorage.setItem('selectedMain', JSON.stringify(selectedMain))
+    localStorage.setItem('selectedMid', JSON.stringify(selectedMid))
+    localStorage.setItem('selectedSub', JSON.stringify(selectedSub))
+    localStorage.setItem('startDate', JSON.stringify(rawStartDate))
+    localStorage.setItem('endDate', JSON.stringify(rawEndDate))
+    localStorage.setItem('description', JSON.stringify(description)) // 🔥 description 저장 추가
+  }, [
+    selectedMain,
+    selectedMid,
+    selectedSub,
+    rawStartDate,
+    rawEndDate,
+    description,
+  ])
+
+  // 🔥 등록 버튼 클릭 시 로컬스토리지 초기화
+  const clearLocalStorage = () => {
+    console.log('🔥 로컬스토리지 삭제')
+    localStorage.removeItem('selectedMain')
+    localStorage.removeItem('selectedMid')
+    localStorage.removeItem('selectedSub')
+    localStorage.removeItem('startDate')
+    localStorage.removeItem('endDate')
+    localStorage.removeItem('description')
+    localStorage.removeItem('showDetails')
+
+    // ✅ 컨텍스트도 초기화
+    setSelectedMain({ id: null, name: '' })
+    setSelectedMid({ id: null, name: '' })
+    setSelectedSub({ id: null, name: '' })
+    setRawStartDate('')
+    setRawEndDate('')
+    setDescription({
+      // 🔥 description 초기화 추가
+      basicDescription: '',
+      detailDescription: '',
+      recommendedFor: '',
+      todos: '',
+    })
+  }
 
   return (
     <SsaprintContext.Provider
@@ -68,10 +122,11 @@ export const SsaprintProvider = ({ children }) => {
         setStartDate: setRawStartDate,
         endDate,
         setEndDate: setRawEndDate,
-        getTomorrowDate, // ✅ 최소 시작 날짜
-        formatToDisplayDate, // ✅ 날짜 표시용 포맷 함수
+        getTomorrowDate, // 최소 시작 날짜
+        formatToDisplayDate, // 날짜 표시용 포맷 함수
         description,
         setDescription,
+        clearLocalStorage,
       }}
     >
       {children}

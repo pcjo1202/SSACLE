@@ -6,29 +6,59 @@ import CategorySelect from '@/components/AdminPage/SsaprintManagement/SsaprintCr
 import CategoryModal from '@/components/AdminPage/SsaprintManagement/SsaprintCreate/CategoryModal'
 import { CirclePlus } from 'lucide-react'
 import { useSsaprint } from '@/contexts/SsaprintContext'
+import { useGptTodos } from '@/hooks/useGptTodos'
 
 const SsaprintCreate = () => {
-  const { startDate, setStartDate, endDate, setEndDate } = useSsaprint()
+  const {
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    clearLocalStorage,
+    selectedMain,
+    selectedMid,
+    selectedSub,
+  } = useSsaprint()
 
   const [showDetails, setShowDetails] = useState(
     localStorage.getItem('showDetails') === 'true'
   )
   const [isModalOpen, setIsModalOpen] = useState(false)
   const navigate = useNavigate()
-
-  // LocalDateTime으로 변환해서 API 요청 시 사용
-  // const getFormattedStartDate = () => formatToLocalDateTime(startDate)
-  // const getFormattedEndDate = () => formatToLocalDateTime(endDate)
+  const { triggerGptFetch, isPending } = useGptTodos()
 
   // 상세 정보 입력 폼 상태 변경 시 로컬스토리지 업데이트
   const toggleDetails = () => {
     if (showDetails) {
       localStorage.removeItem('showDetails')
+      clearLocalStorage()
       navigate('/admin/user')
     } else {
+      if (
+        !startDate ||
+        !endDate ||
+        !selectedMain ||
+        !selectedMid ||
+        !selectedSub
+      ) {
+        alert('⚠️ 모든 정보를 입력해야 상세 정보를 생성할 수 있습니다.')
+        return
+      }
+
       setShowDetails(true)
       localStorage.setItem('showDetails', 'true')
+
+      if (!isPending) {
+        console.log('🔥 [toggleDetails] GPT API 요청 실행')
+        triggerGptFetch() // 🔥 GPT API 요청 실행 (한 번만 실행)
+      }
     }
+  }
+
+  // 뒤로가기 버튼 클릭 시 실행
+  const handleGoBack = () => {
+    clearLocalStorage()
+    navigate('/admin/user')
   }
 
   return (
@@ -101,7 +131,10 @@ const SsaprintCreate = () => {
         >
           {showDetails ? '등록' : '상세 정보 생성하기'}
         </button>
-        <button className="w-60 bg-ssacle-sky text-ssacle-black text-lg rounded-full py-3">
+        <button
+          onClick={handleGoBack}
+          className="w-60 bg-ssacle-sky text-ssacle-black text-lg rounded-full py-3"
+        >
           뒤로가기
         </button>
       </div>
