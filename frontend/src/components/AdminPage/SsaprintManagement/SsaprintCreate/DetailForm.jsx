@@ -57,7 +57,7 @@ const DetailsForm = () => {
   return (
     <div className="w-3/5 py-8">
       <h2 className="text-ssacle-black text-lg font-bold">세부 정보 입력</h2>
-      <div>
+      <div className='mt-4'>
         {/* 싸프린트 이름 입력 */}
         <div>
           <label className="text-ssacle-black text-sm font-bold">
@@ -69,19 +69,19 @@ const DetailsForm = () => {
             className="w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto text-ssacle-black text-sm"
             value={sprintName}
             onChange={(e) => setSprintName(e.target.value)}
-          />
+            />
         </div>
         {/* 최대 인원 수 입력 */}
-        <div>
+        <div className='mt-4'>
           <label className="text-ssacle-black text-sm font-bold">
-            최대 인원 수
+            최대 인원 수 <span className="text-ssacle-gray text-xs">(2인 ~ 4인)</span>
           </label>
           <input
             type="number"
-            min={1}
+            min={2}
             max={4}
             value={maxParticipants}
-            onChange={(e) => setMaxParticipants(Math.min(4, Math.max(1, Number(e.target.value))))}
+            onChange={(e) => setMaxParticipants(Math.min(4, Math.max(2, Number(e.target.value))))}
             className="w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto text-ssacle-black text-sm"
           />
         </div>

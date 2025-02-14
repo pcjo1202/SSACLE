@@ -56,7 +56,7 @@ export const SsaprintProvider = ({ children }) => {
   const startDate = rawStartDate ? formatToLocalDateTime(rawStartDate) : ''
   const endDate = rawEndDate ? formatToLocalDateTime(rawEndDate, true) : ''
 
-  // 추가된 상태 (싸프린트 이름, 최대 인원 수)
+  // 싸프린트 이름, 최대 인원 수
   const [sprintName, setSprintName] = useState(getStoredData('sprintName', ''))
   const [maxParticipants, setMaxParticipants] = useState(
     getStoredData('maxParticipants', 1)
@@ -140,7 +140,9 @@ export const SsaprintProvider = ({ children }) => {
         description,
         setDescription,
         clearLocalStorage,
+        sprintName,
         setSprintName,
+        maxParticipants,
         setMaxParticipants,
       }}
     >
