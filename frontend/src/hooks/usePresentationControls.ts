@@ -16,11 +16,22 @@ import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import useScreenShare from '@/hooks/useScreenShare'
 import { useModal } from '@/hooks/useModal'
 import { ModalSteps } from '@/constants/modalStep'
+import { useConnect } from '@/hooks/useConnect'
+import { useShallow } from 'zustand/shallow'
 
 export const usePresentationControls = () => {
-  const { cameraPublisher, screenPublisher } = useOpenviduStateStore()
+  const { cameraPublisher, screenPublisher, session, subscribers } =
+    useOpenviduStateStore(
+      useShallow((state) => ({
+        cameraPublisher: state.cameraPublisher,
+        screenPublisher: state.screenPublisher,
+        session: state.session,
+        subscribers: state.subscribers,
+      }))
+    )
   const { isMicOn, isCameraOn, isScreenSharing } = useStreamStore()
   const { openModal, setModalStep } = useModal()
+  const { leaveSession } = useConnect()
   const { startScreenShare, stopScreenShare } = useScreenShare()
 
   const leftControl = {
@@ -29,7 +40,10 @@ export const usePresentationControls = () => {
     title: '효과',
     style: 'text-yellow-500',
     activeFunction: () => {
-      console.log('효과')
+      console.log('session', session)
+      console.log('subscribers', subscribers)
+      console.log('cameraPublisher', cameraPublisher)
+      console.log('screenPublisher', screenPublisher)
     },
   }
 

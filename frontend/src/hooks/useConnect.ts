@@ -62,12 +62,6 @@ export const useConnect = () => {
         username,
         userId,
       })
-      // persist되어 있는 room state에 connection data 저장
-      // roomId 별로 userId를 key로 하는 객체의 형태로 저장합니다.
-      // addRoomConnectionData(roomId as string, {
-      //   username: username as string,
-      //   userId: userId as string,
-      // })
 
       /** 세션 연결 */
       await session.connect(token, connectData)
@@ -88,8 +82,9 @@ export const useConnect = () => {
       )
 
       setCameraPublisher(newPublisher)
-      setMainStreamManager(session.streamManagers)
+      setMainStreamManager(newPublisher)
       await session.publish(newPublisher)
+      setOV(openviduInstance)
     } catch (error) {
       console.error('❌ 세션 연결 실패:', error)
     }
@@ -106,32 +101,28 @@ export const useConnect = () => {
 
     const newSession = openvidu.initSession()
 
-    // 🔹 새로운 스트림이 생성되었을 때 (예: 다른 사용자의 화면 공유 또는 카메라/마이크 스트림)
-    newSession.on('streamCreated', (e) => handleStreamCreated(e, newSession))
-
-    // 🔹 스트림이 삭제되었을 때
-    newSession.on('streamDestroyed', (e) =>
-      handleStreamDestroyed(e, newSession)
-    )
-
-    // 🔹 사용자가 입장했을 때
-    newSession.on('connectionCreated', (e) => handleConnectionCreated(e))
-
-    // 🔹 사용자가 퇴장했을 때
-    newSession.on('connectionDestroyed', (e) => handleConnectionDestroyed(e))
-
     setOV(openvidu)
     setSession(newSession)
+
+    // 🔹 새로운 스트림이 생성되었을 때 (예: 다른 사용자의 화면 공유 또는 카메라/마이크 스트림)
+    newSession.on('streamCreated', handleStreamCreated)
+    // 🔹 스트림이 삭제되었을 때
+    newSession.on('streamDestroyed', handleStreamDestroyed)
+    // 🔹 사용자가 입장했을 때
+    newSession.on('connectionCreated', handleConnectionCreated)
+    // 🔹 사용자가 퇴장했을 때
+    newSession.on('connectionDestroyed', handleConnectionDestroyed)
 
     return newSession
   }
 
-  const leaveSession = useCallback(() => {
+  const leaveSession = useCallback(async () => {
     if (session) {
-      removeRoomConnectionData(roomId as string, {
-        username: username as string,
-        userId: userId as string,
-      })
+      try {
+        await session?.unsubscribe(mainStreamManager as unknown as Subscriber)
+      } catch (error) {
+        console.error('❌ 세션 해제 실패:', error)
+      }
       session.disconnect()
     }
 

@@ -18,8 +18,8 @@ interface OpenviduStateStore {
   setSession: (session: Session | null) => void
   setCameraPublisher: (cameraPublisher: Publisher | null) => void
   setScreenPublisher: (screenPublisher: Publisher | null) => void
-  setSubscribers: (subscribers: StreamManager[]) => void
-  setMainStreamManager: (mainStreamManager: StreamManager[] | null) => void
+  setSubscribers: (subscribers: StreamManager) => void
+  setMainStreamManager: (mainStreamManager: StreamManager | null) => void
 }
 
 export const useOpenviduStateStore = create<OpenviduStateStore>((set, get) => ({
@@ -27,7 +27,7 @@ export const useOpenviduStateStore = create<OpenviduStateStore>((set, get) => ({
   session: null, // 세션
   cameraPublisher: null, // 카메라 발행자
   screenPublisher: null, // 화면 공유 발행자
-  mainStreamManager: null, // 메인 스트림 매니저
+  mainStreamManager: null, // 현재 사용자의 스트림 매니저
   subscribers: [], // 구독자
   setOV: (OV: OpenVidu | null) => set({ OV }),
   setSession: (session: Session | null) => set({ session }),
@@ -44,6 +44,6 @@ export const useOpenviduStateStore = create<OpenviduStateStore>((set, get) => ({
           ? subscribers(state.subscribers)
           : subscribers,
     })),
-  setMainStreamManager: (mainStreamManager: StreamManager[] | null) =>
+  setMainStreamManager: (mainStreamManager: StreamManager | null) =>
     set({ mainStreamManager }),
 }))

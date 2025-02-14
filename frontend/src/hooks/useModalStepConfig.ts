@@ -2,6 +2,7 @@ import { ModalSteps } from '@/constants/modalStep'
 import { usePresentationModalActions } from '@/store/usePresentationModalActions'
 import { useNavigate } from 'react-router-dom'
 import { useShallow } from 'zustand/react/shallow'
+import { useConnect } from '@/hooks/useConnect'
 
 const useModalStepConfig = () => {
   const { closeModal, setModalStep } = usePresentationModalActions(
@@ -11,9 +12,17 @@ const useModalStepConfig = () => {
     }))
   )
   const navigate = useNavigate()
-  const leavePresentation = () => {
-    navigate('/main', { replace: true })
-    closeModal()
+  const { leaveSession } = useConnect()
+  const leavePresentation = async () => {
+    try {
+      await leaveSession()
+      console.log('세션 해제 성공')
+    } catch (error) {
+      console.error('❌ 세션 해제 실패:', error)
+    } finally {
+      // navigate('/main')
+      // closeModal()
+    }
   }
 
   const CommonButtons = {
