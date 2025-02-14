@@ -11,7 +11,6 @@ interface ConferenceContainerProps {
 }
 const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
   const { cameraPublisher, subscribers } = useOpenviduStateStore()
-  // * http://localhost:5173/presentation/:presentationType/:roomId?userId=1234567890
 
   const { initializeSession, joinSession, leaveSession } = useConnect()
   const { presentationType } = useParams()

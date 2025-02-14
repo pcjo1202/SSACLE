@@ -123,16 +123,17 @@ const router = createBrowserRouter([
   },
 
   // 발표 화면 page
+  // {
+  //   element: <GuardedRoute />,
+  //   children: [
   {
-    element: <GuardedRoute />,
-    children: [
-      {
-        path: '/presentation',
-        element: <PresentationLayout />,
-        children: [{ index: true, element: <PresentationPage /> }],
-      },
-    ],
+    // * http://localhost:5173/presentation/:presentationType/:roomId?userId=1234567890
+    path: '/presentation/:presentationType/:roomId',
+    element: <PresentationLayout />,
+    children: [{ index: true, element: <PresentationPage /> }],
   },
+  //   ],
+  // },
 
   // 관리자 관련 page
   {
