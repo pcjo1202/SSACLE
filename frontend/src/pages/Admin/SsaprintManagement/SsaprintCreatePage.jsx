@@ -49,8 +49,8 @@ const SsaprintCreate = () => {
       localStorage.setItem('showDetails', 'true')
 
       if (!isPending) {
-        console.log('🔥 [toggleDetails] GPT API 요청 실행')
-        triggerGptFetch() // 🔥 GPT API 요청 실행 (한 번만 실행)
+        // console.log('🔥 [toggleDetails] GPT API 요청 실행')
+        triggerGptFetch() // GPT API 요청 실행 (한 번만 실행)
       }
     }
   }

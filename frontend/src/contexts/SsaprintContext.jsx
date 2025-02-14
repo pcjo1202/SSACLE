@@ -56,7 +56,7 @@ export const SsaprintProvider = ({ children }) => {
   const startDate = rawStartDate ? formatToLocalDateTime(rawStartDate) : ''
   const endDate = rawEndDate ? formatToLocalDateTime(rawEndDate, true) : ''
 
-  // ✅ GPT 데이터가 저장될 description 상태 (🔥 초기 목데이터 삭제)
+  // GPT 데이터가 저장될 description 상태
   const [description, setDescription] = useState(
     getStoredData('description', {
       basicDescription: '',
@@ -67,13 +67,12 @@ export const SsaprintProvider = ({ children }) => {
   )
   // 변경될 때 localStorage에 저장 (자동 저장)
   useEffect(() => {
-    console.log('🔥 description이 변경됨:', description)
     localStorage.setItem('selectedMain', JSON.stringify(selectedMain))
     localStorage.setItem('selectedMid', JSON.stringify(selectedMid))
     localStorage.setItem('selectedSub', JSON.stringify(selectedSub))
     localStorage.setItem('startDate', JSON.stringify(rawStartDate))
     localStorage.setItem('endDate', JSON.stringify(rawEndDate))
-    localStorage.setItem('description', JSON.stringify(description)) // 🔥 description 저장 추가
+    localStorage.setItem('description', JSON.stringify(description)) // description 저장 추가
   }, [
     selectedMain,
     selectedMid,
@@ -83,7 +82,7 @@ export const SsaprintProvider = ({ children }) => {
     description,
   ])
 
-  // 🔥 등록 버튼 클릭 시 로컬스토리지 초기화
+  // 등록 버튼 클릭 시 로컬스토리지 초기화
   const clearLocalStorage = () => {
     console.log('🔥 로컬스토리지 삭제')
     localStorage.removeItem('selectedMain')
@@ -94,14 +93,14 @@ export const SsaprintProvider = ({ children }) => {
     localStorage.removeItem('description')
     localStorage.removeItem('showDetails')
 
-    // ✅ 컨텍스트도 초기화
+    // 컨텍스트도 초기화
     setSelectedMain({ id: null, name: '' })
     setSelectedMid({ id: null, name: '' })
     setSelectedSub({ id: null, name: '' })
     setRawStartDate('')
     setRawEndDate('')
     setDescription({
-      // 🔥 description 초기화 추가
+      // description 초기화 추가
       basicDescription: '',
       detailDescription: '',
       recommendedFor: '',

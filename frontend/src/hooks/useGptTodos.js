@@ -18,7 +18,7 @@ export const useGptTodos = () => {
         console.warn('⚠️ 필수 값이 부족하여 API 요청을 중단합니다.')
         return
       }
-      console.log('🔥 [useMutation] GPT API 요청 실행됨')
+      // console.log('🔥 [useMutation] GPT API 요청 실행됨')
 
       const response = await fetchGptTodos({
         startAt: startDate,
@@ -28,7 +28,7 @@ export const useGptTodos = () => {
       return response
     },
     onSuccess: (data) => {
-      console.log('✅ GPT 응답 데이터:', data)
+      // console.log('✅ GPT 응답 데이터:', data)
       if (data) {
         setDescription({
           basicDescription: data.basicDescription || '',

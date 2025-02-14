@@ -8,10 +8,10 @@ const DetailsForm = () => {
   const { data: gptData, isPending, isError } = useGptTodos()
   const [isDataUpdated, setIsDataUpdated] = useState(false)
 
-  // 🔥 GPT 데이터를 description 상태에 저장
+  // GPT 데이터를 description 상태에 저장
   useEffect(() => {
     
-    // ✅ 데이터가 존재하고, API 로딩이 끝난 상태에서만 실행
+    // 데이터가 존재하고, API 로딩이 끝난 상태에서만 실행
     if (gptData && !isPending && !isDataUpdated) {
       console.log('🔥 GPT 응답 데이터 (useEffect 내부):', gptData)
       setDescription((prev) => {
@@ -33,11 +33,11 @@ const DetailsForm = () => {
         )
         return newDescription
       })
-      setIsDataUpdated(true) // ✅ 한 번만 실행되도록 설정
+      setIsDataUpdated(true) // 한 번만 실행되도록 설정
     }
   }, [gptData, isPending, isDataUpdated, setDescription])
 
-  // ✅ 🔥 GPT 데이터 로딩 중이면 로딩 스피너 표시
+  // GPT 데이터 로딩 중이면 로딩 스피너 표시
   if (isPending) {
     return (
       <div className="w-3/5 py-8 flex justify-center">
