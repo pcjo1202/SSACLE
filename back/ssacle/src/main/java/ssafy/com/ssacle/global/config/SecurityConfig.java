@@ -59,7 +59,8 @@ public class SecurityConfig {
                 "http://localhost:5000",
                 "http://i12a402.p.ssafy.io:8080",
                 "https://i12a402.p.ssafy.io",
-                "http://i12a402.p.ssafy.io"));
+                "http://i12a402.p.ssafy.io",
+                "https://i12a402.p.ssafy.io:8443"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedHeaders(List.of("*"));
