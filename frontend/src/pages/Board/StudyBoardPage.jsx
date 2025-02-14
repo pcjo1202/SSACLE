@@ -96,7 +96,9 @@ const StudyBoardPage = () => {
 
   // 게시글 클릭 핸들러
   const handlePostClick = (postId) => {
-    if (activeTab === 'legend') {
+    // 클릭된 게시글 찾기
+    const clickedPost = filteredPosts.find((post) => post.id === postId)
+    if (clickedPost.subCategory === 'legend') {
       setSelectPostId(postId)
       setShowPayModal(true)
     } else {
@@ -214,10 +216,7 @@ const StudyBoardPage = () => {
           onPostClick={handlePostClick}
         /> */}
         <BoardList
-          posts={filteredPosts.map((post, index) => ({
-            ...post,
-            id: post.id || index, // id가 없는 경우 index를 사용
-          }))}
+          posts={filteredPosts}
           type={activeTab}
           boardType="edu"
           onPostClick={handlePostClick}
