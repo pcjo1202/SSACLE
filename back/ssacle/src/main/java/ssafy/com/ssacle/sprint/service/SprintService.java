@@ -154,14 +154,17 @@ public class SprintService {
     }
 
     @Transactional
-    public Page<Sprint> getSprintsByStatus(Integer status, Pageable pageable) {
-        return sprintRepository.findSprintsByStatus(status, pageable);
+    public Page<SprintAndCategoriesResponseDTO> getSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
+        return sprintRepository.findSprintsByCategoryAndStatus(categoryId, status, pageable)
+                .map(SprintAndCategoriesResponseDTO::from);
     }
 
     @Transactional
-    public Page<Sprint> getSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
-        return sprintRepository.findSprintsByCategoryAndStatus(categoryId, status, pageable);
+    public Page<SprintAndCategoriesResponseDTO> getSprintsByStatus(Integer status, Pageable pageable) {
+        return sprintRepository.findSprintsByStatus(status, pageable)
+                .map(SprintAndCategoriesResponseDTO::from);
     }
+
 
     public SprintDetailResponse getSprintDetail(Long sprintId) {
 

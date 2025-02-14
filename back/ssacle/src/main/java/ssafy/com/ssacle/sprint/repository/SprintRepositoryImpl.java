@@ -36,23 +36,31 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
     @Override
     public Page<Sprint> findSprintsByStatus(Integer status, Pageable pageable) {
         QSprint sprint = QSprint.sprint;
+        QSprintCategory sprintCategory = QSprintCategory.sprintCategory;
+        QCategory category = QCategory.category;
 
         List<Sprint> results = queryFactory
-                .selectFrom(sprint)
-                .where(sprint.status.eq(status)) // 상태 필터링
+                .select(sprint)
+                .from(sprint)
+                .leftJoin(sprint.sprintCategories, sprintCategory).fetchJoin()
+                .leftJoin(sprintCategory.category, category).fetchJoin()
+                .where(sprint.status.eq(status))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
         long total = Optional.ofNullable(queryFactory
-                        .select(sprint.count())
-                        .from(sprint)
-                        .where(sprint.status.eq(status))
-                        .fetchOne())
-                .orElse(0L);
+                .select(sprint.count())
+                .from(sprint)
+                .leftJoin(sprint.sprintCategories, sprintCategory)
+                .leftJoin(sprintCategory.category, category)
+                .where(sprint.status.eq(status))
+                .fetchOne()).orElse(0L);
 
         return PageableExecutionUtils.getPage(results, pageable, () -> total);
     }
+
+
 
     @Override
     public Page<Sprint> findSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
@@ -61,10 +69,10 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
         QCategory category = QCategory.category;
 
         List<Sprint> results = queryFactory
-                .selectDistinct(sprint)
+                .select(sprint)
                 .from(sprint)
-                .join(sprintCategory).on(sprintCategory.sprint.eq(sprint))
-                .join(sprintCategory.category, category)
+                .leftJoin(sprint.sprintCategories, sprintCategory).fetchJoin()
+                .leftJoin(sprintCategory.category, category).fetchJoin()
                 .where(category.id.eq(categoryId)
                         .and(sprint.status.eq(status)))
                 .offset(pageable.getOffset())
@@ -72,16 +80,16 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
                 .fetch();
 
         long total = Optional.ofNullable(queryFactory
-                        .select(sprint.count())
-                        .from(sprint)
-                        .join(sprintCategory).on(sprintCategory.sprint.eq(sprint))
-                        .join(sprintCategory.category, category)
-                        .where(category.id.eq(categoryId)
-                                .and(sprint.status.eq(status)))
-                        .fetchOne())
-                .orElse(0L);
+                .select(sprint.count())
+                .from(sprint)
+                .leftJoin(sprint.sprintCategories, sprintCategory)
+                .leftJoin(sprintCategory.category, category)
+                .where(category.id.eq(categoryId)
+                        .and(sprint.status.eq(status)))
+                .fetchOne()).orElse(0L);
 
         return PageableExecutionUtils.getPage(results, pageable, () -> total);
     }
+
 
 }

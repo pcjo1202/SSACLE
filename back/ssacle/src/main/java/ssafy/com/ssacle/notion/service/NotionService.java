@@ -8,16 +8,19 @@ import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.notion.exception.NotionCreatePageException;
 import ssafy.com.ssacle.todo.dto.DefaultTodoResponse;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class NotionService {
 
-    private final NotionClient notionClient;
-
     @Value("${NOTION_MAIN_PAGE_ID}")
     private String SSACLE_MAIN_PAGE_ID;
+
+    private final NotionClient notionClient;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /** SSACLE 메인 페이지에서 계층적으로 데이터베이스 & 페이지를 탐색하고 생성*/
     public String createCategoryStructure(String category1, String category2, String category3, String teamName) {
@@ -64,7 +67,7 @@ public class NotionService {
         }
         """.formatted(category);
 
-        return notionClient.searchDatabase(queryJson);
+        return notionClient.searchPage(queryJson);
     }
 
     /** 새 페이지 생성 */
@@ -184,4 +187,89 @@ public class NotionService {
     private String extractPageIdFromUrl(String notionUrl) {
         return notionUrl.substring(notionUrl.lastIndexOf("/") + 1, notionUrl.length()).replaceAll("-", "");
     }
+
+
+    /** 오늘 날짜의 노션 페이지 가져오기 */
+    public String getTodayDiaryContent(String teamNotionUrl) {
+        String teamPageId = extractPageIdFromUrl(teamNotionUrl);
+        System.out.println("팀 page id : " + teamPageId);
+        String todayDate = LocalDate.now().toString();
+
+        // 🔹 오늘 날짜에 해당하는 페이지 ID 조회
+        String todayPageId = getDatePageId(teamPageId, todayDate);
+        if (todayPageId == null) {
+            System.out.println("오늘 날짜의 페이지가 없음: " + todayDate);
+            return null;
+        }
+
+        // 🔹 해당 날짜 페이지의 콘텐츠 가져오기
+        return getNotionPageContent(todayPageId);
+    }
+
+    /** 팀 페이지에서 "오늘 날짜"에 해당하는 하위 페이지 ID 찾기 */
+    private String getDatePageId(String teamPageId, String todayDate) {
+        String url = "https://api.notion.com/v1/blocks/" + teamPageId + "/children";
+        String responseJson = notionClient.getPageContent(url);
+
+        try {
+            JsonNode rootNode = objectMapper.readTree(responseJson);
+            JsonNode resultsNode = rootNode.get("results");
+
+            if (resultsNode != null && resultsNode.isArray()) {
+                for (JsonNode node : resultsNode) {
+                    if ("block".equals(node.get("object").asText()) && "child_page".equals(node.get("type").asText())) {
+                        JsonNode childPageNode = node.get("child_page");
+                        if (childPageNode != null && childPageNode.has("title")) {
+                            String pageTitle = childPageNode.get("title").asText();
+                            System.out.println("🔍 찾은 페이지 제목: " + pageTitle);
+
+                            if (todayDate.equals(pageTitle)) {
+                                return node.get("id").asText(); // 오늘 날짜의 페이지 ID 반환
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /** 특정 날짜 페이지의 콘텐츠 가져오기 */
+    public String getNotionPageContent(String notionPageId) {
+        String url = "https://api.notion.com/v1/blocks/" + notionPageId + "/children";
+        String responseJson = notionClient.getPageContent(url);
+        return extractTextFromNotionBlocks(responseJson);
+    }
+
+    /** Notion API 응답에서 블록 내용을 추출 */
+    private String extractTextFromNotionBlocks(String jsonResponse) {
+        try {
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            JsonNode resultsNode = rootNode.get("results");
+
+            List<String> textContents = new ArrayList<>();
+            if (resultsNode != null && resultsNode.isArray()) {
+                for (JsonNode blockNode : resultsNode) {
+                    String blockType = blockNode.get("type").asText();
+                    JsonNode contentNode = blockNode.get(blockType);
+                    if (contentNode != null && contentNode.has("rich_text")) {
+                        JsonNode richTextArray = contentNode.get("rich_text");
+                        for (JsonNode textElement : richTextArray) {
+                            if (textElement.has("text") && textElement.get("text").has("content")) {
+                                textContents.add(textElement.get("text").get("content").asText());
+                            }
+                        }
+                    }
+                }
+            }
+            return String.join("\n", textContents);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

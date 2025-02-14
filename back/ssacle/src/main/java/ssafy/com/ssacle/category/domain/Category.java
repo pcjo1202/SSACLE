@@ -33,6 +33,7 @@ public class Category {
     @JsonIgnore
     private List<Category> children;
 
+    @Builder.Default
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SprintCategory> sprintCategories = new ArrayList<>();
 
