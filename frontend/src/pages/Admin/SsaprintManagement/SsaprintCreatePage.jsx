@@ -5,15 +5,20 @@ import { useNavigate } from 'react-router-dom'
 import CategorySelect from '@/components/AdminPage/SsaprintManagement/SsaprintCreate/CategorySelect'
 import CategoryModal from '@/components/AdminPage/SsaprintManagement/SsaprintCreate/CategoryModal'
 import { CirclePlus } from 'lucide-react'
+import { useSsaprint } from '@/contexts/SsaprintContext'
 
 const SsaprintCreate = () => {
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
+  const { startDate, setStartDate, endDate, setEndDate } = useSsaprint()
+
   const [showDetails, setShowDetails] = useState(
     localStorage.getItem('showDetails') === 'true'
   )
   const [isModalOpen, setIsModalOpen] = useState(false)
   const navigate = useNavigate()
+
+  // LocalDateTime으로 변환해서 API 요청 시 사용
+  const getFormattedStartDate = () => formatToLocalDateTime(startDate)
+  const getFormattedEndDate = () => formatToLocalDateTime(endDate)
 
   // 상세 정보 입력 폼 상태 변경 시 로컬스토리지 업데이트
   const toggleDetails = () => {
@@ -39,7 +44,7 @@ const SsaprintCreate = () => {
         </p>
         <div className="border-t-4 border-ssacle-gray-sm my-4"></div>
 
-          <CategorySelect />
+        <CategorySelect />
 
         {/* + 버튼 추가 */}
         <div className="flex justify-center mt-4">
