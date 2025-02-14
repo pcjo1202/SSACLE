@@ -24,6 +24,8 @@ public class QTeam extends EntityPathBase<Team> {
 
     public final NumberPath<Integer> currentMembers = createNumber("currentMembers", Integer.class);
 
+    public final ListPath<ssafy.com.ssacle.diary.domain.Diary, ssafy.com.ssacle.diary.domain.QDiary> diaries = this.<ssafy.com.ssacle.diary.domain.Diary, ssafy.com.ssacle.diary.domain.QDiary>createList("diaries", ssafy.com.ssacle.diary.domain.Diary.class, ssafy.com.ssacle.diary.domain.QDiary.class, PathInits.DIRECT2);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath name = createString("name");

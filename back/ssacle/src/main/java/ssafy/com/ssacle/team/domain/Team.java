@@ -3,6 +3,7 @@ package ssafy.com.ssacle.team.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import ssafy.com.ssacle.diary.domain.Diary;
 import ssafy.com.ssacle.global.exception.UtilErrorCode;
 import ssafy.com.ssacle.global.utill.ValidationUtils;
 import ssafy.com.ssacle.sprint.domain.Sprint;
@@ -50,6 +51,9 @@ public class Team {
         this.todos.add(todo);
         todo.setTeam(this);
     }
+
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Diary> diaries;
 
     @Column(unique = true, nullable = false, length = 20)
     private String name;
