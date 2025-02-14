@@ -51,7 +51,28 @@ const DetailsForm = () => {
   return (
     <div className="w-3/5 py-8">
       <h2 className="text-ssacle-black text-lg font-bold">세부 정보 입력</h2>
-
+      <div>
+        {/* 싸프린트 이름 입력 */}
+        <div>
+          <label className="text-ssacle-black text-sm font-bold">싸프린트 이름</label>
+          <input
+            type='text'
+            maxLength={100}
+            className="w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto text-ssacle-black text-sm"
+          />
+        </div>
+        {/* 최대 인원 수 입력 */}
+        <div>
+          <label className="text-ssacle-black text-sm font-bold">최대 인원 수</label>
+          <input 
+            type='number'
+            min={1}
+            max={4}
+            value={1}
+            className='w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto text-ssacle-black text-sm'
+          />
+        </div>
+      </div>
       {[
         { label: '기본 설명', key: 'basicDescription' },
         { label: '상세 설명', key: 'detailDescription' },
@@ -61,7 +82,7 @@ const DetailsForm = () => {
         <div key={key} className="mt-4">
           <label className="text-ssacle-black text-sm font-bold">{label}</label>
           <textarea
-            className="w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto"
+            className="w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto text-ssacle-black text-sm"
             rows={rows}
             value={description?.[key] || ''}
             onChange={(e) =>

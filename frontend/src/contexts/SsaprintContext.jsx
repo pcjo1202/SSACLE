@@ -56,6 +56,12 @@ export const SsaprintProvider = ({ children }) => {
   const startDate = rawStartDate ? formatToLocalDateTime(rawStartDate) : ''
   const endDate = rawEndDate ? formatToLocalDateTime(rawEndDate, true) : ''
 
+  // 추가된 상태 (싸프린트 이름, 최대 인원 수)
+  const [sprintName, setSprintName] = useState(getStoredData('sprintName', ''))
+  const [maxParticipants, setMaxParticipants] = useState(
+    getStoredData('maxParticipants', 1)
+  )
+
   // GPT 데이터가 저장될 description 상태
   const [description, setDescription] = useState(
     getStoredData('description', {
@@ -72,13 +78,17 @@ export const SsaprintProvider = ({ children }) => {
     localStorage.setItem('selectedSub', JSON.stringify(selectedSub))
     localStorage.setItem('startDate', JSON.stringify(rawStartDate))
     localStorage.setItem('endDate', JSON.stringify(rawEndDate))
-    localStorage.setItem('description', JSON.stringify(description)) // description 저장 추가
+    localStorage.setItem('sprintName', JSON.stringify(sprintName))
+    localStorage.setItem('maxParticipants', JSON.stringify(maxParticipants))
+    localStorage.setItem('description', JSON.stringify(description))
   }, [
     selectedMain,
     selectedMid,
     selectedSub,
     rawStartDate,
     rawEndDate,
+    sprintName,
+    maxParticipants,
     description,
   ])
 
@@ -90,6 +100,8 @@ export const SsaprintProvider = ({ children }) => {
     localStorage.removeItem('selectedSub')
     localStorage.removeItem('startDate')
     localStorage.removeItem('endDate')
+    localStorage.removeItem('sprintName')
+    localStorage.removeItem('maxParticipants')
     localStorage.removeItem('description')
     localStorage.removeItem('showDetails')
 
@@ -99,6 +111,8 @@ export const SsaprintProvider = ({ children }) => {
     setSelectedSub({ id: null, name: '' })
     setRawStartDate('')
     setRawEndDate('')
+    setSprintName('')
+    setMaxParticipants(1)
     setDescription({
       // description 초기화 추가
       basicDescription: '',
