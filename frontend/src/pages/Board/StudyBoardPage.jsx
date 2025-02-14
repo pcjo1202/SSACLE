@@ -41,11 +41,11 @@ const StudyBoardPage = () => {
     retry: false,
   })
 
-  useEffect(() => {
-    if (userData) {
-      console.log('Current user data:', userData)
-    }
-  }, [userData])
+  // useEffect(() => {
+  //   if (userData) {
+  //     console.log('Current user data:', userData)
+  //   }
+  // }, [userData])
 
   // TanStack Query
   // 로그인 알럿 코드
@@ -98,30 +98,64 @@ const StudyBoardPage = () => {
   const handlePostClick = (postId) => {
     // 클릭된 게시글 찾기
     const clickedPost = filteredPosts.find((post) => post.id === postId)
+
+    if (!clickedPost) return
+
     if (clickedPost.subCategory === 'legend') {
       setSelectPostId(postId)
       setShowPayModal(true)
     } else {
-      // 일반 게시글인 경우 바로 상세 조회 요청
-      boardDetailMutation.mutate(postId)
+      // 게시글의 세부 카테고리 정보도 함께 전달
+      navigate(`/board/edu/${postId}`, {
+        state: {
+          postType: clickedPost.subCategory,
+          majorCategory: clickedPost.majorCategory,
+        },
+      })
     }
   }
 
   // 피클 결제 확인
+  // const handlePayConfirm = async () => {
+  //   try {
+  //     const requiredPickles = 5
+  //     if (userData?.pickles >= requiredPickles) {
+  //       // 피클 차감 성공 시 게시글 상세 조회
+  //       boardDetailMutation.mutate(selectPostId)
+  //       setShowPayModal(false)
+  //       // navigate(`/board/edu/${selectPostId}`)
+  //     }
+  //   } catch (error) {
+  //     console.error('피클 차감 중 오류가 발생했습니다:', error)
+  //     alert('처리 중 오류가 발생했습니다. 다시 시도해주세요.')
+  //   }
+  // }
+
+  // 피클 결제 확인 핸들러 수정
   const handlePayConfirm = async () => {
     try {
       const requiredPickles = 5
       if (userData?.pickles >= requiredPickles) {
-        // 피클 차감 성공 시 게시글 상세 조회
-        boardDetailMutation.mutate(selectPostId)
+        const clickedPost = filteredPosts.find(
+          (post) => post.id === selectPostId
+        )
+
+        if (clickedPost) {
+          navigate(`/board/edu/${selectPostId}`, {
+            state: {
+              postType: clickedPost.subCategory,
+              majorCategory: clickedPost.majorCategory,
+            },
+          })
+        }
         setShowPayModal(false)
-        // navigate(`/board/edu/${selectPostId}`)
       }
     } catch (error) {
       console.error('피클 차감 중 오류가 발생했습니다:', error)
       alert('처리 중 오류가 발생했습니다. 다시 시도해주세요.')
     }
   }
+
   // 모달 취소
   const handlePayCancel = () => {
     setShowPayModal(false)
@@ -216,7 +250,10 @@ const StudyBoardPage = () => {
           onPostClick={handlePostClick}
         /> */}
         <BoardList
-          posts={filteredPosts}
+          posts={filteredPosts.map((post, index) => ({
+            ...post,
+            id: post.id || index, // id가 없는 경우 index를 사용
+          }))}
           type={activeTab}
           boardType="edu"
           onPostClick={handlePostClick}
