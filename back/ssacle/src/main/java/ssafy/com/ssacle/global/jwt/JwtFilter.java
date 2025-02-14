@@ -32,12 +32,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 requestURI.startsWith("/v3/api-docs.yaml") ||
                 requestURI.startsWith("/swagger-ui.html") ||
                 requestURI.startsWith("/swagger-ui/index.html") ||
-                requestURI.startsWith(("/api")
-//                requestURI.startsWith("/api/v1/join") ||
-//                requestURI.startsWith("/api/v1/login") ||
-//                requestURI.startsWith("/api/v1/token") ||
-//                requestURI.startsWith("/api/video/sessions/distribute") ||
-//                requestURI.startsWith("/api/video/sessions/reset-all"
+                requestURI.startsWith("/api/v1/join") ||
+                requestURI.startsWith("/api/v1/login") ||
+                requestURI.startsWith("/api/v1/token") ||
+                requestURI.startsWith("/api/video/sessions/distribute") ||
+                requestURI.startsWith("/api/video/sessions/reset-all"
                 )){
             filterChain.doFilter(request,response);
             return;
