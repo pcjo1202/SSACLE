@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.category.domain.Category;
-import ssafy.com.ssacle.category.dto.CategoryNameAndLevelResponseDTO;
 import ssafy.com.ssacle.category.dto.CategoryResponseDTO;
 import ssafy.com.ssacle.category.dto.CategoryTreeResponseDTO;
 import ssafy.com.ssacle.category.exception.CategoryNotExistException;

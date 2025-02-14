@@ -14,10 +14,7 @@ import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.notion.service.NotionService;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
-import ssafy.com.ssacle.sprint.dto.SingleSprintResponse;
-import ssafy.com.ssacle.sprint.dto.SprintCreateRequest;
-import ssafy.com.ssacle.sprint.dto.SprintDetailResponse;
-import ssafy.com.ssacle.sprint.dto.SprintResponse;
+import ssafy.com.ssacle.sprint.dto.*;
 import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
@@ -147,14 +144,17 @@ public class SprintService {
     }
 
     @Transactional
-    public Page<Sprint> getSprintsByStatus(Integer status, Pageable pageable) {
-        return sprintRepository.findSprintsByStatus(status, pageable);
+    public Page<SprintAndCategoriesResponseDTO> getSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
+        return sprintRepository.findSprintsByCategoryAndStatus(categoryId, status, pageable)
+                .map(SprintAndCategoriesResponseDTO::from);
     }
 
     @Transactional
-    public Page<Sprint> getSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
-        return sprintRepository.findSprintsByCategoryAndStatus(categoryId, status, pageable);
+    public Page<SprintAndCategoriesResponseDTO> getSprintsByStatus(Integer status, Pageable pageable) {
+        return sprintRepository.findSprintsByStatus(status, pageable)
+                .map(SprintAndCategoriesResponseDTO::from);
     }
+
 
     public SprintDetailResponse getSprintDetail(Long sprintId) {
 

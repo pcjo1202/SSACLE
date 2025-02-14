@@ -6,10 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ssafy.com.ssacle.sprint.domain.Sprint;
-import ssafy.com.ssacle.sprint.dto.SingleSprintResponse;
-import ssafy.com.ssacle.sprint.dto.SprintCreateRequest;
-import ssafy.com.ssacle.sprint.dto.SprintDetailResponse;
-import ssafy.com.ssacle.sprint.dto.SprintResponse;
+import ssafy.com.ssacle.sprint.dto.*;
 import ssafy.com.ssacle.sprint.service.SprintService;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.service.UserService;
@@ -38,29 +35,28 @@ public class SprintController implements SprintSwaggerController{
         return ResponseEntity.status(201).build();
     }
 
+    /** 필터링 조건으로 스프린트 조회 */
+    @Override
+    public ResponseEntity<Page<SprintAndCategoriesResponseDTO>> getSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
+        Page<SprintAndCategoriesResponseDTO> sprintResponses;
+
+        if (categoryId == null) {
+            // 카테고리 ID가 없으면 상태만 필터링
+            sprintResponses = sprintService.getSprintsByStatus(status, pageable);
+        } else {
+            // 카테고리 ID가 있으면 카테고리 + 상태 필터링
+            sprintResponses = sprintService.getSprintsByCategoryAndStatus(categoryId, status, pageable);
+        }
+
+        return ResponseEntity.ok(sprintResponses);
+    }
+
+
     /** 단일 스프린트 조회 */
     @Override
     public ResponseEntity<SingleSprintResponse> getSprintById(@PathVariable Long id) {
         SingleSprintResponse response = sprintService.getSprintById(id);
         return ResponseEntity.ok(response);
-    }
-
-    /** 필터링 조건으로 스프린트 조회 */
-    @Override
-    public ResponseEntity<Page<SingleSprintResponse>> getSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
-        Page<SingleSprintResponse> sprintResponses;
-
-        if (categoryId == null) {
-            // 카테고리 ID가 없으면 상태만 필터링
-            sprintResponses = sprintService.getSprintsByStatus(status, pageable)
-                    .map(SingleSprintResponse::from);
-        } else {
-            // 카테고리 ID가 있으면 카테고리 + 상태 필터링
-            sprintResponses = sprintService.getSprintsByCategoryAndStatus(categoryId, status, pageable)
-                    .map(SingleSprintResponse::from);
-        }
-
-        return ResponseEntity.ok(sprintResponses);
     }
 
     /** 스프린트 입장 페이지에 필요한 단일 스프린트 조회 */
