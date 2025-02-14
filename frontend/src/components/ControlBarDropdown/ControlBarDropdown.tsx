@@ -9,7 +9,6 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { SendIcon } from 'lucide-react'
 
 interface ControlBarDropdownProps {
   children: ReactNode
@@ -18,7 +17,7 @@ interface ControlBarDropdownProps {
     title: string
     items: [
       {
-        name: string
+        username: string
         icon: ReactNode
       },
     ]
@@ -42,9 +41,15 @@ const ControlBarDropdown: FC<ControlBarDropdownProps> = ({
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {items.map(
-            ({ name, icon: Icon }: { name: string; icon: ReactNode }) => (
-              <DropdownMenuItem>
-                <span>{name}</span>
+            ({
+              username,
+              icon: Icon,
+            }: {
+              username: string
+              icon: ReactNode
+            }) => (
+              <DropdownMenuItem key={username}>
+                <span>{username}</span>
                 <DropdownMenuShortcut className="transition-all duration-100 cursor-pointer hover:text-ssacle-blue">
                   <Icon />
                 </DropdownMenuShortcut>
