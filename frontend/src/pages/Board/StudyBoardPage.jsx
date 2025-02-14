@@ -53,7 +53,12 @@ const StudyBoardPage = () => {
 
   // 게시글 클릭 시 실행
   const handlePostClick = (postId) => {
-    if (activeTab === 'legend') {
+    // 클릭된 게시글 찾기
+    const clickedPost = filteredPosts.find((post) => post.id === postId)
+
+    if (!clickedPost) return
+
+    if (clickedPost.subCategory === 'legend') {
       setSelectPostId(postId)
       setShowPayModal(true)
     } else {
