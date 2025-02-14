@@ -6,40 +6,30 @@ interface RoomStateStore {
   roomId: string
   setRoomId: (roomId: string) => void
 
-  // 각 roomId별 참여자 데이터
   roomConnectionData: Record<
-    string, // roomId key
-    Record<
-      string, // 참여자에 대한 key (예: userId)
-      {
-        username: string
-        userId: string
-      }
-    >
+    string,
+    Array<{
+      username: string
+      userId: string
+    }>
   >
 
   // 특정 roomId에 참여자 데이터를 추가하는 메서드
   addRoomConnectionData: (
     roomId: string,
-    newData: Record<
-      string,
-      {
-        username: string
-        userId: string
-      }
-    >
+    newData: {
+      username: string
+      userId: string
+    }
   ) => void
 
   // 특정 roomId의 참여자 데이터를 삭제하는 메서드
   removeRoomConnectionData: (
     roomId: string,
-    deleteData: Record<
-      string,
-      {
-        username: string
-        userId: string
-      }
-    >
+    newData: {
+      username: string
+      userId: string
+    }
   ) => void
 
   // 방의 진행 상태
@@ -60,27 +50,40 @@ const useRoomStateStore = create<RoomStateStore>()(
 
       // 특정 roomId에 참여자를 추가합니다.
       addRoomConnectionData: (roomId: string, newData) =>
-        set((state) => ({
-          roomConnectionData: {
-            ...state.roomConnectionData,
-            [roomId]: {
-              // 이미 해당 roomId의 데이터가 있다면 기존 데이터를 유지하면서 새 데이터를 병합합니다.
-              ...(state.roomConnectionData[roomId] || {}),
-              ...newData,
+        set((state) => {
+          // newData가 이미 존재하는 경우 추가하지 않음
+          // if (
+          //   state.roomConnectionData[roomId]?.some(
+          //     (data) => data.userId === newData.userId
+          //   )
+          // ) {
+          //   return {
+          //     roomConnectionData: {
+          //       ...state.roomConnectionData,
+          //       [roomId]: state.roomConnectionData[roomId],
+          //     },
+          //   }
+          // }
+
+          const currentConnections = state.roomConnectionData[roomId] ?? [] // 초기 데이터가 없을 경우 빈 배열 반환
+          const newConnections = Array.isArray(currentConnections)
+            ? [...currentConnections, newData]
+            : [newData]
+          return {
+            roomConnectionData: {
+              ...state.roomConnectionData,
+              [roomId]: newConnections,
             },
-          },
-        })),
+          }
+        }),
 
       // 특정 roomId의 참여자 데이터를 삭제합니다.
       removeRoomConnectionData: (roomId: string, deleteData) =>
         set((state) => ({
           roomConnectionData: {
             ...state.roomConnectionData,
-            [roomId]: Object.fromEntries(
-              // 해당 roomId의 참가자 목록이 없을 수도 있으므로 기본값 {}를 사용
-              Object.entries(state.roomConnectionData[roomId] || {}).filter(
-                ([key]) => !deleteData[key]
-              )
+            [roomId]: state.roomConnectionData[roomId].filter(
+              (data) => data.userId !== deleteData.userId
             ),
           },
         })),

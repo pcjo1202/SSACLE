@@ -1,16 +1,15 @@
 import ConferenceContainer from '@/components/ConferenceContainer/ConferenceContainer'
 import { fetchSessionId, fetchToken } from '@/services/openviduService'
 import { useQuery } from '@tanstack/react-query'
-import { useSearchParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 const SessionInitializer = () => {
-  const [searchParams] = useSearchParams()
-  const ssaprintId = searchParams.get('ssaprintId')
+  const { roomId } = useParams()
   // 세션 ID 요청
   const { data: token, isSuccess } = useQuery({
     queryKey: ['sessionId'],
     queryFn: async () => {
-      const sessionId = await fetchSessionId(ssaprintId ?? 'test-session-id')
+      const sessionId = await fetchSessionId(roomId ?? 'test-session-id')
       const token = await fetchToken(sessionId)
       return token // 실제 데이터만 반환
     },

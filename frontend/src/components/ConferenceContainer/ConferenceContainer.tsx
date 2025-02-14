@@ -47,6 +47,7 @@ const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
       Card.push(
         <StreamVideoCard
           key={cameraPublisher.stream.connection.connectionId}
+          username={JSON.parse(cameraPublisher.stream.connection.data).username}
           ref={(el: HTMLVideoElement) =>
             el && cameraPublisher.addVideoElement(el)
           }
@@ -58,6 +59,7 @@ const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
         Card.push(
           <StreamVideoCard
             key={index}
+            username={JSON.parse(sub.stream.connection.data).username}
             ref={(el: HTMLVideoElement) => el && sub.addVideoElement(el)}
           />
         )

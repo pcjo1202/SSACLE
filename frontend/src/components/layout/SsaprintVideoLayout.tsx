@@ -43,7 +43,6 @@ const SsaprintVideoLayout: FC<SsaprintVideoLayoutProps> = ({
       : setIsScreenSharing(false)
   }, [screenPublisher])
 
-  console.log(children)
   return (
     <section className="flex w-full h-full gap-1">
       {isScreenSharing && screenPublisher && <ScreenShareView />}

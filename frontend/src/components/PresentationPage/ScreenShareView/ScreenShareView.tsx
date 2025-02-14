@@ -31,18 +31,18 @@ const ScreenShareView = () => {
   }, [screenPublisher])
 
   return (
-    <div className="relative flex flex-col justify-start flex-1 gap-4 animate-in fade-in-0">
-      <div className="">
-        <span className="px-4 py-1 text-sm font-bold text-white bg-red-400 rounded-full">
+    <div className="flex flex-col justify-start flex-1 gap-4 animate-in fade-in-0">
+      <div className="absolute top-7 left-60">
+        <span className="px-4 py-1 text-sm text-white rounded-full bg-red-400/80 animate-pulse">
           화면 공유 중
         </span>
       </div>
-      <div className="flex items-start justify-center w-full h-full">
+      <div className="flex items-center justify-center w-full h-full">
         {isScreenSharing && screenPublisher && (
           <video
             autoPlay
             playsInline
-            className="object-cover w-full rounded-md "
+            className="w-full h-full object-contain max-h-[calc(100vh-10rem)] rounded-md"
             ref={(el: HTMLVideoElement) =>
               el && screenPublisher.addVideoElement(el)
             }

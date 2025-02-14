@@ -3,9 +3,10 @@ import { Monitor } from 'lucide-react'
 
 interface StreamVideoCardProps {
   ref: React.RefObject<HTMLVideoElement>
+  username: string
 }
 
-const StreamVideoCard = ({ ref }: StreamVideoCardProps) => {
+const StreamVideoCard = ({ ref, username }: StreamVideoCardProps) => {
   return (
     <div
       className={cn(
@@ -23,7 +24,7 @@ const StreamVideoCard = ({ ref }: StreamVideoCardProps) => {
       {/* 참여자 이름 */}
       <div className="absolute flex items-center justify-center gap-2 px-4 py-1 rounded-sm left-2 bottom-2 bg-ssacle-black/70">
         <Monitor className="text-white size-4" />
-        <span className="text-base text-white">{'test'}</span>
+        <span className="text-base text-white">{username}</span>
       </div>
     </div>
   )

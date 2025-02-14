@@ -22,9 +22,7 @@ export const useConnect = () => {
   const {
     OV,
     session,
-    subscribers,
     mainStreamManager,
-    screenPublisher,
     setScreenPublisher,
     setOV,
     setSession,
@@ -32,8 +30,12 @@ export const useConnect = () => {
     setSubscribers,
     setMainStreamManager,
   } = useOpenviduStateStore()
-  const { handleConnectionCreated, handleConnectionDestroyed } =
-    useConferenceEvents() // 컨퍼런스 이벤트 훅
+  const {
+    handleStreamCreated,
+    handleStreamDestroyed,
+    handleConnectionCreated,
+    handleConnectionDestroyed,
+  } = useConferenceEvents() // 컨퍼런스 이벤트 훅
 
   // Zustand persist store에서 room connection data 관련 로직을 가져오되, shallow 최적화 적용
   const { addRoomConnectionData, removeRoomConnectionData } = useRoomStateStore(
@@ -48,9 +50,7 @@ export const useConnect = () => {
   const [searchParams] = useSearchParams()
   const username = searchParams.get('username')
   const userId = searchParams.get('userId')
-  const roomId = searchParams.get('ssaprintId')
-  // const params = useParams()
-  // const roomId = params.roomId
+  const { roomId } = useParams()
 
   const joinSession = async (session: Session, token: string) => {
     try {
@@ -64,12 +64,10 @@ export const useConnect = () => {
       })
       // persist되어 있는 room state에 connection data 저장
       // roomId 별로 userId를 key로 하는 객체의 형태로 저장합니다.
-      addRoomConnectionData(roomId as string, {
-        [userId as string]: {
-          username: username as string,
-          userId: userId as string,
-        },
-      })
+      // addRoomConnectionData(roomId as string, {
+      //   username: username as string,
+      //   userId: userId as string,
+      // })
 
       /** 세션 연결 */
       await session.connect(token, connectData)
@@ -90,92 +88,37 @@ export const useConnect = () => {
       )
 
       setCameraPublisher(newPublisher)
-      setMainStreamManager(newPublisher)
+      setMainStreamManager(session.streamManagers)
       await session.publish(newPublisher)
     } catch (error) {
       console.error('❌ 세션 연결 실패:', error)
     }
+    setSession(session)
   }
 
   const initializeSession = async () => {
+    if (session) {
+      console.log('이미 세션이 존재합니다.')
+      return session // 기존 세션 반환
+    }
     const openvidu = new OpenVidu()
     openvidu.enableProdMode()
 
     const newSession = openvidu.initSession()
 
-    // 새로운 스트림이 생성되었을 때 (예: 다른 사용자의 화면 공유 또는 카메라/마이크 스트림)
-    newSession.on('streamCreated', (event) => {
-      const isScreenSharing =
-        event.stream?.typeOfVideo?.toLocaleLowerCase() === 'screen'
+    // 🔹 새로운 스트림이 생성되었을 때 (예: 다른 사용자의 화면 공유 또는 카메라/마이크 스트림)
+    newSession.on('streamCreated', (e) => handleStreamCreated(e, newSession))
 
-      const isMyStream =
-        event.stream.connection.connectionId ===
-        newSession.connection.connectionId
+    // 🔹 스트림이 삭제되었을 때
+    newSession.on('streamDestroyed', (e) =>
+      handleStreamDestroyed(e, newSession)
+    )
 
-      if (isScreenSharing) {
-        // 내 스트림이 아닌 경우에만 구독
-        if (!isMyStream) {
-          const screenSubscriber = newSession.subscribe(event.stream, undefined)
-          setScreenPublisher(screenSubscriber as unknown as Publisher)
-          setIsScreenSharing(true)
-        }
-      } else {
-        const newSubscriber = newSession.subscribe(event.stream, undefined)
-        setSubscribers((prev: Subscriber[]) => [...prev, newSubscriber])
-        setSession(newSession)
-      }
-    })
+    // 🔹 사용자가 입장했을 때
+    newSession.on('connectionCreated', (e) => handleConnectionCreated(e))
 
-    newSession.on('streamDestroyed', (event) => {
-      setSubscribers(
-        subscribers.filter(
-          (sub: Subscriber) =>
-            sub.stream.connection.connectionId !==
-            event.stream.connection.connectionId
-        )
-      )
-
-      const isMyStream =
-        event.stream.connection.connectionId ===
-        newSession.connection.connectionId
-
-      // 내 스트림이 아닌 경우에만 화면 공유 스트림 종료
-      if (screenPublisher && !isMyStream) {
-        console.log('화면 공유 스트림 종료')
-        session?.unsubscribe(event.stream as unknown as Subscriber)
-        setScreenPublisher(null)
-        setIsScreenSharing(false)
-      }
-    })
-
-    // 📌 🔹 사용자가 입장했을 때
-    newSession.on('connectionCreated', (event) => {
-      console.log('새로운 사용자가 입장:', event.connection)
-      const { username, userId } = JSON.parse(event.connection.data as string)
-
-      // roomId 별로 참여자 데이터를 저장합니다.
-      addRoomConnectionData(roomId as string, {
-        [userId as string]: {
-          username: username as string,
-          userId: userId as string,
-        },
-      })
-    })
-
-    // 사용자가 퇴장했을 때
-    newSession.on('connectionDestroyed', (event) => {
-      console.log('사용자가 퇴장:', event.connection.connectionId)
-
-      const { username, userId } = JSON.parse(event.connection.data as string)
-
-      // roomId 별로 참여자 데이터를 삭제합니다.
-      removeRoomConnectionData(roomId as string, {
-        [userId as string]: {
-          username: username as string,
-          userId: userId as string,
-        },
-      })
-    })
+    // 🔹 사용자가 퇴장했을 때
+    newSession.on('connectionDestroyed', (e) => handleConnectionDestroyed(e))
 
     setOV(openvidu)
     setSession(newSession)
@@ -185,6 +128,10 @@ export const useConnect = () => {
 
   const leaveSession = useCallback(() => {
     if (session) {
+      removeRoomConnectionData(roomId as string, {
+        username: username as string,
+        userId: userId as string,
+      })
       session.disconnect()
     }
 

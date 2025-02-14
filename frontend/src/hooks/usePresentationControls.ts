@@ -9,7 +9,6 @@ import {
   MicOffIcon,
   CameraOffIcon,
   ScreenShareOffIcon,
-  SendIcon,
 } from 'lucide-react'
 import { usePresentationStore } from '@/store/usePresentationStore'
 import { useStreamStore } from '@/store/useStreamStore'
@@ -17,23 +16,12 @@ import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import useScreenShare from '@/hooks/useScreenShare'
 import { useModal } from '@/hooks/useModal'
 import { ModalSteps } from '@/constants/modalStep'
-import useRoomStateStore from '@/store/useRoomStateStore'
-import { useShallow } from 'zustand/shallow'
 
 export const usePresentationControls = () => {
   const { cameraPublisher, screenPublisher } = useOpenviduStateStore()
   const { isMicOn, isCameraOn, isScreenSharing } = useStreamStore()
   const { openModal, setModalStep } = useModal()
   const { startScreenShare, stopScreenShare } = useScreenShare()
-  const { roomConnectionData, roomId } = useRoomStateStore(
-    useShallow((state) => ({
-      roomConnectionData: state.roomConnectionData,
-      roomId: state.roomId,
-    }))
-  )
-
-  const connectionUserData = roomConnectionData[roomId]
-  console.log(connectionUserData)
 
   const leftControl = {
     id: 'effects',
@@ -79,6 +67,17 @@ export const usePresentationControls = () => {
       title: isScreenSharing ? '화면공유중' : '화면공유',
       style: isScreenSharing ? 'text-green-500' : '',
       activeFunction: () => {
+        const isSharingMe =
+          screenPublisher?.stream.connection.connectionId ===
+          cameraPublisher?.stream.connection.connectionId
+
+        if (isScreenSharing && !isSharingMe) {
+          alert(
+            '다른 사용자가 화면공유 중이므로 화면공유를 종료할 수 없습니다.'
+          )
+          return
+        }
+
         isScreenSharing
           ? confirm('화면공유를 끝내겠습니까?') && stopScreenShare()
           : startScreenShare()
@@ -92,10 +91,6 @@ export const usePresentationControls = () => {
         console.log('참여자')
       },
       isDropdown: true,
-      dropDownItems: {
-        title: '참여자',
-        items: [],
-      },
     },
     {
       id: 'chat',

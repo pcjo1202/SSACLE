@@ -19,7 +19,7 @@ interface OpenviduStateStore {
   setCameraPublisher: (cameraPublisher: Publisher | null) => void
   setScreenPublisher: (screenPublisher: Publisher | null) => void
   setSubscribers: (subscribers: StreamManager[]) => void
-  setMainStreamManager: (mainStreamManager: StreamManager | null) => void
+  setMainStreamManager: (mainStreamManager: StreamManager[] | null) => void
 }
 
 export const useOpenviduStateStore = create<OpenviduStateStore>((set, get) => ({
@@ -44,6 +44,6 @@ export const useOpenviduStateStore = create<OpenviduStateStore>((set, get) => ({
           ? subscribers(state.subscribers)
           : subscribers,
     })),
-  setMainStreamManager: (mainStreamManager: StreamManager | null) =>
+  setMainStreamManager: (mainStreamManager: StreamManager[] | null) =>
     set({ mainStreamManager }),
 }))

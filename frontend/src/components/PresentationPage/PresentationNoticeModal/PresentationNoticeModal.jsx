@@ -18,6 +18,20 @@ const PresentationNoticeModal = () => {
   const { MODAL_STEP_CONFIG } = useModalStepConfig()
   const { title, description, buttons } = MODAL_STEP_CONFIG[modalStep]
 
+  // Todo : 모든 사용자가 초대되었는지 확인 -> 발표 시작 준비 모달 띄우기
+
+  // Todo : 모든 사용자가 발표 시작 모달의 띄우면 5초 후 발표 시작 (현재 발표 단계 업데이트 : Go 발표)
+
+  // Todo : 발표 단계가 "발표 단계"로 업데이트 되면 발표자 랜덤으로 선택 후 전체 알림 모달 띄우기
+
+  // Todo : 발표자 - 화면 공유 버튼 (시작버튼), 일반 사용자 - 확인 버튼
+
+  // Todo : 발표 후 10분 뒤 발표 종료 모달 띄우기
+
+  // Todo : 발표 종료 모달 띄우면 5초 후 발표 종료 (현재 발표 단계 업데이트 : Go 질문 카드 답변)
+
+  // Todo :
+
   return (
     <Dialog open={isModalOpen} modal className="px-10">
       <DialogContent
