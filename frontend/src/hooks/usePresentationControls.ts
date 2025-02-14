@@ -17,12 +17,23 @@ import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import useScreenShare from '@/hooks/useScreenShare'
 import { useModal } from '@/hooks/useModal'
 import { ModalSteps } from '@/constants/modalStep'
+import useRoomStateStore from '@/store/useRoomStateStore'
+import { useShallow } from 'zustand/shallow'
 
 export const usePresentationControls = () => {
   const { cameraPublisher, screenPublisher } = useOpenviduStateStore()
   const { isMicOn, isCameraOn, isScreenSharing } = useStreamStore()
   const { openModal, setModalStep } = useModal()
   const { startScreenShare, stopScreenShare } = useScreenShare()
+  const { roomConnectionData, roomId } = useRoomStateStore(
+    useShallow((state) => ({
+      roomConnectionData: state.roomConnectionData,
+      roomId: state.roomId,
+    }))
+  )
+
+  const connectionUserData = roomConnectionData[roomId]
+  console.log(connectionUserData)
 
   const leftControl = {
     id: 'effects',
@@ -83,16 +94,7 @@ export const usePresentationControls = () => {
       isDropdown: true,
       dropDownItems: {
         title: '참여자',
-        items: [
-          {
-            name: '박창조',
-            icon: SendIcon,
-          },
-          {
-            name: '홍길동',
-            icon: SendIcon,
-          },
-        ],
+        items: [],
       },
     },
     {
