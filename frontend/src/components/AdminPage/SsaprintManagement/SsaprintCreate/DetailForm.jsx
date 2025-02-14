@@ -10,7 +10,6 @@ const DetailsForm = () => {
 
   // GPT 데이터를 description 상태에 저장
   useEffect(() => {
-    
     // 데이터가 존재하고, API 로딩이 끝난 상태에서만 실행
     if (gptData && !isPending && !isDataUpdated) {
       console.log('🔥 GPT 응답 데이터 (useEffect 내부):', gptData)
@@ -54,22 +53,28 @@ const DetailsForm = () => {
       <div>
         {/* 싸프린트 이름 입력 */}
         <div>
-          <label className="text-ssacle-black text-sm font-bold">싸프린트 이름</label>
+          <label className="text-ssacle-black text-sm font-bold">
+            싸프린트 이름
+          </label>
           <input
-            type='text'
+            type="text"
             maxLength={100}
             className="w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto text-ssacle-black text-sm"
+            value={sprintName}
+            onChange={(e) => setSprintName(e.target.value)}
           />
         </div>
         {/* 최대 인원 수 입력 */}
         <div>
-          <label className="text-ssacle-black text-sm font-bold">최대 인원 수</label>
-          <input 
-            type='number'
+          <label className="text-ssacle-black text-sm font-bold">
+            최대 인원 수
+          </label>
+          <input
+            type="number"
             min={1}
             max={4}
             value={1}
-            className='w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto text-ssacle-black text-sm'
+            className="w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto text-ssacle-black text-sm"
           />
         </div>
       </div>

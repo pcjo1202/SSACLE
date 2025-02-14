@@ -140,6 +140,8 @@ export const SsaprintProvider = ({ children }) => {
         description,
         setDescription,
         clearLocalStorage,
+        setSprintName,
+        setMaxParticipants,
       }}
     >
       {children}
