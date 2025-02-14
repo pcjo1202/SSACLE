@@ -20,6 +20,10 @@ export default defineConfig({
         // target: 'http://70.12.246.186:8080',
         changeOrigin: true,
       },
+      '/api/video': {
+        target: 'http://i12a402.p.ssafy.io:8080',
+        changeOrigin: true,
+      },
     },
   },
 })
