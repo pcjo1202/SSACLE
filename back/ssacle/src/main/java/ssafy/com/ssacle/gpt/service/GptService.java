@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import ssafy.com.ssacle.gpt.exception.GptNotRespondError;
+import ssafy.com.ssacle.gpt.exception.GptParsingError;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -45,8 +47,7 @@ public class GptService {
         );
 
         if (response.getBody() == null || response.getBody().getChoices().isEmpty()) {
-            log.error("GPT 응답이 비어 있음");
-            return null;
+            throw new GptNotRespondError();
         }
 
         try {
@@ -69,9 +70,25 @@ public class GptService {
             );
 
         } catch (Exception e) {
-            log.error("JSON 파싱 오류: {}", e.getMessage());
-            return null;
+            throw new GptParsingError();
         }
+    }
+
+    public String generateGptText(String prompt) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
+
+        List<GptMessage> messages = List.of(new GptMessage("user", prompt));
+
+        GptRequest gptRequest = new GptRequest("gpt-4", messages);
+        HttpEntity<GptRequest> entity = new HttpEntity<>(gptRequest, headers);
+
+        ResponseEntity<GptResponse> response = restTemplate.exchange(
+                GPT_API_URL, HttpMethod.POST, entity, GptResponse.class
+        );
+
+        return response.getBody().getChoices().get(0).getMessage().getContent();
     }
 
     private static final String SYSTEM_PROMPT =

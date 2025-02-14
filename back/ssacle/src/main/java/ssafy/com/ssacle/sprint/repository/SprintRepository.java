@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ssafy.com.ssacle.sprint.domain.Sprint;
+import ssafy.com.ssacle.team.domain.Team;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +35,8 @@ public interface SprintRepository extends JpaRepository<Sprint, Long>, SprintRep
             "WHERE FUNCTION('DATE', s.announceAt) = CURRENT_DATE")
     List<Sprint> findSprintsByPresentationDate();
 
+    List<Sprint> findByStatus(int status);
 
-
+    @Query("SELECT t FROM Sprint s JOIN s.teams t WHERE s.status = :status")
+    List<Team> findTeamsByStatus(int status);
 }
