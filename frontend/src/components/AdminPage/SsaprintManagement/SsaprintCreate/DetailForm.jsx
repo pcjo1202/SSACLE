@@ -4,7 +4,14 @@ import { RingLoader } from 'react-spinners'
 import { useState, useEffect } from 'react'
 
 const DetailsForm = () => {
-  const { description, setDescription } = useSsaprint()
+  const {
+    description,
+    setDescription,
+    sprintName,
+    setSprintName,
+    maxParticipants,
+    setMaxParticipants,
+  } = useSsaprint()
   const { data: gptData, isPending, isError } = useGptTodos()
   const [isDataUpdated, setIsDataUpdated] = useState(false)
 
@@ -73,7 +80,8 @@ const DetailsForm = () => {
             type="number"
             min={1}
             max={4}
-            value={1}
+            value={maxParticipants}
+            onChange={(e) => setMaxParticipants(Math.min(4, Math.max(1, Number(e.target.value))))}
             className="w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto text-ssacle-black text-sm"
           />
         </div>
