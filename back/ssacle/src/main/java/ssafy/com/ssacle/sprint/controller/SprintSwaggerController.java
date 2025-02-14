@@ -12,10 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ssafy.com.ssacle.sprint.dto.SingleSprintResponse;
-import ssafy.com.ssacle.sprint.dto.SprintCreateRequest;
-import ssafy.com.ssacle.sprint.dto.SprintDetailResponse;
-import ssafy.com.ssacle.sprint.dto.SprintResponse;
+import ssafy.com.ssacle.sprint.dto.*;
 
 @Tag(name = "Sprint API", description = "Sprint 관련 API입니다.")
 public interface SprintSwaggerController {
@@ -74,7 +71,7 @@ public interface SprintSwaggerController {
             @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
     })
     @GetMapping("/search")
-    ResponseEntity<Page<SingleSprintResponse>> getSprintsByCategoryAndStatus(
+    ResponseEntity<Page<SprintAndCategoriesResponseDTO>> getSprintsByCategoryAndStatus(
             @Parameter(description = "카테고리 ID (선택)", example = "1")
             @RequestParam(required = false) Long categoryId,
 
