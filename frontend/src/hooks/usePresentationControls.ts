@@ -67,7 +67,24 @@ export const usePresentationControls = () => {
       style: isCameraOn ? '' : 'text-red-500',
       title: '카메라',
       activeFunction: () => {
+        console.log(
+          'screenPublisher?.isSubscribedToRemote',
+          screenPublisher?.isSubscribedToRemote
+        )
         if (!isScreenSharing && cameraPublisher) {
+          cameraPublisher?.publishVideo(!isCameraOn)
+          useStreamStore.setState(({ isCameraOn }) => ({
+            isCameraOn: !isCameraOn,
+          }))
+        } else if (
+          isScreenSharing &&
+          screenPublisher?.stream.connection.connectionId ===
+            cameraPublisher?.stream.connection.connectionId
+        ) {
+          // 화면공유 중이면서 카메라 공유자가 자신인 경우
+          alert('기술적 에러...화면공유 중이므로 카메라를 켜지 못합니다.')
+        } else {
+          // 화면공유 중이면서 카메라 공유자가 자신이 아닌 경우 카메라 끄고 키기 가능
           cameraPublisher?.publishVideo(!isCameraOn)
           useStreamStore.setState(({ isCameraOn }) => ({
             isCameraOn: !isCameraOn,
