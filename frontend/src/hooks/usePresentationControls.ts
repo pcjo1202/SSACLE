@@ -44,6 +44,15 @@ export const usePresentationControls = () => {
       console.log('subscribers', subscribers)
       console.log('cameraPublisher', cameraPublisher)
       console.log('screenPublisher', screenPublisher)
+
+      console.log(
+        'cameraPublisher',
+        cameraPublisher?.stream.connection.connectionId
+      )
+      console.log(
+        'screenPublisher',
+        screenPublisher?.stream.connection.connectionId
+      )
     },
   }
 
