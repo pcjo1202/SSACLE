@@ -16,9 +16,11 @@ const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
   const { presentationType } = useParams()
 
   const VideoLayout = useMemo(() => {
-    return presentationType === 'ssadcup' // 싸드컵 프리젠테이션 페이지인 경우
-      ? SsadcupVideoLayout
-      : SsaprintVideoLayout
+    if (presentationType === 'ssadcup') {
+      return SsadcupVideoLayout
+    } else if (presentationType === 'ssaprint') {
+      return SsaprintVideoLayout
+    }
   }, [presentationType])
 
   // 처음 컴포넌트가 마운트 될 때 세션 초기화 및 참여
