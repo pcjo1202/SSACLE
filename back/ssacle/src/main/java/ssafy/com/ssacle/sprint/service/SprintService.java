@@ -82,7 +82,7 @@ public class SprintService {
     }
 
     @Transactional
-    public void joinSprint(Long sprintId, User user) {
+    public Long joinSprint(Long sprintId, User user) {
         Sprint sprint = sprintRepository.findByIdWithTeams(sprintId)
                 .orElseThrow(SprintNotExistException::new);
 
@@ -97,6 +97,8 @@ public class SprintService {
 
         // 팀 <-> 투두 연동
         saveTodo(team, defaultTodos);
+
+        return team.getId();
     }
 
     private String saveNotion(String teamName, List<DefaultTodoResponse> defaultTodoResponses, List<CategoryNameAndLevelResponseDTO> categoryNameAndLevelResponseDTOS){

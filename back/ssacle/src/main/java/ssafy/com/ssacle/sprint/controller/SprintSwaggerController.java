@@ -38,7 +38,7 @@ public interface SprintSwaggerController {
             @Parameter(name = "sprintId", description = "참가할 스프린트의 ID", example = "1")
     })
     @PostMapping("/ssaprint/{sprintId}/join")
-    ResponseEntity<Void> joinSprint(@PathVariable Long sprintId);
+    ResponseEntity<Long> joinSprint(@PathVariable Long sprintId);
 
 
     @Operation(summary = "단일 스프린트 조회", description = "SprintId를 기반으로 특정 스프린트를 가져옵니다.")

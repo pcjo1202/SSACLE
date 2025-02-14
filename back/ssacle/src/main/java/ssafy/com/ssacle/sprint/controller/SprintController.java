@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.dto.*;
 import ssafy.com.ssacle.sprint.service.SprintService;
 import ssafy.com.ssacle.user.domain.User;
@@ -28,11 +27,11 @@ public class SprintController implements SprintSwaggerController{
 
     /** 스프린트 참가 */
     @Override
-    public ResponseEntity<Void> joinSprint(@PathVariable Long sprintId) {
+    public ResponseEntity<Long> joinSprint(@PathVariable Long sprintId) {
         User user = userService.getAuthenticatedUserWithTeams();
-        sprintService.joinSprint(sprintId, user);
+        Long teamId = sprintService.joinSprint(sprintId, user);
 
-        return ResponseEntity.status(201).build();
+        return ResponseEntity.status(201).body(teamId);
     }
 
     /** 필터링 조건으로 스프린트 조회 */
@@ -65,4 +64,5 @@ public class SprintController implements SprintSwaggerController{
         SprintDetailResponse response = sprintService.getSprintDetail(sprintId);
         return ResponseEntity.ok(response);
     }
+
 }
