@@ -45,7 +45,6 @@ public class Sprint {
     @Column(name = "detail_description", nullable = false)
     private String detailDescription;
 
-
     @Column(name = "recommended_for", nullable = false)
     private String recommendedFor;
 
@@ -58,8 +57,9 @@ public class Sprint {
     @Column(name = "announce_at", nullable = false)
     private LocalDateTime announceAt;
 
+    @Setter
     @Column(name = "status", columnDefinition = "TINYINT UNSIGNED", nullable = false)
-    private Integer status;
+    private Integer status; // 0 : 시작 전, 1 : 진행중, 2 : 종료
 
     @Column(name = "sequence", columnDefinition = "TINYINT UNSIGNED", nullable = false)
     private Integer sequence;
