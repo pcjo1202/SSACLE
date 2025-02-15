@@ -50,6 +50,19 @@ public class SprintController implements SprintSwaggerController{
         return ResponseEntity.ok(sprintResponses);
     }
 
+    /** 사용자가 참여중인 스프린트 목록 (status: 0,1) */
+    @Override
+    public ResponseEntity<Page<UserSprintResponseDTO>> getOngoingSprints(Pageable pageable) {
+        User user = userService.getAuthenticatedUserWithTeams();
+        return ResponseEntity.ok(sprintService.getUserOngoingSprints(user, pageable));
+    }
+
+    /** 사용자가 참여 완료한 스프린트 목록 */
+    @Override
+    public ResponseEntity<Page<UserSprintResponseDTO>> getCompletedSprints(Pageable pageable) {
+        User user = userService.getAuthenticatedUserWithTeams();
+        return ResponseEntity.ok(sprintService.getUserCompletedSprints(user, pageable));
+    }
 
     /** 단일 스프린트 조회 */
     @Override

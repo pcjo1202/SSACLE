@@ -1,6 +1,6 @@
 package ssafy.com.ssacle.sprint.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -196,6 +196,24 @@ public class SprintService {
                 .todos(todos)
                 .categories(categories)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserSprintResponseDTO> getUserOngoingSprints(User user, Pageable pageable) {
+        return sprintRepository.findUserParticipatedSprints(user, List.of(0, 1), pageable)
+                .map(sprint -> {
+                    Long teamId = sprintRepository.findTeamIdBySprintAndUser(sprint, user);
+                    return UserSprintResponseDTO.from(sprint, teamId);
+                });
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserSprintResponseDTO> getUserCompletedSprints(User user, Pageable pageable) {
+        return sprintRepository.findUserParticipatedSprints(user, List.of(2), pageable)
+                .map(sprint -> {
+                    Long teamId = sprintRepository.findTeamIdBySprintAndUser(sprint, user);
+                    return UserSprintResponseDTO.from(sprint, teamId);
+                });
     }
 
     @Transactional

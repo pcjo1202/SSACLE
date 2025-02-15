@@ -58,7 +58,7 @@ public class Sprint {
 
     @Setter
     @Column(name = "status", columnDefinition = "TINYINT UNSIGNED", nullable = false)
-    private Integer status;
+    private Integer status; // 0 : 시작 전, 1 : 진행중, 2 : 종료
 
     @Column(name = "sequence", columnDefinition = "TINYINT UNSIGNED", nullable = false)
     private Integer sequence;

@@ -80,4 +80,22 @@ public interface SprintSwaggerController {
 
             Pageable pageable
     );
+
+    @Operation(summary = "사용자가 참여중인 스프린트 목록", description = "사용자가 현재 진행 중인 (status: 0,1) 스프린트 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 실패"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @GetMapping("/ongoing")
+    ResponseEntity<Page<UserSprintResponseDTO>> getOngoingSprints(Pageable pageable);
+
+    @Operation(summary = "사용자가 완료한 스프린트 목록", description = "사용자가 완료한 (status: 2) 스프린트 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 실패"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @GetMapping("/completed")
+    ResponseEntity<Page<UserSprintResponseDTO>> getCompletedSprints(Pageable pageable);
 }
