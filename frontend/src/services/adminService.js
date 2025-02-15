@@ -17,3 +17,9 @@ export const fetchGptTodos = async ({ startAt, endAt, topic }) => {
   })
   return response.data
 }
+
+// 싸프린트 생성
+export const fetchCreateSsaprint = async (Ssaprint_Data) => {
+  const response = await axios.post(ADMIN_END_POINT.SSAPRINT.CREATE.SSAPRINT, Ssaprint_Data)
+  return response.data
+}
