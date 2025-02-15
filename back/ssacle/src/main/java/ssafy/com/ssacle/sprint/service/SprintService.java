@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.SprintCategory.domain.SprintCategory;
 import ssafy.com.ssacle.SprintCategory.repository.SprintCategoryRepository;
@@ -22,10 +23,8 @@ import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.todo.domain.DefaultTodo;
-import ssafy.com.ssacle.todo.domain.QDefaultTodo;
 import ssafy.com.ssacle.todo.domain.Todo;
 import ssafy.com.ssacle.todo.dto.DefaultTodoResponse;
-import ssafy.com.ssacle.todo.repository.DefaultTodoRepository;
 import ssafy.com.ssacle.todo.repository.TodoRepository;
 import ssafy.com.ssacle.todo.service.DefaultTodoService;
 import ssafy.com.ssacle.user.domain.User;
@@ -34,7 +33,6 @@ import ssafy.com.ssacle.usercategory.repository.UserCategoryRepository;
 import ssafy.com.ssacle.userteam.domain.UserTeam;
 import ssafy.com.ssacle.userteam.repository.UserTeamRepository;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -54,6 +52,7 @@ public class SprintService {
     private final NotionService notionService;
     private final UserCategoryRepository userCategoryRepository;
     private final UserTeamRepository userTeamRepository;
+
     @Transactional
     public SprintResponse createSprint(SprintCreateRequest request) {
         Sprint sprint = SprintBuilder.builder()
@@ -157,8 +156,13 @@ public class SprintService {
 
     @Transactional
     public Page<SprintAndCategoriesResponseDTO> getSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
-        return sprintRepository.findSprintsByCategoryAndStatus(categoryId, status, pageable)
-                .map(SprintAndCategoriesResponseDTO::from);
+        Page<Sprint> sprints = sprintRepository.findSprintsByCategoryAndStatus(categoryId, status, pageable);
+
+        List<SprintAndCategoriesResponseDTO> sprintDTOs = sprints.stream()
+                .map(SprintAndCategoriesResponseDTO::from)
+                .collect(Collectors.toList());
+
+        return PageableExecutionUtils.getPage(sprintDTOs, pageable, sprints::getTotalElements);
     }
 
     @Transactional

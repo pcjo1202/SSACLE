@@ -37,6 +37,7 @@ public class SprintAndCategoriesResponseDTO {
         List<CategoryNameLevelImageResponseDTO> categoryDTOs = sprint.getSprintCategories().stream()
                 .map(SprintCategory::getCategory)
                 .filter(category -> category.getLevel() != 3)
+                .distinct()
                 .map(category -> new CategoryNameLevelImageResponseDTO(category.getCategoryName(), category.getLevel(), category.getImage()))
                 .collect(Collectors.toList());
 

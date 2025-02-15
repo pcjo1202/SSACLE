@@ -60,8 +60,6 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
         return PageableExecutionUtils.getPage(results, pageable, () -> total);
     }
 
-
-
     @Override
     public Page<Sprint> findSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
         QSprint sprint = QSprint.sprint;
@@ -69,10 +67,10 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
         QCategory category = QCategory.category;
 
         List<Sprint> results = queryFactory
-                .select(sprint)
+                .selectDistinct(sprint)
                 .from(sprint)
-                .leftJoin(sprint.sprintCategories, sprintCategory).fetchJoin()
-                .leftJoin(sprintCategory.category, category).fetchJoin()
+                .join(sprint.sprintCategories, sprintCategory)
+                .join(sprintCategory.category, category)
                 .where(category.id.eq(categoryId)
                         .and(sprint.status.eq(status)))
                 .offset(pageable.getOffset())
@@ -80,16 +78,15 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
                 .fetch();
 
         long total = Optional.ofNullable(queryFactory
-                .select(sprint.count())
+                .select(sprint.countDistinct())
                 .from(sprint)
-                .leftJoin(sprint.sprintCategories, sprintCategory)
-                .leftJoin(sprintCategory.category, category)
+                .join(sprint.sprintCategories, sprintCategory)
+                .join(sprintCategory.category, category)
                 .where(category.id.eq(categoryId)
                         .and(sprint.status.eq(status)))
                 .fetchOne()).orElse(0L);
 
         return PageableExecutionUtils.getPage(results, pageable, () -> total);
     }
-
 
 }

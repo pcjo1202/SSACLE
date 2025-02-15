@@ -724,30 +724,30 @@ public class DataInitializer {
 
     @Transactional
     public void initializeSprints(SprintRepository sprintRepository, CategoryRepository categoryRepository, SprintCategoryRepository sprintCategoryRepository) {
-        if (sprintRepository.count() == 0) {
-            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategories();
-            Random random = new Random();
-
-            for (Category category : lowestLevelCategories) {
-                for (int i = 0; i < 3; i++) { // 각 최하위 카테고리당 3개의 스프린트 생성
-                    Sprint sprint = SprintBuilder.builder()
-                            .name(category.getCategoryName() + " Sprint " + (i + 1))
-                            .basicDescription("학습 내용: " + category.getCategoryName())
-                            .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
-                            .recommendedFor("이 주제에 관심 있는 개발자")
-                            .startAt(LocalDateTime.now().minusDays(random.nextInt(10)))
-                            .endAt(LocalDateTime.now().plusDays(random.nextInt(20) + 10))
-                            .announceAt(LocalDateTime.now())
-                            .maxMembers(5 + random.nextInt(5))
-                            .build();
-                    sprintRepository.save(sprint);
-                    sprintCategoryRepository.save(new SprintCategory(sprint, category));
-                }
-            }
-            System.out.println("✅ 최하위 카테고리 기반 스프린트 더미 데이터가 추가되었습니다.");
-        } else {
-            System.out.println("✅ 스프린트 데이터가 이미 존재합니다.");
-        }
+//        if (sprintRepository.count() == 0) {
+//            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategories();
+//            Random random = new Random();
+//
+//            for (Category category : lowestLevelCategories) {
+//                for (int i = 0; i < 3; i++) { // 각 최하위 카테고리당 3개의 스프린트 생성
+//                    Sprint sprint = SprintBuilder.builder()
+//                            .name(category.getCategoryName() + " Sprint " + (i + 1))
+//                            .basicDescription("학습 내용: " + category.getCategoryName())
+//                            .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
+//                            .recommendedFor("이 주제에 관심 있는 개발자")
+//                            .startAt(LocalDateTime.now().minusDays(random.nextInt(10)))
+//                            .endAt(LocalDateTime.now().plusDays(random.nextInt(20) + 10))
+//                            .announceAt(LocalDateTime.now())
+//                            .maxMembers(5 + random.nextInt(5))
+//                            .build();
+//                    sprintRepository.save(sprint);
+//                    sprintCategoryRepository.save(new SprintCategory(sprint, category));
+//                }
+//            }
+//            System.out.println("✅ 최하위 카테고리 기반 스프린트 더미 데이터가 추가되었습니다.");
+//        } else {
+//            System.out.println("✅ 스프린트 데이터가 이미 존재합니다.");
+//        }
     }
 
 //    @Transactional
