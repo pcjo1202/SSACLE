@@ -1,8 +1,16 @@
+import {
+  PRESENTATION_STATUS,
+  PresentationStatus,
+} from '@/constants/presentationStatus'
+
 export const ModalSteps = {
+  // 초기 모달
   INITIAL: {
     WELCOME: 'welcome',
     READY: 'ready',
   },
+
+  // 발표 모달
   PRESENTATION: {
     PRESENTER_BEN: 'presenter_ben',
     PRESENTER_SELECTING: 'presenter_selecting',
@@ -10,11 +18,22 @@ export const ModalSteps = {
     PRESENTATION_SOON: 'presentation_soon',
     PRESENTATION_END_CONFIRM: 'presentation_end_confirm',
   },
+
+  // 질문 카드 모달
   QUESTION: {
     SECTION_READY: 'question_section_ready',
     ANSWER_INTRODUCTION: 'question_answer_introduction',
     ANSWER_END: 'question_answer_end',
   },
+
+  // 투표 모달
+  VOTE: {
+    READY: 'vote_ready',
+    START: 'vote_start',
+    END: 'vote_end',
+  },
+
+  // 종료 모달
   ENDING: {
     SSAPLINT_END: 'ssaplint_end',
     SSADCUP_END: 'ssadcup_end',
@@ -23,4 +42,48 @@ export const ModalSteps = {
     WAITING_END: 'waiting_end',
     NAVIGATION_BLOCK: 'navigation_block',
   },
+}
+
+const {
+  INITIAL,
+  READY,
+  START,
+  PRESENTER_INTRO,
+  ING,
+  END_CONFIRM_3MIN,
+  END_CONFIRM,
+  QUESTION_READY,
+  QUESTION_ANSWER,
+  QUESTION_ANSWERER_INTRO,
+  QUESTION_END,
+  VOTE_READY,
+  VOTE_START,
+  VOTE_END,
+  END,
+} = PRESENTATION_STATUS
+
+// 발표 상태에 따른 모달 상태
+export const PRESENTATION_MODAL_STATUS = {
+  [INITIAL]: ModalSteps.INITIAL.WELCOME,
+  [READY]: ModalSteps.INITIAL.READY,
+  [START]: ModalSteps.PRESENTATION.PRESENTATION_SOON,
+  [PRESENTER_INTRO]: ModalSteps.PRESENTATION.PRESENTER_INTRODUCTION,
+  [ING]: ModalSteps.PRESENTATION.PRESENTATION_SOON,
+  [END_CONFIRM_3MIN]: ModalSteps.PRESENTATION.PRESENTATION_SOON,
+  [END_CONFIRM]: ModalSteps.PRESENTATION.PRESENTATION_SOON,
+  [QUESTION_READY]: ModalSteps.QUESTION.SECTION_READY,
+  [QUESTION_ANSWER]: ModalSteps.QUESTION.ANSWER_INTRODUCTION,
+  [QUESTION_ANSWERER_INTRO]: ModalSteps.QUESTION.ANSWER_END,
+  [QUESTION_END]: ModalSteps.QUESTION.SECTION_READY,
+  [VOTE_READY]: ModalSteps.VOTE.READY,
+  [VOTE_START]: ModalSteps.VOTE.START,
+  [VOTE_END]: ModalSteps.VOTE.END,
+  [END]: ModalSteps.ENDING.END_COMPLETE,
+}
+
+export type ModalStep = keyof typeof ModalSteps
+export type ModalStepValue = (typeof ModalSteps)[keyof typeof ModalSteps]
+
+export const getModalStep = (status: PresentationStatus) => {
+  return PRESENTATION_MODAL_STATUS[PRESENTATION_STATUS[status]]
 }

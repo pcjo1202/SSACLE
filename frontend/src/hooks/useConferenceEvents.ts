@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import {
-  Connection,
   Publisher,
   SessionEventMap,
+  SignalEvent,
   StreamManager,
   Subscriber,
 } from 'openvidu-browser'
@@ -11,29 +11,28 @@ import { useShallow } from 'zustand/shallow'
 import { useStreamStore } from '@/store/useStreamStore'
 import useRoomStateStore from '@/store/useRoomStateStore'
 import { useParams } from 'react-router-dom'
+import { usePresentationStore } from '@/store/usePresentationStore'
+import {
+  SignalStateKeys,
+  usePresentationSignalStore,
+} from '@/store/usePresentationSignalStore'
+import { usePresentationModalStateStore } from '@/store/usePresentationModalStateStore'
+import { useSignalEvents } from '@/hooks/useSignalEvents'
 
 export function useConferenceEvents() {
   const { roomId } = useParams()
-  const {
-    OV,
-    subscribers,
-    setSubscribers,
-    session,
-    setSession,
-    setScreenPublisher,
-  } = useOpenviduStateStore(
-    useShallow((state) => ({
-      OV: state.OV,
-      subscribers: state.subscribers,
-      setSubscribers: state.setSubscribers,
-      session: state.session,
-      setSession: state.setSession,
-      screenPublisher: state.screenPublisher,
-      setScreenPublisher: state.setScreenPublisher,
-    }))
-  )
+  // openvidu state store에서 상태 관리
+  const { subscribers, setSubscribers, session, setScreenPublisher } =
+    useOpenviduStateStore(
+      useShallow((state) => ({
+        subscribers: state.subscribers,
+        setSubscribers: state.setSubscribers,
+        session: state.session,
+        setScreenPublisher: state.setScreenPublisher,
+      }))
+    )
 
-  // 🔹 room state store에서 참여자 데이터 관리
+  // room state store에서 참여자 데이터 관리
   const { addRoomConnectionData, removeRoomConnectionData } = useRoomStateStore(
     useShallow((state) => ({
       addRoomConnectionData: state.addRoomConnectionData,
@@ -41,18 +40,50 @@ export function useConferenceEvents() {
     }))
   )
 
-  // 🔹 stream store에서 화면 공유 상태 관리
+  // stream store에서 화면 공유 상태 관리
   const { setIsScreenSharing } = useStreamStore(
     useShallow((state) => ({
       setIsScreenSharing: state.setIsScreenSharing,
     }))
   )
 
-  // ref를 사용해 항상 최신 OV를 참조
-  const OVRef = useRef(OV)
-  useEffect(() => {
-    OVRef.current = OV
-  }, [OV])
+  // presentation store에서 발표 참여자 수 관리
+  const { targetConnectionCount } = usePresentationStore(
+    useShallow((state) => ({
+      targetConnectionCount: state.targetConnectionCount,
+    }))
+  )
+
+  const { presentationStatus, signalStates, addSignalConnection } =
+    usePresentationSignalStore(
+      useShallow((state) => ({
+        presentationStatus: state.presentationStatus,
+        signalStates: state.signalStates,
+        addSignalConnection: state.addSignalConnection,
+      }))
+    )
+
+  const { setIsAllConnection } = usePresentationStore(
+    useShallow((state) => ({
+      setIsAllConnection: state.setIsAllConnection,
+    }))
+  )
+
+  const { setIsModalOpen, setModalStep, modalStep } =
+    usePresentationModalStateStore(
+      useShallow((state) => ({
+        setIsModalOpen: state.setIsModalOpen,
+        setModalStep: state.setModalStep,
+        modalStep: state.modalStep,
+      }))
+    )
+
+  const { handleSignal } = useSignalEvents({
+    setIsModalOpen,
+    setModalStep,
+    modalStep,
+    targetConnectionCount,
+  })
 
   // ref를 사용해 항상 최신 session을 참조
   const sessionRef = useRef(session)
@@ -60,7 +91,47 @@ export function useConferenceEvents() {
     sessionRef.current = session
   }, [session])
 
-  const [connections, setConnections] = useState<Connection[]>([])
+  // ✅ 시그널 이벤트 처리
+  const signalHandler = useCallback(
+    (event: SignalEvent) => {
+      const connectionId = event.from?.connectionId
+      const signalData = JSON.parse(event.data as string)
+      const signalType = signalData.type // presentationStatus의 value 값이 들어옴
+
+      // 이미 처리된 시그널인지 확인
+      if (
+        signalStates[signalType as SignalStateKeys[keyof SignalStateKeys]].has(
+          connectionId as string
+        )
+      ) {
+        // value 값에 대한 connectionId 저장
+        console.log('이미 저장되어있는 시그널입니다.')
+        return
+      }
+
+      try {
+        // 새로운 시그널 연결 추가
+        addSignalConnection(signalType, connectionId as string)
+        // 시그널 처리
+        handleSignal(signalType)
+      } catch (error) {
+        console.error('시그널 처리 중 오류 발생:', error)
+      }
+    },
+    [signalStates, addSignalConnection, handleSignal]
+  )
+
+  // ✅ 시그널 이벤트 처리
+  useEffect(() => {
+    if (!sessionRef.current) return
+    sessionRef.current.on('signal', signalHandler)
+    // 클린업 함수
+    return () => {
+      if (sessionRef.current) {
+        sessionRef.current.off('signal', signalHandler)
+      }
+    }
+  }, [sessionRef.current, signalHandler])
 
   // ✅ 스트림 생성 핸들러 : 새로운 사용자의 카메라 스트림 및 화면 공유 스트림 구독
   const handleStreamCreated = (event: SessionEventMap['streamCreated']) => {
@@ -104,9 +175,6 @@ export function useConferenceEvents() {
     const isScreenSharing =
       event.stream?.typeOfVideo?.toLowerCase() === 'screen'
 
-    console.log('isMyStream', isMyStream)
-    console.log('isScreenSharing', isScreenSharing)
-
     // 다른 사용자의 화면 공유 스트림이 종료되었을 때
     if (isScreenSharing && !isMyStream) {
       console.log('다른 사용자의 화면 공유 스트림 종료')
@@ -116,34 +184,41 @@ export function useConferenceEvents() {
     } else if (!isScreenSharing && !isMyStream) {
       // connectionId 가 아닌 streamId 를 기준으로 필터링하여, 동일 연결의 다른 스트림에는 영향을 주지 않습니다.
       setSubscribers((prev: Subscriber[]) => {
-        console.log('prev', prev)
         const newSub = prev.filter(
           (sub: StreamManager) => sub.stream.streamId !== event.stream.streamId
         )
-
-        console.log('newSub', newSub)
-
         return newSub
       })
-      console.log('session?.subscribe', session?.subscribe)
     }
   }
 
   // ✅ 동적으로 연결 이벤트 처리 (connectionCreated)
-  const handleConnectionCreated = (
-    event: SessionEventMap['connectionCreated']
-  ) => {
-    console.log('새로운 사용자가 입장:', event.connection)
-    const { username, userId } = JSON.parse(event.connection.data as string)
+  const handleConnectionCreated = useCallback(
+    (event: SessionEventMap['connectionCreated']) => {
+      console.log('새로운 사용자가 입장:', event.connection)
+      const { username, userId } = JSON.parse(event.connection.data as string)
 
-    // roomId 별로 참여자 데이터를 저장합니다.
-    addRoomConnectionData(roomId as string, {
-      username: username as string,
-      userId: userId as string,
-    })
+      // 발표 참여자 수 증가
+      // setConnectionCount()
+      const remoteConnectionCount = sessionRef.current?.remoteConnections.size
 
-    console.log('openvidu', OVRef.current)
-  }
+      // 시작 전, 모든 참여자가 접속 완료 시, 발표 시작 신호 전송
+      const isAllConnection =
+        remoteConnectionCount === targetConnectionCount - 1 &&
+        presentationStatus === 'INITIAL' // Key 값으로 비교
+
+      if (isAllConnection) {
+        setIsAllConnection(true)
+      }
+
+      // roomId 별로 참여자 데이터를 저장합니다.
+      addRoomConnectionData(roomId as string, {
+        username: username as string,
+        userId: userId as string,
+      })
+    },
+    []
+  )
 
   // ✅ 연결 해제 이벤트 처리 (connectionDestroyed)
   const handleConnectionDestroyed = (
@@ -162,14 +237,13 @@ export function useConferenceEvents() {
     console.log('연결 해제 핸들러 - 사용자 목록', subscribers)
   }
 
-  return {
-    subscribers,
-    connections,
-    setSubscribers,
-    setConnections,
-    handleStreamCreated,
-    handleStreamDestroyed,
-    handleConnectionCreated,
-    handleConnectionDestroyed,
-  }
+  return useMemo(
+    () => ({
+      handleStreamCreated,
+      handleStreamDestroyed,
+      handleConnectionCreated,
+      handleConnectionDestroyed,
+    }),
+    [handleStreamCreated, handleStreamDestroyed, handleConnectionCreated]
+  )
 }

@@ -6,10 +6,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogDescription,
+  AlertDialogOverlay,
 } from '@/components/ui/alert-dialog'
 import { usePresentationModalStateStore } from '@/store/usePresentationModalStateStore'
 import useModalStepConfig from '@/hooks/useModalStepConfig'
 import { cn } from '@/lib/utils'
+import { ModalSteps } from '@/constants/modalStep'
 
 const PresentationNoticeModal = () => {
   const isModalOpen = usePresentationModalStateStore(
@@ -20,7 +22,8 @@ const PresentationNoticeModal = () => {
   const { title, description, buttons } = MODAL_STEP_CONFIG[modalStep]
 
   return (
-    <AlertDialog open={isModalOpen} modal className="px-10 ">
+    <AlertDialog open={isModalOpen} modal className="px-10">
+      <AlertDialogOverlay className="bg-ssacle-gray-sm/10" />
       <AlertDialogContent
         className="gap-8"
         onInteractOutside={(e) => e.preventDefault()}

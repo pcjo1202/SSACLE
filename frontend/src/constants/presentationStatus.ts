@@ -1,0 +1,63 @@
+// 발표 상태를 나타내는 상수
+export const PRESENTATION_STATUS = {
+  // 발표 진행 단계
+  INITIAL: 'PRESENTATION_INITIAL', // 1. 발표 페이지에 입장했을 상태
+  READY: 'PRESENTATION_READY', // 2. 모든 참여자가 참여했을 상태
+  START: 'PRESENTATION_START', // 3. 발표 시작 상태
+  PRESENTER_INTRO: 'PRESENTER_INTRODUCTION', // 4. 발표자 소개 상태
+  ING: 'PRESENTATION_ING', // 5. 발표 진행 중 상태
+  END_CONFIRM_3MIN: 'PRESENTATION_END_CONFIRM_3MIN', // 6. 발표 종료 3분전 상태
+  END_CONFIRM: 'PRESENTATION_END_CONFIRM', // 7. 발표 종료 확인 상태
+
+  // 질문 카드 단계
+  QUESTION_READY: 'QUESTION_CARD_READY', // 8. 질문 카드 준비 상태
+  QUESTION_ANSWER: 'QUESTION_CARD_ANSWER', // 9. 질문 카드 답변 상태
+  QUESTION_ANSWERER_INTRO: 'QUESTION_CARD_ANSWER_INTRODUCTION', // 10. 질문 카드 답변자 소개 상태
+  QUESTION_END: 'QUESTION_CARD_END', // 11. 질문 카드 종료 상태
+
+  // 투표 단계
+  VOTE_READY: 'VOTE_READY', // 12. 투표 준비 상태
+  VOTE_START: 'VOTE_START', // 13. 투표 시작 상태
+  VOTE_END: 'VOTE_END', // 14. 투표 종료 상태
+
+  // 최종 종료
+  END: 'PRESENTATION_END', // 15. 최종 종료 상태
+} as const
+
+// 각 상태의 다음 단계를 정의하는 객체
+export const NEXT_PRESENTATION_STATUS = {
+  // 발표 진행 상태
+  [PRESENTATION_STATUS.INITIAL]: 'READY',
+  [PRESENTATION_STATUS.READY]: 'START',
+  [PRESENTATION_STATUS.START]: 'PRESENTER_INTRO',
+  [PRESENTATION_STATUS.PRESENTER_INTRO]: 'ING',
+  [PRESENTATION_STATUS.ING]: 'END_CONFIRM_3MIN',
+  [PRESENTATION_STATUS.END_CONFIRM_3MIN]: 'END_CONFIRM',
+  [PRESENTATION_STATUS.END_CONFIRM]: 'QUESTION_READY',
+
+  // 질문 카드 상태
+  [PRESENTATION_STATUS.QUESTION_READY]: 'QUESTION_ANSWER',
+  [PRESENTATION_STATUS.QUESTION_ANSWER]: 'QUESTION_ANSWERER_INTRO',
+  [PRESENTATION_STATUS.QUESTION_ANSWERER_INTRO]: 'QUESTION_END',
+  [PRESENTATION_STATUS.QUESTION_END]: 'VOTE_READY',
+
+  // 투표 상태
+  [PRESENTATION_STATUS.VOTE_READY]: 'VOTE_START',
+  [PRESENTATION_STATUS.VOTE_START]: 'VOTE_END',
+  [PRESENTATION_STATUS.VOTE_END]: null,
+
+  END: null, // 최종 상태
+} as const
+
+export type PresentationStatus = keyof typeof PRESENTATION_STATUS
+export type NextPresentationStatus =
+  (typeof NEXT_PRESENTATION_STATUS)[keyof typeof NEXT_PRESENTATION_STATUS]
+
+// 현재 상태의 다음 상태를 반환하는 함수
+export const getNextPresentationStatus = (
+  status: PresentationStatus
+): NextPresentationStatus => {
+  return NEXT_PRESENTATION_STATUS[
+    status as keyof typeof NEXT_PRESENTATION_STATUS
+  ]
+}
