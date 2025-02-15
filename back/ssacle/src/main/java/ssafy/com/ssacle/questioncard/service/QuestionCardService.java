@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ssafy.com.ssacle.questioncard.domain.QuestionCard;
 import ssafy.com.ssacle.questioncard.dto.QuestionCardRequest;
 import ssafy.com.ssacle.questioncard.dto.QuestionCardResponse;
+import ssafy.com.ssacle.questioncard.exception.QuestionCardNotFoundException;
 import ssafy.com.ssacle.questioncard.repository.QuestionCardRepository;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
@@ -42,4 +43,21 @@ public class QuestionCardService {
                 .map(QuestionCardResponse::from)
                 .collect(Collectors.toList());
     }
+
+    public QuestionCardResponse updateQuestionCard(Long id, QuestionCardRequest request) {
+        QuestionCard questionCard = questionCardRepository.findById(id)
+                .orElseThrow(QuestionCardNotFoundException::new);
+
+        questionCard.updateDescription(request.getDescription()); // ✅ isOpened 변경 X
+
+        return QuestionCardResponse.from(questionCard);
+    }
+
+    public void deleteQuestionCard(Long id) {
+        QuestionCard questionCard = questionCardRepository.findById(id)
+                .orElseThrow(QuestionCardNotFoundException::new);
+
+        questionCardRepository.delete(questionCard);
+    }
+
 }
