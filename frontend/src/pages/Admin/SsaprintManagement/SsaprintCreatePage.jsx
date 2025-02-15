@@ -97,6 +97,7 @@ const SsaprintCreate = () => {
     navigate('/admin/user')
   }
 
+
   return (
     <div className="min-w-max min-h-screen bg-white flex flex-col items-center py-10 shrink-0">
       <h1 className="text-center text-ssacle-blue text-2xl font-bold">

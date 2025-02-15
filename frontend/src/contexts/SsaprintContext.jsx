@@ -137,7 +137,7 @@ export const SsaprintProvider = ({ children }) => {
 
   // 등록 버튼 클릭 시 로컬스토리지 초기화
   const clearLocalStorage = () => {
-    console.log('🔥 로컬스토리지 삭제')
+    // console.log('🔥 로컬스토리지 삭제')
     localStorage.removeItem('selectedMain')
     localStorage.removeItem('selectedMid')
     localStorage.removeItem('selectedSub')

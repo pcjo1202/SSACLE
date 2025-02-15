@@ -105,7 +105,7 @@ const CategoryModal = ({ onClose }) => {
           <X size={24} />
         </button>
 
-        <h2 className="text-lg font-semibold text-blue-600 text-center">카테고리 생성</h2>
+        <h2 className="text-lg font-semibold text-ssacle-blue text-center">카테고리 생성</h2>
         <p className="text-gray-600 text-sm text-center mt-2">
           현재 존재하지 않는 새로운 카테고리를 만들어보세요!
         </p>
@@ -158,7 +158,7 @@ const CategoryModal = ({ onClose }) => {
           {customInput.mid && (
             <label className="ml-3 cursor-pointer">
               <input type="file" className="hidden" onChange={handleImageUpload} />
-              {uploadedImage ? <FolderCheck size={24} className="text-blue-600" /> : <ImagePlus size={24} className="text-gray-500" />}
+              {uploadedImage ? <FolderCheck size={24} className="text-ssacle-blue" /> : <ImagePlus size={24} className="text-gray-500" />}
             </label>
           )}
         </div>
@@ -181,7 +181,7 @@ const CategoryModal = ({ onClose }) => {
         )}
 
         {/* 생성 버튼 */}
-        <button className="w-full mt-6 bg-blue-600 text-white py-2 rounded-md" disabled={!selectedMain || !selectedMid}>
+        <button className="w-full mt-6 bg-ssacle-blue text-white py-2 rounded-md" disabled={!selectedMain || !selectedMid}>
           생성하기
         </button>
       </div>
