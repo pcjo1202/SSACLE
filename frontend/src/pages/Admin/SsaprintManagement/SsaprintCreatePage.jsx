@@ -54,7 +54,7 @@ const SsaprintCreate = () => {
     }
 
     const formattedData = transformSsaprintData()
-    console.log("🔥 변환된 데이터:", formattedData) // 디버깅용 로그 추가
+    // console.log("🔥 변환된 데이터:", formattedData) // 디버깅용 로그 추가
 
     if (!formattedData.categoryIds.length) {
       alert('⚠️ 카테고리 정보가 없습니다. 다시 선택해주세요.')

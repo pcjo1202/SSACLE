@@ -74,7 +74,7 @@ export const SsaprintProvider = ({ children }) => {
 
   // API 요청 데이터 변환 함수 추가
   const transformSsaprintData = () => {
-    console.log('❤️ 변환 전 todos 데이터:', description.todos)
+    // console.log('❤️ 변환 전 todos 데이터:', description.todos)
 
     let todosArray = [];
 
@@ -94,7 +94,7 @@ export const SsaprintProvider = ({ children }) => {
       })
     }
 
-    console.log("🧡 변환 후 todos 데이터:", todosArray)
+    // console.log("🧡 변환 후 todos 데이터:", todosArray)
 
     return {
       name: sprintName,
