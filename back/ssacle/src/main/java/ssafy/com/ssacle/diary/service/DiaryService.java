@@ -9,6 +9,7 @@ import ssafy.com.ssacle.diary.repository.DiaryRepository;
 import ssafy.com.ssacle.gpt.service.GptDiaryService;
 import ssafy.com.ssacle.notion.service.NotionService;
 import ssafy.com.ssacle.sprint.domain.Sprint;
+import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.Team;
 import java.time.LocalDate;
@@ -48,7 +49,7 @@ public class DiaryService {
     @Transactional(readOnly = true)
     public List<DiaryResponseDTO> getDiariesBySprint(Long sprintId) {
         Sprint sprint = sprintRepository.findById(sprintId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 스프린트가 존재하지 않습니다."));
+                .orElseThrow(SprintNotExistException::new);
 
         List<Team> teams = sprint.getTeams();
         List<Diary> diaries = diaryRepository.findByTeamInOrderByDateAsc(teams);

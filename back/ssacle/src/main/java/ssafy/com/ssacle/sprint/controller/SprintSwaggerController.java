@@ -98,4 +98,18 @@ public interface SprintSwaggerController {
     })
     @GetMapping("/completed")
     ResponseEntity<Page<UserSprintResponseDTO>> getCompletedSprints(Pageable pageable);
+
+    @Operation(summary = "스프린트 활성 상태 조회", description = "SprintId와 TeamId를 기반으로 활성 상태의 스프린트 데이터를 가져옵니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "스프린트 활성 상태 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content),
+            @ApiResponse(responseCode = "404", description = "해당 스프린트 또는 팀을 찾을 수 없음", content = @Content),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
+    })
+    @GetMapping("/active")
+    ResponseEntity<ActiveSprintResponse> getActiveSprint(
+            @Parameter(description = "조회할 Sprint ID", example = "1") @RequestParam Long sprintId,
+            @Parameter(description = "조회할 Team ID", example = "2") @RequestParam Long teamId
+    );
+
 }
