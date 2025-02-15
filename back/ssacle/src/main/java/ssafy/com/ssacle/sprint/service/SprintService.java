@@ -41,6 +41,7 @@ import ssafy.com.ssacle.usercategory.repository.UserCategoryRepository;
 import ssafy.com.ssacle.userteam.domain.UserTeam;
 import ssafy.com.ssacle.userteam.repository.UserTeamRepository;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -352,7 +353,7 @@ public class SprintService {
 
     @Transactional
     public void initial_Presentation(Long sprintId){
-        Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(() -> new SprintNotExistException());
+        Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(SprintNotExistException::new);
         if(LocalDateTime.now().isBefore(sprint.getAnnounceAt())){
             throw new SprintAnnouncementNotYetException();
         }
