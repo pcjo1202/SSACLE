@@ -32,6 +32,8 @@ import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.todo.domain.DefaultTodo;
 import ssafy.com.ssacle.todo.domain.Todo;
 import ssafy.com.ssacle.todo.dto.DefaultTodoResponse;
+import ssafy.com.ssacle.todo.dto.TodoContent;
+import ssafy.com.ssacle.todo.dto.TodoResponseDTO;
 import ssafy.com.ssacle.todo.repository.TodoRepository;
 import ssafy.com.ssacle.todo.service.DefaultTodoService;
 import ssafy.com.ssacle.user.domain.User;
@@ -248,9 +250,17 @@ public class SprintService {
         TeamResponse teamResponse = TeamResponse.from(team);
 
         // 5. 특정 팀의 Todo 가져오기
-        List<TodoResponse> todos = todoRepository.findByTeam(team)
+        List<TodoResponseDTO> todos = todoRepository.findByTeam(team)
                 .stream()
-                .map(todo -> new TodoResponse(todo.getDate(), List.of(todo.getContent())))
+                .collect(Collectors.groupingBy(Todo::getDate))  // ✅ 날짜별로 그룹핑
+                .entrySet()
+                .stream()
+                .map(entry -> new TodoResponseDTO(
+                        entry.getKey(), // ✅ 날짜
+                        entry.getValue().stream()
+                                .map(todo -> new TodoContent(todo.getId(), todo.getContent(), todo.isDone())) // ✅ 내용 리스트
+                                .collect(Collectors.toList())
+                ))
                 .collect(Collectors.toList());
 
         // 6. 특정 스프린트의 모든 팀의 다이어리 가져오기
