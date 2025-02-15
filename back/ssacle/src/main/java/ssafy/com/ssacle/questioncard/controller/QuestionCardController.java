@@ -28,4 +28,19 @@ public class QuestionCardController implements QuestionCardSwaggerController {
         List<QuestionCardResponse> response = questionCardService.getQuestionCardsBySprint(sprintId);
         return ResponseEntity.ok(response);
     }
+
+    /** 특정 QuestionCard 수정 */
+    @Override
+    public ResponseEntity<QuestionCardResponse> updateQuestionCard(@PathVariable Long id, @RequestBody QuestionCardRequest request) {
+        QuestionCardResponse response = questionCardService.updateQuestionCard(id, request);
+        return ResponseEntity.ok(response);
+    }
+
+    /** 특정 QuestionCard 삭제 */
+    @Override
+    public ResponseEntity<Void> deleteQuestionCard(@PathVariable Long id) {
+        questionCardService.deleteQuestionCard(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

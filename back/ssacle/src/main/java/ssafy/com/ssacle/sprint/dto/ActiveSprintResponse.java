@@ -7,6 +7,7 @@ import ssafy.com.ssacle.diary.dto.DiaryResponseDTO;
 import ssafy.com.ssacle.gpt.dto.TodoResponse;
 import ssafy.com.ssacle.questioncard.dto.QuestionCardResponse;
 import ssafy.com.ssacle.team.dto.TeamResponse;
+import ssafy.com.ssacle.todo.dto.TodoResponseDTO;
 
 import java.util.List;
 
@@ -16,13 +17,13 @@ public class ActiveSprintResponse {
     private final List<CategoryResponse> categories;
     private final List<QuestionCardResponse> questionCards;
     private final TeamResponse team;
-    private final List<TodoResponse> todos;
+    private final List<TodoResponseDTO> todos;
     private final List<DiaryResponseDTO> diaries;
 
     @Builder
     public ActiveSprintResponse(SingleSprintResponse sprint, List<CategoryResponse> categories,
                                 List<QuestionCardResponse> questionCards, TeamResponse team,
-                                List<TodoResponse> todos, List<DiaryResponseDTO> diaries) {
+                                List<TodoResponseDTO> todos, List<DiaryResponseDTO> diaries) {
         this.sprint = sprint;
         this.categories = categories;
         this.questionCards = questionCards;

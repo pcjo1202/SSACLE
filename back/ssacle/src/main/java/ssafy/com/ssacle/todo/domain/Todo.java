@@ -29,6 +29,7 @@ public class Todo {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
+    @Setter
     @Column(name = "is_done", nullable = false)
     private boolean isDone;
 }

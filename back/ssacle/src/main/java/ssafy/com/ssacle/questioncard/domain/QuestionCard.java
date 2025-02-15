@@ -21,6 +21,9 @@ public class QuestionCard {
 
     @Column(length = 512, nullable = false)
     private String description;
+    public void updateDescription(String description) {
+        this.description = description;
+    }
 
     @Column(nullable = false)
     private boolean isOpened;
