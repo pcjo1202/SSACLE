@@ -5,12 +5,18 @@ import { useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import SsaprintVideoLayout from '@/components/layout/SsaprintVideoLayout'
 import SsadcupVideoLayout from '@/components/layout/SsadcupVideoLayout'
+import { useShallow } from 'zustand/shallow'
 
 interface ConferenceContainerProps {
   token: string
 }
 const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
-  const { cameraPublisher, subscribers } = useOpenviduStateStore()
+  const { cameraPublisher, subscribers } = useOpenviduStateStore(
+    useShallow((state) => ({
+      cameraPublisher: state.cameraPublisher,
+      subscribers: state.subscribers,
+    }))
+  )
 
   const { initializeSession, joinSession, leaveSession } = useConnect()
   const { presentationType } = useParams()

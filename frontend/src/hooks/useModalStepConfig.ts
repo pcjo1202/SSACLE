@@ -3,6 +3,9 @@ import { usePresentationModalActions } from '@/store/usePresentationModalActions
 import { useNavigate } from 'react-router-dom'
 import { useShallow } from 'zustand/react/shallow'
 import { useConnect } from '@/hooks/useConnect'
+import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
+import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
+import { useCallback, useEffect, useRef } from 'react'
 
 const useModalStepConfig = () => {
   const { closeModal, setModalStep } = usePresentationModalActions(
@@ -13,6 +16,8 @@ const useModalStepConfig = () => {
   )
   const navigate = useNavigate()
   const { leaveSession } = useConnect()
+  const session = useOpenviduStateStore(useShallow((state) => state.session))
+
   const leavePresentation = async () => {
     try {
       await leaveSession()
@@ -20,22 +25,38 @@ const useModalStepConfig = () => {
     } catch (error) {
       console.error('❌ 세션 해제 실패:', error)
     } finally {
-      // navigate('/main')
-      // closeModal()
+      navigate('/main')
+      closeModal()
     }
+  }
+
+  // ref를 사용해 항상 최신 session을 참조
+  const sessionRef = useRef(session)
+  useEffect(() => {
+    sessionRef.current = session
+  }, [session])
+
+  const sendSignal = (type: string) => {
+    console.log('sendSignal', sessionRef.current)
+    sessionRef.current?.signal({
+      data: JSON.stringify({
+        type: type,
+      }),
+    })
+    closeModal()
   }
 
   const CommonButtons = {
     CONFIRM: {
       text: '확인',
       onClick: closeModal,
-      style: 'bg-ssacle-blue',
+      style: '',
       variant: '',
     },
     CANCEL: {
       text: '취소',
       onClick: closeModal,
-      style: 'bg-ssacle-blue',
+      style: '',
       variant: '',
     },
     EXIT: {
@@ -58,7 +79,7 @@ const useModalStepConfig = () => {
     },
     // ? 모든 참여자 접속 완료
     [ModalSteps.INITIAL.READY]: {
-      title: ['모든 참여자가 접속 완료하였습니다.', '준비완료'],
+      title: ['준비완료👌', '모든 참여자가 접속 완료하였습니다.'],
       description: [
         `준비가 완료되면 아래 [시작하기] 버튼을 눌러주세요.\n(모든 참가자가 [시작하기] 버튼을 누르면 싸프린트가 시작됩니다.)`,
         `다른 참가자들이 준비 중입니다..\n모든 참가자가 준비되면 곧 시작됩니다! 잠시만 기다려 주세요! ⏳`,
@@ -66,7 +87,10 @@ const useModalStepConfig = () => {
       buttons: [
         {
           text: '시작하기',
-          onClick: () => {},
+          onClick: () => {
+            sendSignal(PRESENTATION_STATUS.START)
+            // console.log('시작하기')
+          },
           style: '',
         },
       ],
@@ -83,13 +107,19 @@ const useModalStepConfig = () => {
       description: [
         `발표 준비가 완료되면 아래 [확인] 버튼을 눌러 발표를 시작해주세요.`,
       ],
-      buttons: [CommonButtons.CONFIRM],
+      buttons: [
+        {
+          text: '확인',
+          onClick: () => sendSignal('presentation-start'),
+          style: '',
+        },
+      ],
     },
     // ? 발표 곧 시작 모달
     [ModalSteps.PRESENTATION.PRESENTATION_SOON]: {
       title: ['발표가 곧 시작됩니다!'],
       description: ['발표를 집중해서 들어주세요!'],
-      buttons: [],
+      buttons: [CommonButtons.CONFIRM],
     },
     // ? 발표 종료 확인 모달
     [ModalSteps.PRESENTATION.PRESENTATION_END_CONFIRM]: {

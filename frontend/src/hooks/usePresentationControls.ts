@@ -29,7 +29,13 @@ export const usePresentationControls = () => {
         subscribers: state.subscribers,
       }))
     )
-  const { isMicOn, isCameraOn, isScreenSharing } = useStreamStore()
+  const { isMicOn, isCameraOn, isScreenSharing } = useStreamStore(
+    useShallow((state) => ({
+      isMicOn: state.isMicOn,
+      isCameraOn: state.isCameraOn,
+      isScreenSharing: state.isScreenSharing,
+    }))
+  )
   const { openModal, setModalStep } = useModal()
   const { leaveSession } = useConnect()
   const { startScreenShare, stopScreenShare } = useScreenShare()
