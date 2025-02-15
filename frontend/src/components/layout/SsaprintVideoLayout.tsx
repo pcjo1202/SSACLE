@@ -61,9 +61,11 @@ const SsaprintVideoLayout: FC<SsaprintVideoLayoutProps> = ({
               ? 'sm:grid-cols-2 md:grid-cols-3 grid-rows-2'
               : !isScreenSharing && connectCount === 1
                 ? 'grid-cols-1 w-11/12 '
-                : isScreenSharing
-                  ? 'grid-cols-1 grid-rows-3'
-                  : 'grid-cols-2 w-10/12 '
+                : !isScreenSharing && connectCount === 2
+                  ? 'grid-cols-2 grid-rows-1 h-2/3'
+                  : isScreenSharing
+                    ? 'grid-cols-1 grid-rows-3'
+                    : 'grid-cols-2 w-10/12 '
           )}
         >
           {slicedChildren}
