@@ -13,7 +13,12 @@ import ssafy.com.ssacle.category.domain.Category;
 import ssafy.com.ssacle.category.dto.CategoryNameAndLevelResponseDTO;
 import ssafy.com.ssacle.category.dto.CategoryResponse;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
+import ssafy.com.ssacle.diary.dto.DiaryResponseDTO;
+import ssafy.com.ssacle.diary.service.DiaryService;
+import ssafy.com.ssacle.gpt.dto.TodoResponse;
 import ssafy.com.ssacle.notion.service.NotionService;
+import ssafy.com.ssacle.questioncard.dto.QuestionCardResponse;
+import ssafy.com.ssacle.questioncard.service.QuestionCardService;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.dto.*;
@@ -21,6 +26,8 @@ import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
+import ssafy.com.ssacle.team.dto.TeamResponse;
+import ssafy.com.ssacle.team.exception.TeamNotFoundException;
 import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.todo.domain.DefaultTodo;
 import ssafy.com.ssacle.todo.domain.Todo;
@@ -52,6 +59,8 @@ public class SprintService {
     private final NotionService notionService;
     private final UserCategoryRepository userCategoryRepository;
     private final UserTeamRepository userTeamRepository;
+    private final QuestionCardService questionCardService;
+    private final DiaryService diaryService;
 
     @Transactional
     public SprintResponse createSprint(SprintCreateRequest request) {
@@ -214,6 +223,47 @@ public class SprintService {
                     Long teamId = sprintRepository.findTeamIdBySprintAndUser(sprint, user);
                     return UserSprintResponseDTO.from(sprint, teamId);
                 });
+    }
+
+    @Transactional
+    public ActiveSprintResponse getActiveSprint(Long sprintId, Long teamId) {
+        // 1. 스프린트 정보 가져오기
+        Sprint sprint = sprintRepository.findById(sprintId)
+                .orElseThrow(SprintNotExistException::new);
+        SingleSprintResponse sprintResponse = SingleSprintResponse.from(sprint);
+
+        // 2. 스프린트 관련 카테고리 가져오기
+        List<CategoryResponse> categories = sprintRepository.findWithSprintCategoriesById(sprintId)
+                .map(s -> s.getSprintCategories().stream()
+                        .map(sprintCategory -> CategoryResponse.from(sprintCategory.getCategory()))
+                        .collect(Collectors.toList()))
+                .orElse(List.of());
+
+        // 3. 스프린트 관련 질문 카드 가져오기
+        List<QuestionCardResponse> questionCards = questionCardService.getQuestionCardsBySprint(sprintId);
+
+        // 4. 특정 팀 정보 가져오기
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(TeamNotFoundException::new);
+        TeamResponse teamResponse = TeamResponse.from(team);
+
+        // 5. 특정 팀의 Todo 가져오기
+        List<TodoResponse> todos = todoRepository.findByTeam(team)
+                .stream()
+                .map(todo -> new TodoResponse(todo.getDate(), List.of(todo.getContent())))
+                .collect(Collectors.toList());
+
+        // 6. 특정 스프린트의 모든 팀의 다이어리 가져오기
+        List<DiaryResponseDTO> diaries = diaryService.getDiariesBySprint(sprintId);
+
+        return ActiveSprintResponse.builder()
+                .sprint(sprintResponse)
+                .categories(categories)
+                .questionCards(questionCards)
+                .team(teamResponse)
+                .todos(todos)
+                .diaries(diaries)
+                .build();
     }
 
     @Transactional

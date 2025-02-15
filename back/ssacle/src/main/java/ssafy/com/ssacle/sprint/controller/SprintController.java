@@ -78,4 +78,10 @@ public class SprintController implements SprintSwaggerController{
         return ResponseEntity.ok(response);
     }
 
+    /** 활동중인 스프린트에 필요한 데이터 */
+    @Override
+    public ResponseEntity<ActiveSprintResponse> getActiveSprint(Long sprintId, Long teamId) {
+        ActiveSprintResponse response = sprintService.getActiveSprint(sprintId, teamId);
+        return ResponseEntity.ok(response);
+    }
 }
