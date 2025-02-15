@@ -245,12 +245,12 @@ export const addSsaprintQuestion = async (sprintId, description) => {
     const response = await httpCommon.post(SSAPRINT_END_POINT.ADD_QUESTION, {
       sprintId,
       description,
-      opened: true, // 요청 기본값 (실제 백엔드 정책 확인 필요)
+      opened: true,
     })
     return response.data // API 응답 데이터 반환
   } catch (error) {
     console.error('🔥 질문 추가 실패:', error)
-    throw new Error('질문 추가에 실패했습니다.') // 예외 던지기 (useMutation에서 처리)
+    throw new Error('질문 추가에 실패했습니다.')
   }
 }
 
