@@ -13,7 +13,7 @@ import ssafy.com.ssacle.category.domain.Category;
 import ssafy.com.ssacle.category.dto.CategoryNameAndLevelResponseDTO;
 import ssafy.com.ssacle.category.dto.CategoryResponse;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
-import ssafy.com.ssacle.diary.dto.DiaryResponseDTO;
+import ssafy.com.ssacle.diary.dto.DiaryGroupedByDateResponse;
 import ssafy.com.ssacle.diary.service.DiaryService;
 import ssafy.com.ssacle.notion.service.NotionService;
 import ssafy.com.ssacle.questioncard.dto.QuestionCardResponse;
@@ -152,7 +152,7 @@ public class SprintService {
                                     .isDone(false)
                                     .build();
 
-                            team.addTodo(todo); // ✅ 연관관계 설정
+                            team.addTodo(todo);
                             return todo;
                         }))
                 .collect(Collectors.toList());
@@ -254,19 +254,19 @@ public class SprintService {
         // 5. 특정 팀의 Todo 가져오기
         List<TodoResponseDTO> todos = todoRepository.findByTeam(team)
                 .stream()
-                .collect(Collectors.groupingBy(Todo::getDate))  // ✅ 날짜별로 그룹핑
+                .collect(Collectors.groupingBy(Todo::getDate))
                 .entrySet()
                 .stream()
                 .map(entry -> new TodoResponseDTO(
-                        entry.getKey(), // ✅ 날짜
+                        entry.getKey(),
                         entry.getValue().stream()
-                                .map(todo -> new TodoContent(todo.getId(), todo.getContent(), todo.isDone())) // ✅ 내용 리스트
+                                .map(todo -> new TodoContent(todo.getId(), todo.getContent(), todo.isDone()))
                                 .collect(Collectors.toList())
                 ))
                 .collect(Collectors.toList());
 
         // 6. 특정 스프린트의 모든 팀의 다이어리 가져오기
-        List<DiaryResponseDTO> diaries = diaryService.getDiariesBySprint(sprintId);
+        List<DiaryGroupedByDateResponse> diaries = diaryService.getDiariesBySprint(sprintId);
 
         return ActiveSprintResponse.builder()
                 .sprint(sprintResponse)
@@ -342,19 +342,19 @@ public class SprintService {
                         log.warn("🚨 Sprint ID {}에 연결된 카테고리가 없음", sprint.getId());
                         return null;
                     }
-                    Category category = sprint.getSprintCategories().get(0).getCategory(); // ✅ 최하위 카테고리
+                    Category category = sprint.getSprintCategories().get(0).getCategory();
 
                     return SprintRecommendResponseDTO.builder()
                             .id(sprint.getId())
-                            .majorCategoryName(category.getMajorCategoryName()) // ✅ 최상위 카테고리
-                            .subCategoryName(category.getSubCategoryName()) // ✅ 중간 카테고리
+                            .majorCategoryName(category.getMajorCategoryName())
+                            .subCategoryName(category.getSubCategoryName())
                             .title(sprint.getName())
                             .description(sprint.getBasicDescription())
                             .start_at(sprint.getStartAt().toLocalDate())
                             .end_at(sprint.getEndAt().toLocalDate())
                             .currentMembers(sprint.getCurrentMembers())
                             .maxMembers(sprint.getMaxMembers())
-                            .imageUrl(category.getImage()) // ✅ 최하위 카테고리의 이미지 사용
+                            .imageUrl(category.getImage())
                             .build();
                 })
                 .filter(Objects::nonNull) // null 값 제거

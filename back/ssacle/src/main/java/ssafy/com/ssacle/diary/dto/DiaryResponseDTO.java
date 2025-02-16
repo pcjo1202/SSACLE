@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 public class DiaryResponseDTO {
+    private Long id;
     private String name;
-    private String content;
     private LocalDate date;
 }

@@ -857,11 +857,17 @@ public class DataInitializer {
                 questionCardService.createQuestionCard(questionCardRequest);
 
                 // ✅ Diary 추가
+                // ✅ Diary 추가 (스프린트 시작일부터 종료일까지 모든 날짜 추가)
                 List<Team> teams = teamRepository.findBySprint(sprint);
                 for (Team team : teams) {
-                    Diary diary = new Diary(team, team.getName(),
-                            "Sprint " + sprint.getId() + "의 일기 내용입니다.", LocalDate.now().minusDays(1));
-                    diaryService.saveDiary(diary);
+                    LocalDate startDate = sprint.getStartAt().toLocalDate();
+                    LocalDate endDate = sprint.getEndAt().toLocalDate();
+
+                    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                        Diary diary = new Diary(team, team.getName(),
+                                "Sprint " + sprint.getId() + "의 " + date + " 일기 내용입니다.", date);
+                        diaryService.saveDiary(diary);
+                    }
                 }
             }
         }

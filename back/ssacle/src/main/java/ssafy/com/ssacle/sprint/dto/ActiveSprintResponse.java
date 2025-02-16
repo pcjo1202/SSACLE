@@ -3,8 +3,7 @@ package ssafy.com.ssacle.sprint.dto;
 import lombok.Builder;
 import lombok.Getter;
 import ssafy.com.ssacle.category.dto.CategoryResponse;
-import ssafy.com.ssacle.diary.dto.DiaryResponseDTO;
-import ssafy.com.ssacle.gpt.dto.TodoResponse;
+import ssafy.com.ssacle.diary.dto.DiaryGroupedByDateResponse;
 import ssafy.com.ssacle.questioncard.dto.QuestionCardResponse;
 import ssafy.com.ssacle.team.dto.TeamResponse;
 import ssafy.com.ssacle.todo.dto.TodoResponseDTO;
@@ -18,12 +17,12 @@ public class ActiveSprintResponse {
     private final List<QuestionCardResponse> questionCards;
     private final TeamResponse team;
     private final List<TodoResponseDTO> todos;
-    private final List<DiaryResponseDTO> diaries;
+    private final List<DiaryGroupedByDateResponse> diaries;
 
     @Builder
     public ActiveSprintResponse(SingleSprintResponse sprint, List<CategoryResponse> categories,
                                 List<QuestionCardResponse> questionCards, TeamResponse team,
-                                List<TodoResponseDTO> todos, List<DiaryResponseDTO> diaries) {
+                                List<TodoResponseDTO> todos, List<DiaryGroupedByDateResponse> diaries) {
         this.sprint = sprint;
         this.categories = categories;
         this.questionCards = questionCards;
