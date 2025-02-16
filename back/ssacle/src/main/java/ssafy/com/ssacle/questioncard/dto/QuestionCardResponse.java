@@ -12,6 +12,7 @@ public class QuestionCardResponse {
     private final String description;
     private final boolean isOpened;
     private final LocalDateTime createdAt;
+    private final Long teamId;
 
     @Builder
     public QuestionCardResponse(QuestionCard questionCard) {
@@ -19,6 +20,7 @@ public class QuestionCardResponse {
         this.description = questionCard.getDescription();
         this.isOpened = questionCard.isOpened();
         this.createdAt = questionCard.getCreatedAt();
+        this.teamId = questionCard.getTeam().getId();
     }
 
     public static QuestionCardResponse from(QuestionCard questionCard) {

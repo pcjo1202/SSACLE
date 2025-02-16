@@ -11,6 +11,9 @@ public class QuestionCardRequest {
     private Long sprintId;
 
     @NotNull
+    private Long teamId;
+
+    @NotNull
     private String description;
 
     private boolean isOpened;

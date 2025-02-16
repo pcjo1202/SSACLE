@@ -831,6 +831,7 @@ public class DataInitializer {
 
         return todos;
     }
+
     @Transactional
     public void initializeSprintParticipation(SprintRepository sprintRepository,
                                               UserRepository userRepository,
@@ -849,22 +850,29 @@ public class DataInitializer {
                 .toList();
 
         for (Sprint sprint : allSprints) {
-            System.out.println("----------스프린트 ID "+sprint.getId()+"-----------");
+            System.out.println("----------스프린트 ID " + sprint.getId() + "-----------");
+
             for (User admin : admins) {
-                System.out.println("----------사용자 ID "+admin.getId()+"-----------");
+                System.out.println("----------사용자 ID " + admin.getId() + "-----------");
                 sprintService.joinSprint(sprint.getId(), admin, sprint.getId() + "_" + admin.getId());
             }
 
-            // Sprint ID가 2+3*x인 경우 QuestionCard와 Diary 추가
+            // ✅ Sprint ID가 2+3*x인 경우에 QuestionCard 및 Diary 추가
             if ((sprint.getId() - 2) % 3 == 0) {
-                // ✅ QuestionCard 추가
-                QuestionCardRequest questionCardRequest = new QuestionCardRequest(sprint.getId(),
-                        "Sprint " + sprint.getId() + "을 위한 질문 카드입니다.", false);
-                questionCardService.createQuestionCard(questionCardRequest);
+                List<Team> teams = teamRepository.findBySprint(sprint); // ✅ 해당 Sprint의 팀 가져오기
 
-                // ✅ Diary 추가
+                for (Team team : teams) {
+                    // ✅ 각 팀별로 QuestionCard 생성
+                    QuestionCardRequest questionCardRequest = new QuestionCardRequest(
+                            sprint.getId(),
+                            team.getId(), // ✅ 팀 ID 추가
+                            "Sprint " + sprint.getId() + "의 팀 [" + team.getName() + "]을 위한 질문 카드입니다.",
+                            false
+                    );
+                    questionCardService.createQuestionCard(questionCardRequest);
+                }
+
                 // ✅ Diary 추가 (스프린트 시작일부터 종료일까지 모든 날짜 추가)
-                List<Team> teams = teamRepository.findBySprint(sprint);
                 for (Team team : teams) {
                     LocalDate startDate = sprint.getStartAt().toLocalDate();
                     LocalDate endDate = sprint.getEndAt().toLocalDate();
@@ -880,5 +888,6 @@ public class DataInitializer {
 
         System.out.println("✅ 모든 Sprint에 admin1~admin2이 참가하고, 특정 Sprint에 QuestionCard 및 Diary가 추가되었습니다.");
     }
+
 
 }
