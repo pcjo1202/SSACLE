@@ -76,7 +76,7 @@ const CommonTable = ({
                   <input
                     type="checkbox"
                     onChange={toggleAll}
-                    checked={selectedRows.length === paginatedData.length && selectedRows.length > 0} // 선택된 행이 모두 체크되어야 true
+                    checked={selectedRows.length === paginatedData.length && selectedRows.length > 0} // 📍 선택된 행이 모두 체크되어야 true
                   />
                 </div>
               </th>
@@ -134,7 +134,7 @@ const CommonTable = ({
         </tbody>
       </table>
 
-      {/* 페이지네이션 버튼 */}
+      {/* 📍 페이지네이션 버튼 */}
       <div className="flex justify-end items-center p-3 gap-3">
         <button
           onClick={() => setPage(page - 1)}
