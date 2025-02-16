@@ -13,9 +13,12 @@ import ssafy.com.ssacle.category.dto.CategoryNameAndLevelResponseDTO;
 import ssafy.com.ssacle.category.dto.CategoryResponse;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.notion.service.NotionService;
+import ssafy.com.ssacle.sprint.domain.PresentationStatus;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.dto.*;
+import ssafy.com.ssacle.sprint.exception.PresentationAlreadyEndedException;
+import ssafy.com.ssacle.sprint.exception.PresentationInvalidStepException;
 import ssafy.com.ssacle.sprint.exception.SprintAnnouncementNotYetException;
 import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
@@ -277,12 +280,24 @@ public class SprintService {
     }
 
     @Transactional
-    public void initial_Presentation(Long sprintId){
-        Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(() -> new SprintNotExistException());
-        if(LocalDateTime.now().isBefore(sprint.getAnnounceAt())){
-            throw new SprintAnnouncementNotYetException();
+    public PresentationStatusUpdateResponseDTO updatePresentationStatus(Long sprintId) {
+        Sprint sprint = sprintRepository.findById(sprintId)
+                .orElseThrow(() -> new SprintNotExistException());
+        // 현재 상태의 다음 상태로 업데이트
+        PresentationStatus nextStatus = PresentationStatus.getNextStatus(sprint.getPresentationStatus());
+        if (nextStatus == null) {
+            throw new PresentationAlreadyEndedException();
         }
+        if(nextStatus.getStep() != sprint.getPresentationStatus().getStep()+1){
+            throw new PresentationInvalidStepException();
+        }
+        sprint.updatePresentationStatus(nextStatus);
+        sprintRepository.save(sprint);
+
+        return new PresentationStatusUpdateResponseDTO("발표 상태 업데이트 성공", sprint.getPresentationStatus());
     }
+
+
 //    @Transactional
 //    public List<SprintRecommendResponseDTO> getRecommendSprint(User user) {
 //        // 1. 사용자의 관심 카테고리(중간 카테고리) 가져오기

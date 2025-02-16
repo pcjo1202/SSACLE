@@ -7,8 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ssafy.com.ssacle.questioncard.domain.QuestionCard;
 import ssafy.com.ssacle.questioncard.dto.QuestionCardRequest;
 import ssafy.com.ssacle.questioncard.dto.QuestionCardResponse;
+import ssafy.com.ssacle.questioncard.exception.QuestionNotFoundException;
 import ssafy.com.ssacle.questioncard.repository.QuestionCardRepository;
+import ssafy.com.ssacle.sprint.domain.PresentationStatus;
 import ssafy.com.ssacle.sprint.domain.Sprint;
+import ssafy.com.ssacle.sprint.exception.InvalidPresentationStatusException;
 import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 
@@ -41,5 +44,22 @@ public class QuestionCardService {
                 .stream()
                 .map(QuestionCardResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    public QuestionCardResponse selectQuestionCardsBySprintAndQuestionId(Long sprintId, Long questionId) {
+        Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(SprintNotExistException::new);
+
+        if (!isQuestionCardSelectionAllowed(sprint)) {
+            throw new InvalidPresentationStatusException();
+        }
+        QuestionCard card = questionCardRepository.findById(questionId).orElseThrow(QuestionNotFoundException::new);
+        card.update();
+        return QuestionCardResponse.from(card);
+    }
+
+    private boolean isQuestionCardSelectionAllowed(Sprint sprint) {
+        return sprint.getPresentationStatus() == PresentationStatus.QUESTION_READY ||
+                sprint.getPresentationStatus() == PresentationStatus.QUESTION_ANSWER ||
+                sprint.getPresentationStatus() == PresentationStatus.QUESTION_ANSWERER_INTRO;
     }
 }

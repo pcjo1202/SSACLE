@@ -28,4 +28,10 @@ public class QuestionCardController implements QuestionCardSwaggerController {
         List<QuestionCardResponse> response = questionCardService.getQuestionCardsBySprint(sprintId);
         return ResponseEntity.ok(response);
     }
+
+    @Override
+    public ResponseEntity<QuestionCardResponse> selectQuestionCardsBySprintAndQuestionId(Long sprintId, Long questionId) {
+        QuestionCardResponse response = questionCardService.selectQuestionCardsBySprintAndQuestionId(sprintId, questionId);
+        return ResponseEntity.ok(response);
+    }
 }
