@@ -22,6 +22,7 @@ const SsaprintCreate = () => {
     selectedSub,
     sprintName,
     transformSsaprintData,
+    getTomorrowDate,
   } = useSsaprint()
 
   const [showDetails, setShowDetails] = useState(
@@ -125,7 +126,7 @@ const SsaprintCreate = () => {
         </div>
 
         <div className="flex justify-between mt-4">
-          <DateInput label="시작일" value={startDate} setValue={setStartDate} />
+          <DateInput label="시작일" value={startDate} setValue={setStartDate} min={getTomorrowDate()}/>
           <DateInput
             label="종료일"
             value={endDate}
@@ -134,7 +135,7 @@ const SsaprintCreate = () => {
               startDate
                 ? new Date(
                     new Date(startDate).setDate(
-                      new Date(startDate).getDate() + 1
+                      new Date(startDate).getDate() + 2
                     )
                   )
                     .toISOString()
@@ -145,7 +146,7 @@ const SsaprintCreate = () => {
               startDate
                 ? new Date(
                     new Date(startDate).setDate(
-                      new Date(startDate).getDate() + 6
+                      new Date(startDate).getDate() + 7
                     )
                   )
                     .toISOString()
