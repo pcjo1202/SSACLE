@@ -8,7 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ssafy.com.ssacle.diary.dto.DiaryResponseDTO;
+import ssafy.com.ssacle.diary.dto.DiaryDetailResponse;
+import ssafy.com.ssacle.diary.dto.DiaryGroupedByDateResponse;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public interface DiarySwaggerController {
             @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
     })
     @GetMapping("/{sprintId}")
-    ResponseEntity<List<DiaryResponseDTO>> getDiariesBySprint(
+    ResponseEntity<List<DiaryGroupedByDateResponse>> getDiariesBySprint(
             @Parameter(description = "조회할 Sprint ID", example = "1") @PathVariable Long sprintId
     );
 
@@ -35,4 +36,15 @@ public interface DiarySwaggerController {
     })
     @PostMapping("/generate-now")
     ResponseEntity<String> generateDailyDiariesNow();
+
+    @Operation(summary = "다이어리 상세 조회", description = "특정 다이어리 ID로 다이어리를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "다이어리 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "해당 다이어리를 찾을 수 없음"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @GetMapping("/detail/{diaryId}")
+    ResponseEntity<DiaryDetailResponse> getDiaryById(
+            @Parameter(description = "조회할 Diary ID", example = "101") @PathVariable Long diaryId
+    );
 }

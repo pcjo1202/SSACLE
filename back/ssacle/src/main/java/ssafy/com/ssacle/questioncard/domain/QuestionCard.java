@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import ssafy.com.ssacle.questioncard.exception.QuestionAlreadyViewedException;
 import ssafy.com.ssacle.sprint.domain.Sprint;
+import ssafy.com.ssacle.team.domain.Team;
 
 import java.time.LocalDateTime;
 
@@ -20,8 +21,15 @@ public class QuestionCard {
     @JoinColumn(name = "sprint_id", nullable = false)
     private Sprint sprint;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id", nullable = false)
+    private Team team;
+
     @Column(length = 512, nullable = false)
     private String description;
+    public void updateDescription(String description) {
+        this.description = description;
+    }
 
     @Column(nullable = false)
     private boolean isOpened;
@@ -30,8 +38,9 @@ public class QuestionCard {
     private LocalDateTime createdAt;
 
     @Builder
-    public QuestionCard(Sprint sprint, String description, boolean isOpened) {
+    public QuestionCard(Sprint sprint, Team team, String description, boolean isOpened) {
         this.sprint = sprint;
+        this.team = team;
         this.description = description;
         this.isOpened = isOpened;
         this.createdAt = LocalDateTime.now();

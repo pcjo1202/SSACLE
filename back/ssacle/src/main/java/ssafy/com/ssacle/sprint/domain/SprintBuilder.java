@@ -64,8 +64,22 @@ public class SprintBuilder {
         this.ssaldCup=ssaldCup;
         return this;
     }
+
+    private Integer calculateStatus(){
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isBefore(startAt)) {
+            return 0;
+        } else if (!now.isAfter(endAt)) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
     public Sprint build(){
-        Sprint sprint = new Sprint(name, basicDescription, detailDescription, recommendedFor, startAt, endAt, announceAt, 0, 1, maxMembers, 1, LocalDateTime.now());
+        Sprint sprint = new Sprint(name, basicDescription, detailDescription, recommendedFor, startAt, endAt, announceAt, calculateStatus(), 1, maxMembers, 1, LocalDateTime.now());
+
         if(ssaldCup !=null)
             sprint.setSsaldCup(ssaldCup);
         if (defaultTodoRequests != null && !defaultTodoRequests.isEmpty()) {
@@ -78,3 +92,4 @@ public class SprintBuilder {
         return sprint;
     }
 }
+

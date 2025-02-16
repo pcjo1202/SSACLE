@@ -1,10 +1,11 @@
 package ssafy.com.ssacle.sprint.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.SprintCategory.domain.SprintCategory;
 import ssafy.com.ssacle.SprintCategory.repository.SprintCategoryRepository;
@@ -12,7 +13,11 @@ import ssafy.com.ssacle.category.domain.Category;
 import ssafy.com.ssacle.category.dto.CategoryNameAndLevelResponseDTO;
 import ssafy.com.ssacle.category.dto.CategoryResponse;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
+import ssafy.com.ssacle.diary.dto.DiaryGroupedByDateResponse;
+import ssafy.com.ssacle.diary.service.DiaryService;
 import ssafy.com.ssacle.notion.service.NotionService;
+import ssafy.com.ssacle.questioncard.dto.QuestionCardResponse;
+import ssafy.com.ssacle.questioncard.service.QuestionCardService;
 import ssafy.com.ssacle.sprint.domain.PresentationStatus;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
@@ -24,12 +29,14 @@ import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
+import ssafy.com.ssacle.team.dto.TeamResponse;
+import ssafy.com.ssacle.team.exception.TeamNotFoundException;
 import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.todo.domain.DefaultTodo;
-import ssafy.com.ssacle.todo.domain.QDefaultTodo;
 import ssafy.com.ssacle.todo.domain.Todo;
 import ssafy.com.ssacle.todo.dto.DefaultTodoResponse;
-import ssafy.com.ssacle.todo.repository.DefaultTodoRepository;
+import ssafy.com.ssacle.todo.dto.TodoContent;
+import ssafy.com.ssacle.todo.dto.TodoResponseDTO;
 import ssafy.com.ssacle.todo.repository.TodoRepository;
 import ssafy.com.ssacle.todo.service.DefaultTodoService;
 import ssafy.com.ssacle.user.domain.User;
@@ -58,6 +65,9 @@ public class SprintService {
     private final NotionService notionService;
     private final UserCategoryRepository userCategoryRepository;
     private final UserTeamRepository userTeamRepository;
+    private final QuestionCardService questionCardService;
+    private final DiaryService diaryService;
+
     @Transactional
     public SprintResponse createSprint(SprintCreateRequest request) {
         Sprint sprint = SprintBuilder.builder()
@@ -86,7 +96,7 @@ public class SprintService {
     }
 
     @Transactional
-    public void joinSprint(Long sprintId, User user) {
+    public Long joinSprint(Long sprintId, User user, String teamName) {
         Sprint sprint = sprintRepository.findByIdWithTeams(sprintId)
                 .orElseThrow(SprintNotExistException::new);
 
@@ -94,13 +104,15 @@ public class SprintService {
         List<CategoryNameAndLevelResponseDTO> categories = categoryRepository.findCategoryNamesBySprintId(sprintId);
 
         // 스프린트 <-> 팀 <-> 사용자팀 <-> 사용자 연동
-        Team team = saveTeamAndTeamUser(user, sprint);
+        Team team = saveTeamAndTeamUser(user, sprint, teamName);
         // 팀 <-> 노션 연동
         String notionUrl = saveNotion(user.getName(), defaultTodos, categories);
         team.setNotionURL(notionUrl);
 
         // 팀 <-> 투두 연동
         saveTodo(team, defaultTodos);
+
+        return team.getId();
     }
 
     private String saveNotion(String teamName, List<DefaultTodoResponse> defaultTodoResponses, List<CategoryNameAndLevelResponseDTO> categoryNameAndLevelResponseDTOS){
@@ -122,10 +134,11 @@ public class SprintService {
         return teamPageId;
     }
 
-    private Team saveTeamAndTeamUser(User user, Sprint sprint){
+    private Team saveTeamAndTeamUser(User user, Sprint sprint, String teamName){
         Team team = SprintTeamBuilder.builder()
                 .addUser(user)
                 .participateSprint(sprint)
+                .teamName(teamName)
                 .build();
 
         return teamRepository.save(team);
@@ -142,7 +155,7 @@ public class SprintService {
                                     .isDone(false)
                                     .build();
 
-                            team.addTodo(todo); // ✅ 연관관계 설정
+                            team.addTodo(todo);
                             return todo;
                         }))
                 .collect(Collectors.toList());
@@ -159,8 +172,13 @@ public class SprintService {
 
     @Transactional
     public Page<SprintAndCategoriesResponseDTO> getSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
-        return sprintRepository.findSprintsByCategoryAndStatus(categoryId, status, pageable)
-                .map(SprintAndCategoriesResponseDTO::from);
+        Page<Sprint> sprints = sprintRepository.findSprintsByCategoryAndStatus(categoryId, status, pageable);
+
+        List<SprintAndCategoriesResponseDTO> sprintDTOs = sprints.stream()
+                .map(SprintAndCategoriesResponseDTO::from)
+                .collect(Collectors.toList());
+
+        return PageableExecutionUtils.getPage(sprintDTOs, pageable, sprints::getTotalElements);
     }
 
     @Transactional
@@ -193,6 +211,73 @@ public class SprintService {
                 .sprint(sprintResponse)
                 .todos(todos)
                 .categories(categories)
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserSprintResponseDTO> getUserOngoingSprints(User user, Pageable pageable) {
+        return sprintRepository.findUserParticipatedSprints(user, List.of(0, 1), pageable)
+                .map(sprint -> {
+                    Long teamId = sprintRepository.findTeamIdBySprintAndUser(sprint, user);
+                    return UserSprintResponseDTO.from(sprint, teamId);
+                });
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserSprintResponseDTO> getUserCompletedSprints(User user, Pageable pageable) {
+        return sprintRepository.findUserParticipatedSprints(user, List.of(2), pageable)
+                .map(sprint -> {
+                    Long teamId = sprintRepository.findTeamIdBySprintAndUser(sprint, user);
+                    return UserSprintResponseDTO.from(sprint, teamId);
+                });
+    }
+
+    @Transactional
+    public ActiveSprintResponse getActiveSprint(Long sprintId, Long teamId) {
+        // 1. 스프린트 정보 가져오기
+        Sprint sprint = sprintRepository.findById(sprintId)
+                .orElseThrow(SprintNotExistException::new);
+        SingleSprintResponse sprintResponse = SingleSprintResponse.from(sprint);
+
+        // 2. 스프린트 관련 카테고리 가져오기
+        List<CategoryResponse> categories = sprintRepository.findWithSprintCategoriesById(sprintId)
+                .map(s -> s.getSprintCategories().stream()
+                        .map(sprintCategory -> CategoryResponse.from(sprintCategory.getCategory()))
+                        .collect(Collectors.toList()))
+                .orElse(List.of());
+
+        // 3. 스프린트 관련 질문 카드 가져오기
+        List<QuestionCardResponse> questionCards = questionCardService.getQuestionCardsBySprint(sprintId);
+
+        // 4. 특정 팀 정보 가져오기
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(TeamNotFoundException::new);
+        TeamResponse teamResponse = TeamResponse.from(team);
+
+        // 5. 특정 팀의 Todo 가져오기
+        List<TodoResponseDTO> todos = todoRepository.findByTeam(team)
+                .stream()
+                .collect(Collectors.groupingBy(Todo::getDate))
+                .entrySet()
+                .stream()
+                .map(entry -> new TodoResponseDTO(
+                        entry.getKey(),
+                        entry.getValue().stream()
+                                .map(todo -> new TodoContent(todo.getId(), todo.getContent(), todo.isDone()))
+                                .collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
+
+        // 6. 특정 스프린트의 모든 팀의 다이어리 가져오기
+        List<DiaryGroupedByDateResponse> diaries = diaryService.getDiariesBySprint(sprintId);
+
+        return ActiveSprintResponse.builder()
+                .sprint(sprintResponse)
+                .categories(categories)
+                .questionCards(questionCards)
+                .team(teamResponse)
+                .todos(todos)
+                .diaries(diaries)
                 .build();
     }
 
@@ -260,19 +345,19 @@ public class SprintService {
                         log.warn("🚨 Sprint ID {}에 연결된 카테고리가 없음", sprint.getId());
                         return null;
                     }
-                    Category category = sprint.getSprintCategories().get(0).getCategory(); // ✅ 최하위 카테고리
+                    Category category = sprint.getSprintCategories().get(0).getCategory();
 
                     return SprintRecommendResponseDTO.builder()
                             .id(sprint.getId())
-                            .majorCategoryName(category.getMajorCategoryName()) // ✅ 최상위 카테고리
-                            .subCategoryName(category.getSubCategoryName()) // ✅ 중간 카테고리
+                            .majorCategoryName(category.getMajorCategoryName())
+                            .subCategoryName(category.getSubCategoryName())
                             .title(sprint.getName())
                             .description(sprint.getBasicDescription())
                             .start_at(sprint.getStartAt().toLocalDate())
                             .end_at(sprint.getEndAt().toLocalDate())
                             .currentMembers(sprint.getCurrentMembers())
                             .maxMembers(sprint.getMaxMembers())
-                            .imageUrl(category.getImage()) // ✅ 최하위 카테고리의 이미지 사용
+                            .imageUrl(category.getImage())
                             .build();
                 })
                 .filter(Objects::nonNull) // null 값 제거
@@ -280,6 +365,12 @@ public class SprintService {
     }
 
     @Transactional
+    public void initial_Presentation(Long sprintId){
+        Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(SprintNotExistException::new);
+        if(LocalDateTime.now().isBefore(sprint.getAnnounceAt())){
+            throw new SprintAnnouncementNotYetException();
+        }
+    }
     public PresentationStatusUpdateResponseDTO updatePresentationStatus(Long sprintId) {
         Sprint sprint = sprintRepository.findById(sprintId)
                 .orElseThrow(() -> new SprintNotExistException());
@@ -296,7 +387,6 @@ public class SprintService {
 
         return new PresentationStatusUpdateResponseDTO("발표 상태 업데이트 성공", sprint.getPresentationStatus());
     }
-
 
 //    @Transactional
 //    public List<SprintRecommendResponseDTO> getRecommendSprint(User user) {
@@ -371,3 +461,4 @@ public class SprintService {
 
 
 }
+

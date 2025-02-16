@@ -67,6 +67,10 @@ public class Category {
         return parent.getCategoryName();
     }
 
+    public List<Category> getSubCategories() {
+        return this.children;
+    }
+
     public String getLowestCategoryName() {
         Category current = this;
         while (!current.getChildren().isEmpty()) {

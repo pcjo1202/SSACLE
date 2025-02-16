@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.dto.*;
 import ssafy.com.ssacle.sprint.service.SprintService;
 import ssafy.com.ssacle.user.domain.User;
@@ -28,11 +27,11 @@ public class SprintController implements SprintSwaggerController{
 
     /** 스프린트 참가 */
     @Override
-    public ResponseEntity<Void> joinSprint(@PathVariable Long sprintId) {
+    public ResponseEntity<Long> joinSprint(@PathVariable Long sprintId,  @RequestParam String teamName) {
         User user = userService.getAuthenticatedUserWithTeams();
-        sprintService.joinSprint(sprintId, user);
+        Long teamId = sprintService.joinSprint(sprintId, user, teamName);
 
-        return ResponseEntity.status(201).build();
+        return ResponseEntity.status(201).body(teamId);
     }
 
     /** 필터링 조건으로 스프린트 조회 */
@@ -51,6 +50,19 @@ public class SprintController implements SprintSwaggerController{
         return ResponseEntity.ok(sprintResponses);
     }
 
+    /** 사용자가 참여중인 스프린트 목록 (status: 0,1) */
+    @Override
+    public ResponseEntity<Page<UserSprintResponseDTO>> getOngoingSprints(Pageable pageable) {
+        User user = userService.getAuthenticatedUserWithTeams();
+        return ResponseEntity.ok(sprintService.getUserOngoingSprints(user, pageable));
+    }
+
+    /** 사용자가 참여 완료한 스프린트 목록 */
+    @Override
+    public ResponseEntity<Page<UserSprintResponseDTO>> getCompletedSprints(Pageable pageable) {
+        User user = userService.getAuthenticatedUserWithTeams();
+        return ResponseEntity.ok(sprintService.getUserCompletedSprints(user, pageable));
+    }
 
     /** 단일 스프린트 조회 */
     @Override
@@ -63,6 +75,13 @@ public class SprintController implements SprintSwaggerController{
     @Override
     public ResponseEntity<SprintDetailResponse> getSprintDetails(@PathVariable Long sprintId) {
         SprintDetailResponse response = sprintService.getSprintDetail(sprintId);
+        return ResponseEntity.ok(response);
+    }
+
+    /** 활동중인 스프린트에 필요한 데이터 */
+    @Override
+    public ResponseEntity<ActiveSprintResponse> getActiveSprint(Long sprintId, Long teamId) {
+        ActiveSprintResponse response = sprintService.getActiveSprint(sprintId, teamId);
         return ResponseEntity.ok(response);
     }
 

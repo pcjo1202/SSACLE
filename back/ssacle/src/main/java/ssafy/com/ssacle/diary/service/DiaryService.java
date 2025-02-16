@@ -4,11 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ssafy.com.ssacle.diary.domain.Diary;
+import ssafy.com.ssacle.diary.dto.DiaryDetailResponse;
+import ssafy.com.ssacle.diary.dto.DiaryGroupedByDateResponse;
 import ssafy.com.ssacle.diary.dto.DiaryResponseDTO;
+import ssafy.com.ssacle.diary.exception.DiaryNotExistException;
 import ssafy.com.ssacle.diary.repository.DiaryRepository;
 import ssafy.com.ssacle.gpt.service.GptDiaryService;
 import ssafy.com.ssacle.notion.service.NotionService;
 import ssafy.com.ssacle.sprint.domain.Sprint;
+import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.Team;
 import java.time.LocalDate;
@@ -44,18 +48,30 @@ public class DiaryService {
 
     }
 
-    /** ✅ 특정 스프린트 ID에 해당하는 모든 팀의 다이어리를 날짜순으로 조회 */
+    /** 특정 스프린트 ID에 해당하는 모든 팀의 다이어리를 날짜순으로 조회 */
     @Transactional(readOnly = true)
-    public List<DiaryResponseDTO> getDiariesBySprint(Long sprintId) {
+    public List<DiaryGroupedByDateResponse> getDiariesBySprint(Long sprintId) {
         Sprint sprint = sprintRepository.findById(sprintId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 스프린트가 존재하지 않습니다."));
+                .orElseThrow(SprintNotExistException::new);
 
         List<Team> teams = sprint.getTeams();
         List<Diary> diaries = diaryRepository.findByTeamInOrderByDateAsc(teams);
 
-        return diaries.stream()
-                .map(diary -> new DiaryResponseDTO(diary.getTitle(), diary.getContent(), diary.getDate()))
+        List<DiaryResponseDTO> diaryResponses = diaries.stream()
+                .map(diary -> new DiaryResponseDTO(diary.getId(), diary.getTitle(), diary.getDate()))
                 .collect(Collectors.toList());
+
+        return DiaryGroupedByDateResponse.fromList(diaryResponses);
+    }
+
+    public DiaryDetailResponse getDiaryById(Long diaryId) {
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(DiaryNotExistException::new);
+        return DiaryDetailResponse.from(diary);
+    }
+
+    public void saveDiary(Diary diary) {
+        diaryRepository.save(diary);
     }
 
 }
