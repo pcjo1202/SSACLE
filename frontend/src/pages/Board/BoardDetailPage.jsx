@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { fetchBoardDetail } from '@/services/boardService'
+import { fetchBoardDetail, fetchBoardList } from '@/services/boardService'
 import CommentForm from '@/components/Board/Comment/CommentForm'
 import CommentList from '@/components/Board/Comment/CommentList'
 import BoardNav from '@/components/Board/Detail/BoardNav'
@@ -33,6 +33,37 @@ const BoardDetailPage = () => {
     enabled: !!boardId,
     retry: false,
   })
+
+  // 게시글 목록 조회 (이전/다음글을 위해)
+  const { data: boardList } = useQuery({
+    queryKey: ['boardList'],
+    queryFn: fetchBoardList,
+    enabled: !!post, // post 데이터가 있을 때만 실행
+  })
+
+  // 이전글, 다음글 계산
+  const getPrevNextPosts = () => {
+    if (!boardList || !post) return { prev: null, next: null }
+
+    // 같은 카테고리(subCategory)의 게시글만 필터링하고 시간순 정렬
+    const sameTypeList = boardList
+      .filter((item) => item.subCategory === post.subCategory)
+      .sort((a, b) => new Date(a.time) - new Date(b.time)) // 시간 오름차순 정렬로 변경
+
+    const currentIndex = sameTypeList.findIndex((item) => item.id === post.id)
+
+    return {
+      // 이전글은 현재 인덱스보다 하나 앞의 글
+      prev: currentIndex > 0 ? sameTypeList[currentIndex - 1] : null,
+      // 다음글은 현재 인덱스보다 하나 뒤의 글
+      next:
+        currentIndex < sameTypeList.length - 1
+          ? sameTypeList[currentIndex + 1]
+          : null,
+    }
+  }
+
+  const { prev, next } = getPrevNextPosts()
 
   // 현재 활성화된 탭 정보 가져오기
   const searchParams = new URLSearchParams(location.search)
@@ -151,14 +182,15 @@ const BoardDetailPage = () => {
   return (
     <div className="min-w-max my-20 container mx-auto px-4 py-8 max-w-4xl">
       <h2 className="text-xl font-semibold text-ssacle-blue flex justify-center mb-6">
-        {BOARD_TITLES[post?.type] || BOARD_TITLES[boardType] || '게시판'}
+        {BOARD_TITLES[post.subCategory] || BOARD_TITLES[boardType] || '게시판'}
       </h2>
 
       <div className="border-b pb-4 mb-4 flex flex-col gap-2">
         <h1 className="text-2xl font-bold">{post?.title || '제목 없음'}</h1>
         <div className="text-gray-500 text-sm">
-          {post?.author || '알 수 없음'} | {post?.date || '날짜 없음'} | 조회수{' '}
-          {post?.views || 0}
+          {post?.writerInfo || '알 수 없음'} |{' '}
+          {post?.time?.split('T')[0] || '날짜 없음'} | 조회수{' '}
+          {post?.viewCount || 0}
         </div>
         <div className="mt-2 flex gap-2">
           {post?.tags?.map((tag, index) => (
@@ -172,8 +204,24 @@ const BoardDetailPage = () => {
       <div className="py-8 min-h-52">{post?.content || '내용 없음'}</div>
 
       <BoardNav
-        prevPost={null}
-        nextPost={null}
+        prevPost={
+          prev
+            ? {
+                id: prev.id,
+                title: prev.title,
+                date: prev.time, // 서버 응답의 time 필드 사용
+              }
+            : null
+        }
+        nextPost={
+          next
+            ? {
+                id: next.id,
+                title: next.title,
+                date: next.time, // 서버 응답의 time 필드 사용
+              }
+            : null
+        }
         onNavigate={handlePostNavigate}
       />
 
