@@ -122,50 +122,61 @@ const DetailsForm = () => {
           />
         </div>
       </div>
+      {/* 🔥 기본 설명 / 상세 설명 / 권장 사항 */}
       {[
         { label: '기본 설명', key: 'basicDescription' },
         { label: '상세 설명', key: 'detailDescription' },
         { label: '권장 사항', key: 'recommendedFor' },
-        // { label: 'Todos', key: 'todos', rows: 5 },
       ].map(({ label, key, rows = 2 }) => (
         <div key={key} className="mt-4">
           <label className="text-ssacle-black text-sm font-bold">{label}</label>
-          <textarea
-            className="w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto text-ssacle-black text-sm"
-            rows={rows}
-            value={description?.[key] || ''}
-            onChange={(e) =>
-              setDescription((prev) => ({ ...prev, [key]: e.target.value }))
-            }
-          />
-        </div>
-      ))}
-      {/* 📝 Todos 목록 */}
-      <h3 className="text-ssacle-black text-sm font-bold mt-6">
-        Todos
-      </h3>
-      {formattedTodos.map((todo, dayIndex) => (
-        <div
-          key={dayIndex}
-          className="mt-4 p-4 border border-ssacle-gray-sm rounded-md"
-        >
-          <h4 className="text-ssacle-blue text-sm font-bold">
-            {todo.dayLabel} ({todo.date})
-          </h4>
-          {todo.tasks.map((task, taskIndex) => (
-            <div key={taskIndex} className="flex items-center mt-2">
-              <input
-                type="text"
-                className="w-full p-2 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md text-ssacle-black text-sm"
-                value={task}
-                onChange={(e) =>
-                  handleTaskChange(dayIndex, taskIndex, e.target.value)
-                }
-              />
+          {!description[key] ? ( // 값이 없으면 개별적으로 RingLoader 표시
+            <div className="w-full flex justify-center p-3">
+              <RingLoader color="#5195F7" size={20} />
             </div>
-          ))}
+          ) : (
+            <textarea
+              className="w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto text-ssacle-black text-sm"
+              rows={rows}
+              value={description?.[key] || ''}
+              onChange={(e) =>
+                setDescription((prev) => ({ ...prev, [key]: e.target.value }))
+              }
+            />
+          )}
         </div>
       ))}
+
+      {/* 📝 Todos 목록 */}
+      <h3 className="text-ssacle-black text-sm font-bold mt-6">Todos</h3>
+      {!description.todos ? (
+        <div className="w-full flex justify-center p-3">
+          <RingLoader color="#5195F7" size={20} />
+        </div>
+      ) : (
+        formattedTodos.map((todo, dayIndex) => (
+          <div
+            key={dayIndex}
+            className="mt-4 p-4 border border-ssacle-gray-sm rounded-md"
+          >
+            <h4 className="text-ssacle-blue text-sm font-bold">
+              {todo.dayLabel} ({todo.date})
+            </h4>
+            {todo.tasks.map((task, taskIndex) => (
+              <div key={taskIndex} className="flex items-center mt-2">
+                <input
+                  type="text"
+                  className="w-full p-2 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md text-ssacle-black text-sm"
+                  value={task}
+                  onChange={(e) =>
+                    handleTaskChange(dayIndex, taskIndex, e.target.value)
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        ))
+      )}
     </div>
   )
 }
