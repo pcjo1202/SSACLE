@@ -56,7 +56,7 @@ const initialSignalStates: SignalState = Object.values(
 // 초기 상태 정의
 const initialState: StoreState = {
   presentationStatus: 'INITIAL', // 초기 발표 상태 (Key 값으로 비교)
-  signalStates: initialSignalStates, // 초기 시그널 상태 (벨류값 저장)
+  signalStates: initialSignalStates, // 초기 시그널 상태 (벨류값)
   timestamp: Date.now(), // 스토어 생성 시간
 }
 

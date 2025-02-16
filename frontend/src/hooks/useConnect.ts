@@ -20,6 +20,7 @@ export const useConnect = () => {
     setCameraPublisher,
     setSubscribers,
     setMainStreamManager,
+    setMyConnectionId,
   } = useOpenviduStateStore(
     useShallow((state) => ({
       session: state.session,
@@ -30,6 +31,7 @@ export const useConnect = () => {
       setCameraPublisher: state.setCameraPublisher,
       setSubscribers: state.setSubscribers,
       setMainStreamManager: state.setMainStreamManager,
+      setMyConnectionId: state.setMyConnectionId,
     }))
   )
   const {
@@ -76,6 +78,7 @@ export const useConnect = () => {
 
       setCameraPublisher(newPublisher)
       setMainStreamManager(newPublisher)
+      setMyConnectionId(session.connection.connectionId)
       await session.publish(newPublisher)
       setOV(openviduInstance)
       console.log('나의 connectionId', session.connection.connectionId)

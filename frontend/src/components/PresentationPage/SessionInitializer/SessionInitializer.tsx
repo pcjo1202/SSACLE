@@ -29,7 +29,7 @@ const SessionInitializer = () => {
         <ConferenceContainer token={token} />
       ) : (
         <div>
-          <p>세션 ID 또는 토큰이 없습니다.</p>
+          <span>세션 ID 또는 토큰이 없습니다.</span>
         </div>
       )}
     </div>

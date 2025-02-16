@@ -1,7 +1,11 @@
 import { ModalSteps } from '@/constants/modalStep'
-import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
+import {
+  PRESENTATION_STATUS,
+  PRESENTATION_STATUS_KEYS,
+} from '@/constants/presentationStatus'
 import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import { usePresentationModalStateStore } from '@/store/usePresentationModalStateStore'
+import { usePresentationSignalStore } from '@/store/usePresentationSignalStore'
 import { usePresentationStore } from '@/store/usePresentationStore'
 import { useEffect, type FC } from 'react'
 import { useShallow } from 'zustand/shallow'
@@ -12,24 +16,40 @@ interface StepContainerProps {
 
 const StepContainer: FC<StepContainerProps> = ({ children }) => {
   const session = useOpenviduStateStore((state) => state.session)
-  const { isAllConnection } = usePresentationStore(
+  const { presentationStatus } = usePresentationSignalStore(
     useShallow((state) => ({
-      isAllConnection: state.isAllConnection,
+      presentationStatus: state.presentationStatus,
     }))
   )
 
   useEffect(() => {
-    if (isAllConnection) {
-      console.log('모든 사용자가 참여했습니다.')
+    // 발표 시작 상태일 때 5초 후 발표자 소개 신호 전송
+    if (presentationStatus === PRESENTATION_STATUS_KEYS.START) {
+      const randomPresenter = Math.floor(
+        Math.random() * (session?.streamManagers?.length ?? 0)
+      )
+
+      const presenterConnectionId =
+        session?.streamManagers[randomPresenter].stream.connection.connectionId
+      const { username: presenterName } = JSON.parse(
+        session?.streamManagers[randomPresenter].stream.connection
+          .data as string
+      )
+      console.log(presenterName)
       setTimeout(() => {
         session?.signal({
           data: JSON.stringify({
-            type: PRESENTATION_STATUS.READY, // value 값으로 전송
+            data: PRESENTATION_STATUS.PRESENTER_INTRO,
+            presenterConnectionId,
+            presenterName,
           }),
+          type: 'presentationStatus',
         })
-      }, 100)
+      }, 5000)
     }
-  }, [isAllConnection])
+
+    //
+  }, [presentationStatus])
   return <div>{children}</div>
 }
 export default StepContainer

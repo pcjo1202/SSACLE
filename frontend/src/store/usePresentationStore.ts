@@ -10,6 +10,10 @@ interface PresentationStore {
   isAllConnection: boolean // 모든 참여자가 참여했는지 여부
   setIsAllConnection: (isAllConnection: boolean) => void
 
+  // 발표자 이름
+  presenterName: string
+  setPresenterName: (presenterName: string) => void
+
   // 발표 채팅 관련
   isChatOpen: boolean
   questionCard: any[]
@@ -22,12 +26,16 @@ interface PresentationStore {
 export const usePresentationStore = create<PresentationStore>((set) => ({
   // 발표 진행 관련
   isAllConnection: false,
-  targetConnectionCount: 3,
+  targetConnectionCount: 2,
   setTargetConnectionCount: (targetConnectionCount) =>
     set({ targetConnectionCount }),
 
   // 모든 참여자가 참여했는지 여부 설정
   setIsAllConnection: (isAllConnection) => set({ isAllConnection }),
+
+  // 발표자 이름 설정
+  presenterName: '',
+  setPresenterName: (presenterName) => set({ presenterName }),
 
   // 발표 채팅 관련
   isChatOpen: false,

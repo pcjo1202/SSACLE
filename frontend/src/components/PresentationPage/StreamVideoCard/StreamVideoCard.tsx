@@ -22,7 +22,13 @@ const StreamVideoCard = ({
   username,
   isPublisher,
 }: StreamVideoCardProps) => {
-  const isScreenSharing = useStreamStore((state) => state.isScreenSharing)
+  const { isScreenSharing, isMicOn, isCameraOn } = useStreamStore(
+    useShallow((state) => ({
+      isScreenSharing: state.isScreenSharing,
+      isMicOn: state.isMicOn,
+      isCameraOn: state.isCameraOn,
+    }))
+  )
   const { screenPublisher, cameraPublisher } = useOpenviduStateStore(
     useShallow((state) => ({
       screenPublisher: state.screenPublisher,

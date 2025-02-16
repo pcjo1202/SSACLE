@@ -18,19 +18,30 @@ import {
 } from '@/store/usePresentationSignalStore'
 import { usePresentationModalStateStore } from '@/store/usePresentationModalStateStore'
 import { useSignalEvents } from '@/hooks/useSignalEvents'
+import { ModalSteps } from '@/constants/modalStep'
+import {
+  PRESENTATION_STATUS,
+  PresentationStatus,
+} from '@/constants/presentationStatus'
 
 export function useConferenceEvents() {
   const { roomId } = useParams()
   // openvidu state store에서 상태 관리
-  const { subscribers, setSubscribers, session, setScreenPublisher } =
-    useOpenviduStateStore(
-      useShallow((state) => ({
-        subscribers: state.subscribers,
-        setSubscribers: state.setSubscribers,
-        session: state.session,
-        setScreenPublisher: state.setScreenPublisher,
-      }))
-    )
+  const {
+    subscribers,
+    setSubscribers,
+    session,
+    setScreenPublisher,
+    myConnectionId,
+  } = useOpenviduStateStore(
+    useShallow((state) => ({
+      subscribers: state.subscribers,
+      setSubscribers: state.setSubscribers,
+      session: state.session,
+      setScreenPublisher: state.setScreenPublisher,
+      myConnectionId: state.myConnectionId,
+    }))
+  )
 
   // room state store에서 참여자 데이터 관리
   const { addRoomConnectionData, removeRoomConnectionData } = useRoomStateStore(
@@ -48,20 +59,26 @@ export function useConferenceEvents() {
   )
 
   // presentation store에서 발표 참여자 수 관리
-  const { targetConnectionCount } = usePresentationStore(
+  const { targetConnectionCount, setPresenterName } = usePresentationStore(
     useShallow((state) => ({
       targetConnectionCount: state.targetConnectionCount,
+      setPresenterName: state.setPresenterName,
     }))
   )
 
-  const { presentationStatus, signalStates, addSignalConnection } =
-    usePresentationSignalStore(
-      useShallow((state) => ({
-        presentationStatus: state.presentationStatus,
-        signalStates: state.signalStates,
-        addSignalConnection: state.addSignalConnection,
-      }))
-    )
+  const {
+    presentationStatus,
+    setPresentationStatus,
+    signalStates,
+    addSignalConnection,
+  } = usePresentationSignalStore(
+    useShallow((state) => ({
+      presentationStatus: state.presentationStatus,
+      setPresentationStatus: state.setPresentationStatus,
+      signalStates: state.signalStates,
+      addSignalConnection: state.addSignalConnection,
+    }))
+  )
 
   const { setIsAllConnection } = usePresentationStore(
     useShallow((state) => ({
@@ -79,6 +96,7 @@ export function useConferenceEvents() {
     )
 
   const { handleSignal } = useSignalEvents({
+    myConnectionId,
     setIsModalOpen,
     setModalStep,
     modalStep,
@@ -91,12 +109,16 @@ export function useConferenceEvents() {
     sessionRef.current = session
   }, [session])
 
-  // ✅ 시그널 이벤트 처리
-  const signalHandler = useCallback(
+  // ✅ 시그널 이벤트 처리 : 모든 사람들이 보냈을 때
+  const allConnectionSignalHandler = useCallback(
     (event: SignalEvent) => {
+      console.log('event', event)
       const connectionId = event.from?.connectionId
-      const signalData = JSON.parse(event.data as string)
-      const signalType = signalData.type // presentationStatus의 value 값이 들어옴
+      const {
+        data: signalType,
+        presenterConnectionId,
+        presenterName,
+      } = JSON.parse(event.data as string) // presentationStatus의 value 값이 들어옴
 
       // 이미 처리된 시그널인지 확인
       if (
@@ -105,7 +127,6 @@ export function useConferenceEvents() {
         )
       ) {
         // value 값에 대한 connectionId 저장
-        console.log('이미 저장되어있는 시그널입니다.')
         return
       }
 
@@ -113,7 +134,26 @@ export function useConferenceEvents() {
         // 새로운 시그널 연결 추가
         addSignalConnection(signalType, connectionId as string)
         // 시그널 처리
-        handleSignal(signalType)
+
+        switch (signalType) {
+          case 'PRESENTER_INTRODUCTION': // 발표자 소개 시그널
+            setPresenterName(presenterName)
+            presenterConnectionId === myConnectionId // 내가 발표자인지 확인
+              ? handleSignal(
+                  signalType,
+                  'presenter',
+                  presenterConnectionId as string
+                ) // 1. 발표자
+              : handleSignal(
+                  signalType,
+                  'individual',
+                  presenterConnectionId as string
+                ) // 2. 참여자
+            break
+          default:
+            handleSignal(signalType, 'all')
+            break
+        }
       } catch (error) {
         console.error('시그널 처리 중 오류 발생:', error)
       }
@@ -124,14 +164,25 @@ export function useConferenceEvents() {
   // ✅ 시그널 이벤트 처리
   useEffect(() => {
     if (!sessionRef.current) return
-    sessionRef.current.on('signal', signalHandler)
+    // 발표 상태 변경 시그널
+    sessionRef.current.on(
+      'signal:presentationStatus',
+      allConnectionSignalHandler
+    )
+
+    // 발표자 준비 완료 시그널
+    sessionRef.current.on('signal:ready', allConnectionSignalHandler)
     // 클린업 함수
     return () => {
       if (sessionRef.current) {
-        sessionRef.current.off('signal', signalHandler)
+        sessionRef.current.off(
+          'signal:presentationStatus',
+          allConnectionSignalHandler
+        )
+        sessionRef.current.off('signal:ready', allConnectionSignalHandler)
       }
     }
-  }, [sessionRef.current, signalHandler])
+  }, [sessionRef.current, allConnectionSignalHandler])
 
   // ✅ 스트림 생성 핸들러 : 새로운 사용자의 카메라 스트림 및 화면 공유 스트림 구독
   const handleStreamCreated = (event: SessionEventMap['streamCreated']) => {
@@ -204,11 +255,16 @@ export function useConferenceEvents() {
 
       // 시작 전, 모든 참여자가 접속 완료 시, 발표 시작 신호 전송
       const isAllConnection =
-        remoteConnectionCount === targetConnectionCount - 1 &&
-        presentationStatus === 'INITIAL' // Key 값으로 비교
+        presentationStatus === 'INITIAL' &&
+        remoteConnectionCount === targetConnectionCount - 1
+      // Key 값으로 비교
 
       if (isAllConnection) {
-        setIsAllConnection(true)
+        setPresentationStatus(PRESENTATION_STATUS.READY as PresentationStatus)
+        setTimeout(() => {
+          setIsModalOpen(true)
+          setModalStep(ModalSteps.INITIAL.READY)
+        }, 1000) // 실제 : 10초 뒤 신호 전송, 테스트 1초
       }
 
       // roomId 별로 참여자 데이터를 저장합니다.

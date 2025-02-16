@@ -8,6 +8,7 @@ export const ModalSteps = {
   INITIAL: {
     WELCOME: 'welcome',
     READY: 'ready',
+    WAITING: 'waiting',
   },
 
   // 발표 모달
@@ -40,7 +41,6 @@ export const ModalSteps = {
     END_CAUTION: 'end_caution',
     END_COMPLETE: 'end_complete',
     WAITING_END: 'waiting_end',
-    NAVIGATION_BLOCK: 'navigation_block',
   },
 }
 
@@ -65,7 +65,7 @@ const {
 // 발표 상태에 따른 모달 상태
 export const PRESENTATION_MODAL_STATUS = {
   [INITIAL]: ModalSteps.INITIAL.WELCOME,
-  [READY]: ModalSteps.INITIAL.READY,
+  // [READY]: ModalSteps.INITIAL.READY,
   [START]: ModalSteps.PRESENTATION.PRESENTATION_SOON,
   [PRESENTER_INTRO]: ModalSteps.PRESENTATION.PRESENTER_INTRODUCTION,
   [ING]: ModalSteps.PRESENTATION.PRESENTATION_SOON,
@@ -85,5 +85,7 @@ export type ModalStep = keyof typeof ModalSteps
 export type ModalStepValue = (typeof ModalSteps)[keyof typeof ModalSteps]
 
 export const getModalStep = (status: PresentationStatus) => {
-  return PRESENTATION_MODAL_STATUS[PRESENTATION_STATUS[status]]
+  console.log('찾아야하는 발표 상태', status)
+  console.log('찾은 모달', PRESENTATION_MODAL_STATUS[status])
+  return PRESENTATION_MODAL_STATUS[status]
 }
