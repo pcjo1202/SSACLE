@@ -210,6 +210,37 @@ export const addSsaprintQuestion = async (sprintId, teamId, description) => {
   }
 }
 
+/**
+ * ✅ 질문 수정
+ * @param {number} id - 질문 ID
+ * @param {Object} data - 수정할 데이터 (sprintId, teamId, description, opened)
+ * @returns {Promise<Object>} - 수정된 질문 정보
+ */
+export const updateSsaprintQuestion = async (id, data) => {
+  try {
+    const response = await httpCommon.put(
+      SSAPRINT_END_POINT.UPDATE_QUESTION(id),
+      data
+    )
+    return response.data
+  } catch (error) {
+    throw new Error('질문 수정에 실패했습니다.')
+  }
+}
+
+/**
+ * ✅ 질문 삭제 (API 요청)
+ * @param {number} id - 삭제할 질문 ID
+ * @returns {Promise<void>}
+ */
+export const deleteSsaprintQuestion = async (id) => {
+  try {
+    await httpCommon.delete(SSAPRINT_END_POINT.DELETE_QUESTION(id))
+  } catch (error) {
+    throw new Error('🔥 질문 삭제에 실패했습니다.')
+  }
+}
+
 // ✅ 발표 종료
 export const exitSsaprintPresentation = (id) =>
   httpCommon.patch(SSAPRINT_END_POINT.PRESENTATION_EXIT(id))

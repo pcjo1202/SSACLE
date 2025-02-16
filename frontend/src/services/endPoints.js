@@ -90,6 +90,8 @@ export const SSAPRINT_END_POINT = {
     `/ssaprint/${id}/presentation/participants`, // 발표 참가자 목록 조회
   QUESTIONS: (sprintId) => `/sprints/${sprintId}/question-cards`, // 질문 목록 조회
   ADD_QUESTION: '/question-cards', // 질문 등록
+  UPDATE_QUESTION: (id) => `/question-cards/${id}`, // 질문 수정
+  DELETE_QUESTION: (id) => `/question-cards/${id}`, // 질문 삭제
   PRESENTATION_CARD_DETAIL: (id, cardId) =>
     `/ssaprint/${id}/presentation/cards/${cardId}`, // 특정 질문 카드 상세 조회
   PRESENTATION_EXIT: (id) => `/ssaprint/${id}/presentation/exit`, // 발표 종료
