@@ -32,6 +32,7 @@ import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.sprint.service.SprintService;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
+import ssafy.com.ssacle.team.dto.TeamResponse;
 import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.todo.dto.TodoRequest;
 import ssafy.com.ssacle.user.domain.User;
@@ -837,6 +838,11 @@ public class DataInitializer {
                                               SprintService sprintService,
                                               QuestionCardService questionCardService,
                                               DiaryService diaryService) {
+        if (teamRepository.count() > 0) {
+            System.out.println("✅ 기존 팀이 존재하므로 스프린트 초기화 생략");
+            return;
+        }
+
         List<Sprint> allSprints = sprintRepository.findAll();
         List<User> admins = userRepository.findAllWithTeams().stream()
                 .filter(user -> user.getEmail().startsWith("admin1") || user.getEmail().startsWith("admin2"))
