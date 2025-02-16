@@ -59,4 +59,8 @@ public class DiaryService {
                 .collect(Collectors.toList());
     }
 
+    public void saveDiary(Diary diary) {
+        diaryRepository.save(diary);
+    }
+
 }

@@ -15,7 +15,6 @@ import ssafy.com.ssacle.category.dto.CategoryResponse;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.diary.dto.DiaryResponseDTO;
 import ssafy.com.ssacle.diary.service.DiaryService;
-import ssafy.com.ssacle.gpt.dto.TodoResponse;
 import ssafy.com.ssacle.notion.service.NotionService;
 import ssafy.com.ssacle.questioncard.dto.QuestionCardResponse;
 import ssafy.com.ssacle.questioncard.service.QuestionCardService;
@@ -94,7 +93,7 @@ public class SprintService {
     }
 
     @Transactional
-    public Long joinSprint(Long sprintId, User user) {
+    public Long joinSprint(Long sprintId, User user, String teamName) {
         Sprint sprint = sprintRepository.findByIdWithTeams(sprintId)
                 .orElseThrow(SprintNotExistException::new);
 
@@ -102,7 +101,7 @@ public class SprintService {
         List<CategoryNameAndLevelResponseDTO> categories = categoryRepository.findCategoryNamesBySprintId(sprintId);
 
         // 스프린트 <-> 팀 <-> 사용자팀 <-> 사용자 연동
-        Team team = saveTeamAndTeamUser(user, sprint);
+        Team team = saveTeamAndTeamUser(user, sprint, teamName);
         // 팀 <-> 노션 연동
         String notionUrl = saveNotion(user.getName(), defaultTodos, categories);
         team.setNotionURL(notionUrl);
@@ -132,10 +131,11 @@ public class SprintService {
         return teamPageId;
     }
 
-    private Team saveTeamAndTeamUser(User user, Sprint sprint){
+    private Team saveTeamAndTeamUser(User user, Sprint sprint, String teamName){
         Team team = SprintTeamBuilder.builder()
                 .addUser(user)
                 .participateSprint(sprint)
+                .teamName(teamName)
                 .build();
 
         return teamRepository.save(team);

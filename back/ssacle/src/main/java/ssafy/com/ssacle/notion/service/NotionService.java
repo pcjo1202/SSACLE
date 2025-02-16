@@ -25,19 +25,19 @@ public class NotionService {
     /** SSACLE 메인 페이지에서 계층적으로 데이터베이스 & 페이지를 탐색하고 생성*/
     public String createCategoryStructure(String category1, String category2, String category3, String teamName) {
         // '대' 카테고리 데이터베이스 탐색 및 생성
-        System.out.println("========대 카테고리 ============");
+//        System.out.println("========대 카테고리 ============");
         String galleryId = findOrCreatePage(SSACLE_MAIN_PAGE_ID, category1);
-        System.out.println("✅ 대 카테고리 ID: " + galleryId);
+//        System.out.println("✅ 대 카테고리 ID: " + galleryId);
 
         // '중' 카테고리 페이지 탐색 및 생성
-        System.out.println("========중 카테고리 ============");
+//        System.out.println("========중 카테고리 ============");
         String middlePageId = findOrCreatePage(galleryId, category2);
-        System.out.println("✅ 중 카테고리 ID: " + middlePageId);
+//        System.out.println("✅ 중 카테고리 ID: " + middlePageId);
 
         // '소' 카테고리 데이터베이스 탐색 및 생성
-        System.out.println("========소 카테고리 ============");
+//        System.out.println("========소 카테고리 ============");
         String smallDatabaseId = findOrCreatePage(middlePageId, category3);
-        System.out.println("✅ 소 카테고리 ID: " + smallDatabaseId);
+//        System.out.println("✅ 소 카테고리 ID: " + smallDatabaseId);
 
         // 최종 팀 페이지 생성
         return createTeamPage(smallDatabaseId, teamName);
@@ -50,7 +50,7 @@ public class NotionService {
         String existingPageId = extractPageId(searchResponse, pageName);
 
         if (existingPageId != null) {
-            System.out.println("페이지 존재.");
+//            System.out.println("페이지 존재.");
             return existingPageId;
         }
 
@@ -72,7 +72,7 @@ public class NotionService {
 
     /** 새 페이지 생성 */
     private String createPage(String databaseId, String pageName) {
-        System.out.println("📌 새 페이지 생성: " + pageName);
+//        System.out.println("📌 새 페이지 생성: " + pageName);
         String requestBody = """
         {
             "parent": { "page_id": "%s" },
@@ -87,7 +87,7 @@ public class NotionService {
 
     /** '소' 카테고리 내부에 팀 페이지 생성 */
     private String createTeamPage(String databaseId, String teamName) {
-        System.out.println("📌 팀 페이지 생성: " + teamName);
+//        System.out.println("📌 팀 페이지 생성: " + teamName);
         String requestBody = """
         {
             "parent": { "page_id": "%s" },
@@ -102,21 +102,21 @@ public class NotionService {
         if (teamId == null) throw new NotionCreatePageException();
 
         String teamUrl = getNotionPageUrl(teamId);
-        System.out.println("✅ 팀 페이지 ID: " + teamId);
-        System.out.println("🔗 팀 페이지 URL: " + teamUrl);
+//        System.out.println("✅ 팀 페이지 ID: " + teamId);
+//        System.out.println("🔗 팀 페이지 URL: " + teamUrl);
         return teamUrl;
     }
 
     /** 날짜별 페이지 생성 (팀 페이지 내) */
     public void createDailyPages(String teamPageId, List<DefaultTodoResponse> defaultTodoResponses) {
-        System.out.println("--------- 팀별 날짜 페이지 생성 메서드 ---------------");
+//        System.out.println("--------- 팀별 날짜 페이지 생성 메서드 ---------------");
         if (teamPageId.startsWith("https://www.notion.so/")) {
             teamPageId = extractPageIdFromUrl(teamPageId); // URL에서 UUID만 추출
         }
 
         for (DefaultTodoResponse todoResponse : defaultTodoResponses) {
             String dateName = todoResponse.getDate().toString();
-            System.out.println("날짜별 페이지 생성: " + dateName);
+//            System.out.println("날짜별 페이지 생성: " + dateName);
 
             String requestBody = """
             {
@@ -192,13 +192,13 @@ public class NotionService {
     /** 오늘 날짜의 노션 페이지 가져오기 */
     public String getTodayDiaryContent(String teamNotionUrl) {
         String teamPageId = extractPageIdFromUrl(teamNotionUrl);
-        System.out.println("팀 page id : " + teamPageId);
+//        System.out.println("팀 page id : " + teamPageId);
         String todayDate = LocalDate.now().toString();
 
         // 🔹 오늘 날짜에 해당하는 페이지 ID 조회
         String todayPageId = getDatePageId(teamPageId, todayDate);
         if (todayPageId == null) {
-            System.out.println("오늘 날짜의 페이지가 없음: " + todayDate);
+//            System.out.println("오늘 날짜의 페이지가 없음: " + todayDate);
             return null;
         }
 
@@ -221,7 +221,7 @@ public class NotionService {
                         JsonNode childPageNode = node.get("child_page");
                         if (childPageNode != null && childPageNode.has("title")) {
                             String pageTitle = childPageNode.get("title").asText();
-                            System.out.println("🔍 찾은 페이지 제목: " + pageTitle);
+//                            System.out.println("🔍 찾은 페이지 제목: " + pageTitle);
 
                             if (todayDate.equals(pageTitle)) {
                                 return node.get("id").asText(); // 오늘 날짜의 페이지 ID 반환

@@ -35,10 +35,11 @@ public interface SprintSwaggerController {
             @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
     })
     @Parameters(value = {
-            @Parameter(name = "sprintId", description = "참가할 스프린트의 ID", example = "1")
+            @Parameter(name = "sprintId", description = "참가할 스프린트의 ID", example = "1"),
+            @Parameter(name = "teamName", description = "참가할 팀의 이름", example = "Team Alpha")
     })
     @PostMapping("/ssaprint/{sprintId}/join")
-    ResponseEntity<Long> joinSprint(@PathVariable Long sprintId);
+    ResponseEntity<Long> joinSprint(@PathVariable Long sprintId,  @RequestParam String teamName);
 
 
     @Operation(summary = "단일 스프린트 조회", description = "SprintId를 기반으로 특정 스프린트를 가져옵니다.")

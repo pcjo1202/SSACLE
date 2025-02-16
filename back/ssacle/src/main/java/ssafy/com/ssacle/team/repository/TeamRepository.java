@@ -4,6 +4,7 @@ import jakarta.persistence.Id;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.team.domain.Team;
 
 import java.util.List;
@@ -23,4 +24,8 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     List<Team> findBySprintIdIn(List<Long> sprintIds);
 
+    List<Team> findBySprint(Sprint sprint);
+
+    @Query("SELECT t FROM Team t WHERE t.sprint.id = :sprintId")
+    List<Team> findBySprintId(Long sprintId);
 }

@@ -27,9 +27,9 @@ public class SprintController implements SprintSwaggerController{
 
     /** 스프린트 참가 */
     @Override
-    public ResponseEntity<Long> joinSprint(@PathVariable Long sprintId) {
+    public ResponseEntity<Long> joinSprint(@PathVariable Long sprintId,  @RequestParam String teamName) {
         User user = userService.getAuthenticatedUserWithTeams();
-        Long teamId = sprintService.joinSprint(sprintId, user);
+        Long teamId = sprintService.joinSprint(sprintId, user, teamName);
 
         return ResponseEntity.status(201).body(teamId);
     }
