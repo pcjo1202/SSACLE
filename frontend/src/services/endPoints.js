@@ -108,7 +108,7 @@ export const SSADCUP_END_POINT = {
 export const ADMIN_END_POINT = {
   USERS: '/admin/users',
   SSAPRINT: {
-    // LIST: '',
+    LIST: '/search',
     // DETAIL: '',
     CREATE: {
       CATEGORY_ALL: '/category/all', // 전체 카테고리 조회

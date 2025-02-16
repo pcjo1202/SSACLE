@@ -2,90 +2,81 @@ import CommonTable from '@/components/AdminPage/CommonTable'
 import DeleteButton from '@/components/AdminPage/DeleteButton'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { fetchSearchSsaprint } from '@/services/adminService'
+import useSsaprintList from '@/hooks/useSsaprintList'
+import {
+  cleanDescription,
+  formatDate,
+  getStatus,
+} from '@/components/AdminPage/SsaprintManagement/SearchSsaprint'
 
 const AdminPage = () => {
   const navigate = useNavigate()
+
+  const [selectedRows, setSelectedRows] = useState([])
+  const [page, setPage] = useState(0) // 현재 페이지 상태
+  const size = 10 // 한 페이지당 보여줄 개수
+
+  // 싸프린트 데이터 가져오기
+  const { data, isLoading, error } = useSsaprintList({
+    categoryId: null,
+    status: 0,
+    page,
+    size,
+  })
+
   const columns = [
     { key: 'id', label: '싸프린트 ID', sortable: true },
+    { key: 'name', label: '이름' },
+    {
+      key: 'basicDescription',
+      label: '설명',
+      render: (row) => cleanDescription(row.basicDescription),
+    },
+    {
+      key: 'startAt',
+      label: '시작일',
+      render: (row) => formatDate(row.startAt),
+    },
+    {
+      key: 'endAt',
+      label: '종료일',
+      render: (row) => formatDate(row.endAt),
+    },
+    { key: 'maxMembers', label: '최대 인원' },
+    { key: 'currentMembers', label: '현재 인원' },
     {
       key: 'status',
       label: '상태',
-      align: 'left',
       render: (row) => (
         <span
-          className={`px-2 py-1 rounded-full text-white ${statusColor(row.status)}`}
+          className={`px-2 py-1 rounded-full text-white ${getStatusColor(row)}`}
         >
-          {row.status}
+          {getStatus(row.startAt, row.endAt)}
         </span>
       ),
     },
-    { key: 'category', label: '대분류' },
-    { key: 'subcategory', label: '중분류' },
-    { key: 'title', label: '제목' },
-    { key: 'date', label: '기간', sortable: true },
   ]
 
-  const data = [
-    {
-      id: 'ABC1234',
-      status: '예정',
-      category: 'FE',
-      subcategory: 'REACT',
-      title: 'useState 싸프린트',
-      date: '2025-01-27 ~ 2025-02-02',
-    },
-    {
-      id: 'ABC1235',
-      status: '진행중',
-      category: 'FE',
-      subcategory: 'VUE',
-      title: 'Pinia 싸프린트',
-      date: '2025-02-01 ~ 2025-02-07',
-    },
-    {
-      id: 'ABC1236',
-      status: '진행 완료',
-      category: 'FE',
-      subcategory: 'REACT',
-      title: 'Redux 싸프린트',
-      date: '2025-02-10 ~ 2025-02-15',
-    },
-    {
-      id: 'ABC1237',
-      status: '모집 중',
-      category: 'FE',
-      subcategory: 'VUE',
-      title: 'Vuex 싸프린트',
-      date: '2025-02-20 ~ 2025-02-25',
-    },
-  ]
-
-  const statusColor = (status) => {
-    return (
-      {
-        예정: 'bg-orange-400',
-        진행중: 'bg-green-500',
-        '진행 완료': 'bg-gray-400',
-        '모집 중': 'bg-blue-400',
-      }[status] || 'bg-gray-200'
-    )
+  const getStatusColor = (row) => {
+    const status = getStatus(row.startAt, row.endAt)
+    return {
+      '모집 중': 'bg-blue-400',
+      '진행 중': 'bg-green-500',
+      '진행 완료': 'bg-gray-400'
+    }[status] || 'bg-gray-200'
   }
 
   const handleDelete = (row) => {
-    console.log('삭제할 데이터:', row)
+    const handleDelete = (rowsToDelete) => {
+      console.log('삭제할 데이터:', rowsToDelete)
+      setSelectedRows([]) // 삭제 후 선택 초기화
+    }
+    
   }
 
   const handleCreate = () => {
     navigate('/admin/sprint/create')
-  }
-
-  const [selectedRows, setSelectedRows] = useState([])
-
-  const handleDelete2 = (rowsToDelete) => {
-    setData((prevData) =>
-      prevData.filter((row) => !rowsToDelete.includes(row.id))
-    )
-    setSelectedRows([]) // 선택된 항목 초기화
   }
 
   return (
@@ -106,17 +97,9 @@ const AdminPage = () => {
       </div>
       <CommonTable
         columns={columns}
-        data={data}
+        data={data?.content || []} // API 응답이 없으면 빈 배열 전달
         selectable
-        perPage={10}
-        renderActions={(row) => (
-          <button
-            className="px-2 py-1 bg-red-500 text-white rounded"
-            onClick={() => handleDelete(row)}
-          >
-            삭제
-          </button>
-        )}
+        perPage={size}
         onSelect={setSelectedRows}
       />
     </div>

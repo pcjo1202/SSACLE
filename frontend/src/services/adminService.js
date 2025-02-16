@@ -87,3 +87,21 @@ export const fetchCreateCategory = async ({
     throw error
   }
 }
+
+
+// 전체 싸프린트 조회 (GET)
+export const fetchSearchSsaprint = async ({ categoryId, status, page, size }) => {
+  const response = await axios.get(ADMIN_END_POINT.SSAPRINT.LIST, {
+    params: {
+      categoryId, // 선택사항
+      status, // 필수
+      pageable: JSON.stringify({
+        page, // 현재 페이지
+        size // 한 페이지에 표시할 개수 (10개)
+      })
+    }
+  })
+  return response.data
+}
+
+
