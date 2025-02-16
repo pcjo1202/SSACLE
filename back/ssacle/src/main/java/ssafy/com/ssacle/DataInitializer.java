@@ -20,11 +20,16 @@ import ssafy.com.ssacle.category.exception.CategoryException;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.comment.domain.Comment;
 import ssafy.com.ssacle.comment.repository.CommentRepository;
+import ssafy.com.ssacle.diary.domain.Diary;
+import ssafy.com.ssacle.diary.service.DiaryService;
 import ssafy.com.ssacle.lunch.domain.Lunch;
 import ssafy.com.ssacle.lunch.repository.LunchRepository;
+import ssafy.com.ssacle.questioncard.dto.QuestionCardRequest;
+import ssafy.com.ssacle.questioncard.service.QuestionCardService;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
+import ssafy.com.ssacle.sprint.service.SprintService;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.repository.TeamRepository;
@@ -61,8 +66,11 @@ public class DataInitializer {
             SprintRepository sprintRepository,
             TeamRepository teamRepository,
             UserTeamRepository userTeamRepository,
-            SprintCategoryRepository sprintCategoryRepository) {
-
+            SprintCategoryRepository sprintCategoryRepository,
+            SprintService sprintService,
+            QuestionCardService questionCardService,
+            DiaryService diaryService
+    ) {
         return args -> {
             initializeUsers(userRepository);
             initializeCategory(categoryRepository);
@@ -74,7 +82,8 @@ public class DataInitializer {
             initializeAINews(aiNewsRepository);
             initializeLunch(lunchRepository);
             initializeSprints(sprintRepository,categoryRepository,sprintCategoryRepository);
-            initializeTeams(sprintRepository,teamRepository,userRepository,userTeamRepository);
+            initializeSprintParticipation(sprintRepository, userRepository, teamRepository, sprintService, questionCardService, diaryService);
+//            initializeTeams(sprintRepository,teamRepository,userRepository,userTeamRepository);
         };
     }
 
@@ -821,36 +830,43 @@ public class DataInitializer {
 
         return todos;
     }
-
     @Transactional
-    public void initializeTeams(SprintRepository sprintRepository, TeamRepository teamRepository, UserRepository userRepository, UserTeamRepository userTeamRepository) {
-        if (teamRepository.count() == 0) {
-            List<Sprint> sprints = sprintRepository.findAllWithTeams();
-            List<User> users = userRepository.findAllWithUserTeams();
-            List<Team> teams = new ArrayList<>();
+    public void initializeSprintParticipation(SprintRepository sprintRepository,
+                                              UserRepository userRepository,
+                                              TeamRepository teamRepository,
+                                              SprintService sprintService,
+                                              QuestionCardService questionCardService,
+                                              DiaryService diaryService) {
+        List<Sprint> allSprints = sprintRepository.findAll();
+        List<User> admins = userRepository.findAllWithTeams().stream()
+                .filter(user -> user.getEmail().startsWith("admin1") || user.getEmail().startsWith("admin2"))
+                .toList();
 
-            for (User user : users) {
-                // 랜덤한 스프린트 배정 (스프린트가 존재할 경우)
-                if (!sprints.isEmpty()) {
-                    Sprint assignedSprint = sprints.get(new Random().nextInt(sprints.size()));
-
-                    // SprintTeamBuilder를 활용하여 팀 생성
-                    Team team = SprintTeamBuilder.builder()
-                            .addUser(user)
-                            .participateSprint(assignedSprint)
-                            .build();
-
-                    teams.add(team);
-                }
+        for (Sprint sprint : allSprints) {
+            System.out.println("----------스프린트 ID "+sprint.getId()+"-----------");
+            for (User admin : admins) {
+                System.out.println("----------사용자 ID "+admin.getId()+"-----------");
+                sprintService.joinSprint(sprint.getId(), admin, sprint.getId() + "_" + admin.getId());
             }
 
-            teamRepository.saveAll(teams);
+            // Sprint ID가 2+3*x인 경우 QuestionCard와 Diary 추가
+            if ((sprint.getId() - 2) % 3 == 0) {
+                // ✅ QuestionCard 추가
+                QuestionCardRequest questionCardRequest = new QuestionCardRequest(sprint.getId(),
+                        "Sprint " + sprint.getId() + "을 위한 질문 카드입니다.", false);
+                questionCardService.createQuestionCard(questionCardRequest);
 
-            System.out.println("✅ SprintTeamBuilder를 이용한 1인 팀 및 스프린트 배정 완료");
-        } else {
-            System.out.println("✅ 팀 데이터가 이미 존재합니다.");
+                // ✅ Diary 추가
+                List<Team> teams = teamRepository.findBySprint(sprint);
+                for (Team team : teams) {
+                    Diary diary = new Diary(team, team.getName(),
+                            "Sprint " + sprint.getId() + "의 일기 내용입니다.", LocalDate.now().minusDays(1));
+                    diaryService.saveDiary(diary);
+                }
+            }
         }
-    }
 
+        System.out.println("✅ 모든 Sprint에 admin1~admin2이 참가하고, 특정 Sprint에 QuestionCard 및 Diary가 추가되었습니다.");
+    }
 
 }
