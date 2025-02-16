@@ -1,5 +1,6 @@
 package ssafy.com.ssacle.todo.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.todo.domain.DefaultTodo;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@AllArgsConstructor
 public class TodoRequest {
     private LocalDate date;
     private List<String> tasks;
