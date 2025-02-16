@@ -76,7 +76,7 @@ const AdminPage = () => {
   }
 
   const handleCreate = () => {
-    navigate('/admin/sprint/create')
+    navigate('/admin/ssaprint/create')
   }
 
   return (
