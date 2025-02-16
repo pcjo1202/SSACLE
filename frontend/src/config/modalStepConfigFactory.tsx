@@ -179,7 +179,7 @@ export const createModalStepConfig = ({
       ],
     },
     // ? 발표 곧 시작 모달 (참여자 전용) ✅
-    [ModalSteps.PRESENTATION.PRESENTATION_SOON]: {
+    [ModalSteps.PRESENTATION.PRESENTATION_WAITING]: {
       title: '발표가 곧 시작됩니다!',
       description: (
         <>
@@ -197,7 +197,7 @@ export const createModalStepConfig = ({
       ),
     },
     [ModalSteps.PRESENTATION.PRESENTATION_END_CONFIRM]: {
-      title: ['⚠️ 발표를 완료하시겠습니다? ⚠️'],
+      title: ['⚠️ 발표를 완료하시겠습니까? ⚠️'],
       description: (
         <>
           <span>발표를 완료하시면 질문 섹션으로 넘어갑니다.</span>
@@ -262,7 +262,9 @@ export const createModalStepConfig = ({
           text: '확인',
           onClick: () => {
             // 질문 섹션 시작 시그널 보내기
-            // sendSignal(PRESENTATION_STATUS.QUESTION_READY)
+            setTimeout(() => {
+              sendStatusSignal(PRESENTATION_STATUS.QUESTION_ANSWERER_INTRO)
+            }, 5000)
             closeModal()
           },
           style: '',
@@ -300,6 +302,22 @@ export const createModalStepConfig = ({
           style: '',
         },
       ],
+    },
+    // * 질문 답변 준비 모달 (참여자 전용) ⚠️
+    [ModalSteps.QUESTION.ANSWER_WAITING]: {
+      title: '질문 답변이 곧 시작됩니다!',
+      description: (
+        <>
+          <span>이번 답변자는 "{presenterName}"님 입니다.</span>
+          <span>답변자 준비하는 시간을 조금만 기다려주세요.</span>
+          <span className="italic">답변자가 답변을 선택하고 있습니다.</span>
+        </>
+      ),
+      buttons: (
+        <>
+          <span className="text-4xl font-bold animate-spin">⏳</span>
+        </>
+      ),
     },
     // ! 질문 섹션 종료
     [ModalSteps.QUESTION.ANSWER_END]: {

@@ -16,7 +16,7 @@ export const ModalSteps = {
     PRESENTER_BEN: 'presenter_ben',
     PRESENTER_SELECTING: 'presenter_selecting',
     PRESENTER_INTRODUCTION: 'presenter_introduction',
-    PRESENTATION_SOON: 'presentation_soon',
+    PRESENTATION_WAITING: 'presentation_waiting',
     PRESENTATION_END_CONFIRM: 'presentation_end_confirm',
     PRESENTATION_END: 'presentation_end',
   },
@@ -25,6 +25,7 @@ export const ModalSteps = {
   QUESTION: {
     SECTION_READY: 'question_section_ready',
     ANSWER_INTRODUCTION: 'question_answer_introduction',
+    ANSWER_WAITING: 'question_answer_waiting',
     ANSWER_END: 'question_answer_end',
   },
 
@@ -67,9 +68,9 @@ const {
 export const PRESENTATION_MODAL_STATUS = {
   [INITIAL]: ModalSteps.INITIAL.WELCOME,
   // [READY]: ModalSteps.INITIAL.READY,
-  [START]: ModalSteps.PRESENTATION.PRESENTATION_SOON,
+  [START]: ModalSteps.PRESENTATION.PRESENTATION_WAITING,
   [PRESENTER_INTRO]: ModalSteps.PRESENTATION.PRESENTER_INTRODUCTION,
-  [ING]: ModalSteps.PRESENTATION.PRESENTATION_SOON,
+  // [ING]: ModalSteps.PRESENTATION.PRESENTATION_WAITING,
   [PENDING_END_CONFIRM_3MIN]: ModalSteps.PRESENTATION.PRESENTATION_END_CONFIRM, // 수정 필
   [PENDING_END]: ModalSteps.PRESENTATION.PRESENTATION_END,
   [QUESTION_READY]: ModalSteps.QUESTION.SECTION_READY,

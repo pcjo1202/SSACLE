@@ -7,7 +7,7 @@ import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import { usePresentationModalStateStore } from '@/store/usePresentationModalStateStore'
 import { usePresentationSignalStore } from '@/store/usePresentationSignalStore'
 import { usePresentationStore } from '@/store/usePresentationStore'
-import { useEffect, type FC } from 'react'
+import { useEffect, useRef, type FC } from 'react'
 import { useShallow } from 'zustand/shallow'
 
 interface StepContainerProps {
@@ -22,6 +22,12 @@ const StepContainer: FC<StepContainerProps> = ({ children }) => {
     }))
   )
 
+  const questionStep = useRef<Array<string>>(() => {
+    session?.streamManagers.map((manager) => {
+      // const {username} = JSON.parse(manager.stream.connection.data as string)
+      // return username
+    })
+  })
   useEffect(() => {
     // 발표 시작 상태일 때 5초 후 발표자 소개 신호 전송
     if (presentationStatus === PRESENTATION_STATUS_KEYS.START) {
@@ -35,7 +41,7 @@ const StepContainer: FC<StepContainerProps> = ({ children }) => {
         session?.streamManagers[randomPresenter].stream.connection
           .data as string
       )
-      console.log(presenterName)
+      // 발표자 소개 신호 전송
       setTimeout(() => {
         session?.signal({
           data: JSON.stringify({
@@ -46,6 +52,31 @@ const StepContainer: FC<StepContainerProps> = ({ children }) => {
           type: 'presentationStatus',
         })
       }, 5000)
+    }
+    // 질문 준비 신호 전송
+    // 답변자 정하기,
+    else if (
+      presentationStatus === PRESENTATION_STATUS_KEYS.QUESTION_ANSWERER_INTRO
+    ) {
+      questionStep.current.length < 3
+        ? // 질문 답변 횟수
+          setTimeout(() => {
+            session?.signal({
+              data: JSON.stringify({
+                data: PRESENTATION_STATUS.QUESTION_ANSWER,
+                presenterName,
+              }),
+            })
+            questionStep.current.push(presenterName)
+          }, 5000)
+        : // 모든 답변이 끝나면 질문 카드 종료 신호 전송
+          setTimeout(() => {
+            session?.signal({
+              data: JSON.stringify({
+                data: PRESENTATION_STATUS.QUESTION_END,
+              }),
+            })
+          }, 5000)
     }
 
     //

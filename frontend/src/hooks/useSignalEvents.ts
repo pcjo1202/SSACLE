@@ -113,7 +113,7 @@ export const useSignalEvents = ({
 
           if (signalType === PRESENTATION_STATUS.PRESENTER_INTRO) {
             setIsModalOpen(true)
-            setModalStep(ModalSteps.PRESENTATION.PRESENTATION_SOON)
+            setModalStep(ModalSteps.PRESENTATION.PRESENTATION_WAITING)
           }
           break
         case 'presenter':
@@ -121,9 +121,13 @@ export const useSignalEvents = ({
           console.log('나 발표자야?', connectId)
           console.log('signalType', signalType)
           console.log('signalStates', PRESENTATION_STATUS.READY)
+          // 여기서 질문 답변 준비 신호 보내기
           if (signalType === PRESENTATION_STATUS.PRESENTER_INTRO) {
             setIsModalOpen(true)
             setModalStep(ModalSteps.PRESENTATION.PRESENTER_INTRODUCTION)
+          } else if (signalType === PRESENTATION_STATUS.QUESTION_READY) {
+            setIsModalOpen(true)
+            setModalStep(ModalSteps.PRESENTATION.PRESENTATION_WAITING)
           }
           break
       }

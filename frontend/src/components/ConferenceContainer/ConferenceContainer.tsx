@@ -1,25 +1,28 @@
 import StreamVideoCard from '@/components/PresentationPage/StreamVideoCard/StreamVideoCard'
 import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import { useConnect } from '@/hooks/useConnect'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import SsaprintVideoLayout from '@/components/layout/SsaprintVideoLayout'
 import SsadcupVideoLayout from '@/components/layout/SsadcupVideoLayout'
 import { useShallow } from 'zustand/shallow'
+import QuestionInfo from '@/components/PresentationPage/QuestionInfo/QuestionInfo'
 
 interface ConferenceContainerProps {
   token: string
 }
 const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
-  const { cameraPublisher, subscribers } = useOpenviduStateStore(
+  const { cameraPublisher, subscribers, session } = useOpenviduStateStore(
     useShallow((state) => ({
       cameraPublisher: state.cameraPublisher,
       subscribers: state.subscribers,
+      session: state.session,
     }))
   )
 
   const { initializeSession, joinSession, leaveSession } = useConnect()
   const { presentationType } = useParams()
+  const firstRenderRef = useRef(false) // 첫 번째 렌더링 여부를 확인하는 참조
 
   const VideoLayout = useMemo(() => {
     if (presentationType === 'ssadcup') {
@@ -39,7 +42,8 @@ const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
           })
       }
     }
-    initialize()
+    !firstRenderRef.current && initialize()
+    firstRenderRef.current = true
     return () => leaveSession()
   }, [])
 

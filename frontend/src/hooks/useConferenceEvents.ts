@@ -151,6 +151,22 @@ export function useConferenceEvents() {
                   presenterConnectionId as string
                 ) // 2. 참여자
             break
+          case 'QUESTION_ANSWERER_INTRO': // 질문 답변자 소개 시그널
+            setPresenterName(presenterName)
+            presenterConnectionId === myConnectionId // 내가 발표자인지 확인
+              ? handleSignal(
+                  signalType,
+                  'presenter',
+                  presenterConnectionId as string
+                ) // 1. 발표자
+              : handleSignal(
+                  signalType,
+                  'individual',
+                  presenterConnectionId as string
+                ) // 2. 참여자
+            break
+          case 'QUESTION_READY': // 질문 준비 시그널
+            setPresenterName('')
           default:
             handleSignal(signalType, 'all')
             break

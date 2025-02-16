@@ -26,7 +26,7 @@ const QuestionCardSection = () => {
   return (
     <div
       className={cn(
-        'relative w-full border-gray-500 rounded-md transition-all duration-300 ease-in-out',
+        'relative w-4/5 border-gray-500 rounded-md transition-all duration-300 ease-in-out',
         isOpen ? 'basis-2/12' : 'h-0 basis-0'
       )}
     >
