@@ -95,13 +95,14 @@ export function useConferenceEvents() {
       }))
     )
 
-  const { handleSignal } = useSignalEvents({
-    myConnectionId,
-    setIsModalOpen,
-    setModalStep,
-    modalStep,
-    targetConnectionCount,
-  })
+  const { handleSignal, readySignalHandler, endSignalHandler } =
+    useSignalEvents({
+      myConnectionId,
+      setIsModalOpen,
+      setModalStep,
+      modalStep,
+      targetConnectionCount,
+    })
 
   // ref를 사용해 항상 최신 session을 참조
   const sessionRef = useRef(session)
@@ -171,7 +172,9 @@ export function useConferenceEvents() {
     )
 
     // 발표자 준비 완료 시그널
-    sessionRef.current.on('signal:ready', allConnectionSignalHandler)
+    sessionRef.current.on('signal:ready', readySignalHandler)
+    // 발표 종료 시그널
+    sessionRef.current.on('signal:end', endSignalHandler)
     // 클린업 함수
     return () => {
       if (sessionRef.current) {
@@ -179,7 +182,7 @@ export function useConferenceEvents() {
           'signal:presentationStatus',
           allConnectionSignalHandler
         )
-        sessionRef.current.off('signal:ready', allConnectionSignalHandler)
+        sessionRef.current.off('signal:ready', readySignalHandler)
       }
     }
   }, [sessionRef.current, allConnectionSignalHandler])

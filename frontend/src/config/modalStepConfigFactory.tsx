@@ -24,6 +24,8 @@ export interface CreateModalStepConfigProps {
   session: Session
   setModalStep: (step: string) => void
   presenterName: string
+  startScreenShare: () => Promise<void>
+  stopScreenShare: () => Promise<void>
 }
 
 export const createModalStepConfig = ({
@@ -33,6 +35,8 @@ export const createModalStepConfig = ({
   session,
   setModalStep,
   presenterName,
+  startScreenShare,
+  stopScreenShare,
 }: CreateModalStepConfigProps): Record<string, ModalStepConfig> => {
   const leavePresentation = async () => {
     try {
@@ -57,6 +61,13 @@ export const createModalStepConfig = ({
     session?.signal({
       data: JSON.stringify({ data }),
       type: 'ready',
+    })
+  }
+
+  const sendEndSignal = (data: string) => {
+    session?.signal({
+      data: JSON.stringify({ data }),
+      type: 'end',
     })
   }
 
@@ -140,7 +151,16 @@ export const createModalStepConfig = ({
     },
     // ? 발표자 소개 모달 (발표자 전용) ✅
     [ModalSteps.PRESENTATION.PRESENTER_INTRODUCTION]: {
-      title: `발표자는 ${presenterName}님 입니다.`,
+      title: (
+        <>
+          <span>
+            <span className="font-bold text-ssacle-black">
+              ✨{presenterName}✨
+            </span>
+            이 발표자가 되었습니다.
+          </span>
+        </>
+      ),
       description: (
         <>
           <span>화면 공유 버튼을 눌러 발표를 시작해주세요.</span>
@@ -149,11 +169,10 @@ export const createModalStepConfig = ({
       buttons: [
         {
           text: '화면 공유하기',
-          onClick: () => {
+          onClick: async () => {
+            await startScreenShare()
             // 다음 스텝으로 넘어가기 위한 시그널 보내기
-            // sendSignal(PRESENTATION_STATUS.QUESTION_READY)
-            // 화면 공유하기 버튼
-            // closeModal()
+            sendReadySignal(PRESENTATION_STATUS.ING)
           },
           style: '',
         },
@@ -177,8 +196,25 @@ export const createModalStepConfig = ({
         </>
       ),
     },
-    // ? 발표 종료 확인 모달 ✅
     [ModalSteps.PRESENTATION.PRESENTATION_END_CONFIRM]: {
+      title: ['⚠️ 발표를 완료하시겠습니다? ⚠️'],
+      description: (
+        <>
+          <span>발표를 완료하시면 질문 섹션으로 넘어갑니다.</span>
+        </>
+      ),
+      buttons: [
+        {
+          text: '확인',
+          onClick: () => {
+            sendEndSignal(PRESENTATION_STATUS.PENDING_END)
+            closeModal()
+          },
+        },
+      ],
+    },
+    // ? 발표 종료 확인 모달 ✅
+    [ModalSteps.PRESENTATION.PRESENTATION_END]: {
       title: ['✅ 발표가 종료되었습니다. ✅'],
       description: (
         <>
@@ -195,7 +231,8 @@ export const createModalStepConfig = ({
           text: '확인',
           onClick: () => {
             // 다음 스템으로 넘어가기 위한 시그널 보내기
-            // sendSignal(PRESENTATION_STATUS.QUESTION_READY)
+            sendStatusSignal(PRESENTATION_STATUS.QUESTION_READY)
+            stopScreenShare()
             closeModal()
           },
           style: '',

@@ -1,11 +1,26 @@
 import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import { useStreamStore } from '@/store/useStreamStore'
 import { OpenVidu } from 'openvidu-browser'
+import { useShallow } from 'zustand/shallow'
 
 const useScreenShare = () => {
-  const { setIsScreenSharing } = useStreamStore()
+  const { isMicOn, isCameraOn, setIsScreenSharing } = useStreamStore(
+    useShallow((state) => ({
+      isMicOn: state.isMicOn,
+      isCameraOn: state.isCameraOn,
+      setIsScreenSharing: state.setIsScreenSharing,
+    }))
+  )
   const { OV, session, cameraPublisher, screenPublisher, setScreenPublisher } =
-    useOpenviduStateStore()
+    useOpenviduStateStore(
+      useShallow((state) => ({
+        OV: state.OV,
+        session: state.session,
+        cameraPublisher: state.cameraPublisher,
+        screenPublisher: state.screenPublisher,
+        setScreenPublisher: state.setScreenPublisher,
+      }))
+    )
 
   // 화면 공유 시작
   const startScreenShare = async () => {
@@ -15,7 +30,7 @@ const useScreenShare = () => {
       // 화면 공유 초기화
       const screenPublisher = await OV?.initPublisherAsync(undefined, {
         videoSource: 'screen',
-        publishAudio: true,
+        publishAudio: isMicOn,
         mirror: false,
       })
 

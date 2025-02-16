@@ -6,6 +6,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { createModalStepConfig } from '@/config/modalStepConfigFactory'
 import { Session } from 'openvidu-browser'
 import { usePresentationStore } from '@/store/usePresentationStore'
+import useScreenShare from '@/hooks/useScreenShare'
 
 const useModalConfig = () => {
   const { setModalStep, closeModal } = usePresentationModalActions(
@@ -18,6 +19,8 @@ const useModalConfig = () => {
   const navigate = useNavigate()
   const { leaveSession } = useConnect()
   const session = useOpenviduStateStore(useShallow((state) => state.session))
+  const { startScreenShare } = useScreenShare()
+  const { stopScreenShare } = useScreenShare()
 
   // 팩토리 함수를 호출하여 모달 설정 생성
   const MODAL_STEP_CONFIG = createModalStepConfig({
@@ -27,6 +30,8 @@ const useModalConfig = () => {
     session: session as Session,
     setModalStep,
     presenterName,
+    startScreenShare,
+    stopScreenShare,
   })
 
   const getModalStepConfig = (step: string) => {

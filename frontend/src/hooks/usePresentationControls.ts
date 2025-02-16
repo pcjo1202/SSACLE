@@ -9,6 +9,8 @@ import {
   MicOffIcon,
   CameraOffIcon,
   ScreenShareOffIcon,
+  FullscreenIcon,
+  ShrinkIcon,
 } from 'lucide-react'
 import { usePresentationStore } from '@/store/usePresentationStore'
 import { useStreamStore } from '@/store/useStreamStore'
@@ -29,38 +31,60 @@ export const usePresentationControls = () => {
         subscribers: state.subscribers,
       }))
     )
-  const { isMicOn, isCameraOn, isScreenSharing } = useStreamStore(
+  const { isMicOn, isCameraOn, isScreenSharing, isFullScreen } = useStreamStore(
     useShallow((state) => ({
       isMicOn: state.isMicOn,
       isCameraOn: state.isCameraOn,
       isScreenSharing: state.isScreenSharing,
+      isFullScreen: state.isFullScreen,
     }))
   )
   const { openModal, setModalStep } = useModal()
   const { leaveSession } = useConnect()
   const { startScreenShare, stopScreenShare } = useScreenShare()
 
-  const leftControl = {
-    id: 'effects',
-    icon: SparklesIcon,
-    title: '효과',
-    style: 'text-yellow-500',
-    activeFunction: () => {
-      console.log('session', session)
-      console.log('subscribers', subscribers)
-      console.log('cameraPublisher', cameraPublisher)
-      console.log('screenPublisher', screenPublisher)
+  const leftControl = [
+    {
+      id: 'effects',
+      icon: SparklesIcon,
+      title: '효과',
+      style: 'text-yellow-500',
+      activeFunction: () => {
+        console.log('session', session)
+        console.log('subscribers', subscribers)
+        console.log('cameraPublisher', cameraPublisher)
+        console.log('screenPublisher', screenPublisher)
 
-      console.log(
-        'cameraPublisher',
-        cameraPublisher?.stream.connection.connectionId
-      )
-      console.log(
-        'screenPublisher',
-        screenPublisher?.stream.connection.connectionId
-      )
+        console.log(
+          'cameraPublisher',
+          cameraPublisher?.stream.connection.connectionId
+        )
+        console.log(
+          'screenPublisher',
+          screenPublisher?.stream.connection.connectionId
+        )
+      },
     },
-  }
+    {
+      id: 'fullScreen',
+      icon: isFullScreen ? ShrinkIcon : FullscreenIcon,
+      title: isFullScreen ? '축소' : '전체화면',
+      style: '',
+      activeFunction: () => {
+        if (isFullScreen && document.fullscreenElement) {
+          document.exitFullscreen()
+          useStreamStore.setState(({ isFullScreen }) => ({
+            isFullScreen: !isFullScreen,
+          }))
+        } else {
+          document.documentElement.requestFullscreen()
+          useStreamStore.setState(({ isFullScreen }) => ({
+            isFullScreen: !isFullScreen,
+          }))
+        }
+      },
+    },
+  ]
 
   const centerControls = [
     {
@@ -115,7 +139,7 @@ export const usePresentationControls = () => {
       activeFunction: () => {
         const isSharingMe =
           screenPublisher?.stream.connection.connectionId ===
-          cameraPublisher?.stream.connection.connectionId
+          cameraPublisher?.stream.connection.connectionId // 화면공유 중이면서 카메라 공유자가 자신인 경우
 
         if (isScreenSharing && !isSharingMe) {
           alert(

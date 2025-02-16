@@ -12,6 +12,7 @@ import {
 } from '@/store/usePresentationSignalStore'
 import { getModalStep, ModalSteps } from '@/constants/modalStep'
 import { useShallow } from 'zustand/shallow'
+import { SignalEvent } from 'openvidu-browser'
 
 interface UseSignalEventsProps {
   myConnectionId: string | null
@@ -74,9 +75,21 @@ export const useSignalEvents = ({
     [setIsModalOpen, setModalStep, setPresentationStatus]
   )
 
-  const debouncedHandleSignal = useMemo(
-    () => debounce((signalType: PresentationStatus) => {}, 300),
-    []
+  const readySignalHandler = useCallback(
+    (event: SignalEvent) => {
+      console.log('readySignalHandler', event)
+      setIsModalOpen(false)
+    },
+    [setIsModalOpen]
+  )
+
+  const endSignalHandler = useCallback(
+    (event: SignalEvent) => {
+      console.log('endSignalHandler', event)
+      setIsModalOpen(true)
+      setModalStep(ModalSteps.PRESENTATION.PRESENTATION_END)
+    },
+    [setIsModalOpen, setModalStep]
   )
 
   type SignalTarget = 'all' | 'individual' | 'presenter' | 'questioner'
@@ -121,5 +134,7 @@ export const useSignalEvents = ({
   return {
     handleSignal,
     addSignalConnection,
+    readySignalHandler,
+    endSignalHandler,
   }
 }
