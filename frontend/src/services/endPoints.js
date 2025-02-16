@@ -83,8 +83,8 @@ export const SSAPRINT_END_POINT = {
   UPDATE: (id) => `/ssaprint/${id}`, // 싸프린트 수정
   DELETE: (id) => `/ssaprint/${id}`, // 싸프린트 삭제
 
-  JOIN: (id) => `/ssaprint/${id}/join`, // 싸프린트 참가
-  CANCEL: (id) => `/ssaprint/${id}/cancel`, // 싸프린트 참가 취소
+  JOIN: (sprintId) => `/ssaprint/${sprintId}/join`, // 싸프린트 참가
+  ACTIVE: (sprintId, teamId) => `/active?sprintId=${sprintId}&teamId=${teamId}`, // 싸프린트 활성 상태 조회 (참여중 스프린트 정보 조회)
 
   PRESENTATION_PARTICIPANTS: (id) =>
     `/ssaprint/${id}/presentation/participants`, // 발표 참가자 목록 조회

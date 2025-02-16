@@ -8,7 +8,7 @@ import { mockActiveSsaprintDetailData } from '@/mocks/ssaprintActiveMockData'
 import { mockSsaprintQuestions } from '@/mocks/ssaprintQuestionMockData'
 
 /**
- * ✅ 카테고리 전체 조회 (포지션 및 기술 스택 포함)
+ * 카테고리 전체 조회 (포지션 및 기술 스택 포함)
  * @returns {Promise<Array>} - 전체 카테고리 데이터
  */
 export const fetchCategories = async () => {
@@ -22,7 +22,7 @@ export const fetchCategories = async () => {
 }
 
 /**
- * ✅ 포지션 & 1차 기술 스택 가공 함수
+ * 포지션 & 1차 기술 스택 가공 함수
  */
 export const transformCategories = (categories) => {
   return categories.map((position) => ({
@@ -36,7 +36,7 @@ export const transformCategories = (categories) => {
 }
 
 /**
- * ✅ 최상위 카테고리 조회 (포지션 목록)
+ * 최상위 카테고리 조회 (포지션 목록)
  */
 export const fetchTopCategories = async () => {
   try {
@@ -48,7 +48,7 @@ export const fetchTopCategories = async () => {
 }
 
 /**
- * ✅ 하위 카테고리 조회 (기술 스택 목록)
+ * 하위 카테고리 조회 (기술 스택 목록)
  */
 export const fetchSubCategories = async (categoryId) => {
   try {
@@ -93,7 +93,7 @@ export const fetchSsaprintListWithFilter = async (
 }
 
 /**
- * ✅ 완료된 싸프린트 조회 (API 요청)
+ * 완료된 싸프린트 조회 (API 요청)
  * @param {number} page - 페이지 번호 (기본값: 0)
  * @param {number} size - 페이지당 아이템 개수 (기본값: 8)
  * @returns {Promise<Object>} - 완료된 스프린트 목록 데이터 반환
@@ -119,7 +119,7 @@ export const fetchCompletedSsaprintList = async (page = 0, size = 8) => {
   }
 }
 
-// ✅ 싸프린트 상세 조회
+// 싸프린트 상세 조회
 export const fetchSsaprintDetail = async (sprintId) => {
   try {
     const response = await httpCommon.get(SSAPRINT_END_POINT.DETAIL(sprintId))
@@ -129,44 +129,29 @@ export const fetchSsaprintDetail = async (sprintId) => {
   }
 }
 
-// ✅ 싸프린트 참가 (목업 처리)
-export const joinSsaprint = async (id) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ message: '스프린트에 신청되었습니다.' })
-    }, 500)
-  })
+// 싸프린트 참가 신청
+export const joinSsaprint = async (sprintId, teamName) => {
+  const response = await httpCommon.post(
+    SSAPRINT_END_POINT.JOIN(sprintId),
+    null,
+    {
+      params: { teamName },
+    }
+  )
+  return response.data
 }
-// // ✅ 싸프린트 참가 (비동기 처리 추가)
-// export const joinSsaprint = async (id) => {
-//   try {
-//     const response = await httpCommon.post(SSAPRINT_END_POINT.JOIN(id));
-//     return response.data; // 성공 메시지 반환
-//   } catch (error) {
-//     console.error(`스프린트 신청 중 오류 발생:`, error);
-//     throw error;
-//   }
-// };
 
 // 참여중인 스프린트 정보 가져오기
-export const getActiveSsaprint = async (sprintId) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockActiveSsaprintDetailData)
-    }, 500)
-  })
+export const getActiveSsaprint = async (sprintId, teamId) => {
+  try {
+    const response = await httpCommon.get(
+      SSAPRINT_END_POINT.ACTIVE(sprintId, teamId)
+    )
+    return response.data // API 응답 데이터 반환
+  } catch (error) {
+    throw new Error('스프린트 데이터를 불러오는 데 실패했습니다.')
+  }
 }
-
-// // ✅ 참여중인 스프린트 정보 가져오기
-// export const getActiveSsaprint = async (sprintId) => {
-//   try {
-//     const response = await httpCommon.get(SSAPRINT_END_POINT.ACTIVE(sprintId));
-//     return response.data;
-//   } catch (error) {
-//     console.error('참여중인 스프린트 정보 불러오기 실패:', error);
-//     throw error;
-//   }
-// };
 
 // ✅ 싸프린트 생성
 export const createSsaprint = (data) =>
