@@ -5,7 +5,7 @@ import SprintQuestionEditModal from '@/components/SprintCommon/SprintQuestionEdi
 import { fetchSsaprintQuestions } from '@/services/ssaprintService'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-const SprintQuestionCards = ({ sprintId }) => {
+const SprintQuestionCards = ({ sprintId, teamId }) => {
   const [questions, setQuestions] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -109,6 +109,7 @@ const SprintQuestionCards = ({ sprintId }) => {
       {isModalOpen && (
         <SprintQuestionEditModal
           sprintId={sprintId}
+          teamId={teamId}
           onClose={() => setIsModalOpen(false)}
           onQuestionAdded={loadQuestions} // 질문 추가 후 목록 갱신
         />

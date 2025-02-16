@@ -33,12 +33,12 @@ const SprintParticipationModal = ({
       localStorage.setItem(`teamId-${sprintId}`, data)
       setIsJoined(true)
       localStorage.setItem(`isJoined-${sprintId}`, 'true')
-      setButtonText('신청 완료! 내 스프린트 노트로 이동하기!')
+      setButtonText('신청 완료! 나의 싸프린트 노트로 이동하기!')
       setIsSubmitting(false) // 신청 완료 후 버튼 활성화
 
       alert('신청이 완료되었습니다.')
 
-      if (window.confirm('내 스프린트 노트로 이동할까요?')) {
+      if (window.confirm('나의 싸프린트 노트로 이동할까요?')) {
         navigate(`/my-sprints/${sprintId}`, {
           state: { sprintId, teamId: data },
         })
@@ -62,7 +62,7 @@ const SprintParticipationModal = ({
 
   const handleJoinSprint = () => {
     if (!teamName.trim()) {
-      alert('나의 스프린트 이름을 입력해주세요.')
+      alert('나의 싸프린트 이름을 입력해주세요.')
       return
     }
     setButtonText('신청 중...')
@@ -94,15 +94,15 @@ const SprintParticipationModal = ({
         {step === 1 ? (
           <>
             <h2 className="text-xl font-semibold text-blue-600 text-center">
-              스프린트 참여 신청 확인
+              싸프린트 참여 신청 확인
             </h2>
             <p className="text-gray-800 mt-5 text-base text-center">
-              스프린트 신청은 취소가 불가능합니다. 아래 내용을 확인하고 신중히
+              싸프린트 신청은 취소가 불가능합니다. 아래 내용을 확인하고 신중히
               결정해주세요!
             </p>
             <ul className="mt-6 text-base text-gray-700 list-disc list-inside">
-              <li>스프린트 신청 후에는 취소 및 변경이 불가능합니다.</li>
-              <li>스프린트 기간 동안 적극적인 참여를 권장합니다.</li>
+              <li>싸프린트 신청 후에는 취소 및 변경이 불가능합니다.</li>
+              <li>싸프린트 기간 동안 적극적인 참여를 권장합니다.</li>
               <li>
                 참여 후 제공되는 혜택은 수료 조건을 충족한 경우에만 받을 수
                 있습니다.
@@ -137,7 +137,7 @@ const SprintParticipationModal = ({
         ) : (
           <>
             <h2 className="text-xl font-semibold text-blue-600 text-center">
-              나의 스프린트 이름 설정하기
+              나의 싸프린트 이름 설정하기
             </h2>
             <p className="text-gray-800 mt-5 text-base text-center">
               싸프린트 노트를 생성할 때, 노트의 이름을 설정할 수 있습니다.
@@ -148,7 +148,7 @@ const SprintParticipationModal = ({
             <input
               type="text"
               className="w-full mt-4 p-3 border rounded-lg text-gray-800"
-              placeholder="팀명 또는 개인 참가명 입력"
+              placeholder="해당 싸프린트 노트명 입력"
               value={teamName}
               onChange={(e) => setTeamName(e.target.value)}
             />
@@ -157,14 +157,14 @@ const SprintParticipationModal = ({
                 className={`w-full py-3 px-5 rounded-lg font-medium text-white text-lg ${
                   isSubmitting || mutation.isLoading
                     ? 'bg-gray-400 cursor-not-allowed' // 신청 중이면 hover 제거 및 비활성화
-                    : buttonText === '신청 완료! 내 스프린트 노트로 이동하기!'
+                    : buttonText === '신청 완료! 나의 싸프린트 노트로 이동하기!'
                       ? 'bg-[#6BC26B] hover:bg-[#5AA65B]' // 신청 완료 후 초록색으로 변경
                       : 'bg-blue-600 hover:bg-blue-700' // 기본 버튼 색
                 }`}
                 onClick={
                   isSubmitting || mutation.isLoading
                     ? undefined
-                    : buttonText === '신청 완료! 내 스프린트 노트로 이동하기!'
+                    : buttonText === '신청 완료! 나의 싸프린트 노트로 이동하기!'
                       ? handleMoveToSprint
                       : handleJoinSprint
                 }

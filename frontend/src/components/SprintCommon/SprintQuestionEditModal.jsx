@@ -1,7 +1,12 @@
 import { useState } from 'react'
 import { addSsaprintQuestion } from '@/services/ssaprintService'
 
-const SprintQuestionEditModal = ({ sprintId, onClose, onQuestionAdded }) => {
+const SprintQuestionEditModal = ({
+  sprintId,
+  teamId,
+  onClose,
+  onQuestionAdded,
+}) => {
   const [description, setDescription] = useState('')
 
   const handleAddQuestion = async () => {
@@ -11,7 +16,7 @@ const SprintQuestionEditModal = ({ sprintId, onClose, onQuestionAdded }) => {
     }
 
     try {
-      await addSsaprintQuestion(sprintId, description) // 질문 추가 API 호출
+      await addSsaprintQuestion(sprintId, teamId, description) // 질문 추가 API 호출
       alert('질문이 등록되었습니다.') // 등록 완료 알림
       setDescription('') // 입력 필드 초기화
       onQuestionAdded() // 질문 목록 업데이트 요청

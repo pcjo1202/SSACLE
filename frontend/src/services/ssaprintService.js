@@ -170,17 +170,6 @@ export const fetchSsaprintParticipants = (id) =>
   httpCommon.get(SSAPRINT_END_POINT.PRESENTATION_PARTICIPANTS(id))
 
 /**
- * ✅ 특정 스프린트의 질문 목록 조회
- */
-// export const fetchSsaprintQuestions = async (sprintId) => {
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       resolve(mockSsaprintQuestions)
-//     }, 500)
-//   })
-// }
-
-/**
  * ✅ 특정 스프린트의 질문 목록 조회 (API 요청)
  * @param {number} sprintId - 스프린트 ID
  * @returns {Promise<Array>} - 질문 목록
@@ -200,37 +189,18 @@ export const fetchSsaprintQuestions = async (sprintId) => {
 export const fetchSsaprintCardDetail = (id, cardId) =>
   httpCommon.get(SSAPRINT_END_POINT.PRESENTATION_CARD_DETAIL(id, cardId))
 
-// /**
-//  * ✅ 질문을 추가하는 함수
-//  */
-// export const addSsaprintQuestion = async (sprintId, description) => {
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       const newQuestion = {
-//         id: mockSsaprintQuestions.length + 1, // ✅ 새로운 id (자동 증가)
-//         description: description,
-//         createdAt: new Date().toISOString(), // ✅ 현재 시간
-//         opened: true,
-//       }
-
-//       // ✅ 질문을 임시 저장 (실제 API 호출이라면 서버로 요청)
-//       mockSsaprintQuestions.push(newQuestion)
-
-//       resolve(newQuestion)
-//     }, 500)
-//   })
-// }
-
 /**
  * ✅ 질문 추가 (API 요청)
  * @param {number} sprintId - 스프린트 ID
+ * @param {number} teamId - 팀 ID
  * @param {string} description - 질문 내용
  * @returns {Promise<Object>} - 추가된 질문 정보
  */
-export const addSsaprintQuestion = async (sprintId, description) => {
+export const addSsaprintQuestion = async (sprintId, teamId, description) => {
   try {
     const response = await httpCommon.post(SSAPRINT_END_POINT.ADD_QUESTION, {
       sprintId,
+      teamId,
       description,
       opened: true,
     })
