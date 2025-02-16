@@ -51,15 +51,13 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = Optional.ofNullable(queryFactory
+        Long total = queryFactory
                 .select(sprint.count())
                 .from(sprint)
-                .leftJoin(sprint.sprintCategories, sprintCategory)
-                .leftJoin(sprintCategory.category, category)
                 .where(sprint.status.eq(status))
-                .fetchOne()).orElse(0L);
+                .fetchOne();
 
-        return PageableExecutionUtils.getPage(results, pageable, () -> total);
+        return PageableExecutionUtils.getPage(results, pageable, () -> total == null ? 0 : total);
     }
 
     @Override
@@ -79,16 +77,16 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = Optional.ofNullable(queryFactory
+        Long total = queryFactory
                 .select(sprint.countDistinct())
                 .from(sprint)
                 .join(sprint.sprintCategories, sprintCategory)
                 .join(sprintCategory.category, category)
                 .where(category.id.eq(categoryId)
                         .and(sprint.status.eq(status)))
-                .fetchOne()).orElse(0L);
+                .fetchOne();
 
-        return PageableExecutionUtils.getPage(results, pageable, () -> total);
+        return PageableExecutionUtils.getPage(results, pageable, () -> total == null ? 0 : total);
     }
 
     @Override
@@ -132,6 +130,7 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
 
         return PageableExecutionUtils.getPage(results, pageable, () -> total);
     }
+
     @Override
     public Long findTeamIdBySprintAndUser(Sprint sprint, User user) {
         QUserTeam userTeam = QUserTeam.userTeam;
