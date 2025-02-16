@@ -28,6 +28,7 @@ import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.repository.TeamRepository;
+import ssafy.com.ssacle.todo.dto.TodoRequest;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.exception.CannotLoginException;
 import ssafy.com.ssacle.user.exception.LoginErrorCode;
@@ -37,6 +38,7 @@ import ssafy.com.ssacle.usercategory.repository.UserCategoryRepository;
 import ssafy.com.ssacle.userteam.domain.UserTeam;
 import ssafy.com.ssacle.userteam.repository.UserTeamRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -722,129 +724,103 @@ public class DataInitializer {
         }
     }
 
+
     @Transactional
-    public void initializeSprints(SprintRepository sprintRepository, CategoryRepository categoryRepository, SprintCategoryRepository sprintCategoryRepository) {
-//        if (sprintRepository.count() == 0) {
-//            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategories();
-//            Random random = new Random();
-//
-//            for (Category category : lowestLevelCategories) {
-//                for (int i = 0; i < 3; i++) { // 각 최하위 카테고리당 3개의 스프린트 생성
-//                    Sprint sprint = SprintBuilder.builder()
-//                            .name(category.getCategoryName() + " Sprint " + (i + 1))
-//                            .basicDescription("학습 내용: " + category.getCategoryName())
-//                            .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
-//                            .recommendedFor("이 주제에 관심 있는 개발자")
-//                            .startAt(LocalDateTime.now().minusDays(random.nextInt(10)))
-//                            .endAt(LocalDateTime.now().plusDays(random.nextInt(20) + 10))
-//                            .announceAt(LocalDateTime.now())
-//                            .maxMembers(5 + random.nextInt(5))
-//                            .build();
-//                    sprintRepository.save(sprint);
-//                    sprintCategoryRepository.save(new SprintCategory(sprint, category));
-//                }
-//            }
-//            System.out.println("✅ 최하위 카테고리 기반 스프린트 더미 데이터가 추가되었습니다.");
-//        } else {
-//            System.out.println("✅ 스프린트 데이터가 이미 존재합니다.");
-//        }
+    public void initializeSprints(SprintRepository sprintRepository,
+                                  CategoryRepository categoryRepository,
+                                  SprintCategoryRepository sprintCategoryRepository) {
+        if (sprintRepository.count() == 0) {
+            List<Sprint> sprints = new ArrayList<>();
+            List<SprintCategory> sprintCategories = new ArrayList<>();
+            LocalDateTime now = LocalDateTime.now();
+            Random random = new Random();
+
+            // ✅ level 3인 카테고리만 조회
+            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
+
+            for (Category category : lowestLevelCategories) {
+                List<Long> categoryIds = new ArrayList<>();
+                categoryIds.add(category.getId());
+
+                // ✅ 부모 카테고리와 조부모 카테고리 초기화
+                Category parent = category.getParent();
+                if (parent != null) {
+                    categoryIds.add(parent.getId());
+                    Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                    if (grandParent != null) {
+                        categoryIds.add(grandParent.getId());
+                    }
+                }
+
+                for (int i = 0; i < 3; i++) { // 각 카테고리당 3개씩 생성
+                    LocalDateTime startAt;
+                    LocalDateTime endAt;
+
+                    if (i == 0) { // 시작 전 (status = 0)
+                        startAt = now.plusDays(random.nextInt(10) + 5);
+                        endAt = startAt.plusDays(random.nextInt(10) + 5);
+                    } else if (i == 1) { // 진행 중 (status = 1)
+                        startAt = now.minusDays(random.nextInt(10));
+                        endAt = now.plusDays(random.nextInt(10) + 5);
+                    } else { // 종료됨 (status = 2)
+                        startAt = now.minusDays(random.nextInt(20) + 20);
+                        endAt = startAt.plusDays(random.nextInt(10) + 5);
+                    }
+
+                    Sprint sprint = SprintBuilder.builder()
+                            .name(category.getCategoryName() + " Sprint " + (i + 1))
+                            .basicDescription("학습 내용: " + category.getCategoryName())
+                            .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
+                            .recommendedFor("이 주제에 관심 있는 개발자")
+                            .startAt(startAt)
+                            .endAt(endAt)
+                            .announceAt(now)
+                            .maxMembers(5 + random.nextInt(5))
+                            .defaultTodos(generateTodos(startAt)) // 7일치 Todo 데이터 추가
+                            .build();
+
+                    sprintRepository.save(sprint);
+
+                    // ✅ 부모, 조부모 카테고리 연결
+                    categoryIds.forEach(categoryId -> {
+                        Category sprintCategory = categoryRepository.findById(categoryId)
+                                .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없음: " + categoryId));
+                        sprintCategoryRepository.save(new SprintCategory(sprint, sprintCategory));
+                    });
+
+                    sprints.add(sprint);
+                }
+            }
+            System.out.println("✅ 30개의 스프린트 데이터가 성공적으로 추가되었습니다.");
+        } else {
+            System.out.println("✅ 스프린트 데이터가 이미 존재합니다.");
+        }
     }
 
-//    @Transactional
-//    public void initializeSprints(SprintRepository sprintRepository, CategoryRepository categoryRepository, SprintCategoryRepository sprintCategoryRepository) {
-//        if (sprintRepository.count() == 0) {
-//            List<Sprint> sprints = new ArrayList<>();
-//            List<SprintCategory> sprintCategories = new ArrayList<>();
-//            LocalDateTime now = LocalDateTime.now();
-//            Category spring = categoryRepository.findByCategoryName("Spring")
-//                    .orElseThrow(() -> new RuntimeException("Spring 카테고리가 없습니다."));
-//            Category react = categoryRepository.findByCategoryName("React")
-//                    .orElseThrow(() -> new RuntimeException("React 카테고리가 없습니다."));
-//            Category nodejs = categoryRepository.findByCategoryName("Node.js")
-//                    .orElseThrow(() -> new RuntimeException("Node.js 카테고리가 없습니다."));
-//            Category nestjs = categoryRepository.findByCategoryName("NestJS")
-//                    .orElseThrow(() -> new RuntimeException("NestJS 카테고리가 없습니다."));
-//
-//            Object[][] sprintData = {
-//                    // Spring 관련 스프린트
-//                    {"Spring Boot 입문", "Spring Boot 개념과 REST API 구축", "초급 백엔드 개발자", spring},
-//                    {"Spring Security 실전", "JWT와 OAuth2를 활용한 인증 시스템", "보안이 필요한 백엔드 개발자", spring},
-//                    {"Spring Batch", "대량 데이터 처리 및 스케줄링", "백엔드 시스템 설계자", spring},
-//
-//                    // React 관련 스프린트
-//                    {"React 기본", "React의 useState, useEffect 이해", "초급 프론트엔드 개발자", react},
-//                    {"React Router", "SPA에서의 페이지 이동 및 라우팅", "SPA 개발자", react},
-//                    {"React 상태관리", "Redux 및 Context API 학습", "프론트엔드 최적화", react},
-//
-//                    // Node.js 관련 스프린트
-//                    {"Node.js Express", "Express.js 기반 REST API 개발", "Node.js를 배우는 개발자", nodejs},
-//                    {"Node.js Async", "비동기 프로그래밍 및 이벤트 루프", "고성능 서버 개발자", nodejs},
-//                    {"GraphQL with Node.js", "GraphQL API 개발 및 Apollo 사용", "GraphQL 기반 API 개발자", nodejs},
-//
-//                    // NestJS 관련 스프린트
-//                    {"NestJS 기본", "NestJS의 기본 개념과 모듈화 학습", "Node.js와 TypeScript 기반 개발자", nestjs},
-//                    {"NestJS REST API", "REST API 설계 및 데이터베이스 연동", "백엔드 API 설계자", nestjs},
-//                    {"NestJS Microservices", "RabbitMQ, Kafka를 활용한 마이크로서비스 구축", "대규모 시스템 개발자", nestjs}
-//            };
-//            for(Object[] sprintInfo : sprintData){
-//                Sprint sprint = SprintBuilder.builder()
-//                        .name((String) sprintInfo[0])
-//                        .basicDescription((String) sprintInfo[1])
-//                        .detailDescription((String) sprintInfo[1] + " 실습 포함")
-//                        .recommendedFor((String) sprintInfo[2])
-//                        .startAt(now.minusDays(7))
-//                        .endAt(now.minusDays(6))
-//                        .announceAt(now)
-//                        .maxMembers(10)
-//                        .build();
-//                sprints.add(sprint);
-//
-//                // 📌 스프린트 - 카테고리 매핑
-//                Category category = (Category) sprintInfo[3];
-//                SprintCategory sprintCategory = new SprintCategory(sprint, category);
-//                sprintCategories.add(sprintCategory);
-//            }
-//            sprintRepository.saveAll(sprints);
-//            sprintCategoryRepository.saveAll(sprintCategories);
-////            Sprint sprint1 = SprintBuilder.builder()
-////                    .name("React Sprint")
-////                    .basicDescription("React 기본 개념 학습")
-////                    .detailDescription("React의 useState, useEffect 및 Component 설계 학습")
-////                    .recommendedFor("초급 프론트엔드 개발자")
-////                    .startAt(LocalDateTime.now().minusDays(7))
-////                    .endAt(LocalDateTime.now().minusDays(6))
-////                    .announceAt(LocalDateTime.now())
-////                    .maxMembers(10)
-////                    .build();
-////
-////            Sprint sprint2 = SprintBuilder.builder()
-////                    .name("Spring Boot Sprint")
-////                    .basicDescription("Spring Boot API 개발")
-////                    .detailDescription("Spring Boot를 활용한 REST API 설계 및 JPA 활용 학습")
-////                    .recommendedFor("초급 백엔드 개발자")
-////                    .startAt(LocalDateTime.now().minusDays(7))
-////                    .endAt(LocalDateTime.now().minusDays(6))
-////                    .announceAt(LocalDateTime.now())
-////                    .maxMembers(8)
-////                    .build();
-////
-////            Sprint sprint3 = SprintBuilder.builder()
-////                    .name("DevOps Sprint")
-////                    .basicDescription("CI/CD 및 Kubernetes 학습")
-////                    .detailDescription("Jenkins, Docker, Kubernetes를 활용한 배포 자동화 학습")
-////                    .recommendedFor("클라우드 및 인프라 엔지니어 지망생")
-////                    .startAt(LocalDateTime.now().minusDays(7))
-////                    .endAt(LocalDateTime.now().minusDays(6))
-////                    .announceAt(LocalDateTime.now())
-////                    .maxMembers(6)
-////                    .build();
-////
-////            sprintRepository.saveAll(List.of(sprint1, sprint2, sprint3));
-//            System.out.println("✅ 스프린트 더미 데이터가 추가되었습니다.");
-//        } else {
-//            System.out.println("✅ 스프린트 데이터가 이미 존재합니다.");
-//        }
-//    }
+    /** 7일치 TodoRequest 생성 */
+    private List<TodoRequest> generateTodos(LocalDateTime startAt) {
+        List<TodoRequest> todos = new ArrayList<>();
+        Random random = new Random();
+
+        String[][] tasksByDay = {
+                {"기본 개념 학습", "아키텍처 개요", "핵심 원리 이해"},
+                {"설치 및 환경 설정", "기본 코드 작성", "간단한 예제 구현"},
+                {"주요 기능 익히기", "실전 프로젝트 적용", "API 활용"},
+                {"보안 및 최적화", "고급 기능 활용", "성능 테스트"},
+                {"실전 문제 해결", "버그 수정 및 디버깅", "모범 사례 학습"},
+                {"프로젝트 확장 및 배포", "서드파티 연동", "실제 환경 적용"},
+                {"최종 복습 및 발표", "코드 리뷰", "QA 세션"}
+        };
+
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startAt.toLocalDate().plusDays(i);
+            List<String> tasks = List.of(tasksByDay[i]);
+
+            todos.add(new TodoRequest(date, tasks));
+        }
+
+        return todos;
+    }
 
     @Transactional
     public void initializeTeams(SprintRepository sprintRepository, TeamRepository teamRepository, UserRepository userRepository, UserTeamRepository userTeamRepository) {
