@@ -145,7 +145,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <SsaprintListPage /> },
           { path: 'user', element: <UserList /> },
-          { path: 'sprint', children: [
+          { path: 'ssaprint', children: [
             { index: 'list', element: <SsaprintListPage /> },
             { path: 'create', element: <SsaprintCreatePage /> },
           ] },
