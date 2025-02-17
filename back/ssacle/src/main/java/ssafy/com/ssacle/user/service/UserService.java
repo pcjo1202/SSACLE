@@ -20,6 +20,7 @@ import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.user.domain.RefreshToken;
+import ssafy.com.ssacle.user.domain.Role;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.dto.*;
 import ssafy.com.ssacle.user.exception.CannotLoginException;
@@ -54,9 +55,8 @@ public class UserService {
     private long refreshExpireMs;
 
     public User getAuthenticatedUser() {
-        System.out.println(SecurityContextHolder.getContext());
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println(userEmail);
+
         return userRepository.findByEmail(userEmail)
                 .orElseThrow(()->new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
     }
@@ -69,7 +69,7 @@ public class UserService {
 
     /** ✅ 로그인 및 Access/Refresh Token 생성 */
     @Transactional
-    public String authenticateAndGenerateTokens(LoginRequestDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
+    public Role authenticateAndGenerateTokens(LoginRequestDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
         User user = getUserFromToken(loginDTO);
         Optional<RefreshToken> existingToken = refreshRepository.findByUser(user);
 
@@ -86,7 +86,7 @@ public class UserService {
         );
         tokenService.setRefreshTokenCookie(response, refreshToken); // ✅ TokenService 활용
         response.setHeader("Authorization", "Bearer " + accessToken);
-        return "로그인 성공";
+        return user.getRole();
     }
 
     /** ✅ Refresh Token을 사용해 Access Token 갱신 */

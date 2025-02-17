@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import ssafy.com.ssacle.user.domain.Role;
 import ssafy.com.ssacle.user.dto.FindEmailDTO;
 import ssafy.com.ssacle.user.dto.FindPasswordDTO;
 import ssafy.com.ssacle.user.dto.LoginRequestDTO;
@@ -34,11 +35,9 @@ public interface LoginSwaggerController {
             )
     )
     @PostMapping("/login")
-    ResponseEntity<String> login(
+    ResponseEntity<Role> login(
             @RequestBody @Valid LoginRequestDTO loginDTO, HttpServletRequest request, HttpServletResponse response
     );
-
-
 
     @Operation(summary = "로그아웃", description = "현재 로그인된 사용자를 로그아웃합니다.")
     @ApiResponses(value = {
