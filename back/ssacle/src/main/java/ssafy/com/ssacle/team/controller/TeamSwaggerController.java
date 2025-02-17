@@ -6,10 +6,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import ssafy.com.ssacle.team.dto.TeamDiaryResponse;
 import ssafy.com.ssacle.team.dto.TeamResponseDTO;
+import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.dto.UserResponse;
 
 import java.util.List;
@@ -35,4 +40,22 @@ public interface TeamSwaggerController {
     @GetMapping("/sprint/{sprintId}/teams")
     ResponseEntity<List<TeamResponseDTO>> getTeamsBySprintId(
             @Parameter(description = "조회할 Sprint ID", example = "1") @PathVariable Long sprintId);
+
+    @Operation(summary = "모든 팀과 일기 조회", description = "모든 팀과 해당 팀의 일기 내용을 반환합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
+    })
+    @GetMapping("/teams/diaries")
+    ResponseEntity<Page<TeamDiaryResponse>> getAllTeamsWithDiaries(Pageable pageable);
+
+    @Operation(summary = "팀 NotionURL 구매", description = "팀을 구매하고 참가하여 해당 팀의 NotionURL을 반환합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "구매 및 참가 성공"),
+            @ApiResponse(responseCode = "400", description = "팀 참가 불가 또는 잔여 Pickles 부족"),
+            @ApiResponse(responseCode = "404", description = "해당 팀을 찾을 수 없음", content = @Content),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
+    })
+    @PostMapping("/teams/{teamId}/purchase")
+    ResponseEntity<String> purchaseTeam(@Parameter(description = "구매할 팀의 ID", example = "1") @PathVariable Long teamId);
 }
