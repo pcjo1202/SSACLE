@@ -24,24 +24,24 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.authorizeHttpRequests(auth -> auth
                         // Swagger 관련 경로는 인증 없이 허용
-//                        .requestMatchers(
-//                                "/swagger-ui/**", "/v3/api-docs/**",// API 문서
-//                                "/swagger-resources/**",
-//                                "/swagger-ui.html/**",
-//                                "/swagger-ui/index.html/**",
-//                                "/webjars/**"
-//                        ).permitAll()
-//                        .requestMatchers(
-//                                "/api/*/join/**",
-//                                "/api/*/login/**",
-//                                "/api/*/refreshtoken",
-//                                "/api/sessions/**",
-//                                "/api/video/sessions/distribute",
-//                                "/api/video/sessions/reset-all"
-//                        ).permitAll()
-                                .requestMatchers(
-                                        "/**"
-                                ).permitAll()
+                        .requestMatchers(
+                                "/swagger-ui/**", "/v3/api-docs/**",// API 문서
+                                "/swagger-resources/**",
+                                "/swagger-ui.html/**",
+                                "/swagger-ui/index.html/**",
+                                "/webjars/**"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/api/*/join/**",
+                                "/api/*/login/**",
+                                "/api/*/refreshtoken",
+                                "/api/sessions/**",
+                                "/api/video/sessions/distribute",
+                                "/api/video/sessions/reset-all"
+                        ).permitAll()
+//                                .requestMatchers(
+//                                        "/**"
+//                                ).permitAll()
                         .requestMatchers("/api/*/admin/**").hasRole("ADMIN")
                                 .anyRequest().permitAll()
 //                        .anyRequest().authenticated()

@@ -41,10 +41,10 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
-        System.out.println(request.getHeader("Authorization"));
+//        System.out.println(request.getHeader("Authorization"));
         String accessToken = userService.resolveToken(request);
-        System.out.println("accessToken: "+accessToken);
-        System.out.println(jwtTokenUtil.isValidToken(accessToken));
+//        System.out.println("accessToken: "+accessToken);
+//        System.out.println(jwtTokenUtil.isValidToken(accessToken));
 
         // 토큰이 유효한 경우
         if (accessToken != null && jwtTokenUtil.isValidToken(accessToken)) {

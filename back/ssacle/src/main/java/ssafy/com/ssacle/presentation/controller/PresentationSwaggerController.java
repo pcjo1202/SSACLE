@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ssafy.com.ssacle.presentation.dto.PresentationRequestDTO;
 import ssafy.com.ssacle.presentation.dto.PresentationStatusUpdateResponseDTO;
 import ssafy.com.ssacle.team.domain.Team;
+import ssafy.com.ssacle.team.dto.TeamWinnerResponseDTO;
 
 import java.util.List;
 
@@ -52,7 +53,7 @@ public interface PresentationSwaggerController {
             @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
     })
     @PostMapping("/calculate")
-    ResponseEntity<Team> calculateFinalScores(
+    ResponseEntity<TeamWinnerResponseDTO> calculateFinalScores(
             @Parameter(description = "팀과 발표 점수를 포함한 요청 리스트") @RequestBody List<PresentationRequestDTO> requestList
     );
 }

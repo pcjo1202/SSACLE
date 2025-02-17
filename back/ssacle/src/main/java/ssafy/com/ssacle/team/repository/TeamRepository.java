@@ -8,6 +8,7 @@ import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.team.domain.Team;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TeamRepository extends JpaRepository<Team, Long> {
     @Query("SELECT DISTINCT t FROM Team t " +
@@ -33,4 +34,7 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     List<Team> findBySprintId(Long sprintId);
 
     boolean existsByName(String name);
+
+    @Query("SELECT t FROM Team t JOIN FETCH t.userTeams ut JOIN FETCH ut.user WHERE t.id = :teamId")
+    Optional<Team> findByIdWithUserTeams(@Param("teamId") Long teamId);
 }
