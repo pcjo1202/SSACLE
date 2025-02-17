@@ -23,6 +23,8 @@ import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.dto.*;
 import ssafy.com.ssacle.sprint.exception.SprintAnnouncementNotYetException;
 import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
+import ssafy.com.ssacle.sprint.exception.SprintUnauthorizedException;
+import ssafy.com.ssacle.sprint.exception.UserParticipatedException;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
@@ -66,6 +68,23 @@ public class SprintService {
     private final QuestionCardService questionCardService;
     private final DiaryService diaryService;
 
+    @Transactional(readOnly = true)
+    public void validateUserParticipation(Long userId, Long sprintId) {
+        boolean isParticipating = userTeamRepository.countByUserIdAndSprintId(userId, sprintId) > 0;
+
+        if (!isParticipating) {
+            throw new SprintUnauthorizedException();
+        }
+    }
+    @Transactional(readOnly = true)
+    public void validateUserNotParticipation(Long userId, Long sprintId) {
+        boolean isParticipating = userTeamRepository.countByUserIdAndSprintId(userId, sprintId) > 0;
+
+        if (isParticipating) {
+            throw new UserParticipatedException();
+        }
+    }
+
     @Transactional
     public SprintResponse createSprint(SprintCreateRequest request) {
         Sprint sprint = SprintBuilder.builder()
@@ -105,6 +124,7 @@ public class SprintService {
 
         // 스프린트 <-> 팀 <-> 사용자팀 <-> 사용자 연동
         Team team = saveTeamAndTeamUser(user, sprint, teamName);
+
         // 팀 <-> 노션 연동
         String notionUrl = saveNotion(teamName, defaultTodos, categories);
         team.setNotionURL(notionUrl);

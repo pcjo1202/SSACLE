@@ -9,6 +9,7 @@ import ssafy.com.ssacle.sprint.dto.*;
 import ssafy.com.ssacle.sprint.service.SprintService;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.service.UserService;
+import ssafy.com.ssacle.userteam.service.UserTeamService;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -16,6 +17,7 @@ import ssafy.com.ssacle.user.service.UserService;
 public class SprintController implements SprintSwaggerController{
     private final UserService userService;
     private final SprintService sprintService;
+    private final UserTeamService userTeamService;
 
     /** 스프린트 생성 */
     @Override
@@ -29,6 +31,8 @@ public class SprintController implements SprintSwaggerController{
     @Override
     public ResponseEntity<Long> joinSprint(@PathVariable Long sprintId,  @RequestParam String teamName) {
         User user = userService.getAuthenticatedUserWithTeams();
+        sprintService.validateUserNotParticipation(user.getId(), sprintId);
+
         Long teamId = sprintService.joinSprint(sprintId, user, teamName);
 
         return ResponseEntity.status(201).body(teamId);
@@ -39,13 +43,10 @@ public class SprintController implements SprintSwaggerController{
     public ResponseEntity<Page<SprintAndCategoriesResponseDTO>> getSprintsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
         Page<SprintAndCategoriesResponseDTO> sprintResponses;
 
-        if (categoryId == null) {
-            // 카테고리 ID가 없으면 상태만 필터링
+        if (categoryId == null)
             sprintResponses = sprintService.getSprintsByStatus(status, pageable);
-        } else {
-            // 카테고리 ID가 있으면 카테고리 + 상태 필터링
+        else
             sprintResponses = sprintService.getSprintsByCategoryAndStatus(categoryId, status, pageable);
-        }
 
         return ResponseEntity.ok(sprintResponses);
     }
@@ -54,6 +55,7 @@ public class SprintController implements SprintSwaggerController{
     @Override
     public ResponseEntity<Page<UserSprintResponseDTO>> getOngoingSprints(Pageable pageable) {
         User user = userService.getAuthenticatedUserWithTeams();
+
         return ResponseEntity.ok(sprintService.getUserOngoingSprints(user, pageable));
     }
 
@@ -61,6 +63,7 @@ public class SprintController implements SprintSwaggerController{
     @Override
     public ResponseEntity<Page<UserSprintResponseDTO>> getCompletedSprints(Pageable pageable) {
         User user = userService.getAuthenticatedUserWithTeams();
+
         return ResponseEntity.ok(sprintService.getUserCompletedSprints(user, pageable));
     }
 
@@ -68,6 +71,7 @@ public class SprintController implements SprintSwaggerController{
     @Override
     public ResponseEntity<SingleSprintResponse> getSprintById(@PathVariable Long id) {
         SingleSprintResponse response = sprintService.getSprintById(id);
+
         return ResponseEntity.ok(response);
     }
 
@@ -81,6 +85,10 @@ public class SprintController implements SprintSwaggerController{
     /** 활동중인 스프린트에 필요한 데이터 */
     @Override
     public ResponseEntity<ActiveSprintResponse> getActiveSprint(Long sprintId, Long teamId) {
+        Long userId = userService.getAuthenticatedUser().getId();
+        sprintService.validateUserParticipation(userId, sprintId);
+        userTeamService.isUserInTeam(userId,teamId);
+
         ActiveSprintResponse response = sprintService.getActiveSprint(sprintId, teamId);
         return ResponseEntity.ok(response);
     }
