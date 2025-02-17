@@ -7,6 +7,9 @@ import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.dto.TeamResponseDTO;
 import ssafy.com.ssacle.team.exception.TeamNotFoundException;
 import ssafy.com.ssacle.team.repository.TeamRepository;
+import ssafy.com.ssacle.user.domain.User;
+import ssafy.com.ssacle.user.dto.UserResponse;
+import ssafy.com.ssacle.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +17,16 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class TeamService {
+    private final UserRepository userRepository;
     private final TeamRepository teamRepository;
+
+    public List<Long> getTeamMembers(Long teamId){
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(TeamNotFoundException::new);
+
+        return userRepository.findUsersIdByTeamId(team.getId());
+    }
+
 
     public List<TeamResponseDTO> getTeamsBySprintId(Long sprintId) {
         List<Team> teams = teamRepository.findBySprintId(sprintId);
