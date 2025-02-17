@@ -10,7 +10,20 @@ import {
 import { usePresentationModalStateStore } from '@/store/usePresentationModalStateStore'
 import { cn } from '@/lib/utils'
 import useModalConfig from '@/hooks/useModalConfig'
-import { useMemo } from 'react'
+import { useMemo, ReactNode } from 'react'
+
+interface ModalConfig {
+  title: string | string[]
+  description: ReactNode
+  buttons:
+    | Array<{
+        text: string
+        onClick: () => void
+        style?: string
+        variant?: string
+      }>
+    | ReactNode
+}
 
 const PresentationNoticeModal = () => {
   const isModalOpen = usePresentationModalStateStore(
@@ -22,7 +35,7 @@ const PresentationNoticeModal = () => {
     title: Title,
     description: Description,
     buttons,
-  } = getModalStepConfig(modalStep)
+  } = getModalStepConfig(modalStep) as ModalConfig
 
   return (
     <Dialog open={isModalOpen} modal>
@@ -32,17 +45,21 @@ const PresentationNoticeModal = () => {
         onInteractOutside={(e) => e.preventDefault()}
       >
         <DialogHeader className="gap-4">
-          <DialogTitle className="flex flex-col w-full text-xl text-center text-ssacle-blue">
-            {Array.isArray(Title)
-              ? Title?.map((t) => <span key={t}>{t}</span>)
-              : Title}
+          <DialogTitle className="">
+            <div className="flex flex-col w-full text-xl text-center text-ssacle-blue">
+              {Array.isArray(Title)
+                ? Title?.map((t) => <span key={t}>{t}</span>)
+                : Title}
+            </div>
           </DialogTitle>
-          <DialogDescription className="flex flex-col gap-2 text-base text-center whitespace-pre-wrap">
-            {typeof Description === 'string' ? (
-              <span>{Description}</span>
-            ) : (
-              Description
-            )}
+          <DialogDescription className="">
+            <div className="flex flex-col w-full max-w-full gap-2 overflow-hidden text-base text-center ">
+              {typeof Description === 'string' ? (
+                <div>{Description}</div>
+              ) : (
+                Description
+              )}
+            </div>
           </DialogDescription>
         </DialogHeader>
         <div className="flex items-center justify-center w-full gap-4">

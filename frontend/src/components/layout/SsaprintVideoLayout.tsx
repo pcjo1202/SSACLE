@@ -46,6 +46,7 @@ const SsaprintVideoLayout: FC<SsaprintVideoLayoutProps> = ({
   return (
     <section className="flex w-full h-[92%] gap-1">
       {isScreenSharing && screenPublisher && <ScreenShareView />}
+      {/* {true && <ScreenShareView />} */}
       <div
         className={cn(
           'flex flex-col justify-center w-full h-full gap-4 ',

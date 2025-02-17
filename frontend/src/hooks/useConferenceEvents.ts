@@ -59,10 +59,17 @@ export function useConferenceEvents() {
   )
 
   // presentation store에서 발표 참여자 수 관리
-  const { targetConnectionCount, setPresenterName } = usePresentationStore(
+  const {
+    targetConnectionCount,
+    setPresenterInfo,
+    setIsQuestionSelected,
+    setSelectedQuestion,
+  } = usePresentationStore(
     useShallow((state) => ({
       targetConnectionCount: state.targetConnectionCount,
-      setPresenterName: state.setPresenterName,
+      setPresenterInfo: state.setPresenterInfo,
+      setIsQuestionSelected: state.setIsQuestionSelected,
+      setSelectedQuestion: state.setSelectedQuestion,
     }))
   )
 
@@ -77,12 +84,6 @@ export function useConferenceEvents() {
       setPresentationStatus: state.setPresentationStatus,
       signalStates: state.signalStates,
       addSignalConnection: state.addSignalConnection,
-    }))
-  )
-
-  const { setIsAllConnection } = usePresentationStore(
-    useShallow((state) => ({
-      setIsAllConnection: state.setIsAllConnection,
     }))
   )
 
@@ -102,6 +103,8 @@ export function useConferenceEvents() {
       setModalStep,
       modalStep,
       targetConnectionCount,
+      setIsQuestionSelected,
+      setSelectedQuestion,
     })
 
   // ref를 사용해 항상 최신 session을 참조
@@ -113,7 +116,6 @@ export function useConferenceEvents() {
   // ✅ 시그널 이벤트 처리 : 모든 사람들이 보냈을 때
   const allConnectionSignalHandler = useCallback(
     (event: SignalEvent) => {
-      console.log('event', event)
       const connectionId = event.from?.connectionId
       const {
         data: signalType,
@@ -138,7 +140,10 @@ export function useConferenceEvents() {
 
         switch (signalType) {
           case 'PRESENTER_INTRODUCTION': // 발표자 소개 시그널
-            setPresenterName(presenterName)
+            setPresenterInfo({
+              name: presenterName,
+              connectionId: presenterConnectionId,
+            })
             presenterConnectionId === myConnectionId // 내가 발표자인지 확인
               ? handleSignal(
                   signalType,
@@ -151,8 +156,11 @@ export function useConferenceEvents() {
                   presenterConnectionId as string
                 ) // 2. 참여자
             break
-          case 'QUESTION_ANSWERER_INTRO': // 질문 답변자 소개 시그널
-            setPresenterName(presenterName)
+          case PRESENTATION_STATUS.QUESTION_ANSWERER_INTRO: // 질문 답변자 소개 시그널
+            setPresenterInfo({
+              name: presenterName,
+              connectionId: presenterConnectionId,
+            })
             presenterConnectionId === myConnectionId // 내가 발표자인지 확인
               ? handleSignal(
                   signalType,
@@ -165,8 +173,11 @@ export function useConferenceEvents() {
                   presenterConnectionId as string
                 ) // 2. 참여자
             break
-          case 'QUESTION_READY': // 질문 준비 시그널
-            setPresenterName('')
+          case PRESENTATION_STATUS.QUESTION_READY: // 질문 준비 시그널
+            setPresenterInfo({
+              name: '',
+              connectionId: '',
+            })
           default:
             handleSignal(signalType, 'all')
             break
@@ -199,6 +210,7 @@ export function useConferenceEvents() {
           allConnectionSignalHandler
         )
         sessionRef.current.off('signal:ready', readySignalHandler)
+        sessionRef.current.off('signal:end', endSignalHandler)
       }
     }
   }, [sessionRef.current, allConnectionSignalHandler])
@@ -278,6 +290,7 @@ export function useConferenceEvents() {
         remoteConnectionCount === targetConnectionCount - 1
       // Key 값으로 비교
 
+      // ! 모든 참여자가 접속 완료 시, 발표 시작 신호 전송
       if (isAllConnection) {
         setPresentationStatus(PRESENTATION_STATUS.READY as PresentationStatus)
         setTimeout(() => {
@@ -290,6 +303,7 @@ export function useConferenceEvents() {
       addRoomConnectionData(roomId as string, {
         username: username as string,
         userId: userId as string,
+        connectionId: event.connection.connectionId as string,
       })
     },
     []
@@ -308,8 +322,6 @@ export function useConferenceEvents() {
       username: username as string,
       userId: userId as string,
     })
-
-    console.log('연결 해제 핸들러 - 사용자 목록', subscribers)
   }
 
   return useMemo(

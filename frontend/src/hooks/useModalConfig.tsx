@@ -15,7 +15,21 @@ const useModalConfig = () => {
       closeModal: state.closeModal,
     }))
   )
-  const presenterName = usePresentationStore((state) => state.presenterName)
+  const {
+    presenterInfo,
+    isQuestionCompleted,
+    isQuestionSelected,
+    setIsQuestionSelected,
+    selectedQuestion,
+  } = usePresentationStore(
+    useShallow((state) => ({
+      presenterInfo: state.presenterInfo,
+      isQuestionCompleted: state.isQuestionCompleted,
+      isQuestionSelected: state.isQuestionSelected,
+      setIsQuestionSelected: state.setIsQuestionSelected,
+      selectedQuestion: state.selectedQuestion,
+    }))
+  )
   const navigate = useNavigate()
   const { leaveSession } = useConnect()
   const session = useOpenviduStateStore(useShallow((state) => state.session))
@@ -29,14 +43,17 @@ const useModalConfig = () => {
     leaveSession,
     session: session as Session,
     setModalStep,
-    presenterName,
+    presenterInfo,
+    isQuestionSelected,
+    selectedQuestion,
+    isQuestionCompleted,
+    setIsQuestionSelected,
     startScreenShare,
     stopScreenShare,
   })
 
   const getModalStepConfig = (step: string) => {
     // 예시 step : ModalSteps.INITIAL.WELCOME
-    console.log('찾아야하는 모달', step)
     return MODAL_STEP_CONFIG[step]
   }
 

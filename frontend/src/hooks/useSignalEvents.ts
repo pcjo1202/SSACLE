@@ -3,7 +3,6 @@ import debounce from 'lodash/debounce'
 import {
   getNextPresentationStatus,
   PRESENTATION_STATUS,
-  PRESENTATION_STATUS_KEYS,
   PresentationStatus,
 } from '@/constants/presentationStatus'
 import {
@@ -20,6 +19,8 @@ interface UseSignalEventsProps {
   setModalStep: (step: string) => void
   modalStep: string
   targetConnectionCount: number // 목표 참가자 수
+  setIsQuestionSelected: (isQuestionSelected: boolean) => void
+  setSelectedQuestion: (selectedQuestion: Question) => void
 }
 
 export const useSignalEvents = ({
@@ -27,6 +28,8 @@ export const useSignalEvents = ({
   setIsModalOpen,
   setModalStep,
   targetConnectionCount,
+  setIsQuestionSelected,
+  setSelectedQuestion,
 }: UseSignalEventsProps) => {
   // Zustand 스토어에서 필요한 메서드들을 가져옵니다
   const {
@@ -65,19 +68,29 @@ export const useSignalEvents = ({
 
         // setPresentationStatus(signalType as PresentationStatus)
 
-        console.log('1️⃣ 현재 받은 신호 - 이것에 대한 모달을 띄움', signalType)
-        console.log(
-          '2️⃣ 다음 발표 상태- 이것으로 발표 상태 업데이트',
-          nextStatus
-        )
-        console.log('3️⃣ 다음 모달 - 이것으로 모달 업데이트', nextModalStep)
+        // console.log('1️⃣ 현재 받은 신호 - 이것에 대한 모달을 띄움', signalType)
+        // console.log(
+        //   '2️⃣ 다음 발표 상태- 이것으로 발표 상태 업데이트',
+        //   nextStatus
+        // )
+        // console.log('3️⃣ 다음 모달 - 이것으로 모달 업데이트', nextModalStep)
       }, 300),
     [setIsModalOpen, setModalStep, setPresentationStatus]
   )
 
   const readySignalHandler = useCallback(
     (event: SignalEvent) => {
-      console.log('readySignalHandler', event)
+      const {
+        data: signalType,
+        selectedQuestion,
+        presenterInfo,
+      } = JSON.parse(event.data as string)
+      setPresentationStatus(signalType)
+      if (signalType === PRESENTATION_STATUS.QUESTION_ANSWER) {
+        // 질문 모달을 띄우기 위한 상태 변환??
+        setIsQuestionSelected(true)
+        setSelectedQuestion(selectedQuestion)
+      }
       setIsModalOpen(false)
     },
     [setIsModalOpen]
@@ -85,9 +98,22 @@ export const useSignalEvents = ({
 
   const endSignalHandler = useCallback(
     (event: SignalEvent) => {
-      console.log('endSignalHandler', event)
+      const { data: signalType } = JSON.parse(event.data as string)
+
       setIsModalOpen(true)
-      setModalStep(ModalSteps.PRESENTATION.PRESENTATION_END)
+      // 발표 종료 모달
+      signalType === PRESENTATION_STATUS.PENDING_END &&
+        setModalStep(ModalSteps.PRESENTATION.PRESENTATION_END)
+
+      // 질문 중간 종료 모달
+      if (signalType === PRESENTATION_STATUS.QUESTION_ANSWER_MIDDLE_END) {
+        setModalStep(ModalSteps.QUESTION.ANSWER_MIDDLE_END)
+        setIsQuestionSelected(false)
+      }
+
+      // 질문 종료 모달
+      signalType === PRESENTATION_STATUS.QUESTION_END &&
+        setModalStep(ModalSteps.QUESTION.ANSWER_END)
     },
     [setIsModalOpen, setModalStep]
   )
@@ -104,30 +130,35 @@ export const useSignalEvents = ({
             signalStates[signalType as SignalStateKeys].size ===
             targetConnectionCount - 1
           ) {
-            console.log('모든 참가자가 준비되었습니다!', signalType)
             debouncedAllHandleSignal(signalType)
           }
           break
         case 'individual':
-          console.log('나 참여자야?', connectId)
+          // console.log('나 참여자야?', connectId)
 
           if (signalType === PRESENTATION_STATUS.PRESENTER_INTRO) {
             setIsModalOpen(true)
             setModalStep(ModalSteps.PRESENTATION.PRESENTATION_WAITING)
+          } else if (
+            signalType === PRESENTATION_STATUS.QUESTION_ANSWERER_INTRO
+          ) {
+            setIsModalOpen(true)
+            setModalStep(ModalSteps.QUESTION.ANSWER_WAITING)
           }
           break
         case 'presenter':
           if (connectId !== myConnectionId) return // 내가 발표자가 아니면 처리하지 않음
-          console.log('나 발표자야?', connectId)
-          console.log('signalType', signalType)
-          console.log('signalStates', PRESENTATION_STATUS.READY)
+          // console.log('나 발표자야?', connectId)
+
           // 여기서 질문 답변 준비 신호 보내기
           if (signalType === PRESENTATION_STATUS.PRESENTER_INTRO) {
-            setIsModalOpen(true)
             setModalStep(ModalSteps.PRESENTATION.PRESENTER_INTRODUCTION)
-          } else if (signalType === PRESENTATION_STATUS.QUESTION_READY) {
             setIsModalOpen(true)
-            setModalStep(ModalSteps.PRESENTATION.PRESENTATION_WAITING)
+          } else if (
+            signalType === PRESENTATION_STATUS.QUESTION_ANSWERER_INTRO
+          ) {
+            setModalStep(ModalSteps.QUESTION.ANSWER_INTRODUCTION)
+            setIsModalOpen(true)
           }
           break
       }

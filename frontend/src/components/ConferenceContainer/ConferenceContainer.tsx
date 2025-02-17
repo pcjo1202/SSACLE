@@ -82,6 +82,7 @@ const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
 
   return (
     <div className="w-full h-full">
+      <QuestionInfo />
       <VideoLayout
         connectCount={sessionConnection} // 컨퍼런스 참여자 수
       >

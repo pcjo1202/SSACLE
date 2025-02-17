@@ -1,3 +1,4 @@
+import QuestionCardSection from '@/components/PresentationPage/QuestionCardSection/QuestionCardSection'
 import { ModalSteps } from '@/constants/modalStep'
 import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
 import { CameraIcon, Mic2Icon, MicIcon } from 'lucide-react'
@@ -23,7 +24,17 @@ export interface CreateModalStepConfigProps {
   leaveSession: () => Promise<void>
   session: Session
   setModalStep: (step: string) => void
-  presenterName: string
+  presenterInfo: {
+    name: string
+    connectionId: string
+  }
+  isQuestionSelected: boolean
+  selectedQuestion: {
+    id: number
+    content: string
+  }
+  isQuestionCompleted: boolean
+  setIsQuestionSelected: (isQuestionSelected: boolean) => void
   startScreenShare: () => Promise<void>
   stopScreenShare: () => Promise<void>
 }
@@ -34,9 +45,13 @@ export const createModalStepConfig = ({
   leaveSession,
   session,
   setModalStep,
-  presenterName,
+  presenterInfo,
+  isQuestionSelected,
+  isQuestionCompleted,
   startScreenShare,
   stopScreenShare,
+  selectedQuestion,
+  setIsQuestionSelected,
 }: CreateModalStepConfigProps): Record<string, ModalStepConfig> => {
   const leavePresentation = async () => {
     try {
@@ -155,10 +170,11 @@ export const createModalStepConfig = ({
         <>
           <span>
             <span className="font-bold text-ssacle-black">
-              ✨{presenterName}✨
+              ✨{presenterInfo.name}✨
             </span>
             이 발표자가 되었습니다.
           </span>
+          <span>발표시간은 총 ⏱️ 10분 입니다.</span>
         </>
       ),
       description: (
@@ -183,8 +199,9 @@ export const createModalStepConfig = ({
       title: '발표가 곧 시작됩니다!',
       description: (
         <>
-          <span>발표자는 "{presenterName}"님 입니다.</span>
+          <span>발표자는 "{presenterInfo.name}"님 입니다.</span>
           <span>발표자가 준비하는 시간을 조금만 기다려주세요.</span>
+          <span>발표시간은 총 ⏱️ 10분 입니다.</span>
           <span className="italic">
             발표를 집중해서 들어주시면 감사하겠습니다 :)
           </span>
@@ -211,6 +228,13 @@ export const createModalStepConfig = ({
             closeModal()
           },
         },
+        {
+          text: '계속',
+          onClick: () => {
+            closeModal()
+          },
+          style: 'bg-ssacle-blue/70 hover:bg-ssacle-blue/30',
+        },
       ],
     },
     // ? 발표 종료 확인 모달 ✅
@@ -231,7 +255,7 @@ export const createModalStepConfig = ({
           text: '확인',
           onClick: () => {
             // 다음 스템으로 넘어가기 위한 시그널 보내기
-            sendStatusSignal(PRESENTATION_STATUS.QUESTION_READY)
+            sendStatusSignal(PRESENTATION_STATUS.QUESTION_INIT)
             stopScreenShare()
             closeModal()
           },
@@ -262,44 +286,57 @@ export const createModalStepConfig = ({
           text: '확인',
           onClick: () => {
             // 질문 섹션 시작 시그널 보내기
+            setModalStep(ModalSteps.INITIAL.WAITING) // 질문 준비 모달로 이동
             setTimeout(() => {
-              sendStatusSignal(PRESENTATION_STATUS.QUESTION_ANSWERER_INTRO)
-            }, 5000)
-            closeModal()
+              sendStatusSignal(PRESENTATION_STATUS.QUESTION_READY)
+            }, 3000)
           },
           style: '',
         },
       ],
     },
+    //
+
     // * 질문 답변 소개 모달 (발표자 전용) ⚠️
     [ModalSteps.QUESTION.ANSWER_INTRODUCTION]: {
       title: (
         <>
           <span>
             이번 질문의 답변자는{' '}
-            <span className=" text-ssacle-black">{presenterName}</span> 님
+            <span className=" text-ssacle-black">{presenterInfo.name}</span> 님
             입니다.
           </span>
         </>
       ),
       description: (
         <>
-          <span>
-            <span className="italic font-bold text-ssacle-blue/80">
-              여기에 질문 카드를 넣어버릴까?
-            </span>
-          </span>
-          <span>질문 카드를 선택 후 [준비 완료] 버튼을 눌러주세요.</span>
+          <div className="flex flex-col gap-2">
+            <div className="font-bold">
+              <QuestionCardSection />
+            </div>
+            <span>질문 카드를 선택 후 [준비 완료] 버튼을 눌러주세요.</span>
+          </div>
         </>
       ),
       buttons: [
         {
           text: '준비 완료',
           onClick: () => {
-            // sendSignal(PRESENTATION_STATUS.QUESTION_READY)
-            closeModal()
+            if (isQuestionSelected) {
+              session?.signal({
+                data: JSON.stringify({
+                  data: PRESENTATION_STATUS.QUESTION_ANSWER,
+                  selectedQuestion,
+                  presenterInfo,
+                }),
+                type: 'ready',
+              })
+              closeModal()
+            } else {
+              alert('질문 카드를 선택해주세요.')
+            }
           },
-          style: '',
+          style: isQuestionSelected ? '' : 'opacity-50 pointer-events-none ',
         },
       ],
     },
@@ -308,7 +345,7 @@ export const createModalStepConfig = ({
       title: '질문 답변이 곧 시작됩니다!',
       description: (
         <>
-          <span>이번 답변자는 "{presenterName}"님 입니다.</span>
+          <span>이번 답변자는 "{presenterInfo.name}"님 입니다.</span>
           <span>답변자 준비하는 시간을 조금만 기다려주세요.</span>
           <span className="italic">답변자가 답변을 선택하고 있습니다.</span>
         </>
@@ -319,19 +356,93 @@ export const createModalStepConfig = ({
         </>
       ),
     },
+
+    // * 질문 종료 확인 모달
+    [ModalSteps.QUESTION.ANSWER_END_CONFIRM]: {
+      title: ['⚠️ 답변을 완료하시겠습니까? ⚠️'],
+      description: (
+        <>
+          <span>발표를 완료하시면 다음 답변자에게 턴이 넘어갑니다.</span>
+        </>
+      ),
+      buttons: [
+        {
+          text: '확인',
+          onClick: () => {
+            sendEndSignal(PRESENTATION_STATUS.QUESTION_ANSWER_MIDDLE_END)
+            closeModal()
+          },
+        },
+        {
+          text: '계속',
+          onClick: () => {
+            closeModal()
+          },
+          style: 'bg-ssacle-blue/70 hover:bg-ssacle-blue/30',
+        },
+      ],
+    },
+
+    // * 질문 답변 중간 종료 모달
+    [ModalSteps.QUESTION.ANSWER_MIDDLE_END]: {
+      title: (
+        <>
+          <span>✨ {presenterInfo.name} ✨이 답변을 완료했습니다. </span>
+        </>
+      ),
+      description: (
+        <>
+          {isQuestionCompleted ? (
+            <span>
+              수고하셨습니다. 모든 사람들의 질문 답변이 완료되었습니다.👍🏻
+            </span>
+          ) : (
+            <span>다음 단계로 넘어갑니다.</span>
+          )}
+        </>
+      ),
+      buttons: [
+        {
+          text: '확인',
+          onClick: () => {
+            // 모든 참여자가 완료 했을 경우, 질문 카드 종료 시그널 보내기
+            isQuestionCompleted
+              ? setTimeout(() => {
+                  sendEndSignal(PRESENTATION_STATUS.QUESTION_END)
+                }, 1000)
+              : sendStatusSignal(PRESENTATION_STATUS.QUESTION_ANSWER_CONTINUE)
+            closeModal()
+            setIsQuestionSelected(false)
+          },
+        },
+      ],
+    },
+
     // ! 질문 섹션 종료
     [ModalSteps.QUESTION.ANSWER_END]: {
       title: ['✨ 질문 섹션이 종료되었습니다. ✨ '],
       description: (
         <>
           <span>
-            잠시후 1분 후{' '}
+            잠시후 ⏱️ 1분 후{' '}
             <span className="font-bold text-ssacle-blue">투표</span>가
             진행됩니다.
           </span>
         </>
       ),
-      buttons: [CommonButtons.CONFIRM],
+      buttons: [
+        {
+          text: '확인',
+          onClick: () => {
+            setTimeout(() => {
+              sendStatusSignal(PRESENTATION_STATUS.VOTE_INIT)
+            }, 1000)
+            setIsQuestionSelected(false)
+            closeModal()
+          },
+          style: '',
+        },
+      ],
     },
 
     // ! 투표 소개 모달
@@ -342,11 +453,20 @@ export const createModalStepConfig = ({
           <span>잠시후 싸프린트 투표를 진행합니다.</span>
           <span>발표, 질문 답변, 태도 등 종합적으로 평가를 진행합니다.</span>
           <span className="italic font-bold text-ssacle-blue/80">
-            총 평가 시간은 3분입니다.
+            총 ⏱️ 평가 시간은 3분입니다.
           </span>
         </>
       ),
-      buttons: [],
+      buttons: [
+        {
+          text: '확인',
+          onClick: () => {
+            sendStatusSignal(PRESENTATION_STATUS.VOTE_START)
+            closeModal()
+          },
+          style: '',
+        },
+      ],
     },
 
     // ! 투표 시작 모달
@@ -362,7 +482,7 @@ export const createModalStepConfig = ({
           text: '평가 완료',
           onClick: () => {
             // 투표 완료 시그널 보내기
-            // sendSignal(PRESENTATION_STATUS.QUESTION_READY)
+            sendStatusSignal(PRESENTATION_STATUS.VOTE_END)
             closeModal()
           },
           style: '',
@@ -379,7 +499,40 @@ export const createModalStepConfig = ({
           <span>마지막으로 참여자들과 인사를 나눠주세요!</span>
         </>
       ),
-      buttons: [CommonButtons.CONFIRM],
+      buttons: [
+        {
+          text: '확인',
+          onClick: () => {
+            sendStatusSignal(PRESENTATION_STATUS.END)
+            closeModal()
+          },
+          style: '',
+        },
+      ],
+    },
+
+    [ModalSteps.ENDING.END_COMPLETE]: {
+      title: ['✨ 싸프린트가 종료되었습니다. ✨'],
+      description: (
+        <>
+          <span>지금까지 열심히 발표하시느라 고생 많으셨습니다.</span>
+          <span>오늘의 경험이 더 큰 성장의 발판이 되길 바랍니다.</span>
+          <span className="italic">
+            "언제나 <span className="font-bold text-ssacle-blue">SSACLE</span>{' '}
+            이 여러분을 응원합니다."
+          </span>
+        </>
+      ),
+      buttons: [
+        {
+          text: '결과 확인하기',
+          onClick: () => {
+            navigate('/presentation/result') // 결과 페이지로 이동
+            closeModal()
+          },
+          style: '',
+        },
+      ],
     },
 
     // ! 싸프린트 종료 모달
@@ -400,6 +553,7 @@ export const createModalStepConfig = ({
           text: '결과 확인하기',
           onClick: () => {
             // 결과 확인 시그널 보내기
+            // 투표 종료 시그널 보내기
             // sendSignal(PRESENTATION_STATUS.QUESTION_READY)
             closeModal()
           },

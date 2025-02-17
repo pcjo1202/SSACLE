@@ -12,6 +12,7 @@ export const usePresentationModalStateStore =
   create<PresentationModalStateStore>((set) => ({
     // 모달 상태
     modalStep: ModalSteps.INITIAL.WELCOME, // 초기 모달 상태
+    // modalStep: ModalSteps.QUESTION.SECTION_READY, // 초기 모달 상태
     isModalOpen: true,
 
     // 모달 상태 설정
