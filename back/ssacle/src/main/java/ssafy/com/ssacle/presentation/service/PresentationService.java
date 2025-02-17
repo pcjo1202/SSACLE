@@ -1,4 +1,4 @@
-package ssafy.com.ssacle.sprint.service;
+package ssafy.com.ssacle.presentation.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

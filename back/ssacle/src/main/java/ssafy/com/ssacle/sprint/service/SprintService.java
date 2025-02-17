@@ -16,14 +16,16 @@ import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.diary.dto.DiaryGroupedByDateResponse;
 import ssafy.com.ssacle.diary.service.DiaryService;
 import ssafy.com.ssacle.notion.service.NotionService;
+import ssafy.com.ssacle.presentation.domain.PresentationStatus;
+import ssafy.com.ssacle.presentation.dto.PresentationStatusUpdateResponseDTO;
 import ssafy.com.ssacle.questioncard.dto.QuestionCardResponse;
 import ssafy.com.ssacle.questioncard.service.QuestionCardService;
-import ssafy.com.ssacle.sprint.domain.PresentationStatus;
+import ssafy.com.ssacle.presentation.domain.PresentationStatus;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.dto.*;
-import ssafy.com.ssacle.sprint.exception.PresentationAlreadyEndedException;
-import ssafy.com.ssacle.sprint.exception.PresentationInvalidStepException;
+import ssafy.com.ssacle.presentation.exception.PresentationAlreadyEndedException;
+import ssafy.com.ssacle.presentation.exception.PresentationInvalidStepException;
 import ssafy.com.ssacle.sprint.exception.SprintAnnouncementNotYetException;
 import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
 import ssafy.com.ssacle.sprint.exception.SprintUnauthorizedException;
@@ -396,7 +398,7 @@ public class SprintService {
     }
     public PresentationStatusUpdateResponseDTO updatePresentationStatus(Long sprintId) {
         Sprint sprint = sprintRepository.findById(sprintId)
-                .orElseThrow(() -> new SprintNotExistException());
+                .orElseThrow(SprintNotExistException::new);
         // 현재 상태의 다음 상태로 업데이트
         PresentationStatus nextStatus = PresentationStatus.getNextStatus(sprint.getPresentationStatus());
         if (nextStatus == null) {
@@ -422,8 +424,5 @@ public class SprintService {
 
         return now.isAfter(presentationStartTime) && now.isBefore(presentationEndTime);
     }
-}
-
 
 }
-
