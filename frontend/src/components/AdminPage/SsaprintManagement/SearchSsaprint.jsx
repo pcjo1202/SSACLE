@@ -1,6 +1,9 @@
 // 싸프린트 전체 조회 데이터 가공
 
 import dayjs from 'dayjs'
+import isBetween from 'dayjs/plugin/isBetween'
+
+dayjs.extend(isBetween)
 
 // ✅ '학습 내용: ' 텍스트 제거
 export const cleanDescription = (description) => {
