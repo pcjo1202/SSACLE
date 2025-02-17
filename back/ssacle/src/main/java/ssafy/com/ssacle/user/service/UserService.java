@@ -54,9 +54,7 @@ public class UserService {
     private long refreshExpireMs;
 
     public User getAuthenticatedUser() {
-        System.out.println(SecurityContextHolder.getContext());
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println(userEmail);
         return userRepository.findByEmail(userEmail)
                 .orElseThrow(()->new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
     }
