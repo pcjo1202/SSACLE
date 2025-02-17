@@ -73,7 +73,7 @@ const MySsaprintList = ({ currentSprintsData }) => {
             return (
               <div
                 key={sprint.id}
-                className="flex flex-row gap-x-2 mb-1 items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                className="flex flex-row gap-x-2 items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
                 onClick={() => {
                   handleSprintClick(sprint.id)
                 }}
