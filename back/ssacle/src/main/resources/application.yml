@@ -1,9 +1,9 @@
 server:
+  forward-headers-strategy: native # 추가가
   address: 0.0.0.0
   port: 8080
   ssl:
-    enabled: false # false -> true 변경경
-  # forward-headers-strategy: native
+    enabled: false 
 
 spring:
   datasource:
