@@ -12,13 +12,19 @@ const LoginPage = () => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  // 기존 코드
+  // 로그인 뮤테이션
   const loginMutation = useMutation({
     mutationFn: fetchLogin,
     onSuccess: (response) => {
       if (response.status === 200) {
         // localStorage.setItem('accessToken', response.data?.accessToken)
-        navigate('/main')
+        const role = response.data
+        localStorage.setItem("role", role)
+        if (role === 'ADMIN') {
+          navigate('/admin')
+        } else {
+          navigate('/main')
+        }
       }
     },
     onError: (error) => {
