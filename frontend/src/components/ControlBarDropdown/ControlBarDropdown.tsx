@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from 'react'
+import { useMemo, type FC, type ReactNode } from 'react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,49 +9,43 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useShallow } from 'zustand/shallow'
+import useRoomStateStore from '@/store/useRoomStateStore'
+import { useParams } from 'react-router-dom'
+import { SendIcon } from 'lucide-react'
 
 interface ControlBarDropdownProps {
   children: ReactNode
   isDropdown: boolean
-  dropDownItems: {
-    title: string
-    items: [
-      {
-        username: string
-        icon: ReactNode
-      },
-    ]
-  }[]
 }
 
 const ControlBarDropdown: FC<ControlBarDropdownProps> = ({
   children,
   isDropdown,
-  dropDownItems,
 }) => {
   if (!isDropdown) return <>{children}</>
 
-  const { title, items } = dropDownItems
+  const { roomId } = useParams()
+
+  const { roomConnectionData } = useRoomStateStore(
+    useShallow((state) => ({
+      roomConnectionData: state.roomConnectionData,
+    }))
+  )
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>{title}</DropdownMenuLabel>
+        <DropdownMenuLabel>{'참여자'}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {items.map(
-            ({
-              username,
-              icon: Icon,
-            }: {
-              username: string
-              icon: ReactNode
-            }) => (
+          {roomConnectionData[roomId as string]?.map(
+            ({ username }: { username: string }) => (
               <DropdownMenuItem key={username}>
                 <span>{username}</span>
                 <DropdownMenuShortcut className="transition-all duration-100 cursor-pointer hover:text-ssacle-blue">
-                  <Icon />
+                  <SendIcon />
                 </DropdownMenuShortcut>
               </DropdownMenuItem>
             )

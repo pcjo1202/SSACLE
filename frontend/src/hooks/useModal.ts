@@ -1,6 +1,7 @@
 import { usePresentationModalStateStore } from '@/store/usePresentationModalStateStore'
 import { useShallow } from 'zustand/react/shallow'
 import { useNavigate } from 'react-router-dom'
+import { useCallback } from 'react'
 
 export const useModal = () => {
   const { isModalOpen, modalStep, setIsModalOpen, setModalStep } =
@@ -14,18 +15,18 @@ export const useModal = () => {
     )
   const navigate = useNavigate()
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setIsModalOpen(false)
-  }
+  }, [setIsModalOpen])
 
-  const openModal = () => {
+  const openModal = useCallback(() => {
     setIsModalOpen(true)
-  }
+  }, [setIsModalOpen])
 
-  const leavePresentation = () => {
+  const leavePresentation = useCallback(() => {
     // navigate('/main', { replace: true })
     setIsModalOpen(false)
-  }
+  }, [setIsModalOpen])
 
   return {
     //

@@ -1,18 +1,20 @@
-import { useConnect } from '@/hooks/useConnect'
+import { ModalSteps } from '@/constants/modalStep'
 import { create } from 'zustand'
 
 interface PresentationModalStateStore {
-  modalStep: string
-  isModalOpen: boolean
-  setModalStep: (modalStep: string) => void
-  setIsModalOpen: (isModalOpen: boolean) => void
+  modalStep: string // 보여줄 모달 상태
+  isModalOpen: boolean // 모달 열림 여부
+  setModalStep: (modalStep: string) => void // 모달 상태 설정
+  setIsModalOpen: (isModalOpen: boolean) => void // 모달 열림 여부 설정
 }
 
 export const usePresentationModalStateStore =
   create<PresentationModalStateStore>((set) => ({
     // 모달 상태
-    modalStep: 'welcome', // 초기 모달 상태
+    modalStep: ModalSteps.INITIAL.WELCOME, // 초기 모달 상태
+    // modalStep: ModalSteps.QUESTION.SECTION_READY, // 초기 모달 상태
     isModalOpen: true,
+
     // 모달 상태 설정
     setModalStep: (modalStep) => set({ modalStep }),
     setIsModalOpen: (isModalOpen) => set({ isModalOpen }),
