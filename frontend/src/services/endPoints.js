@@ -83,13 +83,19 @@ export const SSAPRINT_END_POINT = {
   UPDATE: (id) => `/ssaprint/${id}`, // 싸프린트 수정
   DELETE: (id) => `/ssaprint/${id}`, // 싸프린트 삭제
 
-  JOIN: (id) => `/ssaprint/${id}/join`, // 싸프린트 참가
-  CANCEL: (id) => `/ssaprint/${id}/cancel`, // 싸프린트 참가 취소
+  JOIN: (sprintId) => `/ssaprint/${sprintId}/join`, // 싸프린트 참가
+  ACTIVE: (sprintId, teamId) => `/active?sprintId=${sprintId}&teamId=${teamId}`, // 싸프린트 활성 상태 조회 (참여중 스프린트 정보 조회)
+  ADD_TODO: (teamId) => `/todos/team/${teamId}`, // ToDo 등록
+  DELETE_TODO: (todoId) => `/todos/${todoId}`, // ToDo 삭제
+  UPDATE_TODO_STATUS: (todoId) => `/todos/${todoId}/done`, // To-Do 완료 상태 변경
+  DIARY_DETAIL: (diaryId) => `/diary/detail/${diaryId}`, // 일기 상세 조회
 
   PRESENTATION_PARTICIPANTS: (id) =>
     `/ssaprint/${id}/presentation/participants`, // 발표 참가자 목록 조회
   QUESTIONS: (sprintId) => `/sprints/${sprintId}/question-cards`, // 질문 목록 조회
   ADD_QUESTION: '/question-cards', // 질문 등록
+  UPDATE_QUESTION: (id) => `/question-cards/${id}`, // 질문 수정
+  DELETE_QUESTION: (id) => `/question-cards/${id}`, // 질문 삭제
   PRESENTATION_CARD_DETAIL: (id, cardId) =>
     `/ssaprint/${id}/presentation/cards/${cardId}`, // 특정 질문 카드 상세 조회
   PRESENTATION_EXIT: (id) => `/ssaprint/${id}/presentation/exit`, // 발표 종료
@@ -119,7 +125,7 @@ export const ADMIN_END_POINT = {
       CATEGORY_ALL: '/category/all', // 전체 카테고리 조회
       GPT_TODOS: '/gpt/todos', // gpt 상세 내용 생성
       SSAPRINT: '/admin/ssaprints', // 싸프린트 생성
-      CATEGORY: '/category/admin/create'
+      CATEGORY: '/category/admin/create',
     },
   },
 }

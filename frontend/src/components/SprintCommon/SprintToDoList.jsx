@@ -1,44 +1,80 @@
 import { useState, useEffect, useMemo } from 'react'
 import { FaPlus, FaTimes } from 'react-icons/fa'
+import {
+  createTodo,
+  deleteTodo,
+  updateTodoStatus,
+} from '@/services/ssaprintService'
 
-const SprintToDoList = ({ todos }) => {
+const SprintToDoList = ({ todos, teamId, refreshTodos }) => {
   const [tasks, setTasks] = useState([])
   const [newTask, setNewTask] = useState('')
 
   // 오늘 날짜 포맷 (YYYY-MM-DD)
-  const [today] = useMemo(() => new Date().toISOString().split('T'), [])
+  const today = useMemo(() => {
+    const now = new Date()
+    now.setHours(now.getHours() + 9) // UTC 기준을 한국 시간으로 변환
+    return now.toISOString().split('T')[0] // YYYY-MM-DD 형식 반환
+  }, [])
 
   // todos 데이터에서 오늘 날짜의 To-Do 찾기
   useEffect(() => {
     const todayTasks = todos.find((day) => day.date === today)
     if (todayTasks) {
       setTasks(
-        todayTasks.tasks.map((task) => ({ text: task, completed: false }))
+        todayTasks.contents?.map((content) => ({
+          id: content.id,
+          text: content.task,
+          completed: content.done, // API에서 받은 done 값을 반영
+        })) || []
       )
     } else {
       setTasks([])
     }
   }, [todos, today])
 
-  // 체크박스 변경 이벤트
-  const handleToggle = (taskIndex) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task, index) =>
-        index === taskIndex ? { ...task, completed: !task.completed } : task
-      )
-    )
+  // 체크박스 클릭 시 완료 상태 변경
+  const handleToggle = async (todoId) => {
+    try {
+      await updateTodoStatus(todoId)
+      refreshTodos() // 최신 데이터 다시 불러오기
+    } catch (error) {
+      alert('❌ To-Do 상태 변경에 실패했습니다. 다시 시도해주세요.')
+    }
   }
 
-  // 할 일 삭제
-  const handleDeleteTask = (taskIndex) => {
-    setTasks((prevTasks) => prevTasks.filter((_, index) => index !== taskIndex))
-  }
-
-  // 새 할 일 추가
-  const handleAddTask = () => {
+  // ToDo 추가
+  const handleAddTask = async () => {
     if (!newTask.trim()) return
-    setTasks((prevTasks) => [...prevTasks, { text: newTask, completed: false }])
-    setNewTask('') // 입력 필드 초기화
+
+    try {
+      await createTodo(teamId, { content: newTask, date: today })
+      setNewTask('')
+      alert('To-Do가 성공적으로 추가되었습니다!')
+
+      // ✅ 최신 To-Do 데이터 다시 불러오기
+      refreshTodos()
+    } catch (error) {
+      alert('❌ To-Do 추가에 실패했습니다. 다시 시도해주세요.')
+    }
+  }
+
+  // ToDo 삭제제
+  const handleDeleteTask = async (todoId) => {
+    try {
+      await deleteTodo(todoId)
+      alert('To-Do가 삭제되었습니다.')
+      refreshTodos() // 최신 데이터 다시 불러오기
+    } catch (error) {
+      alert('❌ To-Do 삭제에 실패했습니다. 다시 시도해주세요.')
+    }
+  }
+
+  // 엔터키 이벤트 처리
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleAddTask()
+    }
   }
 
   return (
@@ -53,14 +89,14 @@ const SprintToDoList = ({ todos }) => {
           {tasks.length > 0 ? (
             tasks.map((task, taskIndex) => (
               <li
-                key={taskIndex}
+                key={task.id || taskIndex}
                 className="flex items-center justify-between gap-2"
               >
                 <div className="flex items-center gap-2 w-full">
                   <input
                     type="checkbox"
                     checked={task.completed}
-                    onChange={() => handleToggle(taskIndex)}
+                    onChange={() => handleToggle(task.id)}
                     className="cursor-pointer"
                   />
                   <span
@@ -71,7 +107,7 @@ const SprintToDoList = ({ todos }) => {
                 </div>
                 {/* X 버튼 (삭제) */}
                 <button
-                  onClick={() => handleDeleteTask(taskIndex)}
+                  onClick={() => handleDeleteTask(task.id)}
                   className="w-3 h-3 flex items-center justify-center bg-gray-500 rounded-sm hover:bg-gray-700 transition"
                 >
                   <FaTimes className="text-white text-[6px]" />
@@ -94,6 +130,7 @@ const SprintToDoList = ({ todos }) => {
             type="text"
             value={newTask}
             onChange={(e) => setNewTask(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="새로운 To-Do 입력"
             className="flex-1 p-1.5 border rounded-md focus:outline-none text-xs"
           />
