@@ -87,7 +87,9 @@ const SsaprintLayout = () => {
       />
 
       {/* 필터 UI */}
-      <FilterBar onFilterChange={handleFilterChange} />
+      <div className="mt-4">
+        <FilterBar onFilterChange={handleFilterChange} />
+      </div>
 
       {/* 스프린트 목록 */}
       <section className="mt-1">
