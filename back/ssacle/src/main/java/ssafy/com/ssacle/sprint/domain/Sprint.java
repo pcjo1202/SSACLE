@@ -6,12 +6,10 @@ import ssafy.com.ssacle.SprintCategory.domain.SprintCategory;
 import ssafy.com.ssacle.category.domain.Category;
 import ssafy.com.ssacle.global.exception.UtilErrorCode;
 import ssafy.com.ssacle.global.utill.ValidationUtils;
-import ssafy.com.ssacle.sprint.exception.PresentationAlreadyEndedException;
-import ssafy.com.ssacle.sprint.exception.PresentationInvalidStepException;
+import ssafy.com.ssacle.presentation.domain.PresentationStatus;
 import ssafy.com.ssacle.ssaldcup.domain.SsaldCup;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.todo.domain.DefaultTodo;
-import ssafy.com.ssacle.user.domain.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -16,20 +16,25 @@ import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.diary.dto.DiaryGroupedByDateResponse;
 import ssafy.com.ssacle.diary.service.DiaryService;
 import ssafy.com.ssacle.notion.service.NotionService;
+import ssafy.com.ssacle.presentation.domain.PresentationStatus;
+import ssafy.com.ssacle.presentation.dto.PresentationStatusUpdateResponseDTO;
 import ssafy.com.ssacle.questioncard.dto.QuestionCardResponse;
 import ssafy.com.ssacle.questioncard.service.QuestionCardService;
-import ssafy.com.ssacle.sprint.domain.PresentationStatus;
+import ssafy.com.ssacle.presentation.domain.PresentationStatus;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.dto.*;
-import ssafy.com.ssacle.sprint.exception.PresentationAlreadyEndedException;
-import ssafy.com.ssacle.sprint.exception.PresentationInvalidStepException;
+import ssafy.com.ssacle.presentation.exception.PresentationAlreadyEndedException;
+import ssafy.com.ssacle.presentation.exception.PresentationInvalidStepException;
 import ssafy.com.ssacle.sprint.exception.SprintAnnouncementNotYetException;
 import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
+import ssafy.com.ssacle.sprint.exception.SprintUnauthorizedException;
+import ssafy.com.ssacle.sprint.exception.UserParticipatedException;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.dto.TeamResponse;
+import ssafy.com.ssacle.team.exception.TeamNameExistException;
 import ssafy.com.ssacle.team.exception.TeamNotFoundException;
 import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.todo.domain.DefaultTodo;
@@ -71,6 +76,23 @@ public class SprintService {
     private final QuestionCardService questionCardService;
     private final DiaryService diaryService;
 
+    @Transactional(readOnly = true)
+    public void validateUserParticipation(Long userId, Long sprintId) {
+        boolean isParticipating = userTeamRepository.countByUserIdAndSprintId(userId, sprintId) > 0;
+
+        if (!isParticipating) {
+            throw new SprintUnauthorizedException();
+        }
+    }
+    @Transactional(readOnly = true)
+    public void validateUserNotParticipation(Long userId, Long sprintId) {
+        boolean isParticipating = userTeamRepository.countByUserIdAndSprintId(userId, sprintId) > 0;
+
+        if (isParticipating) {
+            throw new UserParticipatedException();
+        }
+    }
+
     @Transactional
     public SprintResponse createSprint(SprintCreateRequest request) {
         Sprint sprint = SprintBuilder.builder()
@@ -102,15 +124,18 @@ public class SprintService {
     public Long joinSprint(Long sprintId, User user, String teamName) {
         Sprint sprint = sprintRepository.findByIdWithTeams(sprintId)
                 .orElseThrow(SprintNotExistException::new);
+        if(teamRepository.existsByName(teamName))
+            throw new TeamNameExistException();
 
         List<DefaultTodoResponse> defaultTodos = defaultTodoService.getDefaultTodosBySprintId(sprintId);
         List<CategoryNameAndLevelResponseDTO> categories = categoryRepository.findCategoryNamesBySprintId(sprintId);
 
         // 스프린트 <-> 팀 <-> 사용자팀 <-> 사용자 연동
         Team team = saveTeamAndTeamUser(user, sprint, teamName);
+
         // 팀 <-> 노션 연동
-        String notionUrl = saveNotion(user.getName(), defaultTodos, categories);
-        team.setNotionURL(notionUrl);
+//        String notionUrl = saveNotion(teamName, defaultTodos, categories);
+//        team.setNotionURL(notionUrl);
 
         // 팀 <-> 투두 연동
         saveTodo(team, defaultTodos);
@@ -376,7 +401,7 @@ public class SprintService {
     }
     public PresentationStatusUpdateResponseDTO updatePresentationStatus(Long sprintId) {
         Sprint sprint = sprintRepository.findById(sprintId)
-                .orElseThrow(() -> new SprintNotExistException());
+                .orElseThrow(SprintNotExistException::new);
         // 현재 상태의 다음 상태로 업데이트
         PresentationStatus nextStatus = PresentationStatus.getNextStatus(sprint.getPresentationStatus());
         if (nextStatus == null) {
@@ -416,78 +441,4 @@ public class SprintService {
                 .map(user-> UserResponseDTO.of(user,null))
                 .collect(Collectors.toList());
     }
-
-//    @Transactional
-//    public List<SprintRecommendResponseDTO> getRecommendSprint(User user) {
-//        // 1. 사용자의 관심 카테고리(중간 카테고리) 가져오기
-//        List<UserCategory> userCategories = userCategoryRepository.findByUserId(user.getId());
-//        List<Long> interestedMiddleCategoryIds = userCategories.stream()
-//                .map(userCategory -> userCategory.getCategory().getId())
-//                .collect(Collectors.toList());
-//
-//        log.info("사용자의 관심 중간 카테고리 ID 목록: {}", interestedMiddleCategoryIds);
-//        if (interestedMiddleCategoryIds.isEmpty()) {
-//            return Collections.emptyList(); // 관심 카테고리가 없으면 추천 스프린트 없음
-//        }
-//
-//// 2. 모든 최하위 카테고리 가져오기
-//        List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategories();
-//
-//// 3. 최하위 카테고리 중에서 부모가 사용자의 관심 중간 카테고리와 일치하는 것만 필터링
-//        List<Long> validLowestCategoryIds = lowestLevelCategories.stream()
-//                .filter(category -> category.getParent() != null &&
-//                        interestedMiddleCategoryIds.contains(category.getParent().getId()))
-//                .map(Category::getId)
-//                .collect(Collectors.toList());
-//
-//        log.info("사용자의 관심 중간 카테고리와 연결된 최하위 카테고리 ID 목록: {}", validLowestCategoryIds);
-//
-//        if (validLowestCategoryIds.isEmpty()) {
-//            return Collections.emptyList(); // 사용자의 관심 카테고리와 연결된 최하위 카테고리가 없으면 추천할 스프린트 없음
-//        }
-//
-//// 4. 해당하는 최하위 카테고리에 속한 스프린트 조회
-//        List<SprintCategory> relatedSprintCategories = sprintCategoryRepository.findByCategoryIdIn(validLowestCategoryIds);
-//        List<Sprint> relatedSprints = relatedSprintCategories.stream()
-//                .map(SprintCategory::getSprint)
-//                .collect(Collectors.toList());
-//
-//        log.info("추천 가능한 스프린트 개수: {}", relatedSprints.size());
-//
-//// 5. 이미 참여한 스프린트 제외 (시작 전인 것만 필터링)
-//        List<UserTeam> userTeams = userTeamRepository.findByUserId(user.getId());
-//        Set<Long> joinedSprintIds = userTeams.stream()
-//                .map(userTeam -> userTeam.getTeam().getSprint().getId())
-//                .collect(Collectors.toSet());
-//
-//        List<Sprint> unjoinedSprints = relatedSprints.stream()
-//                .filter(sprint -> !joinedSprintIds.contains(sprint.getId()))
-////                .filter(sprint -> !joinedSprintIds.contains(sprint.getId()) && sprint.getStartAt().isAfter(LocalDateTime.now()))
-//                .collect(Collectors.toList());
-//
-//        log.info("사용자가 참여하지 않은 추천 가능한 스프린트 개수: {}", unjoinedSprints.size());
-//
-//// 6. 추천 스프린트 목록 반환
-//        return unjoinedSprints.stream()
-//                .map(sprint -> SprintRecommendResponseDTO.builder()
-//                        .id(sprint.getId())
-//                        .categoryName(
-//                                sprint.getSprintCategories().isEmpty() ? "Unknown"
-//                                        : sprint.getSprintCategories().get(0).getCategory().getCategoryName()
-//                        )
-//                        .title(sprint.getName())
-//                        .description(sprint.getBasicDescription())
-//                        .start_at(sprint.getStartAt().toLocalDate()) // LocalDateTime → LocalDate 변환
-//                        .end_at(sprint.getEndAt().toLocalDate()) // LocalDateTime → LocalDate 변환
-//                        .currentMembers(sprint.getCurrentMembers())
-//                        .maxMembers(sprint.getMaxMembers())
-//                        .imageUrl(sprint.getSprintCategories().isEmpty() ? null
-//                                : sprint.getSprintCategories().get(0).getCategory().getImage()) // 카테고리 이미지 활용
-//                        .build())
-//                .collect(Collectors.toList());
-//
-//    }
-
-
 }
-
