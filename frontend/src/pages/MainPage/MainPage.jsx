@@ -56,19 +56,20 @@ const MainPage = () => {
   // API 응답 데이터를 컴포넌트가 기대하는 형태로 변환
   const filteredSprints =
     sprintListData
-      ?.filter((sprint) => {
-        // 유저의 categoryNames에 majorCategoryName이나 subCategoryName이 포함되어 있는지 확인
-        userData.categoryNames.includes(sprint.majorCategoryName) ||
+      ?.filter(
+        (sprint) =>
+          // 유저의 categoryNames에 majorCategoryName이나 subCategoryName이 포함되어 있는지 확인
+          userData.categoryNames.includes(sprint.majorCategoryName) ||
           (sprint.subCategoryName &&
             userData.categoryNames.includes(sprint.subCategoryName))
-      })
+      )
       .map((sprint) => ({
         sprintId: sprint.id,
         title: sprint.title,
-        category: sprint.subCategoryName || sprint.majorCategoryName, // subCategoryName이 null이면 majorCategoryName 사용
+        category: sprint.subCategoryName || sprint.majorCategoryName,
         status:
           sprint.currentMembers < sprint.maxMembers ? '모집중' : '모집완료',
-        requiredSkills: [sprint.subCategoryName || sprint.majorCategoryName], // null 체크
+        requiredSkills: [sprint.subCategoryName || sprint.majorCategoryName],
         currentMembers: sprint.currentMembers,
         maxMembers: sprint.maxMembers,
         startDate: sprint.start_at,
@@ -94,12 +95,12 @@ const MainPage = () => {
         />
       </section>
       {/* 모집중인 싸드컵 */}
-      <section className="mb-20">
+      {/* <section className="mb-20">
         <CurruntSsadcup
           userData={user}
           recommendedSprints={recommendedSprints}
         />
-      </section>
+      </section> */}
       {/* 싸밥 투표, AI 기사 */}
       <div className="flex flex-row gap-x-5">
         <section className="basis-1/2">
