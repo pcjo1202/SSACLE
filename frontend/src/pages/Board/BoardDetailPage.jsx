@@ -1,11 +1,16 @@
 import React, { useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
-import { fetchBoardDetail, fetchBoardList } from '@/services/boardService'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import {
+  fetchBoardDetail,
+  fetchBoardList,
+  fetchDeleteBoard,
+} from '@/services/boardService'
 import CommentForm from '@/components/Board/Comment/CommentForm'
 import CommentList from '@/components/Board/Comment/CommentList'
 import BoardNav from '@/components/Board/Detail/BoardNav'
 import PayModal from '@/components/Board/Modal/PayModal'
+import { fetchUserInfo } from '@/services/mainService'
 
 const BOARD_TITLES = {
   edu: '학습 게시판',
@@ -40,6 +45,45 @@ const BoardDetailPage = () => {
     queryFn: fetchBoardList,
     enabled: !!post, // post 데이터가 있을 때만 실행
   })
+  // 현재 로그인한 사용자 정보 조회
+  const { data: userData } = useQuery({
+    queryKey: ['userInfo'],
+    queryFn: fetchUserInfo,
+    retry: false,
+  })
+
+  // 게시글 삭제 mutation
+  const deletePostMutation = useMutation({
+    mutationFn: fetchDeleteBoard,
+    onSuccess: () => {
+      alert('게시글이 삭제되었습니다.')
+      navigate(`/board/${boardType}?tab=${post.subCategory}`)
+    },
+    onError: (error) => {
+      console.error('게시글 삭제 실패:', error)
+      alert('게시글 삭제에 실패했습니다.')
+    },
+  })
+
+  // 게시글 삭제 핸들러
+  const handleDeletePost = () => {
+    if (window.confirm('정말 이 게시글을 삭제하시겠습니까?')) {
+      deletePostMutation.mutate(boardId)
+    }
+  }
+
+  // 게시글 수정 페이지로 이동
+  const handleEditPost = () => {
+    navigate(`/board/${boardType}/${boardId}/edit`, {
+      state: {
+        boardType: boardType,
+        type: post.subCategory,
+      },
+    })
+  }
+
+  // 작성자 여부 확인 (닉네임으로 비교)
+  const isAuthor = userData?.nickname === post?.writerInfo
 
   // 이전글, 다음글 계산
   const getPrevNextPosts = () => {
@@ -233,9 +277,28 @@ const BoardDetailPage = () => {
         currentPickle={userPickle}
       />
 
+      {/* 버튼 그룹 */}
       <div className="mt-6 flex justify-end gap-2">
+        {isAuthor && (
+          <>
+            <button
+              onClick={handleEditPost}
+              className="px-4 py-2 bg-blue-300 text-white rounded hover:bg-blue-600"
+            >
+              수정
+            </button>
+            <button
+              onClick={handleDeletePost}
+              className="px-4 py-2 bg-blue-300 text-white rounded hover:bg-blue-600"
+            >
+              삭제
+            </button>
+          </>
+        )}
         <button
-          onClick={() => navigate(`/board/${boardType}`)}
+          onClick={() =>
+            navigate(`/board/${boardType}?tab=${post.subCategory}`)
+          }
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           목록
