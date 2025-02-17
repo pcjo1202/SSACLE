@@ -67,7 +67,7 @@ const SsaprintDetail = () => {
       </div>
 
       {/* 질문 카드 테이블 */}
-      <div className="max-w-3xl w-full mx-auto px-4">
+      <div className="max-w-3xl w-full mx-auto p-6">
         <SasprintQuestionTable />
       </div>
 
