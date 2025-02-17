@@ -12,7 +12,7 @@ import ssafy.com.ssacle.team.domain.Team;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/diary")
+@RequestMapping("/api/v1/diary")
 @RequiredArgsConstructor
 public class DiaryController implements DiarySwaggerController{
 
