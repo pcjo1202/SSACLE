@@ -17,6 +17,7 @@ import ssafy.com.ssacle.board.repository.BoardTypeRepository;
 import ssafy.com.ssacle.category.domain.Category;
 import ssafy.com.ssacle.category.exception.CategoryErrorCode;
 import ssafy.com.ssacle.category.exception.CategoryException;
+import ssafy.com.ssacle.category.exception.CategoryNotExistException;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.comment.domain.Comment;
 import ssafy.com.ssacle.comment.repository.CommentRepository;
@@ -30,6 +31,11 @@ import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.sprint.service.SprintService;
+import ssafy.com.ssacle.ssaldcup.domain.SsaldCup;
+import ssafy.com.ssacle.ssaldcup.domain.SsaldCupBuilder;
+import ssafy.com.ssacle.ssaldcup.repository.SsaldCupRepository;
+import ssafy.com.ssacle.ssaldcupcategory.domain.SsaldCupCategory;
+import ssafy.com.ssacle.ssaldcupcategory.repository.SsaldCupCategoryRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.dto.TeamResponse;
@@ -50,6 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Configuration
 public class DataInitializer {
@@ -70,7 +77,9 @@ public class DataInitializer {
             SprintCategoryRepository sprintCategoryRepository,
             SprintService sprintService,
             QuestionCardService questionCardService,
-            DiaryService diaryService
+            DiaryService diaryService,
+            SsaldCupRepository ssaldCupRepository,
+            SsaldCupCategoryRepository ssaldCupCategoryRepository
     ) {
         return args -> {
             initializeUsers(userRepository);
@@ -85,6 +94,7 @@ public class DataInitializer {
             initializeSprints(sprintRepository,categoryRepository,sprintCategoryRepository);
             initializeSprintParticipation(sprintRepository, userRepository, teamRepository, sprintService, questionCardService, diaryService);
 //            initializeTeams(sprintRepository,teamRepository,userRepository,userTeamRepository);
+            initializeSsaldCups(ssaldCupRepository, sprintRepository, categoryRepository,ssaldCupCategoryRepository, sprintCategoryRepository);
         };
     }
 
@@ -831,6 +841,7 @@ public class DataInitializer {
 
         return todos;
     }
+
     @Transactional
     public void initializeSprintParticipation(SprintRepository sprintRepository,
                                               UserRepository userRepository,
@@ -849,22 +860,29 @@ public class DataInitializer {
                 .toList();
 
         for (Sprint sprint : allSprints) {
-            System.out.println("----------스프린트 ID "+sprint.getId()+"-----------");
+            System.out.println("----------스프린트 ID " + sprint.getId() + "-----------");
+
             for (User admin : admins) {
-                System.out.println("----------사용자 ID "+admin.getId()+"-----------");
+                System.out.println("----------사용자 ID " + admin.getId() + "-----------");
                 sprintService.joinSprint(sprint.getId(), admin, sprint.getId() + "_" + admin.getId());
             }
 
-            // Sprint ID가 2+3*x인 경우 QuestionCard와 Diary 추가
+            // ✅ Sprint ID가 2+3*x인 경우에 QuestionCard 및 Diary 추가
             if ((sprint.getId() - 2) % 3 == 0) {
-                // ✅ QuestionCard 추가
-                QuestionCardRequest questionCardRequest = new QuestionCardRequest(sprint.getId(),
-                        "Sprint " + sprint.getId() + "을 위한 질문 카드입니다.", false);
-                questionCardService.createQuestionCard(questionCardRequest);
+                List<Team> teams = teamRepository.findBySprint(sprint); // ✅ 해당 Sprint의 팀 가져오기
 
-                // ✅ Diary 추가
+                for (Team team : teams) {
+                    // ✅ 각 팀별로 QuestionCard 생성
+                    QuestionCardRequest questionCardRequest = new QuestionCardRequest(
+                            sprint.getId(),
+                            team.getId(), // ✅ 팀 ID 추가
+                            "Sprint " + sprint.getId() + "의 팀 [" + team.getName() + "]을 위한 질문 카드입니다.",
+                            false
+                    );
+                    questionCardService.createQuestionCard(questionCardRequest);
+                }
+
                 // ✅ Diary 추가 (스프린트 시작일부터 종료일까지 모든 날짜 추가)
-                List<Team> teams = teamRepository.findBySprint(sprint);
                 for (Team team : teams) {
                     LocalDate startDate = sprint.getStartAt().toLocalDate();
                     LocalDate endDate = sprint.getEndAt().toLocalDate();
@@ -881,4 +899,85 @@ public class DataInitializer {
         System.out.println("✅ 모든 Sprint에 admin1~admin2이 참가하고, 특정 Sprint에 QuestionCard 및 Diary가 추가되었습니다.");
     }
 
+    @Transactional
+    public void initializeSsaldCups(SsaldCupRepository ssaldCupRepository, SprintRepository sprintRepository,
+                                    CategoryRepository categoryRepository,
+                                    SsaldCupCategoryRepository ssaldCupCategoryRepository, SprintCategoryRepository sprintCategoryRepository){
+        if(ssaldCupRepository.count()==0){
+            List<SsaldCup> ssaldCups = new ArrayList<>();
+            List<SsaldCupCategory> ssaldCupCategories = new ArrayList<>();
+            LocalDateTime now = LocalDateTime.now();
+            Random random = new Random();
+            List<Category> midLevelCategories = categoryRepository.findMidLevelCategoriesByJoin();
+            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
+            for(Category category : midLevelCategories){
+                List<Long> categoryIds = new ArrayList<>();
+                categoryIds.add(category.getId());
+                Category parent = category.getParent();
+                if(parent!=null){
+                    categoryIds.add(parent.getId());
+                }
+
+                for(int i=0; i<3; i++){
+                    LocalDateTime startAt;
+                    LocalDateTime endAt;
+                    if (i == 0) { // 시작 전 (status = 0)
+                        startAt = now.plusDays(random.nextInt(10) + 5);
+                        endAt = startAt.plusDays(random.nextInt(10) + 5);
+                    } else if (i == 1) { // 진행 중 (status = 1)
+                        startAt = now.minusDays(random.nextInt(10));
+                        endAt = now.plusDays(random.nextInt(10) + 5);
+                    } else { // 종료됨 (status = 2)
+                        startAt = now.minusDays(random.nextInt(20) + 20);
+                        endAt = startAt.plusDays(random.nextInt(10) + 5);
+                    }
+                    SsaldCup ssaldCup = SsaldCupBuilder.builder()
+                            .name(category.getCategoryName()+" SsaldCup "+(i+1))
+                            .description("학습 내용: "+category.getCategoryName())
+                            .maxTeams(2 + random.nextInt(3))
+                            .maxTeamMembers(3+random.nextInt(2))
+                            .startAt(startAt)
+                            .endAt(endAt)
+                            .build();
+                    ssaldCupRepository.save(ssaldCup);
+                    categoryIds.forEach(categoryId ->{
+                        Category ssaldCupCategory = categoryRepository.findById(categoryId)
+                                .orElseThrow(CategoryNotExistException::new);
+                        ssaldCupCategoryRepository.save(new SsaldCupCategory(ssaldCup, ssaldCupCategory));
+                    });
+                    ssaldCups.add(ssaldCup);
+                    List<Category> relatedLowestCategories = lowestLevelCategories.stream()
+                            .filter(lowestCategory -> lowestCategory.getParent() != null &&
+                                    lowestCategory.getParent().getId().equals(category.getId()))
+                            .collect(Collectors.toList());
+                    int sprintCount = 2 + random.nextInt(3);
+
+                    for(int j=0; j<sprintCount; j++){
+                        LocalDateTime sprintStart = startAt.plusDays(random.nextInt(3));
+                        LocalDateTime sprintEnd = sprintStart.plusDays(random.nextInt(5) + 2);
+                        LocalDateTime announceAt = sprintEnd.minusDays(0);
+                        Category selectedLowestCategory = relatedLowestCategories.get(random.nextInt(relatedLowestCategories.size()));
+
+                        Sprint sprint = SprintBuilder.builder()
+                                .name(ssaldCup.getName()+"_Sprint_"+(j+1))
+                                .basicDescription("학습 내용: " + category.getCategoryName())
+                                .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
+                                .recommendedFor("이 주제에 관심 있는 개발자")
+                                .startAt(sprintStart)
+                                .endAt(sprintEnd)
+                                .announceAt(announceAt)
+                                .maxMembers(5 + random.nextInt(5))
+                                .sequence(j+1)
+                                .ssaldCup(ssaldCup)
+                                .build();
+                        sprintRepository.save(sprint);
+                        sprintCategoryRepository.save(new SprintCategory(sprint, selectedLowestCategory));
+                    }
+                }
+            }
+            System.out.println("싸드컵 더미 데이터 추가 성공");
+        }else{
+            System.out.println("싸드컵 더미 데이터가 이미 존재합니다.");
+        }
+    }
 }

@@ -18,9 +18,12 @@ import ssafy.com.ssacle.diary.service.DiaryService;
 import ssafy.com.ssacle.notion.service.NotionService;
 import ssafy.com.ssacle.questioncard.dto.QuestionCardResponse;
 import ssafy.com.ssacle.questioncard.service.QuestionCardService;
+import ssafy.com.ssacle.sprint.domain.PresentationStatus;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.dto.*;
+import ssafy.com.ssacle.sprint.exception.PresentationAlreadyEndedException;
+import ssafy.com.ssacle.sprint.exception.PresentationInvalidStepException;
 import ssafy.com.ssacle.sprint.exception.SprintAnnouncementNotYetException;
 import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
 import ssafy.com.ssacle.sprint.exception.SprintUnauthorizedException;
@@ -391,6 +394,36 @@ public class SprintService {
             throw new SprintAnnouncementNotYetException();
         }
     }
+    public PresentationStatusUpdateResponseDTO updatePresentationStatus(Long sprintId) {
+        Sprint sprint = sprintRepository.findById(sprintId)
+                .orElseThrow(() -> new SprintNotExistException());
+        // 현재 상태의 다음 상태로 업데이트
+        PresentationStatus nextStatus = PresentationStatus.getNextStatus(sprint.getPresentationStatus());
+        if (nextStatus == null) {
+            throw new PresentationAlreadyEndedException();
+        }
+        if(nextStatus.getStep() != sprint.getPresentationStatus().getStep()+1){
+            throw new PresentationInvalidStepException();
+        }
+        sprint.updatePresentationStatus(nextStatus);
+        sprintRepository.save(sprint);
+
+        return new PresentationStatusUpdateResponseDTO("발표 상태 업데이트 성공", sprint.getPresentationStatus());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean checkPresentationAvailability(Long sprintId) {
+        Sprint sprint = sprintRepository.findById(sprintId)
+                .orElseThrow(SprintNotExistException::new);
+        // 발표 시작 시간(announced_at) 30분전부터 입장 가능하며 해당 시간이 아니면 입장할 수 없는 로직 구현
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime presentationStartTime = sprint.getAnnounceAt().minusMinutes(30);
+        LocalDateTime presentationEndTime = sprint.getAnnounceAt();
+
+        return now.isAfter(presentationStartTime) && now.isBefore(presentationEndTime);
+    }
+}
 
 
 }
+

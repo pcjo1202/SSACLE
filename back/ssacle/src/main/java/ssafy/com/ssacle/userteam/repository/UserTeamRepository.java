@@ -18,6 +18,8 @@ public interface UserTeamRepository extends JpaRepository<UserTeam, Long> {
             "WHERE ut.user.id = :userId AND s.id = :sprintId")
     List<UserTeam> findUserTeamsWithSprint(@Param("userId") Long userId, @Param("sprintId") Long sprintId);
 
+    @Query("SELECT ut.team FROM UserTeam ut WHERE ut.user.id = :userId")
+    List<Team> findTeamsByUserId(@Param("userId") Long userId);
     /** 특정 사용자가 속한 Team을 찾음 */
     @Query("SELECT ut.team FROM UserTeam ut WHERE ut.user.id = :userId")
     Optional<Team> findTeamByUserId(@Param("userId") Long userId);

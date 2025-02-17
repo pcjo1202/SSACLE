@@ -1,5 +1,6 @@
 package ssafy.com.ssacle.sprint.domain;
 
+import ssafy.com.ssacle.ssaldcup.domain.SsaldCup;
 import ssafy.com.ssacle.todo.domain.DefaultTodo;
 import ssafy.com.ssacle.todo.dto.TodoRequest;
 
@@ -15,7 +16,9 @@ public class SprintBuilder {
     private LocalDateTime endAt;
     private LocalDateTime announceAt;
     private Integer maxMembers;
+    private Integer sequence = 1;
     private List<TodoRequest> defaultTodoRequests;
+    private SsaldCup ssaldCup;
 
     public static SprintBuilder builder() {
         return new SprintBuilder();
@@ -53,8 +56,19 @@ public class SprintBuilder {
         this.maxMembers = maxMembers;
         return this;
     }
+    public SprintBuilder sequence(Integer sequence){
+        if(sequence !=null){
+            this.sequence=sequence;
+        }
+        return this;
+    }
     public SprintBuilder defaultTodos(List<TodoRequest> defaultTodoRequests) {
         this.defaultTodoRequests = defaultTodoRequests;
+        return this;
+    }
+
+    public SprintBuilder ssaldCup(SsaldCup ssaldCup){
+        this.ssaldCup=ssaldCup;
         return this;
     }
 
@@ -71,8 +85,10 @@ public class SprintBuilder {
     }
 
     public Sprint build(){
-        Sprint sprint = new Sprint(name, basicDescription, detailDescription, recommendedFor, startAt, endAt, announceAt, calculateStatus(), 1, maxMembers, 1, LocalDateTime.now());
+        Sprint sprint = new Sprint(name, basicDescription, detailDescription, recommendedFor, startAt, endAt, announceAt, calculateStatus(), sequence, maxMembers, 1, LocalDateTime.now());
 
+        if(ssaldCup !=null)
+            sprint.setSsaldCup(ssaldCup);
         if (defaultTodoRequests != null && !defaultTodoRequests.isEmpty()) {
             List<DefaultTodo> defaultTodos = defaultTodoRequests.stream()
                     .flatMap(todoRequest -> todoRequest.toEntity(sprint).stream())
@@ -83,3 +99,4 @@ public class SprintBuilder {
         return sprint;
     }
 }
+

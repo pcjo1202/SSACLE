@@ -92,4 +92,5 @@ public class SprintController implements SprintSwaggerController{
         ActiveSprintResponse response = sprintService.getActiveSprint(sprintId, teamId);
         return ResponseEntity.ok(response);
     }
+
 }
