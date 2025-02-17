@@ -100,7 +100,7 @@ const CommentList = ({
           <CommentForm
             isEditing
             initialValue={comment.content}
-            onSubmit={(content) => handleEditSubmit(comment.id, content)}
+            onSubmit={(content) => handleEditSubmit(comment.commentid, content)}
             onCancel={handleEditCancel}
           />
         ) : (
@@ -158,7 +158,7 @@ const CommentList = ({
                       </button>
                       <button
                         onClick={() => {
-                          handleDeleteClick(comment.id)
+                          handleDeleteClick(comment.commentid)
                           setActiveMenuId(null)
                         }}
                         className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 text-red-600 transition-colors"
@@ -189,7 +189,9 @@ const CommentList = ({
             {replyingTo === comment.id && (
               <div className="mt-4">
                 <CommentForm
-                  onSubmit={(content) => handleReplySubmit(comment.id, content)}
+                  onSubmit={(content) =>
+                    handleReplySubmit(comment.commentid, content)
+                  }
                   onCancel={handleReplyCancel}
                   placeholder="답글을 입력하세요..."
                 />

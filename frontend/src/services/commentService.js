@@ -15,13 +15,12 @@ export const fetchBoardComments = async (boardId) => {
 // 게시글에 댓글 작성 (POST)
 export const fetchCreateComment = async (boardId, content) => {
   try {
-    console.log('fetchCreateComment called with:', { boardId, content })
     const response = await httpCommon.post(COMMENT_END_POINT.CREATE(boardId), {
       content,
     })
     return response.data
   } catch (error) {
-    console.error('댓글 작성 API 호출 실패:', error.response?.data || error)
+    console.error('댓글 작성 실패:', error)
     throw error
   }
 }
@@ -69,16 +68,15 @@ export const fetchSubComments = async (parentCommentId) => {
 }
 
 // 대댓글 생성 (POST)
-export const fetchCreateSubComment = async (parentId, content) => {
+export const fetchCreateSubComment = async (parentCommentId, content) => {
   try {
-    console.log('fetchCreateSubComment called with:', { parentId, content })
     const response = await httpCommon.post(
-      COMMENT_END_POINT.SUB_COMMENTS.CREATE(parentId),
+      COMMENT_END_POINT.SUB_COMMENTS.CREATE(parentCommentId),
       { content }
     )
     return response.data
   } catch (error) {
-    console.error('대댓글 작성 API 호출 실패:', error.response?.data || error)
+    console.error('대댓글 작성 실패:', error)
     throw error
   }
 }

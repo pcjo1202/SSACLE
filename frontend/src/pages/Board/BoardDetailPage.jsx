@@ -34,7 +34,7 @@ const BoardDetailPage = () => {
   const location = useLocation()
   const boardType = location.pathname.includes('/board/edu') ? 'edu' : 'free'
 
-  // 게시글 상세 조회
+  // 게시글 상세 조회 쿼리
   const {
     data: post,
     isLoading,
@@ -46,21 +46,21 @@ const BoardDetailPage = () => {
     retry: false,
   })
 
-  // 게시글 목록 조회 (이전/다음글을 위해)
+  // 게시글 목록 조회 쿼리 (이전/다음글 탐색용)
   const { data: boardList } = useQuery({
     queryKey: ['boardList'],
     queryFn: fetchBoardList,
-    enabled: !!post, // post 데이터가 있을 때만 실행
+    enabled: !!post,
   })
 
-  // 현재 로그인한 사용자 정보 조회
+  // 사용자 정보 조회 쿼리
   const { data: userData } = useQuery({
     queryKey: ['userInfo'],
     queryFn: fetchUserInfo,
     retry: false,
   })
 
-  // 게시글 삭제 mutation
+  // 게시글 삭제 뮤테이션
   const deletePostMutation = useMutation({
     mutationFn: fetchDeleteBoard,
     onSuccess: () => {
@@ -73,144 +73,13 @@ const BoardDetailPage = () => {
     },
   })
 
-  // 게시글 삭제 핸들러
+  // 게시글 관련 핸들러들
   const handleDeletePost = () => {
     if (window.confirm('정말 이 게시글을 삭제하시겠습니까?')) {
       deletePostMutation.mutate(boardId)
     }
   }
 
-  // 댓글 목록 조회
-  const {
-    data: commentsData = [],
-    refetch: refetchComments,
-    isLoading: isCommentsLoading,
-    error: commentsError,
-  } = useQuery({
-    queryKey: ['comments', boardId],
-    queryFn: async () => {
-      try {
-        const response = await fetchBoardComments(boardId)
-        console.log('Fetched comments data:', response)
-        return response
-      } catch (error) {
-        console.error('Error fetching comments:', error)
-        throw error
-      }
-    },
-    enabled: !!boardId,
-  })
-
-  console.log('Current comments state:', commentsData)
-  console.log('Comments loading:', isCommentsLoading)
-  console.log('Comments error:', commentsError)
-
-  // 댓글 작성 mutation
-  const createCommentMutation = useMutation({
-    mutationFn: async (content) => {
-      console.log('Creating comment with:', { boardId, content })
-      return fetchCreateComment(boardId, content)
-    },
-    onSuccess: () => {
-      refetchComments()
-    },
-    onError: (error) => {
-      console.error('댓글 작성 실패:', error.response?.data || error)
-      alert('댓글 작성에 실패했습니다.')
-    },
-  })
-
-  // 댓글 수정 mutation
-  const updateCommentMutation = useMutation({
-    mutationFn: ({ commentId, content }) =>
-      fetchUpdateComment(commentId, content),
-    onSuccess: () => {
-      refetchComments()
-    },
-    onError: (error) => {
-      console.error('댓글 수정 실패:', error)
-      alert('댓글 수정에 실패했습니다.')
-    },
-  })
-
-  // 댓글 삭제 mutation
-  const deleteCommentMutation = useMutation({
-    mutationFn: async (commentId) => {
-      console.log(`🔹 Deleting comment ID: ${commentId}`)
-      const response = await fetchDeleteComment(commentId)
-      console.log('✅ Delete response:', response)
-      return response
-    },
-    onSuccess: async () => {
-      console.log('🟢 댓글 삭제 성공! 댓글 목록을 다시 불러옵니다.')
-      await refetchComments() // 댓글 목록을 다시 불러오기
-    },
-    onError: (error) => {
-      console.error('❌ 댓글 삭제 실패:', error.response?.data || error)
-      alert('댓글 삭제에 실패했습니다.')
-    },
-  })
-
-  // 댓글 삭제 핸들러
-  const handleCommentDelete = async (commentId) => {
-    if (!window.confirm('정말 이 댓글을 삭제하시겠습니까?')) return
-
-    try {
-      await deleteCommentMutation.mutateAsync(commentId)
-      console.log(`🟢 댓글 ID ${commentId} 삭제 요청 완료`)
-    } catch (error) {
-      console.error('❌ 댓글 삭제 중 오류 발생:', error)
-    }
-  }
-
-  // 대댓글 작성 mutation
-  const createSubCommentMutation = useMutation({
-    mutationFn: async ({ parentId, content }) => {
-      console.log('Creating reply with:', { parentId, content })
-      return fetchCreateSubComment(parentId, content)
-    },
-    onSuccess: () => {
-      refetchComments()
-    },
-    onError: (error) => {
-      console.error('대댓글 작성 실패:', error.response?.data || error)
-      alert('대댓글 작성에 실패했습니다.')
-    },
-  })
-
-  // 댓글 핸들러들
-  // 댓글 작성 핸들러
-  const handleCommentSubmit = async (content) => {
-    try {
-      console.log('handleCommentSubmit called with:', content)
-      await createCommentMutation.mutateAsync(content)
-    } catch (error) {
-      console.error('댓글 작성 중 오류:', error)
-    }
-  }
-
-  const handleCommentEdit = async (commentId, content) => {
-    try {
-      await updateCommentMutation.mutateAsync({ commentId, content })
-    } catch (error) {
-      console.error('댓글 수정 중 오류:', error)
-    }
-  }
-
-  // 대댓글 작성 핸들러
-  const handleReplySubmit = async (parentId, content) => {
-    try {
-      console.log('handleReplySubmit called with:', { parentId, content })
-      await createSubCommentMutation.mutateAsync({
-        parentId: parentId.toString(), // ID를 문자열로 변환
-        content: content,
-      })
-    } catch (error) {
-      console.error('대댓글 작성 중 오류:', error)
-    }
-  }
-
-  // 게시글 수정 페이지로 이동
   const handleEditPost = () => {
     navigate(`/board/${boardType}/${boardId}/edit`, {
       state: {
@@ -220,50 +89,109 @@ const BoardDetailPage = () => {
     })
   }
 
-  // 작성자 여부 확인 (닉네임으로 비교)
-  const isAuthor = userData?.nickname === post?.writerInfo
+  // 댓글 목록 조회 쿼리
+  const {
+    data: commentsData = [],
+    refetch: refetchComments,
+    isLoading: isCommentsLoading,
+  } = useQuery({
+    queryKey: ['comments', boardId],
+    queryFn: () => fetchBoardComments(boardId),
+    enabled: !!boardId,
+  })
 
-  // 이전글, 다음글 계산
-  const getPrevNextPosts = () => {
-    if (!boardList || !post) return { prev: null, next: null }
+  // 댓글 작성 뮤테이션
+  const createCommentMutation = useMutation({
+    mutationFn: (content) => fetchCreateComment(boardId, content),
+    onSuccess: () => refetchComments(),
+    onError: (error) => {
+      console.error('댓글 작성 실패:', error)
+      alert('댓글 작성에 실패했습니다.')
+    },
+  })
 
-    // 같은 카테고리(subCategory)의 게시글만 필터링하고 시간순 정렬
-    const sameTypeList = boardList
-      .filter((item) => item.subCategory === post.subCategory)
-      .sort((a, b) => new Date(b.time) - new Date(a.time)) // 시간 오름차순 정렬로 변경
+  // 댓글 수정 뮤테이션
+  const updateCommentMutation = useMutation({
+    mutationFn: ({ commentId, content }) =>
+      fetchUpdateComment(commentId, content),
+    onSuccess: () => refetchComments(),
+    onError: (error) => {
+      console.error('댓글 수정 실패:', error)
+      alert('댓글 수정에 실패했습니다.')
+    },
+  })
 
-    const currentIndex = sameTypeList.findIndex((item) => item.id === post.id)
+  // 댓글 삭제 뮤테이션
+  const deleteCommentMutation = useMutation({
+    mutationFn: fetchDeleteComment,
+    onSuccess: () => refetchComments(),
+    onError: (error) => {
+      console.error('댓글 삭제 실패:', error)
+      alert('댓글 삭제에 실패했습니다.')
+    },
+  })
 
-    return {
-      // 이전글은 현재 인덱스보다 하나 뒤의 글 (더 오래된 글)
-      prev:
-        currentIndex < sameTypeList.length - 1
-          ? sameTypeList[currentIndex + 1]
-          : null,
-      // 다음글은 현재 인덱스보다 하나 앞의 글 (더 최신 글)
-      next: currentIndex > 0 ? sameTypeList[currentIndex - 1] : null,
+  // 대댓글 작성 뮤테이션
+  const createSubCommentMutation = useMutation({
+    mutationFn: ({ parentId, content }) =>
+      fetchCreateSubComment(parentId, content),
+    onSuccess: () => refetchComments(),
+    onError: (error) => {
+      console.error('대댓글 작성 실패:', error)
+      alert('대댓글 작성에 실패했습니다.')
+    },
+  })
+
+  // 댓글 관련 핸들러들
+  const handleCommentSubmit = async (content) => {
+    try {
+      await createCommentMutation.mutateAsync(content)
+    } catch (error) {
+      console.error('댓글 작성 실패:', error)
     }
   }
 
-  const { prev, next } = getPrevNextPosts()
+  const handleCommentEdit = async (commentId, content) => {
+    if (!commentId) return // commentId가 없는 경우 처리 중단
+    try {
+      await updateCommentMutation.mutateAsync({ commentId, content })
+      await refetchComments() // 성공 시 댓글 목록을 새로고침
+    } catch (error) {
+      console.error('댓글 수정 실패:', error)
+    }
+  }
 
-  // 현재 활성화된 탭 정보 가져오기
-  const searchParams = new URLSearchParams(location.search)
-  const activeTab = searchParams.get('tab') || 'legend' // 기본값: 명예의 전당
+  const handleCommentDelete = async (commentId) => {
+    if (!commentId) return // commentId가 없는 경우 처리 중단
+    try {
+      await deleteCommentMutation.mutateAsync(commentId)
+      await refetchComments() // 삭제 후 댓글 목록 새로고침
+    } catch (error) {
+      console.error('댓글 삭제 실패:', error)
+    }
+  }
 
-  // 피클 결제 관련 상태
+  const handleReplySubmit = async (parentId, content) => {
+    if (!parentId) return // parentId가 없는 경우 처리 중단
+    try {
+      await createSubCommentMutation.mutateAsync({
+        parentId,
+        content,
+      })
+      await refetchComments() // 대댓글 작성 후 댓글 목록 새로고침
+    } catch (error) {
+      console.error('대댓글 작성 실패:', error)
+    }
+  }
+
+  // 피클 결제 관련 상태 및 핸들러
   const [showPayModal, setShowPayModal] = useState(false)
   const [selectedPostId, setSelectedPostId] = useState(null)
-  const [userPickle, setUserPickle] = useState(256) // TODO: 실제 유저 데이터와 연동 필요
 
-  // 게시글 이동 핸들러 (명예의 전당일 경우 피클 결제 필요)
   const handlePostNavigate = (postId) => {
     if (!postId) return
 
-    // 이전글/다음글 정보 찾기
     const targetPost = postId === prev?.id ? prev : next
-
-    // 명예의 전당 게시글이고 작성자가 아닌 경우에만 피클 결제 모달 표시
     if (
       post?.subCategory === 'legend' &&
       targetPost?.writerInfo !== userData?.nickname
@@ -271,29 +199,49 @@ const BoardDetailPage = () => {
       setSelectedPostId(postId)
       setShowPayModal(true)
     } else {
-      // 작성자이거나 일반 게시글인 경우 바로 이동
       navigate(`/board/${boardType}/${postId}`)
     }
   }
-  // 피클 결제 확인 후 게시글 열기
+
   const handlePayConfirm = async () => {
     try {
       const requiredPickles = 5
       if (userData?.pickles >= requiredPickles) {
-        setUserPickle((prev) => prev - requiredPickles)
         setShowPayModal(false)
         navigate(`/board/${boardType}/${selectedPostId}`)
       } else {
         alert('피클이 부족합니다!')
       }
     } catch (error) {
-      console.error('❌ 피클 결제 오류:', error)
+      console.error('피클 결제 오류:', error)
     }
   }
 
+  // 이전글, 다음글 계산
+  const getPrevNextPosts = () => {
+    if (!boardList || !post) return { prev: null, next: null }
+
+    const sameTypeList = boardList
+      .filter((item) => item.subCategory === post.subCategory)
+      .sort((a, b) => new Date(b.time) - new Date(a.time))
+
+    const currentIndex = sameTypeList.findIndex((item) => item.id === post.id)
+
+    return {
+      prev:
+        currentIndex < sameTypeList.length - 1
+          ? sameTypeList[currentIndex + 1]
+          : null,
+      next: currentIndex > 0 ? sameTypeList[currentIndex - 1] : null,
+    }
+  }
+
+  const { prev, next } = getPrevNextPosts()
+  const isAuthor = userData?.nickname === post?.writerInfo
+
   if (isLoading) return <div>로딩 중...</div>
   if (isError || !post)
-    return <div>게시글을 불러오는 중 오류가 발생했습니다. 😢</div>
+    return <div>게시글을 불러오는 중 오류가 발생했습니다.</div>
 
   return (
     <div className="min-w-max my-20 container mx-auto px-4 py-8 max-w-4xl">
