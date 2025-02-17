@@ -35,5 +35,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT ut.user.id FROM UserTeam ut WHERE ut.team.id = :teamId")
     List<Long> findUsersIdByTeamId(@Param("teamId") Long teamId);
 
+    @Query("SELECT ut.user.id FROM UserTeam ut WHERE ut.team.id IN :teamIds")
+    List<Long> findUserIdsByTeamIds(@Param("teamIds") List<Long> teamIds);
+
+    @Query("SELECT u FROM User u WHERE u.id IN :userIds")
+    List<User> findUsersByIds(@Param("userIds") List<Long> userIds);
+
 }
 

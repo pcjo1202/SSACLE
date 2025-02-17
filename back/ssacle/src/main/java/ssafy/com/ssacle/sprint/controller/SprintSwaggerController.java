@@ -12,6 +12,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ssafy.com.ssacle.sprint.dto.*;
+import ssafy.com.ssacle.user.dto.UserResponse;
+import ssafy.com.ssacle.user.dto.UserResponseDTO;
+
+import java.util.List;
 
 @Tag(name = "Sprint API", description = "Sprint 관련 API입니다.")
 public interface SprintSwaggerController {
@@ -181,4 +185,12 @@ public interface SprintSwaggerController {
             @Parameter(description = "조회할 Sprint ID", example = "1") @PathVariable Long sprintId
     );
 
+    @Operation(summary = "Sprint에 속한 사용자 조회", description = "특정 Sprint ID에 속한 모든 사용자 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "404", description = "Sprint를 찾을 수 없음", content = @Content),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
+    })
+    @GetMapping("/{sprintId}/users")
+    ResponseEntity<List<UserResponse>> getUsersBySprint(@PathVariable Long sprintId);
 }

@@ -45,6 +45,7 @@ import ssafy.com.ssacle.todo.dto.TodoResponseDTO;
 import ssafy.com.ssacle.todo.repository.TodoRepository;
 import ssafy.com.ssacle.todo.service.DefaultTodoService;
 import ssafy.com.ssacle.user.domain.User;
+import ssafy.com.ssacle.user.dto.UserResponse;
 import ssafy.com.ssacle.user.dto.UserResponseDTO;
 import ssafy.com.ssacle.user.repository.UserRepository;
 import ssafy.com.ssacle.usercategory.domain.UserCategory;
@@ -73,7 +74,6 @@ public class SprintService {
     private final QuestionCardService questionCardService;
     private final DiaryService diaryService;
 
-    @Transactional(readOnly = true)
     public void validateUserParticipation(Long userId, Long sprintId) {
         boolean isParticipating = userTeamRepository.countByUserIdAndSprintId(userId, sprintId) > 0;
 
@@ -81,13 +81,20 @@ public class SprintService {
             throw new SprintUnauthorizedException();
         }
     }
-    @Transactional(readOnly = true)
+
     public void validateUserNotParticipation(Long userId, Long sprintId) {
         boolean isParticipating = userTeamRepository.countByUserIdAndSprintId(userId, sprintId) > 0;
 
         if (isParticipating) {
             throw new UserParticipatedException();
         }
+    }
+
+    public void validateIsSprint(Long sprintId){
+        if (!sprintRepository.existsById(sprintId)) {
+            throw new SprintNotExistException();
+        }
+
     }
 
     @Transactional
@@ -446,6 +453,19 @@ public class SprintService {
         List<User> users = userRepository.findByIdIn(userIds);
         return users.stream()
                 .map(user-> UserResponseDTO.of(user,null))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<UserResponse> getUsersBySprintId(Long sprintId) {
+
+        List<Long> teamIds = teamRepository.findTeamIdsBySprintId(sprintId);
+
+        List<Long> userIds = userRepository.findUserIdsByTeamIds(teamIds);
+
+        return userRepository.findUsersByIds(userIds)
+                .stream()
+                .map(UserResponse::from)
                 .collect(Collectors.toList());
     }
 }

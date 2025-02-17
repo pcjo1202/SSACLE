@@ -40,4 +40,7 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     @Query("SELECT t FROM Team t JOIN FETCH t.userTeams ut JOIN FETCH ut.user WHERE t.id = :teamId")
     Optional<Team> findByIdWithUserTeams(@Param("teamId") Long teamId);
+
+    @Query("SELECT t.id FROM Team t WHERE t.sprint.id = :sprintId")
+    List<Long> findTeamIdsBySprintId(@Param("sprintId") Long sprintId);
 }
