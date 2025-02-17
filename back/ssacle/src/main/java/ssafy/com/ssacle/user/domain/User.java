@@ -8,7 +8,10 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ssafy.com.ssacle.board.domain.Board;
+import ssafy.com.ssacle.board.exception.BoardErrorCode;
+import ssafy.com.ssacle.board.exception.BoardException;
 import ssafy.com.ssacle.comment.domain.Comment;
+import ssafy.com.ssacle.userboard.domain.UserBoard;
 import ssafy.com.ssacle.usercategory.domain.UserCategory;
 import ssafy.com.ssacle.vote.domain.Vote;
 import ssafy.com.ssacle.userteam.domain.UserTeam;
@@ -38,6 +41,18 @@ public class User {
             this.userTeams = new ArrayList<>();
         }
         this.userTeams.add(userTeam);
+    }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<UserBoard> purchasedBoards;
+
+    public void purchaseBoard(Board board) {
+        if (this.pickles < 7) {
+            throw new BoardException(BoardErrorCode.PICKLE_NOT_ENOUGH);
+        }
+        this.pickles -= 7;
+        this.purchasedBoards.add(new UserBoard(0L,this, board));
     }
 
     @Column(name = "email", nullable = false, length = 255, unique = true)
@@ -111,6 +126,7 @@ public class User {
         return new User(
                 null,
                 new ArrayList<>(),
+                new ArrayList<>(),
                 email,
                 encodePassword(password),
                 name,
@@ -137,6 +153,7 @@ public class User {
         return new User(
                 null,
                 new ArrayList<>(),
+                new ArrayList<>(),
                 email,
                 encodePassword(password),
                 name,
@@ -162,6 +179,7 @@ public class User {
     public static User createAlumni(String email, String password, String name, String studentNumber, String nickname) {
         return new User(
                 null,
+                new ArrayList<>(),
                 new ArrayList<>(),
                 email,
                 encodePassword(password),

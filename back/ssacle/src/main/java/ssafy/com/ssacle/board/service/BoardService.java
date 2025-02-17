@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.board.domain.Board;
 import ssafy.com.ssacle.board.domain.BoardType;
@@ -19,6 +20,8 @@ import ssafy.com.ssacle.global.jwt.JwtTokenUtil;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.repository.UserRepository;
 import ssafy.com.ssacle.user.service.UserService;
+import ssafy.com.ssacle.userboard.domain.UserBoard;
+import ssafy.com.ssacle.userboard.repository.UserBoardRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,9 +36,9 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final BoardTypeRepository boardTypeRepository;
+    private final UserBoardRepository userBoardRepository;
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
-
 
     /** 📌 1. 모든 게시글 목록 조회 */
     @Transactional
@@ -172,38 +175,68 @@ public class BoardService {
         String tag = formatTags(boardUpdateRequestDTO.getTags());
         boardRepository.updateBoard(boardId, boardUpdateRequestDTO.getTitle(),boardUpdateRequestDTO.getContent(), tag, LocalDateTime.now());
     }
+
     @Transactional
     public int countBoardsByBoardTypeName(String boardTypeName) {
         return boardRepository.countBoardsByBoardTypeName(boardTypeName);
     }
+
+    /** 보드 구입 로직 */
     @Transactional
-    public Page<BoardResponseDTO> getAllBoards(Pageable pageable) {
+    public BoardResponseDTO buyBoard(User user, Long boardId) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_NOT_FOUND));
+
+        if (userBoardRepository.existsByUserIdAndBoardId(user.getId(), board.getId())) {
+            throw new BoardException(BoardErrorCode.BOARD_ALREADY_PURCHASED);
+        }
+
+        user.purchaseBoard(board);
+        userBoardRepository.save(UserBoard.create(user, board));
+
+        return convertToDto(board, true);
+    }
+
+
+    @Transactional
+    public Page<BoardResponseDTO> getAllBoards(Long userId, Pageable pageable) {
         Page<Board> boardPage = boardRepository.findAllWithPagination(pageable);
-        return boardPage.map(this::convertToDto);
+
+        return boardPage.map(board -> convertToDto(board, userBoardRepository.existsByUserIdAndBoardId(userId, board.getId())));
     }
 
     /** 📌 2. 특정 게시판 타입의 게시글 목록 조회 (페이지네이션) */
     @Transactional
-    public Page<BoardResponseDTO> getBoardsbyBoardTypeName(String name, Pageable pageable) {
+    public Page<BoardResponseDTO> getBoardsByBoardTypeName(String name, Long userId, Pageable pageable) {
         BoardType boardType = boardTypeRepository.findByName(name)
                 .orElseThrow(() -> new BoardException(BoardErrorCode.INVALID_BOARD_TYPE));
 
         Page<Board> boardPage = boardRepository.findByBoardTypeId(boardType.getId(), pageable);
-        return boardPage.map(this::convertToDto);
+        return boardPage.map(board -> convertToDto(board, userBoardRepository.existsByUserIdAndBoardId(userId, board.getId())));
     }
 
-    private BoardResponseDTO convertToDto(Board board) {
+    private BoardResponseDTO convertToDto(Board board, boolean isPurchased) {
+        String content;
+
+        if ("legend".equals(board.getBoardType().getName())) {
+            content = isPurchased ? board.getContent() : "구매 후 열람 가능합니다.";
+        } else {
+            content = board.getContent();
+        }
+
         return BoardResponseDTO.builder()
                 .id(board.getId())
                 .title(board.getTitle())
-                .content(board.getContent())
+                .content(content)
                 .writerInfo(board.getUser().getNickname())
                 .time(board.getCreatedAt())
                 .tags(splitTags(board.getTag()))
                 .majorCategory(board.getBoardType().getParent() != null ? board.getBoardType().getParent().getName() : null)
                 .subCategory(board.getBoardType().getName())
+                .isPurchased(isPurchased)
                 .build();
     }
+
 
     private List<String> splitTags(String tagString) {
         List<String> tags = new ArrayList<>();

@@ -7,9 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ssafy.com.ssacle.board.domain.Board;
 import ssafy.com.ssacle.board.dto.BoardRequestDTO;
 import ssafy.com.ssacle.board.dto.BoardResponseDTO;
@@ -73,11 +71,22 @@ public class BoardController implements BoardSwaggerController{
 
     @Override
     public ResponseEntity<Page<BoardResponseDTO>> getAllBoardsPaged(Pageable pageable) {
-        return ResponseEntity.ok().body(boardService.getAllBoards(pageable));
+        Long userId = userService.getAuthenticatedUser().getId();
+
+        return ResponseEntity.ok().body(boardService.getAllBoards(userId, pageable));
     }
 
     @Override
     public ResponseEntity<Page<BoardResponseDTO>> getBoardsByBoardTypePaged(String name, Pageable pageable) {
-        return ResponseEntity.ok().body(boardService.getBoardsbyBoardTypeName(name, pageable));
+        Long userId = userService.getAuthenticatedUser().getId();
+
+        return ResponseEntity.ok().body(boardService.getBoardsByBoardTypeName(name, userId, pageable));
+    }
+
+    @PostMapping("/{boardId}/purchase")
+    public ResponseEntity<BoardResponseDTO> purchaseBoard(@PathVariable Long boardId) {
+        User user = userService.getAuthenticatedUser();
+
+        return ResponseEntity.ok(boardService.buyBoard(user, boardId));
     }
 }
