@@ -10,7 +10,7 @@ import {
   getStatus,
 } from '@/components/AdminPage/SsaprintManagement/SearchSsaprint'
 
-const AdminPage = () => {
+const SsaprintListPage = () => {
   const navigate = useNavigate()
 
   const [selectedRows, setSelectedRows] = useState([])
@@ -84,13 +84,20 @@ const AdminPage = () => {
     navigate('/admin/ssaprint/create')
   }
 
+  const handleRowClick = (id) => {
+    navigate(`/admin/ssaprint/${id}`)
+  }
+
   return (
     <div className="flex flex-col justify-center p-6 gap-1 max-w-full min-w-max ">
       <h1 className="text-2xl font-bold text-center">싸프린트 관리</h1>
       {/* 삭제 버튼 & 생성하기 버튼 영역 */}
-      <div className="flex justify-end items-center m-2">
+      <div className="flex justify-between items-center m-2">
         {/* 삭제 버튼 */}
         {/* <DeleteButton selectedRows={selectedRows} onDelete={handleDelete} /> */}
+        <p className="text-ssacle-blue text-xs text-center mt-2">
+          ✨ 원하는 싸프린트를 선택하면 상세 페이지로 이동해요!
+        </p>
 
         {/* 생성하기 버튼 */}
         <button
@@ -106,9 +113,10 @@ const AdminPage = () => {
         selectable
         perPage={size}
         onSelect={setSelectedRows}
+        onRowClick={(row) => handleRowClick(row.id)} 
       />
     </div>
   )
 }
 
-export default AdminPage
+export default SsaprintListPage

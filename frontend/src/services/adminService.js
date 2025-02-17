@@ -27,11 +27,16 @@ export const fetchCreateSsaprint = async (Ssaprint_Data) => {
   return response.data
 }
 
-export const fetchCreateCategory = async ({ param1, param2, param3, image }) => {
+export const fetchCreateCategory = async ({
+  param1,
+  param2,
+  param3,
+  image,
+}) => {
   try {
     // Query Parameters 정의
     const queryParams = {
-      param1: param1,  // string 형식 유지
+      param1: param1, // string 형식 유지
       ...(param2 && { param2: param2 }),
       ...(param3 && { param3: param3 }),
     }
@@ -46,8 +51,8 @@ export const fetchCreateCategory = async ({ param1, param2, param3, image }) => 
 
     // API 요청
     const response = await axios.post(
-      ADMIN_END_POINT.SSAPRINT.CREATE.CATEGORY, 
-      formData,  // body: image만 포함
+      ADMIN_END_POINT.SSAPRINT.CREATE.CATEGORY,
+      formData, // body: image만 포함
       {
         params: queryParams, // Query Parameters 설정
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -57,15 +62,22 @@ export const fetchCreateCategory = async ({ param1, param2, param3, image }) => 
     // console.log('✅ API 응답 데이터:', response.data)
     return response.data
   } catch (error) {
-    console.error('❌ API 요청 실패:', error.response ? error.response.data : error)
+    console.error(
+      '❌ API 요청 실패:',
+      error.response ? error.response.data : error
+    )
     throw error
   }
 }
 
-
-
 // 전체 싸프린트 조회 (GET)
-export const fetchSearchSsaprint = async ({ categoryId, status, page, size, sort = ["startAt", "desc"] }) => {
+export const fetchSearchSsaprint = async ({
+  categoryId,
+  status,
+  page,
+  size,
+  sort = ['startAt', 'desc'],
+}) => {
   // console.log("📡 API 요청 params:", { categoryId, status, page, size, sort });
 
   const response = await axios.get(ADMIN_END_POINT.SSAPRINT.LIST, {
@@ -74,14 +86,26 @@ export const fetchSearchSsaprint = async ({ categoryId, status, page, size, sort
       status, // 필수
       page, // 현재 페이지
       size,
-      sort: sort.join(","),
-    }
-  });
+      sort: sort.join(','),
+    },
+  })
 
   // console.log("✅ API 응답:", response.data);
-  return response.data;
-};
+  return response.data
+}
 
+// 싸프린트 상세 조회
+export const fetchSsaprintDetail = async (sprintId) => {
+  if (!sprintId) {
+    console.error('fetchSsaprintDetail: sprintId가 없습니다.')
+    return null
+  }
 
-
-
+  try {
+    const response = await axios.get(ADMIN_END_POINT.SSAPRINT.DETAIL(sprintId)) // ✅ 동적 URL 적용
+    return response.data // ✅ API 응답 데이터 반환
+  } catch (error) {
+    console.error('❌ 싸프린트 상세 정보를 가져오는 중 오류 발생:', error)
+    throw error
+  }
+}

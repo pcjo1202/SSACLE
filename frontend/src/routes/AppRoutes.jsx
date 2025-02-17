@@ -147,8 +147,8 @@ const router = createBrowserRouter([
           { index: true, element: <SsaprintListPage /> },
           { path: 'user', element: <UserList /> },
           { path: 'ssaprint', children: [
-            { index: 'list', element: <SsaprintListPage /> },
-            { path: 'detail', element: <AdminSsaprintDetail /> },
+            { index: true, element: <SsaprintListPage /> },
+            { path: ':id', element: <AdminSsaprintDetail /> },
             { path: 'create', element: <SsaprintCreatePage /> },
           ] },
           { path: 'ssadcup', element: <h1>admin ssadcup</h1> },
