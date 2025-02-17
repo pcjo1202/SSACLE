@@ -40,6 +40,8 @@ import ssafy.com.ssacle.todo.dto.TodoResponseDTO;
 import ssafy.com.ssacle.todo.repository.TodoRepository;
 import ssafy.com.ssacle.todo.service.DefaultTodoService;
 import ssafy.com.ssacle.user.domain.User;
+import ssafy.com.ssacle.user.dto.UserResponseDTO;
+import ssafy.com.ssacle.user.repository.UserRepository;
 import ssafy.com.ssacle.usercategory.domain.UserCategory;
 import ssafy.com.ssacle.usercategory.repository.UserCategoryRepository;
 import ssafy.com.ssacle.userteam.domain.UserTeam;
@@ -65,6 +67,7 @@ public class SprintService {
     private final NotionService notionService;
     private final UserCategoryRepository userCategoryRepository;
     private final UserTeamRepository userTeamRepository;
+    private final UserRepository userRepository;
     private final QuestionCardService questionCardService;
     private final DiaryService diaryService;
 
@@ -398,6 +401,20 @@ public class SprintService {
         LocalDateTime presentationEndTime = sprint.getAnnounceAt();
 
         return now.isAfter(presentationStartTime) && now.isBefore(presentationEndTime);
+    }
+
+    public List<UserResponseDTO> getPresentationParticipants(Long sprintId) {
+        //Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(SprintNotExistException::new);
+        List<Team> teams = teamRepository.findBySprintIdWithUserTeams(sprintId);
+        List<Long> userIds = teams.stream()
+                .flatMap(team -> team.getUserTeams().stream())
+                .map(userTeam -> userTeam.getUser().getId())
+                .distinct()
+                .collect(Collectors.toList());
+        List<User> users = userRepository.findByIdIn(userIds);
+        return users.stream()
+                .map(user-> UserResponseDTO.of(user,null))
+                .collect(Collectors.toList());
     }
 
 //    @Transactional

@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ssafy.com.ssacle.sprint.dto.PresentationStatusUpdateResponseDTO;
 import ssafy.com.ssacle.sprint.service.SprintService;
+import ssafy.com.ssacle.user.dto.UserResponseDTO;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -21,6 +24,11 @@ public class PresentationController implements PresentationSwaggerController{
     public ResponseEntity<Boolean> checkPresentationAvailability(Long sprintId) {
         boolean canParticipate = sprintService.checkPresentationAvailability(sprintId);
         return ResponseEntity.ok(canParticipate);
+    }
+
+    @Override
+    public ResponseEntity<List<UserResponseDTO>> getPresentationParticipants(Long sprintId) {
+        return ResponseEntity.ok().body(sprintService.getPresentationParticipants(sprintId));
     }
 
 }

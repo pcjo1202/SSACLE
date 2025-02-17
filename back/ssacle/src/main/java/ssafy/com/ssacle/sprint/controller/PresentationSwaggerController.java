@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import ssafy.com.ssacle.sprint.dto.PresentationStatusUpdateResponseDTO;
+import ssafy.com.ssacle.user.dto.UserResponseDTO;
+
+import java.util.List;
 
 @Tag(name = "Presentation API", description = "Presentation 관련 API입니다.")
 public interface PresentationSwaggerController {
@@ -39,6 +42,20 @@ public interface PresentationSwaggerController {
     @GetMapping("/ssaprint/{sprintId}/presentation-availability")
     ResponseEntity<Boolean> checkPresentationAvailability(
             @Parameter(description = "발표 참가 가능 여부를 확인할 Sprint ID", example = "1")
+            @PathVariable Long sprintId
+    );
+
+    @Operation(summary = "발표 참가자 목록 조회",
+            description = "특정 Sprint의 발표 참가자 목록을 반환하는 API입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "참가자 목록 반환 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content),
+            @ApiResponse(responseCode = "404", description = "해당 스프린트를 찾을 수 없음", content = @Content),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
+    })
+    @GetMapping("/ssaprint/{sprintId}/presentation-participants")
+    ResponseEntity<List<UserResponseDTO>> getPresentationParticipants(
+            @Parameter(description = "발표 참가자 목록을 조회할 Sprint ID", example = "1")
             @PathVariable Long sprintId
     );
 
