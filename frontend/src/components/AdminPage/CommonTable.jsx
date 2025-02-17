@@ -67,16 +67,16 @@ const CommonTable = ({
 
   return (
     <div className="w-full overflow-x-auto">
-      <table className="w-full border-collapse border border-gray-300">
+      <table className="w-full border-collapse border border-gray-300 text-sm">
         <thead className="bg-blue-100">
           <tr>
             {selectable && (
-              <th className="p-2 border text-center">
+              <th className="p-2 border text-center text-sm">
                 <div className="flex items-center justify-center">
                   <input
                     type="checkbox"
                     onChange={toggleAll}
-                    checked={selectedRows.length === paginatedData.length && selectedRows.length > 0} // 📍 선택된 행이 모두 체크되어야 true
+                    checked={selectedRows.length === paginatedData.length && selectedRows.length > 0}
                   />
                 </div>
               </th>
@@ -113,7 +113,7 @@ const CommonTable = ({
                     <input
                       type="checkbox"
                       checked={selectedRows.includes(row.id)}
-                      onChange={() => handleRowSelect(row.id)} // 📍 체크박스 선택 시 부모 컴포넌트에 업데이트
+                      onChange={() => handleRowSelect(row.id)}
                     />
                   </div>
                 </td>

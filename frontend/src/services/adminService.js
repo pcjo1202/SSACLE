@@ -46,47 +46,41 @@ export const fetchCreateSsaprint = async (Ssaprint_Data) => {
 //   return response.data;
 // };
 
-export const fetchCreateCategory = async ({
-  param1,
-  param2,
-  param3,
-  image,
-}) => {
-  // 🔥 params 객체를 함수 내부에서 올바르게 선언
-  const params = {
-    param1: String(param1), // 문자열 변환
-    param2: param2 ? String(param2) : null,
-    param3: param3 ? String(param3) : null,
-  }
-
-  // FormData는 이미지가 있을 때만 생성
-  const formData = new FormData()
-  if (image) {
-    formData.append('image', image)
-  }
-
-  console.log('📡 API 전송 데이터:', {
-    params,
-    image: image ? image.name : 'No Image',
-  })
-
+export const fetchCreateCategory = async ({ param1, param2, param3, image }) => {
   try {
+    // Query Parameters 정의
+    const queryParams = {
+      param1: param1,  // string 형식 유지
+      ...(param2 && { param2: param2 }),
+      ...(param3 && { param3: param3 }),
+    }
+
+    // FormData 생성
+    const formData = new FormData()
+    if (image) {
+      formData.append('image', image)
+    }
+
+    console.log('📡 API 전송 데이터:', { queryParams, image: image ? image.name : 'No Image' })
+
+    // API 요청
     const response = await axios.post(
-      ADMIN_END_POINT.SSAPRINT.CREATE.CATEGORY,
-      formData, // Body에는 image만 포함
-      { params, headers: { 'Content-Type': 'multipart/form-data' } } // params는 URL 쿼리 스트링으로 전송
+      ADMIN_END_POINT.SSAPRINT.CREATE.CATEGORY, 
+      formData,  // body: image만 포함
+      {
+        params: queryParams, // Query Parameters 설정
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }
     )
 
     console.log('✅ API 응답 데이터:', response.data)
     return response.data
   } catch (error) {
-    console.error(
-      '❌ API 요청 실패:',
-      error.response ? error.response.data : error
-    )
+    console.error('❌ API 요청 실패:', error.response ? error.response.data : error)
     throw error
   }
 }
+
 
 
 // 전체 싸프린트 조회 (GET)

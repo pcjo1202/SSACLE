@@ -95,7 +95,7 @@ const SsaprintCreate = () => {
   // 뒤로가기 버튼 클릭 시 실행
   const handleGoBack = () => {
     clearLocalStorage()
-    navigate('/admin/user')
+    navigate('/admin/ssaprint')
   }
 
 
