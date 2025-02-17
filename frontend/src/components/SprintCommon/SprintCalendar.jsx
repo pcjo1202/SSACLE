@@ -3,10 +3,14 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { ChevronLeft, ChevronRight } from 'lucide-react' // 아이콘 사용
+import SprintDiaryModal from './SprintDiaryModal'
+import { fetchDiaryDetail } from '@/services/ssaprintService' // API 호출 함수
 
 const SprintCalendar = ({ sprint, diaries }) => {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [events, setEvents] = useState([])
+  const [selectedDiary, setSelectedDiary] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [tooltip, setTooltip] = useState({ show: false, text: '', x: 0, y: 0 })
   const calendarRef = useRef(null) // 캘린더 전체 컨테이너 참조
 
@@ -24,7 +28,7 @@ const SprintCalendar = ({ sprint, diaries }) => {
         start: sprint.startAt,
         end: sprint.endAt,
         color: '#5195F7',
-        priority: 1, // 스프린트 일정이 가장 위
+        priority: 1,
       })
     }
 
@@ -37,7 +41,7 @@ const SprintCalendar = ({ sprint, diaries }) => {
         color: '#E5F0FF',
         textColor: '#242424',
         extendedProps: { shadow: true },
-        priority: 2, // 발표 일정이 두 번째
+        priority: 2,
       })
     }
 
@@ -51,8 +55,11 @@ const SprintCalendar = ({ sprint, diaries }) => {
             start: diary.date,
             color: '#FFFFFF',
             textColor: '#242424',
-            extendedProps: { shadow: true },
-            priority: 3, // 일기 일정이 가장 마지막
+            extendedProps: {
+              shadow: true, // 그림자 효과 유지
+              diaryId: entry.id, // 일기 ID 추가
+            },
+            priority: 3,
           })
         })
       })
@@ -60,9 +67,22 @@ const SprintCalendar = ({ sprint, diaries }) => {
 
     // 정렬 (스프린트 > 발표 > 일기 순서 유지)
     sprintEvents = sprintEvents.sort((a, b) => a.priority - b.priority)
-
     setEvents(sprintEvents)
   }, [sprint, diaries])
+
+  // 특정 다이어리 상세 조회 API 호출 후 모달 표시
+  const handleEventClick = async (eventInfo) => {
+    const { extendedProps } = eventInfo.event
+    if (extendedProps.diaryId) {
+      try {
+        const diaryData = await fetchDiaryDetail(extendedProps.diaryId)
+        setSelectedDiary(diaryData)
+        setIsModalOpen(true)
+      } catch (error) {
+        alert('❌ 다이어리 정보를 불러오지 못했습니다. 다시 시도해주세요.')
+      }
+    }
+  }
 
   // 툴팁 표시 함수 (스프린트 일정 및 "+ more" 버튼 제외)
   const showTooltip = (event, text, eventId) => {
@@ -138,32 +158,7 @@ const SprintCalendar = ({ sprint, diaries }) => {
         contentHeight={700}
         eventOrder="priority"
         events={events}
-        dayHeaderContent={(info) => {
-          const dayNames = ['일', '월', '화', '수', '목', '금', '토']
-          return (
-            <span
-              className={`text-sm font-medium ${
-                info.date.getDay() === 0
-                  ? 'text-red-500'
-                  : info.date.getDay() === 6
-                    ? 'text-blue-500'
-                    : 'text-gray-900'
-              }`}
-            >
-              {dayNames[info.date.getDay()]}
-            </span>
-          )
-        }}
-        dayCellContent={(info) => {
-          const day = info.date.getDay()
-          let textColor = 'text-gray-900 p-1'
-          if (day === 0) textColor = 'text-red-500'
-          if (day === 6) textColor = 'text-blue-500'
-
-          return (
-            <div className={`text-sm ${textColor}`}>{info.date.getDate()}</div>
-          )
-        }}
+        eventClick={handleEventClick}
         eventContent={(eventInfo) => {
           const { title, extendedProps, id } = eventInfo.event
           return (
@@ -205,6 +200,13 @@ const SprintCalendar = ({ sprint, diaries }) => {
           {tooltip.text}
         </div>
       )}
+
+      {/* 모달 UI */}
+      <SprintDiaryModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        diary={selectedDiary}
+      />
     </div>
   )
 }

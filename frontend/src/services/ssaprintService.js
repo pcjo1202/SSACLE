@@ -153,6 +153,18 @@ export const getActiveSsaprint = async (sprintId, teamId) => {
   }
 }
 
+// 일기 상세 조회
+export const fetchDiaryDetail = async (diaryId) => {
+  try {
+    const response = await httpCommon.get(
+      SSAPRINT_END_POINT.DIARY_DETAIL(diaryId)
+    )
+    return response.data
+  } catch (error) {
+    throw new Error('다이어리 정보를 불러올 수 없습니다.')
+  }
+}
+
 // ✅ 싸프린트 생성
 export const createSsaprint = (data) =>
   httpCommon.post(SSAPRINT_END_POINT.CREATE, data)
