@@ -28,4 +28,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     @Query("SELECT t FROM Team t WHERE t.sprint.id = :sprintId")
     List<Team> findBySprintId(Long sprintId);
+
+    boolean existsByName(String name);
 }

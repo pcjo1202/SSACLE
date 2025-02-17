@@ -27,6 +27,7 @@ import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.dto.TeamResponse;
+import ssafy.com.ssacle.team.exception.TeamNameExistException;
 import ssafy.com.ssacle.team.exception.TeamNotFoundException;
 import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.todo.domain.DefaultTodo;
@@ -96,6 +97,8 @@ public class SprintService {
     public Long joinSprint(Long sprintId, User user, String teamName) {
         Sprint sprint = sprintRepository.findByIdWithTeams(sprintId)
                 .orElseThrow(SprintNotExistException::new);
+        if(teamRepository.existsByName(teamName))
+            throw new TeamNameExistException();
 
         List<DefaultTodoResponse> defaultTodos = defaultTodoService.getDefaultTodosBySprintId(sprintId);
         List<CategoryNameAndLevelResponseDTO> categories = categoryRepository.findCategoryNamesBySprintId(sprintId);
@@ -103,7 +106,7 @@ public class SprintService {
         // 스프린트 <-> 팀 <-> 사용자팀 <-> 사용자 연동
         Team team = saveTeamAndTeamUser(user, sprint, teamName);
         // 팀 <-> 노션 연동
-        String notionUrl = saveNotion(user.getName(), defaultTodos, categories);
+        String notionUrl = saveNotion(teamName, defaultTodos, categories);
         team.setNotionURL(notionUrl);
 
         // 팀 <-> 투두 연동
