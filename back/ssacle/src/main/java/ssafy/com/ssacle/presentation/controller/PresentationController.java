@@ -14,7 +14,6 @@ import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.dto.TeamWinnerResponseDTO;
 import ssafy.com.ssacle.team.service.TeamService;
 import ssafy.com.ssacle.userteam.service.UserTeamService;
-import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.user.dto.UserResponseDTO;
 
 import java.util.Comparator;

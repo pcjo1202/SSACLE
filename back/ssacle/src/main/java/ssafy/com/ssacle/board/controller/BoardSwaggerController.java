@@ -37,6 +37,7 @@ public interface BoardSwaggerController {
     })
     @GetMapping("/boardtype")
     ResponseEntity<List<BoardResponseDTO>> getBoardsbyBoardTypeName(@RequestParam("name") String name);
+
     /** 📌 2. 게시글 상세 조회 */
     @Operation(summary = "게시글 상세 조회", description = "게시글 ID를 기반으로 특정 게시글을 조회합니다.")
     @ApiResponses(value = {
