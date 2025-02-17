@@ -66,7 +66,6 @@ export const fetchCreateCategory = async ({ param1, param2, param3, image }) => 
 
 // 전체 싸프린트 조회 (GET)
 export const fetchSearchSsaprint = async ({ categoryId, status, page, size, sort = ["startAt", "desc"] }) => {
-  const fixedSize = 100 // 조회 개수 강제
   // console.log("📡 API 요청 params:", { categoryId, status, page, size, sort });
 
   const response = await axios.get(ADMIN_END_POINT.SSAPRINT.LIST, {
@@ -74,7 +73,7 @@ export const fetchSearchSsaprint = async ({ categoryId, status, page, size, sort
       categoryId, // 선택사항
       status, // 필수
       page, // 현재 페이지
-      size: fixedSize,
+      size,
       sort: sort.join(","),
     }
   });

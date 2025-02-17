@@ -16,13 +16,14 @@ const AdminPage = () => {
   const [selectedRows, setSelectedRows] = useState([])
   const [page, setPage] = useState(0) // 현재 페이지 상태
   const size = 10 // 한 페이지당 보여줄 개수
+  const data_size = 1000 // 총 가져올 데이터 수수
 
   // 싸프린트 데이터 가져오기
   const { data, isLoading, error } = useSsaprintList({
     categoryId: null,
     status: 0,
     page,
-    size,
+    size:data_size,
   })
 
   const columns = [
