@@ -11,6 +11,13 @@ import CommentList from '@/components/Board/Comment/CommentList'
 import BoardNav from '@/components/Board/Detail/BoardNav'
 import PayModal from '@/components/Board/Modal/PayModal'
 import { fetchUserInfo } from '@/services/mainService'
+import {
+  fetchBoardComments,
+  fetchCreateComment,
+  fetchCreateSubComment,
+  fetchDeleteComment,
+  fetchUpdateComment,
+} from '@/services/commentService'
 
 const BOARD_TITLES = {
   edu: '학습 게시판',
@@ -45,6 +52,7 @@ const BoardDetailPage = () => {
     queryFn: fetchBoardList,
     enabled: !!post, // post 데이터가 있을 때만 실행
   })
+
   // 현재 로그인한 사용자 정보 조회
   const { data: userData } = useQuery({
     queryKey: ['userInfo'],
@@ -69,6 +77,136 @@ const BoardDetailPage = () => {
   const handleDeletePost = () => {
     if (window.confirm('정말 이 게시글을 삭제하시겠습니까?')) {
       deletePostMutation.mutate(boardId)
+    }
+  }
+
+  // 댓글 목록 조회
+  const {
+    data: commentsData = [],
+    refetch: refetchComments,
+    isLoading: isCommentsLoading,
+    error: commentsError,
+  } = useQuery({
+    queryKey: ['comments', boardId],
+    queryFn: async () => {
+      try {
+        const response = await fetchBoardComments(boardId)
+        console.log('Fetched comments data:', response)
+        return response
+      } catch (error) {
+        console.error('Error fetching comments:', error)
+        throw error
+      }
+    },
+    enabled: !!boardId,
+  })
+
+  console.log('Current comments state:', commentsData)
+  console.log('Comments loading:', isCommentsLoading)
+  console.log('Comments error:', commentsError)
+
+  // 댓글 작성 mutation
+  const createCommentMutation = useMutation({
+    mutationFn: async (content) => {
+      console.log('Creating comment with:', { boardId, content })
+      return fetchCreateComment(boardId, content)
+    },
+    onSuccess: () => {
+      refetchComments()
+    },
+    onError: (error) => {
+      console.error('댓글 작성 실패:', error.response?.data || error)
+      alert('댓글 작성에 실패했습니다.')
+    },
+  })
+
+  // 댓글 수정 mutation
+  const updateCommentMutation = useMutation({
+    mutationFn: ({ commentId, content }) =>
+      fetchUpdateComment(commentId, content),
+    onSuccess: () => {
+      refetchComments()
+    },
+    onError: (error) => {
+      console.error('댓글 수정 실패:', error)
+      alert('댓글 수정에 실패했습니다.')
+    },
+  })
+
+  // 댓글 삭제 mutation
+  const deleteCommentMutation = useMutation({
+    mutationFn: async (commentId) => {
+      console.log(`🔹 Deleting comment ID: ${commentId}`)
+      const response = await fetchDeleteComment(commentId)
+      console.log('✅ Delete response:', response)
+      return response
+    },
+    onSuccess: async () => {
+      console.log('🟢 댓글 삭제 성공! 댓글 목록을 다시 불러옵니다.')
+      await refetchComments() // 댓글 목록을 다시 불러오기
+    },
+    onError: (error) => {
+      console.error('❌ 댓글 삭제 실패:', error.response?.data || error)
+      alert('댓글 삭제에 실패했습니다.')
+    },
+  })
+
+  // 댓글 삭제 핸들러
+  const handleCommentDelete = async (commentId) => {
+    if (!window.confirm('정말 이 댓글을 삭제하시겠습니까?')) return
+
+    try {
+      await deleteCommentMutation.mutateAsync(commentId)
+      console.log(`🟢 댓글 ID ${commentId} 삭제 요청 완료`)
+    } catch (error) {
+      console.error('❌ 댓글 삭제 중 오류 발생:', error)
+    }
+  }
+
+  // 대댓글 작성 mutation
+  const createSubCommentMutation = useMutation({
+    mutationFn: async ({ parentId, content }) => {
+      console.log('Creating reply with:', { parentId, content })
+      return fetchCreateSubComment(parentId, content)
+    },
+    onSuccess: () => {
+      refetchComments()
+    },
+    onError: (error) => {
+      console.error('대댓글 작성 실패:', error.response?.data || error)
+      alert('대댓글 작성에 실패했습니다.')
+    },
+  })
+
+  // 댓글 핸들러들
+  // 댓글 작성 핸들러
+  const handleCommentSubmit = async (content) => {
+    try {
+      console.log('handleCommentSubmit called with:', content)
+      await createCommentMutation.mutateAsync(content)
+    } catch (error) {
+      console.error('댓글 작성 중 오류:', error)
+    }
+  }
+
+  const handleCommentEdit = async (commentId, content) => {
+    try {
+      await updateCommentMutation.mutateAsync({ commentId, content })
+    } catch (error) {
+      console.error('댓글 수정 중 오류:', error)
+    }
+  }
+
+  // 대댓글 작성 핸들러
+  const handleReplySubmit = async (parentId, content) => {
+    try {
+      console.log('handleReplySubmit called with:', { parentId, content })
+      await createSubCommentMutation.mutateAsync({
+        parentId: parentId.toString(), // ID를 문자열로 변환
+        content: content,
+      })
+    } catch (error) {
+      console.error('대댓글 작성 중 오류:', error)
     }
   }
 
@@ -150,78 +288,6 @@ const BoardDetailPage = () => {
       }
     } catch (error) {
       console.error('❌ 피클 결제 오류:', error)
-    }
-  }
-
-  // 댓글 관리
-  const [comments, setComments] = useState([])
-
-  const handleCommentSubmit = async (content) => {
-    try {
-      // TODO: API 연결 후 서버로 전송
-      const newComment = {
-        id: comments.length + 1,
-        userId: 'user123', // TODO: 실제 유저 데이터 연동 필요
-        author: '현재 사용자',
-        content,
-        createdAt: new Date().toISOString(),
-        replies: [],
-      }
-      setComments([...comments, newComment])
-    } catch (error) {
-      console.error('❌ 댓글 작성 실패:', error)
-    }
-  }
-
-  const handleCommentEdit = async (commentId, newContent) => {
-    try {
-      setComments((prevComments) =>
-        prevComments.map((comment) => {
-          if (comment.id === commentId)
-            return { ...comment, content: newContent }
-          return comment
-        })
-      )
-    } catch (error) {
-      console.error('❌ 댓글 수정 실패:', error)
-    }
-  }
-
-  const handleCommentDelete = async (commentId) => {
-    try {
-      setComments((prevComments) =>
-        prevComments.filter((comment) => comment.id !== commentId)
-      )
-    } catch (error) {
-      console.error('❌ 댓글 삭제 실패:', error)
-    }
-  }
-
-  const handleReplySubmit = async (parentId, content) => {
-    try {
-      setComments((prevComments) =>
-        prevComments.map((comment) => {
-          if (comment.id === parentId) {
-            return {
-              ...comment,
-              replies: [
-                ...(comment.replies || []),
-                {
-                  id: comments.length + 1,
-                  userId: 'user123',
-                  author: '현재 사용자',
-                  parentId,
-                  content,
-                  createdAt: new Date().toISOString(),
-                },
-              ],
-            }
-          }
-          return comment
-        })
-      )
-    } catch (error) {
-      console.error('❌ 답글 작성 실패:', error)
     }
   }
 
@@ -313,8 +379,8 @@ const BoardDetailPage = () => {
 
       <div className="mt-16">
         <CommentList
-          comments={comments}
-          currentUserId="user123"
+          comments={commentsData}
+          currentUserId={userData?.nickname}
           onDelete={handleCommentDelete}
           onEdit={handleCommentEdit}
           onReply={handleReplySubmit}

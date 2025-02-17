@@ -1,4 +1,3 @@
-// CommentList.jsx
 import { useState } from 'react'
 import CommentForm from './CommentForm'
 
@@ -13,16 +12,31 @@ const CommentList = ({
   const [activeMenuId, setActiveMenuId] = useState(null)
   const [replyingTo, setReplyingTo] = useState(null)
 
+  // 댓글 데이터에 고유 ID 추가
+  const processComments = (commentsData, parentIndex = '') => {
+    return commentsData.map((comment, index) => {
+      const uniqueId = parentIndex ? `${parentIndex}-${index}` : String(index)
+      return {
+        ...comment,
+        id: uniqueId,
+        child: comment.child ? processComments(comment.child, uniqueId) : [],
+      }
+    })
+  }
+
+  // 처리된 댓글 데이터
+  const processedComments = processComments(comments)
+
+  const handleReplyClick = (commentId) => {
+    setReplyingTo(replyingTo === commentId ? null : commentId)
+    setActiveMenuId(null)
+    setEditingId(null)
+  }
+
   const handleEditClick = (commentId) => {
     setEditingId(commentId)
     setActiveMenuId(null)
     setReplyingTo(null)
-  }
-
-  const handleReplyClick = (commentId) => {
-    setReplyingTo(commentId)
-    setActiveMenuId(null)
-    setEditingId(null)
   }
 
   const handleEditCancel = () => {
@@ -54,10 +68,8 @@ const CommentList = ({
   }
 
   const handleDeleteClick = async (commentId) => {
-    if (!window.confirm('정말로 이 댓글을 삭제하시겠습니까?')) return
-
     try {
-      await onDelete(commentId)
+      await onDelete(commentId) // 부모 컴포넌트의 확인 로직에 위임
       setActiveMenuId(null)
     } catch (error) {
       console.error('댓글 삭제 중 오류 발생:', error)
@@ -80,7 +92,9 @@ const CommentList = ({
     return (
       <div
         key={comment.id}
-        className={`border-b pb-4 last:border-b-0 ${depth > 0 ? 'ml-8 mt-4 pl-4 border-l-2 border-gray-100' : ''}`}
+        className={`border-b pb-4 last:border-b-0 ${
+          depth > 0 ? 'ml-8 mt-4 pl-4 border-l-2 border-gray-100' : ''
+        }`}
       >
         {editingId === comment.id ? (
           <CommentForm
@@ -93,25 +107,21 @@ const CommentList = ({
           <div>
             <div className="flex justify-between items-start mb-2">
               <div className="flex items-center gap-2">
-                <span className="font-medium">{comment.author}</span>
-                {comment.parentId && (
-                  <span className="text-gray-500">
-                    {comment.parentAuthor && `@${comment.parentAuthor}`}
-                  </span>
-                )}
+                <span className="font-medium">{comment.writerInfo}</span>
                 <span className="text-gray-500 text-sm">
-                  {formatDate(comment.createdAt)}
+                  {formatDate(comment.time)}
                 </span>
               </div>
 
-              {currentUserId === comment.userId && (
+              {depth === 0 && currentUserId === comment.writerInfo && (
                 <div className="relative">
                   <button
-                    onClick={() =>
+                    onClick={(e) => {
+                      e.stopPropagation()
                       setActiveMenuId(
                         activeMenuId === comment.id ? null : comment.id
                       )
-                    }
+                    }}
                     className="p-1 hover:bg-gray-100 rounded-full transition-colors"
                     aria-label="댓글 메뉴"
                   >
@@ -127,15 +137,30 @@ const CommentList = ({
                   </button>
 
                   {activeMenuId === comment.id && (
-                    <div className="absolute right-0 mt-1 w-24 bg-white border rounded-lg shadow-lg z-10">
+                    <div
+                      className="absolute right-0 mt-1 w-24 bg-white border rounded-lg shadow-lg z-10"
+                      style={{
+                        // 절대 위치 지정을 위해 relative 부모 컨테이너 필요
+                        position: 'absolute',
+                        top: '100%', // 부모 요소의 하단에 위치
+                        right: 0,
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <button
-                        onClick={() => handleEditClick(comment.id)}
+                        onClick={() => {
+                          handleEditClick(comment.id)
+                          setActiveMenuId(null)
+                        }}
                         className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
                       >
                         수정
                       </button>
                       <button
-                        onClick={() => handleDeleteClick(comment.id)}
+                        onClick={() => {
+                          handleDeleteClick(comment.id)
+                          setActiveMenuId(null)
+                        }}
                         className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 text-red-600 transition-colors"
                       >
                         삭제
@@ -150,7 +175,6 @@ const CommentList = ({
               {comment.content}
             </p>
 
-            {/* 답글달기 버튼은 depth가 0일 때만 표시 */}
             {depth === 0 && (
               <div className="flex gap-2 mt-2">
                 <button
@@ -172,11 +196,9 @@ const CommentList = ({
               </div>
             )}
 
-            {comment.replies?.length > 0 && (
+            {depth === 0 && comment.child?.length > 0 && (
               <div className="mt-4 space-y-4">
-                {comment.replies.map((reply) =>
-                  renderComment(reply, depth + 1)
-                )}
+                {comment.child.map((reply) => renderComment(reply, 1))}
               </div>
             )}
           </div>
@@ -189,15 +211,15 @@ const CommentList = ({
     <div className="space-y-6">
       <h3 className="text-lg font-semibold">
         댓글{' '}
-        {comments.reduce(
-          (acc, comment) => acc + 1 + (comment.replies?.length || 0),
+        {processedComments.reduce(
+          (acc, comment) => acc + 1 + (comment.child?.length || 0),
           0
         )}
         개
       </h3>
 
       <div className="space-y-6">
-        {comments.map((comment) => renderComment(comment))}
+        {processedComments.map((comment) => renderComment(comment))}
       </div>
     </div>
   )
