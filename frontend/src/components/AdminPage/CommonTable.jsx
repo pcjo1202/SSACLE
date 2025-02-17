@@ -86,6 +86,7 @@ const CommonTable = ({
                 key={col.key}
                 className="p-2 border text-left cursor-pointer"
                 onClick={() => handleSort(col.key)}
+                style={{ width: col.width || 'auto' }}
               >
                 <div className="flex items-center">
                   {col.label}

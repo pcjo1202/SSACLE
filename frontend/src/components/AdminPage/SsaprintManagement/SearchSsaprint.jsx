@@ -9,7 +9,8 @@ export const cleanDescription = (description) => {
 
 // ✅ 날짜 포맷 변경 (2025-02-21T09:13:31.301617 → 2025-02-21 09:13)
 export const formatDate = (isoString) => {
-  return dayjs(isoString).format('YYYY-MM-DD HH:mm')
+  // return dayjs(isoString).format('YYYY-MM-DD HH:mm')
+  return dayjs(isoString).format('YYYY-MM-DD')
 }
 
 // ✅ 현재 상태 계산 (현재 날짜 기준으로 상태 결정)
