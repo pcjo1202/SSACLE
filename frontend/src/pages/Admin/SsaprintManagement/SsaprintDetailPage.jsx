@@ -46,12 +46,12 @@ const SsaprintDetail = () => {
   return (
     <div className="max-w-full min-w-max flex flex-col justify-center items-center p-6 gap-6">
       <h1 className="text-2xl font-bold text-center">싸프린트 상세 조회</h1>
-      <p>ID: {sprintId}</p>
+      {/* <p>ID: {sprintId}</p> */}
       {/* 스프린트 기본 정보 */}
       <SsaprintInfo
         title={sprintData.sprint.name}
         topic={
-          sprintData.categories?.map((cat) => cat.categoryName).join(' < ') ||
+          sprintData.categories?.map((cat) => cat.categoryName).join('  |  ') ||
           'N/A'
         }
         period={`${formatDate(sprintData?.sprint?.startAt)} ~ ${formatDate(sprintData?.sprint?.endAt)}`}

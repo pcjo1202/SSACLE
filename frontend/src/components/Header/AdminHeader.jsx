@@ -1,8 +1,23 @@
-import { Search, Lock, User } from 'lucide-react'
+import { fetchLogout } from '@/services/userService'
+import { Search, Lock, User, LogOut, Cookie } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom'
 
 const AdminHeader = () => {
   const navigate = useNavigate()
+  const accessToken = localStorage.getItem('accessToken') // 로그인 여부 확인
+
+  // 로그아웃 핸들러
+  const handleLogout = async () => {
+    try {
+      await fetchLogout() // 로그아웃 API 호출
+      // 로컬에서 토큰 제거
+      localStorage.removeItem('accessToken')
+      navigate('/account/login', { replace: true })
+    } catch (error) {
+      console.error('로그아웃 실패:', error)
+      alert('로그아웃 중 오류가 발생했습니다.')
+    }
+  }
 
   return (
     <header className="min-w-max z-10 fixed top-0 left-0 w-full h-12 px-48 py-4 bg-white shadow-sm flex justify-between items-center">
@@ -35,12 +50,21 @@ const AdminHeader = () => {
         <button className="w-5 h-5 flex justify-center items-center">
           <Search size={15} className="text-black" />
         </button>
-        <button
-          className="w-5 h-5 flex justify-center items-center"
-          onClick={() => navigate('account/login')}
-        >
-          <Lock size={15} className="text-black" />
-        </button>
+        {accessToken ? (
+          <button
+            className="w-5 h-5 flex justify-center items-center"
+            onClick={handleLogout}
+          >
+            <LogOut size={15} className="text-black" />
+          </button>
+        ) : (
+          <button
+            className="w-5 h-5 flex justify-center items-center"
+            onClick={() => navigate('/account/login')}
+          >
+            <Lock size={15} className="text-black" />
+          </button>
+        )}
         <button
           className="w-5 h-5 flex justify-center items-center"
           onClick={() => navigate('user/profile')}
