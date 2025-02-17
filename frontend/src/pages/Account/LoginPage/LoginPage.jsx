@@ -1,10 +1,18 @@
 import { useNavigate } from 'react-router-dom'
-import { useRef, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import { fetchLogin } from '@/services/userService'
 import { useMutation } from '@tanstack/react-query'
+import { AuthContext } from '@/contexts/AuthContext'
 
 const LoginPage = () => {
   const navigate = useNavigate()
+  const authContext = useContext(AuthContext)
+
+  if (!authContext) {
+    console.error("❌ AuthContext가 정의되지 않았습니다.");
+    return <p>오류 발생: 인증 컨텍스트가 로드되지 않았습니다.</p>;
+  }
+  const { login } = authContext
   const emailInputRef = useRef(null)
   const passwordInputRef = useRef(null)
 
@@ -19,7 +27,8 @@ const LoginPage = () => {
       if (response.status === 200) {
         // localStorage.setItem('accessToken', response.data?.accessToken)
         const role = response.data
-        localStorage.setItem("role", role)
+        // localStorage.setItem("role", role)
+        login(role)
         if (role === 'ADMIN') {
           navigate('/admin')
         } else {
