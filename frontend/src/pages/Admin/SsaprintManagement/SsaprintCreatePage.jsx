@@ -38,7 +38,7 @@ const SsaprintCreate = () => {
     onSuccess: (data) => {
       alert(`싸프린트 생성 완료! ID: ${data.ssaprintId}`)
       clearLocalStorage()
-      navigate('/admin/user')
+      navigate('/admin/ssaprint')
     },
     onError: (error) => {
       alert(
@@ -69,7 +69,7 @@ const SsaprintCreate = () => {
     if (showDetails) {
       localStorage.removeItem('showDetails')
       clearLocalStorage()
-      navigate('/admin/user')
+      navigate('/admin/ssaprint')
     } else {
       if (
         !startDate ||
