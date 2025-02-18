@@ -82,7 +82,7 @@ const SsaprintLayout = () => {
   }, [filters, pagination.currentPage, pagination.pageSize])
 
   return (
-    <div className="mt-16">
+    <div className="">
       {/* 싸프린트 소개 배너 */}
       <SprintBanner
         title="싸프린트"
