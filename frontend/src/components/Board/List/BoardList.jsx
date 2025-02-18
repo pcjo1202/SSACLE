@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-
 const BoardList = ({ posts, boardType, type, onPostClick }) => {
   // 게시글 없을 경우 글 작성 유도 문구 뜨도록
   if (!posts || posts.length === 0) {
@@ -10,7 +8,28 @@ const BoardList = ({ posts, boardType, type, onPostClick }) => {
       </div>
     )
   }
-  // 게시판 유형 `boardType` 추가
+
+  const renderTitle = (post) => {
+    if (type === 'note') {
+      return (
+        <div>
+          <h3 className="text-ssacle-black text-lg font-medium group-hover:text-blue-500 transition-colors">
+            📖 {post.title}
+          </h3>
+          <p className="text-sm text-ssacle-gray mt-1">
+            {post.teamName ? `${post.teamName} 팀의 학습 노트` : '팀 학습 노트'}
+          </p>
+        </div>
+      )
+    }
+
+    return (
+      <h3 className="text-ssacle-black text-lg font-medium group-hover:text-blue-500 transition-colors">
+        {post.title}
+      </h3>
+    )
+  }
+
   return (
     <div className="space-y-3">
       {posts.map((post) => (
@@ -32,16 +51,11 @@ const BoardList = ({ posts, boardType, type, onPostClick }) => {
             )}
 
             <div>
-              {/* 게시판 유형(boardType)을 포함하여 동적으로 이동 */}
-
-              <h3 className="text-ssacle-black text-lg font-medium group-hover:text-blue-500 transition-colors">
-                {post.title}
-              </h3>
+              {renderTitle(post)}
 
               <div className="flex space-x-4 text-sm text-gray-500">
                 <span>{post.writerInfo}</span>
-                <span>{post.time.split('T')[0]}</span>
-                {/* <span>조회수 {post.views}</span> */}
+                {type !== 'note' && <span>{post.time.split('T')[0]}</span>}
               </div>
             </div>
           </div>

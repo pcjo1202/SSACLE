@@ -2,6 +2,8 @@ import BoardList from '@/components/Board/List/BoardList'
 import BoardPagination from '@/components/Board/List/BoardPagination'
 import NotePayModal from '@/components/Board/Modal/NotePayModal'
 import httpCommon from '@/services/http-common'
+import { fetchUserInfo } from '@/services/mainService'
+import { useQuery } from '@tanstack/react-query'
 
 import { useEffect, useState } from 'react'
 
@@ -18,6 +20,25 @@ const NoteBoardPage = () => {
     pageSize: 10,
   })
 
+  // 유저 정보 조회 추가
+  const { data: userData } = useQuery({
+    queryKey: ['userInfo'],
+    queryFn: fetchUserInfo,
+    retry: false,
+  })
+
+  // 서버에서 받은 데이터를 BoardList 형식에 맞게 변환
+  const formatPosts = (posts) => {
+    return posts.map((post) => ({
+      id: post.teamId,
+      title: post.sprintName, // 스프린트 이름을 제목으로
+      writerInfo: post.teamName, // 팀 이름을 작성자 정보로
+      tags: post.categoryNames, // 카테고리 이름들을 태그로
+      diaries: post.diaries, // 모달용 일기 데이터
+      time: new Date().toISOString(), // 시간 정보가 없다면 현재 시간으로 대체
+    }))
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
@@ -30,18 +51,16 @@ const NoteBoardPage = () => {
           },
         })
 
-        console.log('API Response:', response.data) // 응답 데이터 확인
-
         if (response.data) {
-          setPosts(response.data.content)
+          setPosts(formatPosts(response.data.content))
           setPagination((prev) => ({
             ...prev,
-            totalPages: Math.max(response.data.totalPages, 1),
+            totalPages: response.data.totalPages,
             currentPage: response.data.pageable.pageNumber,
           }))
         }
       } catch (err) {
-        console.error('Error details:', err.response || err) // 더 자세한 에러 정보
+        console.error('Error details:', err.response || err)
         setError(err.message)
       } finally {
         setLoading(false)
@@ -49,7 +68,20 @@ const NoteBoardPage = () => {
     }
 
     fetchData()
-  }, [pagination.currentPage])
+  }, [pagination.currentPage, pagination.pageSize])
+
+  // 게시글 클릭 핸들러 수정
+  const handlePostClick = (postId) => {
+    const clickedPost = posts.find((post) => post.id === postId)
+    if (!clickedPost) return
+
+    // 모달에 전달할 데이터 설정
+    setSelectedPost({
+      ...clickedPost,
+      diaries: clickedPost.diaries || [], // 일기 데이터 추가
+    })
+    setShowPurchaseModal(true)
+  }
 
   return (
     <main className="min-w-max my-20">
@@ -112,8 +144,12 @@ const NoteBoardPage = () => {
       {selectedPost && (
         <NotePayModal
           isOpen={showPurchaseModal}
-          onClose={() => setShowPurchaseModal(false)}
+          onClose={() => {
+            setShowPurchaseModal(false)
+            setSelectedPost(null)
+          }}
           post={selectedPost}
+          currentPickle={userData?.pickles || 0}
         />
       )}
     </main>
