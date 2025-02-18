@@ -34,6 +34,8 @@ import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.dto.TeamResponse;
+import ssafy.com.ssacle.team.dto.TeamWinnerResponseDTO;
+import ssafy.com.ssacle.team.dto.TeamWithMembersDTO;
 import ssafy.com.ssacle.team.exception.TeamNameExistException;
 import ssafy.com.ssacle.team.exception.TeamNotFoundException;
 import ssafy.com.ssacle.team.repository.TeamRepository;
@@ -131,8 +133,8 @@ public class SprintService {
         Team team = saveTeamAndTeamUser(user, sprint, teamName);
 
         // 팀 <-> 노션 연동
-        String notionUrl = saveNotion(teamName, defaultTodos, categories);
-        team.setNotionURL(notionUrl);
+//        String notionUrl = saveNotion(teamName, defaultTodos, categories);
+//        team.setNotionURL(notionUrl);
 
         // 팀 <-> 투두 연동
         saveTodo(team, defaultTodos);
@@ -433,19 +435,5 @@ public class SprintService {
         LocalDateTime presentationEndTime = sprint.getAnnounceAt();
 
         return now.isAfter(presentationStartTime) && now.isBefore(presentationEndTime);
-    }
-
-    public List<UserResponseDTO> getPresentationParticipants(Long sprintId) {
-        //Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(SprintNotExistException::new);
-        List<Team> teams = teamRepository.findBySprintIdWithUserTeams(sprintId);
-        List<Long> userIds = teams.stream()
-                .flatMap(team -> team.getUserTeams().stream())
-                .map(userTeam -> userTeam.getUser().getId())
-                .distinct()
-                .collect(Collectors.toList());
-        List<User> users = userRepository.findByIdIn(userIds);
-        return users.stream()
-                .map(user-> UserResponseDTO.of(user,null))
-                .collect(Collectors.toList());
     }
 }
