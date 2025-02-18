@@ -3,8 +3,7 @@ import BoardPagination from '@/components/Board/List/BoardPagination'
 import NotePayModal from '@/components/Board/Modal/NotePayModal'
 import httpCommon from '@/services/http-common'
 import { fetchUserInfo } from '@/services/mainService'
-import { useQuery } from '@tanstack/react-query'
-
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 
 const NoteBoardPage = () => {
@@ -13,15 +12,16 @@ const NoteBoardPage = () => {
   const [error, setError] = useState(null)
   const [selectedPost, setSelectedPost] = useState(null)
   const [showPurchaseModal, setShowPurchaseModal] = useState(false)
+  const queryClient = useQueryClient()
 
   const [pagination, setPagination] = useState({
-    currentPage: 0,
+    currentPage: 1,
     totalPages: 1,
     pageSize: 10,
   })
 
-  // 유저 정보 조회 추가
-  const { data: userData } = useQuery({
+  // 유저 정보 조회
+  const { data: userData, refetch: refetchUserInfo } = useQuery({
     queryKey: ['userInfo'],
     queryFn: fetchUserInfo,
     retry: false,
@@ -31,11 +31,13 @@ const NoteBoardPage = () => {
   const formatPosts = (posts) => {
     return posts.map((post) => ({
       id: post.teamId,
-      title: post.sprintName, // 스프린트 이름을 제목으로
-      writerInfo: post.teamName, // 팀 이름을 작성자 정보로
-      tags: post.categoryNames, // 카테고리 이름들을 태그로
-      diaries: post.diaries, // 모달용 일기 데이터
-      time: new Date().toISOString(), // 시간 정보가 없다면 현재 시간으로 대체
+      title: post.sprintName,
+      writerInfo: post.teamName,
+      tags: post.categoryNames,
+      diaries: post.diaries,
+      time: new Date().toISOString(),
+      isPurchased: post.isPurchased || false, // 구매 여부 추가
+      notionUrl: post.notionUrl || '', // Notion URL 추가
     }))
   }
 
@@ -45,22 +47,24 @@ const NoteBoardPage = () => {
       try {
         const response = await httpCommon.get('/teams/diaries', {
           params: {
-            page: pagination.currentPage,
+            page: pagination.currentPage - 1,
             size: pagination.pageSize,
             sort: 'startAt,desc',
           },
         })
 
         if (response.data) {
-          setPosts(formatPosts(response.data.content))
+          const formattedPosts = formatPosts(response.data.content)
+          setPosts(formattedPosts)
+
           setPagination((prev) => ({
             ...prev,
-            totalPages: response.data.totalPages,
-            currentPage: response.data.pageable.pageNumber,
+            totalPages: Math.max(1, response.data.totalPages),
+            currentPage: pagination.currentPage,
           }))
         }
       } catch (err) {
-        console.error('Error details:', err.response || err)
+        console.error('Error fetching board data:', err)
         setError(err.message)
       } finally {
         setLoading(false)
@@ -70,22 +74,44 @@ const NoteBoardPage = () => {
     fetchData()
   }, [pagination.currentPage, pagination.pageSize])
 
-  // 게시글 클릭 핸들러 수정
   const handlePostClick = (postId) => {
     const clickedPost = posts.find((post) => post.id === postId)
     if (!clickedPost) return
 
-    // 모달에 전달할 데이터 설정
-    setSelectedPost({
-      ...clickedPost,
-      diaries: clickedPost.diaries || [], // 일기 데이터 추가
-    })
-    setShowPurchaseModal(true)
+    if (clickedPost.isPurchased) {
+      // 이미 구매한 노트라면 바로 Notion URL 열기
+      if (clickedPost.notionUrl) {
+        window.open(clickedPost.notionUrl, '_blank')
+      }
+    } else {
+      // 구매되지 않은 노트라면 모달을 열고 구매 진행
+      setSelectedPost({
+        ...clickedPost,
+        diaries: clickedPost.diaries || [],
+      })
+      setShowPurchaseModal(true)
+    }
+  }
+
+  const handleModalClose = () => {
+    setShowPurchaseModal(false)
+    setSelectedPost(null)
+    refetchUserInfo() // 모달이 닫힐 때 유저 정보 갱신
+  }
+
+  const handlePageChange = (newPage) => {
+    setPagination((prev) => ({
+      ...prev,
+      currentPage: newPage,
+    }))
+  }
+
+  const handlePurchaseComplete = async () => {
+    await refetchUserInfo() // 구매 완료 시 유저 정보 갱신
   }
 
   return (
-    <main className="min-w-max my-20">
-      {/* 배너 */}
+    <main className="min-w-max">
       <section>
         <div className="bg-ssacle-sky w-full h-32 rounded-lg mb-4 flex justify-center items-center">
           <div className="flex flex-col items-center gap-1">
@@ -102,22 +128,18 @@ const NoteBoardPage = () => {
 
       <div className="border-b my-3"></div>
 
-      {/* 로딩 상태 */}
       {loading && (
         <div className="text-center py-4">데이터를 불러오는 중...</div>
       )}
 
-      {/* 에러 상태 */}
       {error && (
         <div className="text-red-500 text-center py-4">에러 발생: {error}</div>
       )}
 
-      {/* 데이터 없음 상태 */}
       {!loading && !error && posts.length === 0 && (
         <div className="text-center py-4">작성된 노트가 없습니다.</div>
       )}
 
-      {/* 게시글 목록 */}
       {!loading && !error && posts.length > 0 && (
         <section>
           <BoardList
@@ -129,27 +151,21 @@ const NoteBoardPage = () => {
         </section>
       )}
 
-      {/* 페이지네이션 */}
       <section>
         <BoardPagination
           currentPage={pagination.currentPage}
-          setCurrentPage={(newPage) =>
-            setPagination((prev) => ({ ...prev, currentPage: newPage }))
-          }
+          setCurrentPage={handlePageChange}
           totalPages={pagination.totalPages}
         />
       </section>
 
-      {/* 피클 결제 모달 */}
       {selectedPost && (
         <NotePayModal
           isOpen={showPurchaseModal}
-          onClose={() => {
-            setShowPurchaseModal(false)
-            setSelectedPost(null)
-          }}
+          onClose={handleModalClose}
           post={selectedPost}
           currentPickle={userData?.pickles || 0}
+          onPurchaseComplete={handlePurchaseComplete}
         />
       )}
     </main>
