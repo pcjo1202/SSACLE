@@ -13,6 +13,8 @@ import java.util.List;
 @Builder
 public class CommentResponseDTO {
     @NotBlank
+    private Long id;
+    @NotBlank
     private String content;
 
     @NotBlank

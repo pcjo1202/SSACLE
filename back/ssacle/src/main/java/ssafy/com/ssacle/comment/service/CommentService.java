@@ -154,6 +154,7 @@ public class CommentService {
                 .collect(Collectors.toList());
 
         return CommentResponseDTO.builder()
+                .id(comment.getId())
                 .content(comment.getContent())
                 .writerInfo(comment.getUser().getNickname())  // ✅ 변경
                 .time(comment.getCreatedAt())
