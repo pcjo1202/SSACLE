@@ -20,11 +20,11 @@ const PresentationPage = () => {
     queryFn: () => fetchPresentationAvailability(roomId ?? 'test-session-id'),
   })
 
-  if (!presentationAvailability) {
-    alert('발표 참가 불가능합니다.')
-    navigate(-1)
-    return
-  }
+  // if (!presentationAvailability) {
+  //   alert('발표 참가 불가능합니다.')
+  //   navigate(-1)
+  //   return
+  // }
 
   // 모달 열기 상태
   const { isModalOpen, modalStep } = usePresentationModalStateStore(
