@@ -7,10 +7,12 @@ import { useParams } from 'react-router-dom'
 import { fetchSsaprintDetail } from '@/services/ssaprintService'
 import { useEffect, useState } from 'react'
 import { formatDate } from '@/components/AdminPage/SsaprintManagement/SearchSsaprint'
+import { fetchAdminSsaprintUser } from '@/services/adminService'
 
 const SsaprintDetail = () => {
   const { id: sprintId } = useParams()
   const [sprintData, setSprintData] = useState(null)
+  const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -22,7 +24,13 @@ const SsaprintDetail = () => {
           setError('스프린트 ID가 없습니다.')
           return
         }
+        console.log(`🟢 Fetching sprint details for ID: ${sprintId}`)
         const data = await fetchSsaprintDetail(sprintId)
+        console.log('✅ Sprint Detail API Response:', data)
+
+        console.log(`🟢 Fetching sprint users for ID: ${sprintId}`)
+        const sprintUsers = await fetchAdminSsaprintUser(sprintId)
+        console.log('✅ Sprint Users API Response:', sprintUsers)
         setSprintData(data)
       } catch (err) {
         setError('데이터를 불러오는 중 오류가 발생했습니다.')
@@ -63,16 +71,16 @@ const SsaprintDetail = () => {
         <h2 className="text-ssacle-blue text-lg font-semibold text-center">
           스프린트 멤버
         </h2>
-        <div className="flex justify-center gap-4">
-          {(sprintData?.members?.length ? sprintData.members : mockMembers).map(
-            (member) => (
-              <UserProfile
-                key={member.id}
-                imageUrl={member.imageUrl}
-                nickname={member.nickname}
-              />
-            )
-          )}
+        <div className="flex justify-center gap-4 text-sm m-4">
+          {members.length > 0
+            ? members.map((member) => (
+                <UserProfile
+                  key={member.id}
+                  imageUrl={member.imageUrl}
+                  nickname={member.nickname}
+                />
+              ))
+            : '참여 멤버가 없습니다.'}
         </div>
       </div>
 
