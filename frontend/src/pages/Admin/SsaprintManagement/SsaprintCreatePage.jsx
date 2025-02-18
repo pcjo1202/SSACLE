@@ -114,7 +114,7 @@ const SsaprintCreate = () => {
         </p>
         <div className="border-t-4 border-ssacle-gray-sm my-4"></div>
 
-        <CategorySelect />
+        <CategorySelect disabled={showDetails} />
 
         {/* + 버튼 추가 */}
         <div className="flex justify-center mt-4">
@@ -133,6 +133,7 @@ const SsaprintCreate = () => {
             value={startDate}
             setValue={setStartDate}
             min={getTomorrowDate()}
+            disabled={showDetails}
           />
           <DateInput
             label="종료일"
@@ -160,7 +161,7 @@ const SsaprintCreate = () => {
                     .split('T')[0]
                 : ''
             } // 시작일 +6일 설정
-            disabled={!startDate}
+            disabled={showDetails || !startDate}
           />
         </div>
       </div>
