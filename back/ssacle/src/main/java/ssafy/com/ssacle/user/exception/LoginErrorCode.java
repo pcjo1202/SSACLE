@@ -10,7 +10,7 @@ import ssafy.com.ssacle.global.exception.ErrorCode;
 public enum LoginErrorCode implements ErrorCode {
     // 로그인 관련 에러 (LOGIN_4XX)
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "LOGIN_400_1", "User not found"),
-    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "LOGIN_401_1", "Invalid password"),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "LOGIN_400_2", "Invalid password"),
     CANNOT_LOGIN(HttpStatus.FORBIDDEN, "LOGIN_403_1", "Cannot login due to restricted access"),
     ALREADY_LOGGED_IN(HttpStatus.FORBIDDEN, "LOGIN_409_2", "다른 화면에서 로그인했습니다. 다시 로그인해 주세요"),
     ALREADY_LOGGED_OUT(HttpStatus.UNAUTHORIZED, "LOGIN_401_2", "User is already logged out"),
