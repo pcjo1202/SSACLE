@@ -30,7 +30,7 @@ export const fetchToken = async (sessionId: string): Promise<string> => {
 export const fetchServerToken = async (sprintId: string): Promise<number> => {
   const accessToken = localStorage.getItem('accessToken')
   const response = await axios.post(
-    `/api/video/sessions/${sprintId}/token`,
+    `/api/v1/video/sessions/${sprintId}/token`,
     {},
     {
       headers: {

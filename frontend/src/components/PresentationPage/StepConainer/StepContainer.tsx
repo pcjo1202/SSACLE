@@ -86,7 +86,7 @@ const StepContainer: FC<StepContainerProps> = ({ children }) => {
         if (hasSentAnswerIntro.current) return
         hasSentAnswerIntro.current = true
 
-        if (questionStep.length !== roomConnectionData.length) {
+        if (questionStep.length < roomConnectionData.length + 1) {
           // 발표자 랜덤 선택
           const randomPresenter = Math.floor(
             Math.random() * (questionStep.length ?? 0)
@@ -114,13 +114,21 @@ const StepContainer: FC<StepContainerProps> = ({ children }) => {
               type: 'presentationStatus',
             })
             // 발표자 이름 배열에 추가
-            setQuestionStep((prev) => [
-              ...prev,
-              {
-                userId: presenterConnectionId as string,
-                connectionId: presenterConnectionId as string,
-              },
-            ])
+            setQuestionStep((prev) => {
+              // 이미 존재하는 ID인지 확인
+              const exists = prev.some(
+                (item) => item.connectionId === presenterConnectionId
+              )
+              if (exists) return prev
+
+              return [
+                ...prev,
+                {
+                  userId: presenterConnectionId as string,
+                  connectionId: presenterConnectionId as string,
+                },
+              ]
+            })
 
             // 마지막 답변자였을 경우
             if (questionStep.length - 1 === roomConnectionData.length) {
