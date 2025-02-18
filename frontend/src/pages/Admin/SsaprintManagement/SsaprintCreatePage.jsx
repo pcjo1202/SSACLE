@@ -24,7 +24,6 @@ const SsaprintCreate = () => {
     transformSsaprintData,
     getTomorrowDate,
   } = useSsaprint()
-  console.log('HELLO', startDate)
   const [showDetails, setShowDetails] = useState(
     localStorage.getItem('showDetails') === 'true'
   )

@@ -15,12 +15,10 @@ const DetailsForm = () => {
   } = useSsaprint()
   const { data: gptData, isPending, isError } = useGptTodos()
   const [isDataUpdated, setIsDataUpdated] = useState(false)
-  console.log('data', data)
   // GPT 데이터를 description 상태에 저장
   useEffect(() => {
     // 데이터가 존재하고, API 로딩이 끝난 상태에서만 실행
     if (gptData && !isPending && !isDataUpdated) {
-      console.log('🔥 GPT 응답 데이터 (useEffect 내부):', gptData)
       setDescription((prev) => {
         const newDescription = {
           basicDescription:
@@ -34,10 +32,10 @@ const DetailsForm = () => {
                 .join('\n')
             : prev.todos || '',
         }
-        console.log(
-          '🔥 컨텍스트 업데이트 실행 (setDescription):',
-          newDescription
-        )
+        // console.log(
+        //   '🔥 컨텍스트 업데이트 실행 (setDescription):',
+        //   newDescription
+        // )
         return newDescription
       })
       setIsDataUpdated(true) // 한 번만 실행되도록 설정
