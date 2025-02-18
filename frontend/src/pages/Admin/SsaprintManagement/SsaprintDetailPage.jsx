@@ -24,13 +24,8 @@ const SsaprintDetail = () => {
           setError('스프린트 ID가 없습니다.')
           return
         }
-        console.log(`🟢 Fetching sprint details for ID: ${sprintId}`)
         const data = await fetchSsaprintDetail(sprintId)
-        console.log('✅ Sprint Detail API Response:', data)
-
-        console.log(`🟢 Fetching sprint users for ID: ${sprintId}`)
         const sprintUsers = await fetchAdminSsaprintUser(sprintId)
-        console.log('✅ Sprint Users API Response:', sprintUsers)
         setSprintData(data)
       } catch (err) {
         setError('데이터를 불러오는 중 오류가 발생했습니다.')
@@ -44,12 +39,12 @@ const SsaprintDetail = () => {
   if (loading) return <p className="text-center">데이터 로딩 중...</p>
   if (error) return <p className="text-center text-red-500">{error}</p>
 
-  const mockMembers = [
-    { id: 1, nickname: '미셸', imageUrl: '' },
-    { id: 2, nickname: '쥬니', imageUrl: '' },
-    { id: 3, nickname: '펠릭', imageUrl: '' },
-    { id: 4, nickname: '시베리아', imageUrl: '' },
-  ]
+  // const mockMembers = [
+  //   { id: 1, nickname: '미셸', imageUrl: '' },
+  //   { id: 2, nickname: '쥬니', imageUrl: '' },
+  //   { id: 3, nickname: '펠릭', imageUrl: '' },
+  //   { id: 4, nickname: '시베리아', imageUrl: '' },
+  // ]
 
   return (
     <div className="max-w-full min-w-max flex flex-col justify-center items-center p-6 gap-6">

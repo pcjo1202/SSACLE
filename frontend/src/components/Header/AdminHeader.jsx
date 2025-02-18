@@ -23,7 +23,7 @@ const AdminHeader = () => {
     <header className="min-w-max z-10 fixed top-0 left-0 w-full h-12 px-48 py-4 bg-white shadow-sm flex justify-between items-center">
       {/* 로고 */}
       <Link
-        to="/"
+        to="/admin/ssaprint"
         className="text-ssacle-blue text-3xl font-bold font-montserrat"
       >
         SSACLE
@@ -34,13 +34,13 @@ const AdminHeader = () => {
         <Link to="/admin/ssaprint" className="hover:underline">
           싸프린트
         </Link>
-        <Link to="/ssadcup" className="hover:underline">
+        <Link to="/admin/ssadcup" className="hover:underline">
           싸드컵
         </Link>
-        <Link to="/board/edu" className="hover:underline">
+        <Link to="/admin/board/" className="hover:underline">
           게시판 관리
         </Link>
-        <Link to="/board/free" className="hover:underline">
+        <Link to="/admin/user" className="hover:underline">
           유저 관리
         </Link>
       </nav>
@@ -48,7 +48,7 @@ const AdminHeader = () => {
       {/* 아이콘 */}
       <div className="flex space-x-6">
         <button className="w-5 h-5 flex justify-center items-center">
-          <Search size={15} className="text-black" />
+          <Search size={15} className="text-white" />
         </button>
         {accessToken ? (
           <button
@@ -67,9 +67,9 @@ const AdminHeader = () => {
         )}
         <button
           className="w-5 h-5 flex justify-center items-center"
-          onClick={() => navigate('user/profile')}
+          // onClick={() => navigate('user/profile')}
         >
-          <User size={15} className="text-black" />
+          <User size={15} className="text-white" />
         </button>
       </div>
     </header>
