@@ -311,11 +311,13 @@ export const createModalStepConfig = ({
       ),
       description: (
         <>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             <div className="font-bold">
               <QuestionCardSection />
             </div>
-            <span>질문 카드를 선택 후 [준비 완료] 버튼을 눌러주세요.</span>
+            <span className="text-base">
+              질문 카드를 선택 후 [준비 완료] 버튼을 눌러주세요.
+            </span>
           </div>
         </>
       ),

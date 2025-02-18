@@ -1,12 +1,13 @@
 import type { FC } from 'react'
 import { cn } from '@/lib/utils'
+import { QuestionCard as QuestionCardType } from '@/store/usePresentationStore'
 
 interface QuestionCardProps {
   isSelectedQuestion: boolean
   handleQuestionCardClick: (questionId: number) => void
-  question: { id: number; content: string }
-  selectedQuestionList: { id: number; content: string }[] | null
-  selectedQuestion: { id: number; content: string } | null
+  question: QuestionCardType
+  selectedQuestionList: QuestionCardType[] | null
+  selectedQuestion: QuestionCardType | null
 }
 
 const QuestionCard: FC<QuestionCardProps> = ({
@@ -16,7 +17,7 @@ const QuestionCard: FC<QuestionCardProps> = ({
   question,
   selectedQuestionList,
 }) => {
-  const { id, content } = question
+  const { id, description } = question
 
   const isSelected = selectedQuestionList?.some(
     (question) => question.id === id
@@ -32,7 +33,7 @@ const QuestionCard: FC<QuestionCardProps> = ({
           ? isSelected
             ? 'w-full'
             : 'hidden'
-          : 'hover:bg-ssacle-blue/40 max-w-28 min-h-28 bg-ssacle-blue/20 cursor-pointer',
+          : 'hover:bg-ssacle-blue/40 py-12 px-14 bg-ssacle-blue/20 cursor-pointer',
         `${
           isSelected //
             ? selectedQuestion
@@ -49,7 +50,7 @@ const QuestionCard: FC<QuestionCardProps> = ({
             <span className="transition-all duration-300 ease-in-out text-ssacle-blue/90">
               📝 선택한 질문의 내용 📝
             </span>
-            <span>{content}</span>
+            <span>" {description} "</span>
           </div>
         ) : (
           <span className="text-ssacle-black/40 ">{id}</span>

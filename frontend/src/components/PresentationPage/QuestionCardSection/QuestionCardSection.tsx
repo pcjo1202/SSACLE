@@ -2,7 +2,10 @@ import { cn } from '@/lib/utils'
 import { useRef } from 'react'
 import QuestionCardList from '@/components/PresentationPage/QuestionCardList/QuestionCardList'
 import { useShallow } from 'zustand/shallow'
-import { usePresentationStore } from '@/store/usePresentationStore'
+import {
+  QuestionCard,
+  usePresentationStore,
+} from '@/store/usePresentationStore'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QuestionCardSection = () => {
@@ -24,36 +27,54 @@ const QuestionCardSection = () => {
     }))
   )
 
-  const queryClient = useQueryClient()
-
-  const questionCards = queryClient.getQueryData(['question-card-list'])
-
   // Todo : 여기서 fetch 해야함
   const initialQuestionCardData = [
-    { id: 1, content: '질문내용1' },
-    { id: 2, content: '질문내용2' },
-    { id: 3, content: '질문내용3' },
-    { id: 4, content: '질문내용4' },
-    { id: 5, content: '질문내용5' },
+    {
+      id: 0,
+      description: 'React에서 렌더링이 되는 시점은 언제인가요?',
+      createdAt: '2025-02-18T09:42:59.160Z',
+      teamId: 0,
+      opened: true,
+    },
+    {
+      id: 1,
+      description: 'React Fiber Node 란 무엇인가요?',
+      createdAt: '2025-02-18T09:42:59.160Z',
+      teamId: 0,
+      opened: true,
+    },
+    {
+      id: 2,
+      description: '브라우저 렌더링에 대해 설명해주세요.',
+      createdAt: '2025-02-18T09:42:59.160Z',
+      teamId: 0,
+      opened: true,
+    },
   ]
 
-  // Todo : 여기서 fetch 한 내용을 넣어줌
-  const questionCardData = useRef<{ id: number; content: string }[]>(
-    isSuccess && questionCards ? questionCards : initialQuestionCardData
-  )
+  const queryClient = useQueryClient()
+
+  const questionCards: QuestionCard[] =
+    queryClient.getQueryData(['question-card-list']) || initialQuestionCardData
 
   // const { questionCardData } = usePresentation()
 
   // 질문카드 클릭 함수
   const handleQuestionCardClick = (questionId: number) => {
-    const { id, content } = questionCardData.current.find(
-      (question) => question.id === questionId
-    )
-    console.log('content', content)
-    setSelectedQuestionList([...selectedQuestionList, { id, content }])
+    const data = questionCards.find((question) => question.id === questionId)
+    if (!data) return
+    const { id, description, createdAt, teamId, opened } = data
+    setSelectedQuestionList([
+      ...(selectedQuestionList as QuestionCard[]),
+      { id, description, createdAt, teamId, opened } as QuestionCard,
+    ])
+
     setSelectedQuestion({
       id,
-      content,
+      description,
+      createdAt,
+      teamId,
+      opened,
     })
     setIsQuestionSelected(true)
   }
@@ -67,7 +88,7 @@ const QuestionCardSection = () => {
     >
       {/* 질문카드 목록 */}
       <QuestionCardList
-        questionCardData={questionCardData.current}
+        questionCardData={questionCards}
         isSelectedQuestion={isQuestionSelected}
         selectedQuestion={selectedQuestion}
         selectedQuestionList={selectedQuestionList}

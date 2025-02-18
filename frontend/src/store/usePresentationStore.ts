@@ -3,7 +3,10 @@ import { create } from 'zustand'
 
 export interface QuestionCard {
   id: number
-  content: string
+  description: string
+  createdAt: string
+  teamId: number
+  opened: boolean
 }
 
 interface PresentationStore {
