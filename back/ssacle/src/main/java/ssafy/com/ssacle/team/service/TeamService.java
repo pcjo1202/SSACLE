@@ -76,6 +76,7 @@ public class TeamService {
         }
 
         user.setPickles(user.getPickles()-7);
+        userRepository.save(user);
 
         return team.getNotionURL();
     }
