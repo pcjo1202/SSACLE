@@ -192,6 +192,7 @@ public class BoardService {
         }
 
         user.purchaseBoard(board);
+        userRepository.save(user);
         userBoardRepository.save(UserBoard.create(user, board));
 
         return convertToDto(board, true);
