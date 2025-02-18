@@ -28,6 +28,7 @@ import AdminSsaprintDetail from '@/pages/Admin/SsaprintManagement/SsaprintDetail
 import AdminRoute from '@/components/common/AdminRoute'
 import SsadcupList from '@/pages/Admin/SsadcupManagement/SsadcupListPage'
 import AdminBoardList from '@/pages/Admin/BoardManagement/BoardListPage'
+import MyPage from '@/pages/MyPage/MyPage'
 
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
