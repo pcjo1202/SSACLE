@@ -108,9 +108,9 @@ public class VideoService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime presentationStartTime = sprint.getAnnounceAt().minusMinutes(30);
         LocalDateTime presentationEndTime = sprint.getAnnounceAt();
-        if(!(now.isAfter(presentationStartTime) && now.isBefore(presentationEndTime))){
-            throw new PresentationInvalidStepException();
-        }
+//        if(!(now.isAfter(presentationStartTime) && now.isBefore(presentationEndTime))){
+//            throw new PresentationInvalidStepException();
+//        }
         Optional<Team> teamOpt = teamRepository.findById(teamId);
         if (teamOpt.isEmpty() || !teamOpt.get().getUserTeams().stream().anyMatch(ut -> ut.getUser().getId().equals(user.getId()))) {
             log.warn("해당 Sprint에 참여하지 않은 사용자 | UserID: {}, SprintID: {}", user.getId(), sprintId);
