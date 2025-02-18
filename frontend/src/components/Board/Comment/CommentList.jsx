@@ -15,10 +15,12 @@ const CommentList = ({
   // 댓글 데이터에 고유 ID 추가
   const processComments = (commentsData, parentIndex = '') => {
     return commentsData.map((comment, index) => {
-      const uniqueId = parentIndex ? `${parentIndex}-${index}` : String(index)
+      // 임시 ID를 생성하되, 중복되지 않도록 깊이와 인덱스를 조합
+      const uniqueId = parentIndex ? `${parentIndex}-${index}` : `root-${index}`
       return {
         ...comment,
-        id: uniqueId,
+        id: uniqueId, // UI 조작을 위한 임시 ID
+        commentid: uniqueId, // API 호출용 ID도 동일하게 설정
         child: comment.child ? processComments(comment.child, uniqueId) : [],
       }
     })
