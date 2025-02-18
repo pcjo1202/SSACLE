@@ -36,7 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 requestURI.startsWith("/api/v1/login") ||
                 requestURI.startsWith("/api/v1/token") ||
                 requestURI.startsWith("/api/v1/video/sessions/reset-all") ||
-                requestURI.startsWith("/api/v1/video/sessions")
+                requestURI.startsWith("/api/v1/video/sessions/distribute")
         ){
             filterChain.doFilter(request,response);
             return;
