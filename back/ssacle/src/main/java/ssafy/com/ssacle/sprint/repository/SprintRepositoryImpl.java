@@ -46,7 +46,7 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
                 .from(sprint)
                 .leftJoin(sprint.sprintCategories, sprintCategory).fetchJoin()
                 .leftJoin(sprintCategory.category, category).fetchJoin()
-                .where(sprint.status.eq(status))
+                .where(sprint.status.eq(status).and(sprint.ssaldCup.id.isNull()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -54,7 +54,7 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
         Long total = queryFactory
                 .select(sprint.count())
                 .from(sprint)
-                .where(sprint.status.eq(status))
+                .where(sprint.status.eq(status).and(sprint.ssaldCup.id.isNull()))
                 .fetchOne();
 
         return PageableExecutionUtils.getPage(results, pageable, () -> total == null ? 0 : total);
@@ -72,7 +72,7 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
                 .join(sprint.sprintCategories, sprintCategory)
                 .join(sprintCategory.category, category)
                 .where(category.id.eq(categoryId)
-                        .and(sprint.status.eq(status)))
+                        .and(sprint.status.eq(status)).and(sprint.ssaldCup.id.isNull()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -83,7 +83,7 @@ public class SprintRepositoryImpl implements SprintRepositoryCustom {
                 .join(sprint.sprintCategories, sprintCategory)
                 .join(sprintCategory.category, category)
                 .where(category.id.eq(categoryId)
-                        .and(sprint.status.eq(status)))
+                        .and(sprint.status.eq(status).and(sprint.ssaldCup.id.isNull())))
                 .fetchOne();
 
         return PageableExecutionUtils.getPage(results, pageable, () -> total == null ? 0 : total);
