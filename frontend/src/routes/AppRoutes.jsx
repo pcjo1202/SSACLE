@@ -25,6 +25,7 @@ import UnGuardedRoute from '@/components/common/UnGuardedRoute'
 import SsaprintCreatePage from '@/pages/Admin/SsaprintManagement/SsaprintCreatePage'
 import SsaprintListPage from '@/pages/Admin/SsaprintManagement/SsaprintListPage'
 import AdminSsaprintDetail from '@/pages/Admin/SsaprintManagement/SsaprintDetailPage'
+import MyPage from '@/pages/MyPage/MyPage'
 
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
@@ -66,7 +67,7 @@ const router = createBrowserRouter([
           {
             path: '/user',
             children: [
-              { path: 'profile', element: <h1>Profile</h1> },
+              { path: 'profile', element: <MyPage /> },
               { path: 'help/inquiry', element: <h1>inquiry</h1> },
             ],
           },
@@ -147,11 +148,14 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <SsaprintListPage /> },
           { path: 'user', element: <UserList /> },
-          { path: 'ssaprint', children: [
-            { index: true, element: <SsaprintListPage /> },
-            { path: ':id', element: <AdminSsaprintDetail /> },
-            { path: 'create', element: <SsaprintCreatePage /> },
-          ] },
+          {
+            path: 'ssaprint',
+            children: [
+              { index: true, element: <SsaprintListPage /> },
+              { path: ':id', element: <AdminSsaprintDetail /> },
+              { path: 'create', element: <SsaprintCreatePage /> },
+            ],
+          },
           { path: 'ssadcup', element: <h1>admin ssadcup</h1> },
           { path: 'board', element: <h1>admin board</h1> },
         ],
