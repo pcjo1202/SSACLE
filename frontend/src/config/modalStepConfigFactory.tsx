@@ -37,6 +37,11 @@ export interface CreateModalStepConfigProps {
   setIsQuestionSelected: (isQuestionSelected: boolean) => void
   startScreenShare: () => Promise<void>
   stopScreenShare: () => Promise<void>
+  setPresenterInfo: (presenterInfo: {
+    connectionId: string
+    username: string
+  }) => void
+  presentationStatus: string
 }
 
 export const createModalStepConfig = ({
@@ -52,6 +57,8 @@ export const createModalStepConfig = ({
   stopScreenShare,
   selectedQuestion,
   setIsQuestionSelected,
+  setPresenterInfo,
+  presentationStatus,
 }: CreateModalStepConfigProps): Record<string, ModalStepConfig> => {
   const leavePresentation = async () => {
     try {
@@ -65,13 +72,14 @@ export const createModalStepConfig = ({
     }
   }
 
-  const sendStatusSignal = (data: string) => {
+  const sendStatusSignal = (data: string, option?: unknown) => {
     session?.signal({
-      data: JSON.stringify({ data }),
+      data: JSON.stringify({ data, option }),
       type: 'presentationStatus',
     })
   }
 
+  // 준비 완료 시그널 보내기 - 발표자 전용
   const sendReadySignal = (data: string) => {
     session?.signal({
       data: JSON.stringify({ data }),
@@ -258,6 +266,11 @@ export const createModalStepConfig = ({
             sendStatusSignal(PRESENTATION_STATUS.QUESTION_INIT)
             stopScreenShare()
             closeModal()
+            // 발표 종료 모달 띄우면 발표자 정보 초기화
+            setPresenterInfo({
+              connectionId: '',
+              username: '',
+            })
           },
           style: '',
         },
@@ -296,7 +309,8 @@ export const createModalStepConfig = ({
         },
       ],
     },
-    //
+
+    // read -> intro -> stepComponent ->
 
     // * 질문 답변 소개 모달 (발표자 전용) ⚠️
     [ModalSteps.QUESTION.ANSWER_INTRODUCTION]: {
@@ -315,9 +329,9 @@ export const createModalStepConfig = ({
             <div className="font-bold">
               <QuestionCardSection />
             </div>
-            <span className="text-base">
+            <div className="text-base">
               질문 카드를 선택 후 [준비 완료] 버튼을 눌러주세요.
-            </span>
+            </div>
           </div>
         </>
       ),
@@ -411,12 +425,15 @@ export const createModalStepConfig = ({
           text: '확인',
           onClick: () => {
             // 모든 참여자가 완료 했을 경우, 질문 카드 종료 시그널 보내기
-            isQuestionCompleted
-              ? setTimeout(() => {
-                  sendEndSignal(PRESENTATION_STATUS.QUESTION_END)
-                }, 1000)
+            !isQuestionCompleted // ! 임시로 질문 한번만 보내기
+              ? sendEndSignal(PRESENTATION_STATUS.QUESTION_END)
               : sendStatusSignal(PRESENTATION_STATUS.QUESTION_ANSWER_CONTINUE)
             closeModal()
+            // 질문 중간 종료 모달 띄우면 발표자 정보 초기화
+            setPresenterInfo({
+              connectionId: '',
+              username: '',
+            })
             setIsQuestionSelected(false)
           },
         },
@@ -480,22 +497,13 @@ export const createModalStepConfig = ({
       description: (
         <>
           <SsaprintVoteContainer
+            session={session}
             sendStatusSignal={sendStatusSignal}
             closeModal={closeModal}
           />
         </>
       ),
-      buttons: [
-        // {
-        //   text: '평가 완료',
-        //   onClick: () => {
-        //     // 투표 완료 시그널 보내기
-        //     sendStatusSignal(PRESENTATION_STATUS.VOTE_END)
-        //     closeModal()
-        //   },
-        //   style: '',
-        // },
-      ],
+      buttons: [],
     },
 
     // ! 투표 종료 모달

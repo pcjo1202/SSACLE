@@ -18,6 +18,10 @@ const PresentationPage = () => {
   const { data: presentationAvailability, isSuccess } = useQuery({
     queryKey: ['presentation-availability'],
     queryFn: () => fetchPresentationAvailability(roomId ?? 'test-session-id'),
+    staleTime: Infinity,
+    gcTime: 0,
+    enabled: !!roomId,
+    retry: 3,
   })
 
   // if (!presentationAvailability) {

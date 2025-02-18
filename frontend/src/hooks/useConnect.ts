@@ -5,6 +5,7 @@ import { useCallback } from 'react'
 import { useConferenceEvents } from '@/hooks/useConferenceEvents'
 import { useSearchParams } from 'react-router-dom'
 import { useShallow } from 'zustand/shallow'
+import { useQueryClient } from '@tanstack/react-query'
 
 export const useConnect = () => {
   const isMicOn = useStreamStore((state) => state.isMicOn)
@@ -46,6 +47,8 @@ export const useConnect = () => {
   const [searchParams] = useSearchParams()
   const username = searchParams.get('username')
   const userId = searchParams.get('userId')
+
+  const queryClient = useQueryClient()
 
   const joinSession = useCallback(async (session: Session, token: string) => {
     try {
