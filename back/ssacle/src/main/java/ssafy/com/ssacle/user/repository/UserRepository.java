@@ -11,9 +11,6 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.userTeams")
-    List<User> findAllWithUserTeams();
-
     Optional<User> findByStudentNumber(String studentNumber);
 
     Optional<User> findByEmailAndStudentNumber(String email, String studentNumber);
@@ -33,10 +30,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.userTeams")
     List<User> findAllWithTeams();
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.userTeams WHERE u.id = :userId")
-    Optional<User> findUserWithTeams(@Param("userId") Long userId);
-
     List<User> findByIdIn(List<Long> userIds);
+
+    @Query("SELECT ut.user.id FROM UserTeam ut WHERE ut.team.id = :teamId")
+    List<Long> findUsersIdByTeamId(@Param("teamId") Long teamId);
+
+    @Query("SELECT ut.user.id FROM UserTeam ut WHERE ut.team.id IN :teamIds")
+    List<Long> findUserIdsByTeamIds(@Param("teamIds") List<Long> teamIds);
+
+    @Query("SELECT u FROM User u WHERE u.id IN :userIds")
+    List<User> findUsersByIds(@Param("userIds") List<Long> userIds);
+
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.userTeams")
+    List<User> findAllWithUserTeams();
+
 
 }
 

@@ -8,8 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import ssafy.com.ssacle.sprint.dto.*;
 import ssafy.com.ssacle.sprint.service.SprintService;
 import ssafy.com.ssacle.user.domain.User;
+import ssafy.com.ssacle.user.dto.UserResponse;
+import ssafy.com.ssacle.user.dto.UserResponseDTO;
 import ssafy.com.ssacle.user.service.UserService;
 import ssafy.com.ssacle.userteam.service.UserTeamService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -91,6 +95,15 @@ public class SprintController implements SprintSwaggerController{
 
         ActiveSprintResponse response = sprintService.getActiveSprint(sprintId, teamId);
         return ResponseEntity.ok(response);
+    }
+
+    /** 특정 Sprint의 모든 사용자 조회 */
+    @Override
+    public ResponseEntity<List<UserResponse>> getUsersBySprint(@PathVariable Long sprintId) {
+        sprintService.validateIsSprint(sprintId);
+
+        List<UserResponse> users = sprintService.getUsersBySprintId(sprintId);
+        return ResponseEntity.ok(users);
     }
 
 }

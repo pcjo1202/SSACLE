@@ -1,8 +1,9 @@
 server:
+  forward-headers-strategy: native # 추가가
   address: 0.0.0.0
   port: 8080
   ssl:
-    enabled: false
+    enabled: false 
 
 spring:
   datasource:
@@ -12,7 +13,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
     properties:

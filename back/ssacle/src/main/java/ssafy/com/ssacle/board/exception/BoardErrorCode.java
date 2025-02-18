@@ -49,7 +49,14 @@ public enum BoardErrorCode implements ErrorCode {
     BOARD_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BOARD_013", "게시글 삭제 중 오류가 발생했습니다."),
 
     /** 📌 14. 게시글 타입을 찾을 수 없는 경우 */
-    BOARDTYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD_014", "해당 게시글 타입을 찾을 수 없습니다.");
+    BOARDTYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD_014", "해당 게시글 타입을 찾을 수 없습니다."),
+
+    /** 📌 15. 이미 해당 게시물을 구입한 경우 */
+    BOARD_ALREADY_PURCHASED(HttpStatus.NOT_FOUND, "BOARD_015", "해당 게시글을 이미 구입하셨습니다."),
+
+    /** 피클 부족 한 경우 */
+    PICKLE_NOT_ENOUGH(HttpStatus.FORBIDDEN, "BOARD_016", "피클이 부족합니다.");
+
     private final HttpStatus status;
     private final String code;
     private final String message;

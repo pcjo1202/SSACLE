@@ -17,7 +17,9 @@ public enum UpdateProfileErrorCode implements ErrorCode {
 
     // ✅ 비밀번호 변경 관련 에러 코드 추가
     INCORRECT_CURRENT_PASSWORD(HttpStatus.UNAUTHORIZED, "PROFILE_006", "현재 비밀번호가 올바르지 않습니다."),
-    PASSWORD_CONFIRMATION_MISMATCH(HttpStatus.BAD_REQUEST, "PROFILE_007", "새로운 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+    PASSWORD_CONFIRMATION_MISMATCH(HttpStatus.BAD_REQUEST, "PROFILE_007", "새로운 비밀번호와 확인 비밀번호가 일치하지 않습니다."),
+
+    PICKLE_NOT_ENOUGH(HttpStatus.UNAUTHORIZED, "USER_01", "피클이 충분하지 않습니다.");;
 
     private final HttpStatus status;
     private final String code;

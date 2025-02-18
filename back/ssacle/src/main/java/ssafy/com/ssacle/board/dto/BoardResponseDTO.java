@@ -14,6 +14,7 @@ import java.util.List;
 public class BoardResponseDTO {
     @NotBlank
     private Long id;
+
     @NotBlank
     private String title;
 
@@ -34,4 +35,6 @@ public class BoardResponseDTO {
 
     @NotBlank
     private String subCategory;
+
+    private boolean isPurchased;
 }

@@ -56,16 +56,25 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         //Make the below setting` as * to allow connection from any hos
-        corsConfiguration.setAllowedOriginPatterns(List.of("http://localhost:5173",
+        // corsConfiguration.setAllowedOriginPatterns(List.of("http://localhost:5173",
+        //         "http://localhost:8080",
+        //         "http://localhost:8000",
+        //         "http://localhost:4443",
+        //         "http://localhost:5000",
+        //         "http://i12a402.p.ssafy.io:8080",
+        //         "https://i12a402.p.ssafy.io",
+        //         "http://i12a402.p.ssafy.io",
+        //         "https://i12a402.p.ssafy.io:8443"));
+        corsConfiguration.setAllowedOrigins(List.of(
+                "http://localhost:5173",
                 "http://localhost:8080",
                 "http://localhost:8000",
                 "http://localhost:4443",
                 "http://localhost:5000",
                 "http://i12a402.p.ssafy.io:8080",
                 "https://i12a402.p.ssafy.io",
-                "http://i12a402.p.ssafy.io",
                 "https://i12a402.p.ssafy.io:8443"));
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE", "OPTION"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setMaxAge(3600L);

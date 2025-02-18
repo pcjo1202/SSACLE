@@ -47,6 +47,7 @@ import ssafy.com.ssacle.todo.dto.TodoResponseDTO;
 import ssafy.com.ssacle.todo.repository.TodoRepository;
 import ssafy.com.ssacle.todo.service.DefaultTodoService;
 import ssafy.com.ssacle.user.domain.User;
+import ssafy.com.ssacle.user.dto.UserResponse;
 import ssafy.com.ssacle.user.dto.UserResponseDTO;
 import ssafy.com.ssacle.user.repository.UserRepository;
 import ssafy.com.ssacle.usercategory.domain.UserCategory;
@@ -75,7 +76,6 @@ public class SprintService {
     private final QuestionCardService questionCardService;
     private final DiaryService diaryService;
 
-    @Transactional(readOnly = true)
     public void validateUserParticipation(Long userId, Long sprintId) {
         boolean isParticipating = userTeamRepository.countByUserIdAndSprintId(userId, sprintId) > 0;
 
@@ -83,13 +83,20 @@ public class SprintService {
             throw new SprintUnauthorizedException();
         }
     }
-    @Transactional(readOnly = true)
+
     public void validateUserNotParticipation(Long userId, Long sprintId) {
         boolean isParticipating = userTeamRepository.countByUserIdAndSprintId(userId, sprintId) > 0;
 
         if (isParticipating) {
             throw new UserParticipatedException();
         }
+    }
+
+    public void validateIsSprint(Long sprintId){
+        if (!sprintRepository.existsById(sprintId)) {
+            throw new SprintNotExistException();
+        }
+
     }
 
     @Transactional
@@ -133,8 +140,8 @@ public class SprintService {
         Team team = saveTeamAndTeamUser(user, sprint, teamName);
 
         // 팀 <-> 노션 연동
-//        String notionUrl = saveNotion(teamName, defaultTodos, categories);
-//        team.setNotionURL(notionUrl);
+        String notionUrl = saveNotion(teamName, defaultTodos, categories);
+        team.setNotionURL(notionUrl);
 
         // 팀 <-> 투두 연동
         saveTodo(team, defaultTodos);
@@ -435,5 +442,32 @@ public class SprintService {
         LocalDateTime presentationEndTime = sprint.getAnnounceAt();
 
         return now.isAfter(presentationStartTime) && now.isBefore(presentationEndTime);
+    }
+
+    public List<UserResponseDTO> getPresentationParticipants(Long sprintId) {
+        //Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(SprintNotExistException::new);
+        List<Team> teams = teamRepository.findBySprintIdWithUserTeams(sprintId);
+        List<Long> userIds = teams.stream()
+                .flatMap(team -> team.getUserTeams().stream())
+                .map(userTeam -> userTeam.getUser().getId())
+                .distinct()
+                .collect(Collectors.toList());
+        List<User> users = userRepository.findByIdIn(userIds);
+        return users.stream()
+                .map(user-> UserResponseDTO.of(user,null))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<UserResponse> getUsersBySprintId(Long sprintId) {
+
+        List<Long> teamIds = teamRepository.findTeamIdsBySprintId(sprintId);
+
+        List<Long> userIds = userRepository.findUserIdsByTeamIds(teamIds);
+
+        return userRepository.findUsersByIds(userIds)
+                .stream()
+                .map(UserResponse::from)
+                .collect(Collectors.toList());
     }
 }

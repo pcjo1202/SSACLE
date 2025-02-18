@@ -102,7 +102,8 @@ public class DataInitializer {
     @Transactional
     public void initializeUsers(UserRepository userRepository) {
         if (userRepository.count() == 0) { // 기존 데이터가 없을 경우에만 추가
-            User admin = User.createAdmin("admin1@example.com", "admin1234", "AdminUser1");
+            User admin = User.createAdmin("admin@example.com", "admin1234", "Admin");
+            User admin1 = User.createAdmin("admin1@example.com", "admin1234", "AdminUser1");
             User admin2 = User.createAdmin("admin2@example.com", "admin1234", "AdminUser2");
             User admin3 = User.createAdmin("admin3@example.com", "admin1234", "AdminUser3");
             User admin4 = User.createAdmin("admin4@example.com", "admin1234", "AdminUser4");
@@ -123,8 +124,10 @@ public class DataInitializer {
             User admin19 = User.createAdmin("admin19@example.com", "admin1234", "Admin19");
             User admin20 = User.createAdmin("admin20@example.com", "admin1234", "Admin20");
 
-            User user = User.createStudent("user@example.com", "user123", "John Doe", "1234567", "johndoe");
+            User user = User.createStudent("user@example.com", "user1234", "SSAFY", "1234000", "ssafy");
+            User user1 = User.createStudent("user1@example.com", "user1234", "John Doe", "1234567", "johndoe");
             userRepository.save(admin);
+            userRepository.save(admin1);
             userRepository.save(admin2);
             userRepository.save(admin3);
             userRepository.save(admin4);
@@ -145,6 +148,7 @@ public class DataInitializer {
             userRepository.save(admin19);
             userRepository.save(admin20);
             userRepository.save(user);
+            userRepository.save(user1);
             System.out.println("default data added");
         } else {
             System.out.println("default data already exists");
@@ -743,7 +747,7 @@ public class DataInitializer {
             // 기존 댓글 중 일부를 부모로 하여 대댓글 추가 (깊이 제한 설정)
             for (Comment parentComment : allComments) {
                 if (random.nextBoolean()) { // 50% 확률로 대댓글 생성
-                    if (getDepth(parentComment) >= 3) { // 깊이가 3 이상이면 생성하지 않음
+                    if (getDepth(parentComment) >= 1) { // 깊이가 3 이상이면 생성하지 않음
                         continue;
                     }
 
@@ -834,7 +838,7 @@ public class DataInitializer {
                             .recommendedFor("이 주제에 관심 있는 개발자")
                             .startAt(startAt)
                             .endAt(endAt)
-                            .announceAt(now)
+                            .announceAt(now.plusMinutes(15))
                             .maxMembers(5 + random.nextInt(5))
                             .defaultTodos(generateTodos(startAt)) // 7일치 Todo 데이터 추가
                             .build();

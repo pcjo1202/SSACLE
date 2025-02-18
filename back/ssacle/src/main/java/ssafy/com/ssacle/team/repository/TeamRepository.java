@@ -1,16 +1,19 @@
 package ssafy.com.ssacle.team.repository;
 
 import jakarta.persistence.Id;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.team.domain.Team;
+import ssafy.com.ssacle.team.dto.TeamDiaryResponse;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface TeamRepository extends JpaRepository<Team, Long> {
+public interface TeamRepository extends JpaRepository<Team, Long>, TeamRepositoryCustom {
     @Query("SELECT DISTINCT t FROM Team t " +
             "JOIN t.userTeams ut " +
             "WHERE ut.user.id = :userId")
@@ -43,4 +46,8 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     @Query("SELECT t FROM Team t JOIN FETCH t.userTeams ut JOIN FETCH ut.user WHERE t.id = :teamId")
     Optional<Team> findByIdWithUserTeams(@Param("teamId") Long teamId);
+
+    @Query("SELECT t.id FROM Team t WHERE t.sprint.id = :sprintId")
+    List<Long> findTeamIdsBySprintId(@Param("sprintId") Long sprintId);
+
 }
