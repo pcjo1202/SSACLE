@@ -98,11 +98,11 @@ const DetailsForm = () => {
         {/* 싸프린트 이름 입력 */}
         <div>
           <label className="text-ssacle-black text-sm font-bold">
-            싸프린트 이름
+            싸프린트 이름 <span className="text-ssacle-gray text-xs">(20자 이내)</span>
           </label>
           <input
             type="text"
-            maxLength={100}
+            maxLength={20}
             className="w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto text-ssacle-black text-sm"
             value={sprintName}
             onChange={(e) => setSprintName(e.target.value)}
