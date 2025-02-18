@@ -121,6 +121,8 @@ export const ADMIN_END_POINT = {
   SSAPRINT: {
     LIST: '/search',
     DETAIL: (sprintId) => `/${sprintId}/details`,
+    USER: (sprintId) => `${sprintId}/users`,
+    CARD: (sprintId) => `${sprintId}/users`,
     CREATE: {
       CATEGORY_ALL: '/category/all', // 전체 카테고리 조회
       GPT_TODOS: '/gpt/todos', // gpt 상세 내용 생성
@@ -147,14 +149,20 @@ export const COMMENT_END_POINT = {
   // 게시글 댓글 관련
   LIST: (boardId) => `/comment/board/${boardId}`, // 게시글의 댓글 목록 조회
   CREATE: (boardId) => `/comment/board/${boardId}`, // 댓글 작성
-  UPDATE: (commentId) => `/comments/${commentId}`, // 댓글 수정
-  DELETE: (commentId) => `/comments/${commentId}`, // 댓글 삭제
+  UPDATE: (commentId) => `/comment/${commentId}`, // 댓글 수정
+  DELETE: (commentId) => `/comment/${commentId}`, // 댓글 삭제
 
   // 대댓글 관련
   SUB_COMMENTS: {
-    LIST: (parentCommentId) => `/comment/reply/comments/${parentCommentId}`, // 대댓글 목록 조회
-    CREATE: (parentCommentId) => `/comment/reply/comments/${parentCommentId}`, // 대댓글 작성
+    LIST: (parentCommentId) => `/comment/reply/${parentCommentId}`, // 대댓글 목록 조회
+    CREATE: (parentCommentId) => `/comment/reply/${parentCommentId}`, // 대댓글 작성
   },
+}
+
+// 노트 구매 관련
+export const NOTE_END_POINT = {
+  LIST: '/teams/diaries',
+  PURCHASE: (teamId) => `/teams/${teamId}/purchase`,
 }
 
 // 노션 관련 -> notionService
