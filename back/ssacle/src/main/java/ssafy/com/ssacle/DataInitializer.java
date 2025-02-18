@@ -91,8 +91,8 @@ public class DataInitializer {
             initializeReplies(commentRepository, userRepository);
             initializeAINews(aiNewsRepository);
             initializeLunch(lunchRepository);
-            initializeSprints(sprintRepository,categoryRepository,sprintCategoryRepository);
-            initializeSprintParticipation(sprintRepository, userRepository, teamRepository, sprintService, questionCardService, diaryService);
+//            initializeSprints(sprintRepository,categoryRepository,sprintCategoryRepository);
+//            initializeSprintParticipation(sprintRepository, userRepository, teamRepository, sprintService, questionCardService, diaryService);
 //            initializeTeams(sprintRepository,teamRepository,userRepository,userTeamRepository);
             initializeSsaldCups(ssaldCupRepository, sprintRepository, categoryRepository,ssaldCupCategoryRepository, sprintCategoryRepository);
             //initializeSsaldCupParticipation(ssaldCupRepository, userRepository, teamRepository);
@@ -789,159 +789,159 @@ public class DataInitializer {
 
 
 
-    @Transactional
-    public void initializeSprints(SprintRepository sprintRepository,
-                                  CategoryRepository categoryRepository,
-                                  SprintCategoryRepository sprintCategoryRepository) {
-        if (sprintRepository.count() == 0) {
-            List<Sprint> sprints = new ArrayList<>();
-            List<SprintCategory> sprintCategories = new ArrayList<>();
-            LocalDateTime now = LocalDateTime.now();
-            Random random = new Random();
-
-            // ✅ level 3인 카테고리만 조회
-            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
-
-            for (Category category : lowestLevelCategories) {
-                List<Long> categoryIds = new ArrayList<>();
-                categoryIds.add(category.getId());
-
-                // ✅ 부모 카테고리와 조부모 카테고리 초기화
-                Category parent = category.getParent();
-                if (parent != null) {
-                    categoryIds.add(parent.getId());
-                    Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
-                    if (grandParent != null) {
-                        categoryIds.add(grandParent.getId());
-                    }
-                }
-
-                for (int i = 0; i < 3; i++) { // 각 카테고리당 3개씩 생성
-                    LocalDateTime startAt;
-                    LocalDateTime endAt;
-
-                    if (i == 0) { // 시작 전 (status = 0)
-                        startAt = now.plusDays(random.nextInt(10) + 5);
-                        endAt = startAt.plusDays(random.nextInt(10) + 5);
-                    } else if (i == 1) { // 진행 중 (status = 1)
-                        startAt = now.minusDays(random.nextInt(10));
-                        endAt = now.plusDays(random.nextInt(10) + 5);
-                    } else { // 종료됨 (status = 2)
-                        startAt = now.minusDays(random.nextInt(20) + 20);
-                        endAt = startAt.plusDays(random.nextInt(10) + 5);
-                    }
-
-                    Sprint sprint = SprintBuilder.builder()
-                            .name(category.getCategoryName() + " Sprint " + (i + 1))
-                            .basicDescription("학습 내용: " + category.getCategoryName())
-                            .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
-                            .recommendedFor("이 주제에 관심 있는 개발자")
-                            .startAt(startAt)
-                            .endAt(endAt)
-                            .announceAt(now.plusMinutes(15))
-                            .maxMembers(5 + random.nextInt(5))
-                            .defaultTodos(generateTodos(startAt)) // 7일치 Todo 데이터 추가
-                            .build();
-
-                    sprintRepository.save(sprint);
-
-                    // ✅ 부모, 조부모 카테고리 연결
-                    categoryIds.forEach(categoryId -> {
-                        Category sprintCategory = categoryRepository.findById(categoryId)
-                                .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없음: " + categoryId));
-                        sprintCategoryRepository.save(new SprintCategory(sprint, sprintCategory));
-                    });
-
-                    sprints.add(sprint);
-                }
-            }
-            System.out.println("✅ 30개의 스프린트 데이터가 성공적으로 추가되었습니다.");
-        } else {
-            System.out.println("✅ 스프린트 데이터가 이미 존재합니다.");
-        }
-    }
-
-    /** 7일치 TodoRequest 생성 */
-    private List<TodoRequest> generateTodos(LocalDateTime startAt) {
-        List<TodoRequest> todos = new ArrayList<>();
-        Random random = new Random();
-
-        String[][] tasksByDay = {
-                {"기본 개념 학습", "아키텍처 개요", "핵심 원리 이해"},
-                {"설치 및 환경 설정", "기본 코드 작성", "간단한 예제 구현"},
-                {"주요 기능 익히기", "실전 프로젝트 적용", "API 활용"},
-                {"보안 및 최적화", "고급 기능 활용", "성능 테스트"},
-                {"실전 문제 해결", "버그 수정 및 디버깅", "모범 사례 학습"},
-                {"프로젝트 확장 및 배포", "서드파티 연동", "실제 환경 적용"},
-                {"최종 복습 및 발표", "코드 리뷰", "QA 세션"}
-        };
-
-        for (int i = 0; i < 7; i++) {
-            LocalDate date = startAt.toLocalDate().plusDays(i);
-            List<String> tasks = List.of(tasksByDay[i]);
-
-            todos.add(new TodoRequest(date, tasks));
-        }
-
-        return todos;
-    }
-
-    @Transactional
-    public void initializeSprintParticipation(SprintRepository sprintRepository,
-                                              UserRepository userRepository,
-                                              TeamRepository teamRepository,
-                                              SprintService sprintService,
-                                              QuestionCardService questionCardService,
-                                              DiaryService diaryService) {
-        if (teamRepository.count() > 0) {
-            System.out.println("✅ 기존 팀이 존재하므로 스프린트 초기화 생략");
-            return;
-        }
-
-        List<Sprint> allSprints = sprintRepository.findAll();
-        List<User> admins = userRepository.findAllWithTeams().stream()
-                .filter(user -> user.getEmail().startsWith("admin1") || user.getEmail().startsWith("admin2"))
-                .toList();
-
-        for (Sprint sprint : allSprints) {
-            System.out.println("----------스프린트 ID " + sprint.getId() + "-----------");
-
-            for (User admin : admins) {
-                System.out.println("----------사용자 ID " + admin.getId() + "-----------");
-                sprintService.joinSprint(sprint.getId(), admin, sprint.getId() + "_" + admin.getId());
-            }
-
-            // ✅ Sprint ID가 2+3*x인 경우에 QuestionCard 및 Diary 추가
-            if ((sprint.getId() - 2) % 3 == 0) {
-                List<Team> teams = teamRepository.findBySprint(sprint); // ✅ 해당 Sprint의 팀 가져오기
-
-                for (Team team : teams) {
-                    // ✅ 각 팀별로 QuestionCard 생성
-                    QuestionCardRequest questionCardRequest = new QuestionCardRequest(
-                            sprint.getId(),
-                            team.getId(), // ✅ 팀 ID 추가
-                            "Sprint " + sprint.getId() + "의 팀 [" + team.getName() + "]을 위한 질문 카드입니다.",
-                            false
-                    );
-                    questionCardService.createQuestionCard(questionCardRequest);
-                }
-
-                // ✅ Diary 추가 (스프린트 시작일부터 종료일까지 모든 날짜 추가)
-                for (Team team : teams) {
-                    LocalDate startDate = sprint.getStartAt().toLocalDate();
-                    LocalDate endDate = sprint.getEndAt().toLocalDate();
-
-                    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-                        Diary diary = new Diary(team, team.getName(),
-                                "Sprint " + sprint.getId() + "의 " + date + " 일기 내용입니다.", date);
-                        diaryService.saveDiary(diary);
-                    }
-                }
-            }
-        }
-
-        System.out.println("✅ 모든 Sprint에 admin1~admin2이 참가하고, 특정 Sprint에 QuestionCard 및 Diary가 추가되었습니다.");
-    }
+//    @Transactional
+//    public void initializeSprints(SprintRepository sprintRepository,
+//                                  CategoryRepository categoryRepository,
+//                                  SprintCategoryRepository sprintCategoryRepository) {
+//        if (sprintRepository.count() == 0) {
+//            List<Sprint> sprints = new ArrayList<>();
+//            List<SprintCategory> sprintCategories = new ArrayList<>();
+//            LocalDateTime now = LocalDateTime.now();
+//            Random random = new Random();
+//
+//            // ✅ level 3인 카테고리만 조회
+//            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
+//
+//            for (Category category : lowestLevelCategories) {
+//                List<Long> categoryIds = new ArrayList<>();
+//                categoryIds.add(category.getId());
+//
+//                // ✅ 부모 카테고리와 조부모 카테고리 초기화
+//                Category parent = category.getParent();
+//                if (parent != null) {
+//                    categoryIds.add(parent.getId());
+//                    Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+//                    if (grandParent != null) {
+//                        categoryIds.add(grandParent.getId());
+//                    }
+//                }
+//
+//                for (int i = 0; i < 3; i++) { // 각 카테고리당 3개씩 생성
+//                    LocalDateTime startAt;
+//                    LocalDateTime endAt;
+//
+//                    if (i == 0) { // 시작 전 (status = 0)
+//                        startAt = now.plusDays(random.nextInt(10) + 5);
+//                        endAt = startAt.plusDays(random.nextInt(10) + 5);
+//                    } else if (i == 1) { // 진행 중 (status = 1)
+//                        startAt = now.minusDays(random.nextInt(10));
+//                        endAt = now.plusDays(random.nextInt(10) + 5);
+//                    } else { // 종료됨 (status = 2)
+//                        startAt = now.minusDays(random.nextInt(20) + 20);
+//                        endAt = startAt.plusDays(random.nextInt(10) + 5);
+//                    }
+//
+//                    Sprint sprint = SprintBuilder.builder()
+//                            .name(category.getCategoryName() + " Sprint " + (i + 1))
+//                            .basicDescription("학습 내용: " + category.getCategoryName())
+//                            .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
+//                            .recommendedFor("이 주제에 관심 있는 개발자")
+//                            .startAt(startAt)
+//                            .endAt(endAt)
+//                            .announceAt(now)
+//                            .maxMembers(5 + random.nextInt(5))
+//                            .defaultTodos(generateTodos(startAt)) // 7일치 Todo 데이터 추가
+//                            .build();
+//
+//                    sprintRepository.save(sprint);
+//
+//                    // ✅ 부모, 조부모 카테고리 연결
+//                    categoryIds.forEach(categoryId -> {
+//                        Category sprintCategory = categoryRepository.findById(categoryId)
+//                                .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없음: " + categoryId));
+//                        sprintCategoryRepository.save(new SprintCategory(sprint, sprintCategory));
+//                    });
+//
+//                    sprints.add(sprint);
+//                }
+//            }
+//            System.out.println("✅ 30개의 스프린트 데이터가 성공적으로 추가되었습니다.");
+//        } else {
+//            System.out.println("✅ 스프린트 데이터가 이미 존재합니다.");
+//        }
+//    }
+//
+//    /** 7일치 TodoRequest 생성 */
+//    private List<TodoRequest> generateTodos(LocalDateTime startAt) {
+//        List<TodoRequest> todos = new ArrayList<>();
+//        Random random = new Random();
+//
+//        String[][] tasksByDay = {
+//                {"기본 개념 학습", "아키텍처 개요", "핵심 원리 이해"},
+//                {"설치 및 환경 설정", "기본 코드 작성", "간단한 예제 구현"},
+//                {"주요 기능 익히기", "실전 프로젝트 적용", "API 활용"},
+//                {"보안 및 최적화", "고급 기능 활용", "성능 테스트"},
+//                {"실전 문제 해결", "버그 수정 및 디버깅", "모범 사례 학습"},
+//                {"프로젝트 확장 및 배포", "서드파티 연동", "실제 환경 적용"},
+//                {"최종 복습 및 발표", "코드 리뷰", "QA 세션"}
+//        };
+//
+//        for (int i = 0; i < 7; i++) {
+//            LocalDate date = startAt.toLocalDate().plusDays(i);
+//            List<String> tasks = List.of(tasksByDay[i]);
+//
+//            todos.add(new TodoRequest(date, tasks));
+//        }
+//
+//        return todos;
+//    }
+//
+//    @Transactional
+//    public void initializeSprintParticipation(SprintRepository sprintRepository,
+//                                              UserRepository userRepository,
+//                                              TeamRepository teamRepository,
+//                                              SprintService sprintService,
+//                                              QuestionCardService questionCardService,
+//                                              DiaryService diaryService) {
+//        if (teamRepository.count() > 0) {
+//            System.out.println("✅ 기존 팀이 존재하므로 스프린트 초기화 생략");
+//            return;
+//        }
+//
+//        List<Sprint> allSprints = sprintRepository.findAll();
+//        List<User> admins = userRepository.findAllWithTeams().stream()
+//                .filter(user -> user.getEmail().startsWith("admin1") || user.getEmail().startsWith("admin2"))
+//                .toList();
+//
+//        for (Sprint sprint : allSprints) {
+//            System.out.println("----------스프린트 ID " + sprint.getId() + "-----------");
+//
+//            for (User admin : admins) {
+//                System.out.println("----------사용자 ID " + admin.getId() + "-----------");
+//                sprintService.joinSprint(sprint.getId(), admin, sprint.getId() + "_" + admin.getId());
+//            }
+//
+//            // ✅ Sprint ID가 2+3*x인 경우에 QuestionCard 및 Diary 추가
+//            if ((sprint.getId() - 2) % 3 == 0) {
+//                List<Team> teams = teamRepository.findBySprint(sprint); // ✅ 해당 Sprint의 팀 가져오기
+//
+//                for (Team team : teams) {
+//                    // ✅ 각 팀별로 QuestionCard 생성
+//                    QuestionCardRequest questionCardRequest = new QuestionCardRequest(
+//                            sprint.getId(),
+//                            team.getId(), // ✅ 팀 ID 추가
+//                            "Sprint " + sprint.getId() + "의 팀 [" + team.getName() + "]을 위한 질문 카드입니다.",
+//                            false
+//                    );
+//                    questionCardService.createQuestionCard(questionCardRequest);
+//                }
+//
+//                // ✅ Diary 추가 (스프린트 시작일부터 종료일까지 모든 날짜 추가)
+//                for (Team team : teams) {
+//                    LocalDate startDate = sprint.getStartAt().toLocalDate();
+//                    LocalDate endDate = sprint.getEndAt().toLocalDate();
+//
+//                    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+//                        Diary diary = new Diary(team, team.getName(),
+//                                "Sprint " + sprint.getId() + "의 " + date + " 일기 내용입니다.", date);
+//                        diaryService.saveDiary(diary);
+//                    }
+//                }
+//            }
+//        }
+//
+//        System.out.println("✅ 모든 Sprint에 admin1~admin2이 참가하고, 특정 Sprint에 QuestionCard 및 Diary가 추가되었습니다.");
+//    }
 
     @Transactional
     public void initializeSsaldCups(SsaldCupRepository ssaldCupRepository,
