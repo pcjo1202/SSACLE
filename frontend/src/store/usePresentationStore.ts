@@ -3,7 +3,10 @@ import { create } from 'zustand'
 
 export interface QuestionCard {
   id: number
-  content: string
+  description: string
+  createdAt: string
+  teamId: number
+  opened: boolean
 }
 
 interface PresentationStore {
@@ -21,6 +24,16 @@ interface PresentationStore {
     connectionId: string
   }
   setPresenterInfo: (presenterInfo: {
+    name: string
+    connectionId: string
+  }) => void
+
+  // 질문 답변자 정보
+  questionAnswererInfo: {
+    name: string
+    connectionId: string
+  }
+  setQuestionAnswererInfo: (questionAnswererInfo: {
     name: string
     connectionId: string
   }) => void
@@ -62,6 +75,14 @@ export const usePresentationStore = create<PresentationStore>((set) => ({
     connectionId: '',
   },
   setPresenterInfo: (presenterInfo) => set({ presenterInfo }),
+
+  // 질문 답변자 정보 설정
+  questionAnswererInfo: {
+    name: '',
+    connectionId: '',
+  },
+  setQuestionAnswererInfo: (questionAnswererInfo) =>
+    set({ questionAnswererInfo }),
 
   // 질문 카드 선택 여부 설정
   isQuestionSelected: false,

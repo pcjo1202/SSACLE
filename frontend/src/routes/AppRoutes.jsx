@@ -28,6 +28,7 @@ import AdminSsaprintDetail from '@/pages/Admin/SsaprintManagement/SsaprintDetail
 import AdminRoute from '@/components/common/AdminRoute'
 import SsadcupList from '@/pages/Admin/SsadcupManagement/SsadcupListPage'
 import AdminBoardList from '@/pages/Admin/BoardManagement/BoardListPage'
+import MyPage from '@/pages/MyPage/MyPage'
 
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
@@ -40,7 +41,7 @@ const router = createBrowserRouter([
       // 계정 인증 관련 (로그인, 회원가입, 관심사 등록 등)
       {
         path: '/account',
-        element: <UnGuardedRoute />,
+        // element: <UnGuardedRoute />,
         children: [
           // 로그인 page
           { path: 'login', element: <LoginPage /> },
@@ -69,7 +70,7 @@ const router = createBrowserRouter([
           {
             path: '/user',
             children: [
-              { path: 'profile', element: <h1>Profile</h1> },
+              { path: 'profile', element: <MyPage /> },
               { path: 'help/inquiry', element: <h1>inquiry</h1> },
             ],
           },
