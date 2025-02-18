@@ -9,52 +9,25 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { CreditCard } from 'lucide-react'
+import { useState } from 'react'
+import httpCommon from '@/services/http-common'
 
-const NotePayModal = ({
-  isOpen,
-  onClose,
-  onConfirm,
-  note,
-  requiredPickles = 5,
-  currentPickle,
-  purchaseSuccess,
-  notionUrl,
-}) => {
-  const hasEnoughPickles = currentPickle >= requiredPickles
+const NotePayModal = ({ isOpen, onClose, post }) => {
+  const [notionUrl, setNotionUrl] = useState(null)
+  const [loading, setLoading] = useState(false)
 
-  // 하드코딩된 일기 목록
-  const diaryList = [
-    '1주차 - prop 공부하기',
-    '2주차 - 컴포넌트 설계하기',
-    '3주차 - 상태관리 학습하기',
-    '4주차 - API 연동하기',
-    '5주차 - 일기장 만들기',
-  ]
-
-  if (purchaseSuccess) {
-    return (
-      <AlertDialog open={isOpen} onOpenChange={onClose}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>구매가 완료되었어요! 🎉</AlertDialogTitle>
-            <AlertDialogDescription>
-              <p className="mb-4">노트 구매가 완료되었습니다.</p>
-              <a
-                href={notionUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                노션 페이지로 이동하기
-              </a>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={onClose}>확인</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    )
+  // 결제 요청 핸들러
+  const handlePurchase = async () => {
+    setLoading(true)
+    try {
+      const response = await httpCommon.post(`/teams/${post.teamId}/purchase`)
+      setNotionUrl(response.data) // Notion URL 반환
+    } catch (error) {
+      console.error('노트 구매 실패:', error)
+      alert('노트 구매에 실패했습니다. 다시 시도해주세요.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -63,34 +36,27 @@ const NotePayModal = ({
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
             <CreditCard className="w-5 h-5 text-ssacle-blue" />
-            <span>노트 구매하기</span>
+            <span>노트 구매</span>
           </AlertDialogTitle>
           <AlertDialogDescription className="space-y-4">
-            <p className="font-medium text-lg">{note?.sprintName}</p>
+            <p>
+              <strong>{post.teamName}</strong>의 노트를 구매하려면 5피클이
+              필요합니다.
+            </p>
 
+            {/* 주차별 내용 표시 */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm font-medium mb-2">학습 일기 목록</p>
-              <ul className="space-y-1">
-                {diaryList.map((diary, index) => (
-                  <li key={index} className="text-sm text-gray-600">
-                    {diary}
-                  </li>
-                ))}
+              <p className="text-sm text-gray-600">노트 학습 내용</p>
+              <ul className="text-gray-700 text-sm list-disc list-inside">
+                {post.diaries.length > 0 ? (
+                  post.diaries.map((diary, index) => (
+                    <li key={index}>{diary}</li>
+                  ))
+                ) : (
+                  <li>등록된 학습 내용이 없습니다.</li>
+                )}
               </ul>
             </div>
-
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-600">현재 보유 피클</p>
-              <p className="text-lg font-bold text-ssacle-blue flex items-center gap-1">
-                {currentPickle} 🥒
-              </p>
-            </div>
-
-            {!hasEnoughPickles && (
-              <div className="text-sm text-red-500">
-                피클이 부족합니다. 더 많은 활동을 통해 피클을 모아보세요!
-              </div>
-            )}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -99,17 +65,29 @@ const NotePayModal = ({
             취소
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
-            disabled={!hasEnoughPickles}
-            className={`${
-              hasEnoughPickles
-                ? 'bg-ssacle-blue hover:bg-blue-600'
-                : 'bg-gray-300 cursor-not-allowed'
-            }`}
+            onClick={handlePurchase}
+            disabled={loading || notionUrl}
+            className="bg-ssacle-blue hover:bg-blue-600"
           >
-            {requiredPickles}피클로 구매하기
+            {loading ? '구매 중...' : notionUrl ? '구매 완료' : '구매하기'}
           </AlertDialogAction>
         </AlertDialogFooter>
+
+        {/* 구매 완료 후 Notion 링크 표시 */}
+        {notionUrl && (
+          <div className="mt-4 p-4 border-t text-center">
+            <p className="text-sm text-gray-600">
+              구매 완료! 아래 링크에서 확인하세요.
+            </p>
+            <a
+              href={notionUrl}
+              target="_blank"
+              className="text-ssacle-blue underline"
+            >
+              Notion에서 보기
+            </a>
+          </div>
+        )}
       </AlertDialogContent>
     </AlertDialog>
   )
