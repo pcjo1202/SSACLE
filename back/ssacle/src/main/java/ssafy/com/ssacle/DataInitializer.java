@@ -95,7 +95,7 @@ public class DataInitializer {
             initializeSprintParticipation(sprintRepository, userRepository, teamRepository, sprintService, questionCardService, diaryService);
 //            initializeTeams(sprintRepository,teamRepository,userRepository,userTeamRepository);
             initializeSsaldCups(ssaldCupRepository, sprintRepository, categoryRepository,ssaldCupCategoryRepository, sprintCategoryRepository);
-            initializeSsaldCupParticipation(ssaldCupRepository, userRepository, teamRepository);
+            //initializeSsaldCupParticipation(ssaldCupRepository, userRepository, teamRepository);
         };
     }
 
@@ -1069,44 +1069,44 @@ public class DataInitializer {
 
 
 
-    @Transactional
-    public void initializeSsaldCupParticipation(SsaldCupRepository ssaldCupRepository,
-                                                UserRepository userRepository,
-                                                TeamRepository teamRepository) {
-
-        // ✅ 1번 싸드컵 조회
-        SsaldCup ssaldCup = ssaldCupRepository.findById(1L)
-                .orElseThrow(() -> new IllegalStateException("1번 싸드컵이 존재하지 않습니다."));
-
-        // ✅ ID=1~20인 사용자 조회
-        List<User> temp = userRepository.findAllWithUserTeams();
-        List<User> users = new ArrayList<>();
-        for (User user : temp) {
-            if (user.getId() >= 1 && user.getId() <= 20) {
-                users.add(user);
-            }
-        }
-
-        if (users.size() < 20) {
-            throw new IllegalStateException("ID=1~20인 사용자가 20명 존재해야 합니다.");
-        }
-
-        List<Team> teams = new ArrayList<>();
-
-        // ✅ 2명씩 10팀 구성
-        for (int i = 0; i < 10; i++) {
-            Team team = new Team("Team" + (i + 1), 0);
-            team.addUser(users.get(i * 2));
-            team.addUser(users.get(i * 2 + 1));
-            team.setCurrentMembers(2);
-            team.setSsaldCup(ssaldCup);
-            teams.add(team);
-        }
-
-        teamRepository.saveAll(teams);
-
-        System.out.println("✅ 1번 싸드컵에 10개 팀이 생성되었습니다.");
-    }
+//    @Transactional
+//    public void initializeSsaldCupParticipation(SsaldCupRepository ssaldCupRepository,
+//                                                UserRepository userRepository,
+//                                                TeamRepository teamRepository) {
+//
+//        // ✅ 1번 싸드컵 조회
+//        SsaldCup ssaldCup = ssaldCupRepository.findById(1L)
+//                .orElseThrow(() -> new IllegalStateException("1번 싸드컵이 존재하지 않습니다."));
+//
+//        // ✅ ID=1~20인 사용자 조회
+//        List<User> temp = userRepository.findAllWithUserTeams();
+//        List<User> users = new ArrayList<>();
+//        for (User user : temp) {
+//            if (user.getId() >= 1 && user.getId() <= 20) {
+//                users.add(user);
+//            }
+//        }
+//
+//        if (users.size() < 20) {
+//            throw new IllegalStateException("ID=1~20인 사용자가 20명 존재해야 합니다.");
+//        }
+//
+//        List<Team> teams = new ArrayList<>();
+//
+//        // ✅ 2명씩 10팀 구성
+//        for (int i = 0; i < 10; i++) {
+//            Team team = new Team("Team" + (i + 1), 0);
+//            team.addUser(users.get(i * 2));
+//            team.addUser(users.get(i * 2 + 1));
+//            team.setCurrentMembers(2);
+//            team.setSsaldCup(ssaldCup);
+//            teams.add(team);
+//        }
+//
+//        teamRepository.saveAll(teams);
+//
+//        System.out.println("✅ 1번 싸드컵에 10개 팀이 생성되었습니다.");
+//    }
 
 
 }
