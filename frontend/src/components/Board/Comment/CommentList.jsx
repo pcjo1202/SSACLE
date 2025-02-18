@@ -12,23 +12,6 @@ const CommentList = ({
   const [activeMenuId, setActiveMenuId] = useState(null)
   const [replyingTo, setReplyingTo] = useState(null)
 
-  // 댓글 데이터에 고유 ID 추가
-  const processComments = (commentsData, parentIndex = '') => {
-    return commentsData.map((comment, index) => {
-      // 임시 ID를 생성하되, 중복되지 않도록 깊이와 인덱스를 조합
-      const uniqueId = parentIndex ? `${parentIndex}-${index}` : `root-${index}`
-      return {
-        ...comment,
-        id: uniqueId, // UI 조작을 위한 임시 ID
-        commentid: uniqueId, // API 호출용 ID도 동일하게 설정
-        child: comment.child ? processComments(comment.child, uniqueId) : [],
-      }
-    })
-  }
-
-  // 처리된 댓글 데이터
-  const processedComments = processComments(comments)
-
   const handleReplyClick = (commentId) => {
     setReplyingTo(replyingTo === commentId ? null : commentId)
     setActiveMenuId(null)
@@ -70,12 +53,14 @@ const CommentList = ({
   }
 
   const handleDeleteClick = async (commentId) => {
-    try {
-      await onDelete(commentId) // 부모 컴포넌트의 확인 로직에 위임
-      setActiveMenuId(null)
-    } catch (error) {
-      console.error('댓글 삭제 중 오류 발생:', error)
-      alert('댓글 삭제에 실패했습니다. 다시 시도해주세요.')
+    if (window.confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+      try {
+        await onDelete(commentId)
+        setActiveMenuId(null)
+      } catch (error) {
+        console.error('댓글 삭제 중 오류 발생:', error)
+        alert('댓글 삭제에 실패했습니다. 다시 시도해주세요.')
+      }
     }
   }
 
@@ -93,16 +78,16 @@ const CommentList = ({
   const renderComment = (comment, depth = 0) => {
     return (
       <div
-        key={comment.id}
+        key={comment.time} // time을 key로 사용 (고유한 값)
         className={`border-b pb-4 last:border-b-0 ${
           depth > 0 ? 'ml-8 mt-4 pl-4 border-l-2 border-gray-100' : ''
         }`}
       >
-        {editingId === comment.id ? (
+        {editingId === comment.time ? (
           <CommentForm
             isEditing
             initialValue={comment.content}
-            onSubmit={(content) => handleEditSubmit(comment.commentid, content)}
+            onSubmit={(content) => handleEditSubmit(comment.time, content)}
             onCancel={handleEditCancel}
           />
         ) : (
@@ -115,15 +100,14 @@ const CommentList = ({
                 </span>
               </div>
 
-              {depth === 0 && currentUserId === comment.writerInfo && (
+              {currentUserId === comment.writerInfo && (
                 <div className="relative">
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation()
+                    onClick={() =>
                       setActiveMenuId(
-                        activeMenuId === comment.id ? null : comment.id
+                        activeMenuId === comment.time ? null : comment.time
                       )
-                    }}
+                    }
                     className="p-1 hover:bg-gray-100 rounded-full transition-colors"
                     aria-label="댓글 메뉴"
                   >
@@ -138,31 +122,16 @@ const CommentList = ({
                     </svg>
                   </button>
 
-                  {activeMenuId === comment.id && (
-                    <div
-                      className="absolute right-0 mt-1 w-24 bg-white border rounded-lg shadow-lg z-10"
-                      style={{
-                        // 절대 위치 지정을 위해 relative 부모 컨테이너 필요
-                        position: 'absolute',
-                        top: '100%', // 부모 요소의 하단에 위치
-                        right: 0,
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
+                  {activeMenuId === comment.time && (
+                    <div className="absolute right-0 mt-1 w-24 bg-white border rounded-lg shadow-lg z-10">
                       <button
-                        onClick={() => {
-                          handleEditClick(comment.id)
-                          setActiveMenuId(null)
-                        }}
+                        onClick={() => handleEditClick(comment.time)}
                         className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
                       >
                         수정
                       </button>
                       <button
-                        onClick={() => {
-                          handleDeleteClick(comment.commentid)
-                          setActiveMenuId(null)
-                        }}
+                        onClick={() => handleDeleteClick(comment.time)}
                         className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 text-red-600 transition-colors"
                       >
                         삭제
@@ -180,7 +149,7 @@ const CommentList = ({
             {depth === 0 && (
               <div className="flex gap-2 mt-2">
                 <button
-                  onClick={() => handleReplyClick(comment.id)}
+                  onClick={() => handleReplyClick(comment.time)}
                   className="text-sm text-gray-500 hover:text-gray-700"
                 >
                   답글달기
@@ -188,11 +157,11 @@ const CommentList = ({
               </div>
             )}
 
-            {replyingTo === comment.id && (
+            {replyingTo === comment.time && (
               <div className="mt-4">
                 <CommentForm
                   onSubmit={(content) =>
-                    handleReplySubmit(comment.commentid, content)
+                    handleReplySubmit(comment.time, content)
                   }
                   onCancel={handleReplyCancel}
                   placeholder="답글을 입력하세요..."
@@ -200,7 +169,7 @@ const CommentList = ({
               </div>
             )}
 
-            {depth === 0 && comment.child?.length > 0 && (
+            {comment.child?.length > 0 && (
               <div className="mt-4 space-y-4">
                 {comment.child.map((reply) => renderComment(reply, 1))}
               </div>
@@ -211,19 +180,16 @@ const CommentList = ({
     )
   }
 
+  const totalComments = comments.reduce(
+    (acc, comment) => acc + 1 + (comment.child?.length || 0),
+    0
+  )
+
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold">
-        댓글{' '}
-        {processedComments.reduce(
-          (acc, comment) => acc + 1 + (comment.child?.length || 0),
-          0
-        )}
-        개
-      </h3>
-
+      <h3 className="text-lg font-semibold">댓글 {totalComments}개</h3>
       <div className="space-y-6">
-        {processedComments.map((comment) => renderComment(comment))}
+        {comments.map((comment) => renderComment(comment))}
       </div>
     </div>
   )
