@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react'
+import Pagination from '@/components/common/Pagination'
 import FilterBar from '@/components/SprintCommon/FilterBar'
 import ItemList from '@/components/SprintCommon/ItemList'
-import Pagination from '@/components/common/Pagination'
 import SprintBanner from '@/components/SprintCommon/SprintBanner'
 import {
-  fetchSsaprintListWithFilter,
   fetchCompletedSsaprintList,
+  fetchSsaprintListWithFilter,
 } from '@/services/ssaprintService'
+import { useEffect, useState } from 'react'
 
 const SsaprintLayout = () => {
   const [sprints, setSprints] = useState([])
@@ -82,7 +82,7 @@ const SsaprintLayout = () => {
   }, [filters, pagination.currentPage, pagination.pageSize])
 
   return (
-    <div className="">
+    <div className="relative min-h-full flex flex-col">
       {/* 싸프린트 소개 배너 */}
       <SprintBanner
         title="싸프린트"
@@ -96,7 +96,7 @@ const SsaprintLayout = () => {
       </div>
 
       {/* 스프린트 목록 */}
-      <section className="mt-1">
+      <section className="mt-1 w-full">
         <ItemList
           items={
             filters.status === 2 ? sprints.map((item) => item.sprint) : sprints
@@ -106,11 +106,13 @@ const SsaprintLayout = () => {
       </section>
 
       {/* 페이지네이션 추가 */}
-      <Pagination
-        currentPage={pagination.currentPage}
-        totalPages={pagination.totalPages}
-        onPageChange={handlePageChange}
-      />
+      <div className="mt-auto">
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   )
 }
