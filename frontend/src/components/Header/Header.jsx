@@ -32,17 +32,17 @@ const Header = () => {
   }
 
   return (
-    <header className="min-w-max z-10 fixed top-0 left-0 w-full h-12 px-48 py-4 bg-white shadow-sm flex justify-between items-center">
+    <header className="sticky top-0 z-10 flex items-center justify-between w-full h-12 px-48 mb-10 bg-white shadow-sm py-7 min-w-max">
       {/* 로고 */}
       <Link
         to="/main"
-        className="text-ssacle-blue text-3xl font-bold font-montserrat"
+        className="text-3xl font-bold text-ssacle-blue font-montserrat"
       >
         SSACLE
       </Link>
 
       {/* 네비게이션 */}
-      <nav className="flex space-x-12 text-ssacle-black text-base font-medium font-noto-sans-kr">
+      <nav className="flex space-x-12 text-base font-medium text-ssacle-black font-noto-sans-kr">
         <Link to="/ssaprint" className="hover:underline">
           싸프린트
         </Link>
@@ -59,20 +59,20 @@ const Header = () => {
 
       {/* 아이콘 */}
       <div className="flex space-x-6">
-        <button className="w-5 h-5 flex justify-center items-center">
+        <button className="flex items-center justify-center w-5 h-5">
           <Search size={15} className="text-black" />
         </button>
 
         {accessToken ? (
           <button
-            className="w-5 h-5 flex justify-center items-center"
+            className="flex items-center justify-center w-5 h-5"
             onClick={handleLogout}
           >
             <LogOut size={15} className="text-black" />
           </button>
         ) : (
           <button
-            className="w-5 h-5 flex justify-center items-center"
+            className="flex items-center justify-center w-5 h-5"
             onClick={() => navigate('/account/login')}
           >
             <Lock size={15} className="text-black" />
@@ -80,7 +80,7 @@ const Header = () => {
         )}
 
         <button
-          className="w-5 h-5 flex justify-center items-center"
+          className="flex items-center justify-center w-5 h-5"
           onClick={() => navigate('user/profile')}
         >
           <User size={15} className="text-black" />
