@@ -3,7 +3,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "allowJs": true,
-    "checkJs": false, // true로 설정하면 JS에서도 타입 체크 가능
+    "checkJs": true, // true로 설정하면 JS에서도 타입 체크 가능
     "noEmit": true, // JS와 TS의 빌드 출력을 방지 (Vite 사용 시 필요 없음)
     "jsx": "react-jsx",
     "strict": true,

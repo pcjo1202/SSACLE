@@ -1,8 +1,8 @@
+import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
 import { CheckIcon, Circle } from 'lucide-react'
 import { useMemo } from 'react'
 
 const Progress = ({
-  steps = [],
   activeStep = '', // 현재 진행 단계
   activeColor = 'bg-gray-400', // 현재 진행 단계 색상
   completedColor = 'bg-ssacle-blue', // 완료 단계 색상
@@ -10,11 +10,17 @@ const Progress = ({
   lineColor = 'bg-gray-700', // 선 색상
   className = '',
 }) => {
+  const steps = [
+    { step: '준비', status: PRESENTATION_STATUS.READY },
+    { step: '발표', status: PRESENTATION_STATUS.START },
+    { step: '질문', status: PRESENTATION_STATUS.QUESTION_INIT },
+    { step: '평가', status: PRESENTATION_STATUS.VOTE_INIT },
+    { step: '완료', status: PRESENTATION_STATUS.END },
+  ]
+
   const activeStepIndex = useMemo(() => {
     return steps.findIndex((step) => step.status === activeStep)
   }, [steps, activeStep])
-
-  console.log(activeStepIndex, activeStep)
 
   return (
     <div className={`flex items-center ${className} gap-16`}>

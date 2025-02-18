@@ -1,4 +1,3 @@
-// CommentList.jsx
 import { useState } from 'react'
 import CommentForm from './CommentForm'
 
@@ -13,16 +12,17 @@ const CommentList = ({
   const [activeMenuId, setActiveMenuId] = useState(null)
   const [replyingTo, setReplyingTo] = useState(null)
 
-  const handleEditClick = (commentId) => {
-    setEditingId(commentId)
-    setActiveMenuId(null)
-    setReplyingTo(null)
-  }
-
   const handleReplyClick = (commentId) => {
-    setReplyingTo(commentId)
+    setReplyingTo(replyingTo === commentId ? null : commentId)
     setActiveMenuId(null)
     setEditingId(null)
+  }
+
+  const handleEditClick = (comment) => {
+    console.log('✅ 수정 버튼 클릭됨! - comment.id:', comment.id) // 디버깅 추가
+    setEditingId(comment.id)
+    setActiveMenuId(null)
+    setReplyingTo(null)
   }
 
   const handleEditCancel = () => {
@@ -34,34 +34,78 @@ const CommentList = ({
   }
 
   const handleEditSubmit = async (commentId, newContent) => {
+    console.log(
+      '✅ 댓글 수정 요청 - commentId:',
+      commentId,
+      'newContent:',
+      newContent
+    )
+
+    if (!commentId || isNaN(commentId)) {
+      console.error('❌ 잘못된 commentId:', commentId)
+      alert('댓글 ID가 올바르지 않습니다.')
+      return
+    }
+
+    if (!newContent?.trim()) {
+      console.error('❌ 댓글 내용이 비어 있음!')
+      alert('댓글 내용을 입력하세요.')
+      return
+    }
+
     try {
       await onEdit(commentId, newContent)
       setEditingId(null)
     } catch (error) {
-      console.error('댓글 수정 중 오류 발생:', error)
+      console.error('댓글 수정 실패:', error)
       alert('댓글 수정에 실패했습니다. 다시 시도해주세요.')
     }
   }
 
   const handleReplySubmit = async (parentId, content) => {
+    console.log('대댓글 요청 - parentId:', parentId, 'content:', content) // ✅ id와 내용 확인
+
+    if (!parentId || isNaN(parentId)) {
+      console.error('❌ 잘못된 parentId:', parentId)
+      alert('대댓글을 달 대상 댓글 ID가 올바르지 않습니다.')
+      return
+    }
+
+    if (!content?.trim()) {
+      console.error('❌ 대댓글 내용이 비어 있음!')
+      alert('대댓글 내용을 입력하세요.')
+      return
+    }
+
     try {
       await onReply(parentId, content)
       setReplyingTo(null)
     } catch (error) {
-      console.error('답글 작성 중 오류 발생:', error)
-      alert('답글 작성에 실패했습니다. 다시 시도해주세요.')
+      console.error('대댓글 작성 실패:', error)
+      alert('대댓글 작성에 실패했습니다. 다시 시도해주세요.')
     }
   }
 
-  const handleDeleteClick = async (commentId) => {
-    if (!window.confirm('정말로 이 댓글을 삭제하시겠습니까?')) return
+  const handleDeleteClick = async (comment) => {
+    console.log('삭제 버튼 클릭 - comment:', comment) // comment 객체 전체 출력
 
-    try {
-      await onDelete(commentId)
-      setActiveMenuId(null)
-    } catch (error) {
-      console.error('댓글 삭제 중 오류 발생:', error)
-      alert('댓글 삭제에 실패했습니다. 다시 시도해주세요.')
+    const commentId = Number(comment?.id)
+    console.log('삭제 요청 - commentId:', commentId) // 변환된 commentId 확인
+
+    if (!commentId || isNaN(commentId)) {
+      console.error('❌ 잘못된 commentId:', commentId)
+      alert('삭제할 댓글 ID가 올바르지 않습니다.')
+      return
+    }
+
+    if (window.confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+      try {
+        await onDelete(commentId)
+        setActiveMenuId(null)
+      } catch (error) {
+        console.error('댓글 삭제 중 오류 발생:', error)
+        alert('댓글 삭제에 실패했습니다. 다시 시도해주세요.')
+      }
     }
   }
 
@@ -79,8 +123,10 @@ const CommentList = ({
   const renderComment = (comment, depth = 0) => {
     return (
       <div
-        key={comment.id}
-        className={`border-b pb-4 last:border-b-0 ${depth > 0 ? 'ml-8 mt-4 pl-4 border-l-2 border-gray-100' : ''}`}
+        key={comment.id} // time을 key로 사용 (고유한 값)
+        className={`border-b pb-4 last:border-b-0 ${
+          depth > 0 ? 'ml-8 mt-4 pl-4 border-l-2 border-gray-100' : ''
+        }`}
       >
         {editingId === comment.id ? (
           <CommentForm
@@ -93,18 +139,13 @@ const CommentList = ({
           <div>
             <div className="flex justify-between items-start mb-2">
               <div className="flex items-center gap-2">
-                <span className="font-medium">{comment.author}</span>
-                {comment.parentId && (
-                  <span className="text-gray-500">
-                    {comment.parentAuthor && `@${comment.parentAuthor}`}
-                  </span>
-                )}
+                <span className="font-medium">{comment.writerInfo}</span>
                 <span className="text-gray-500 text-sm">
-                  {formatDate(comment.createdAt)}
+                  {formatDate(comment.time)}
                 </span>
               </div>
 
-              {currentUserId === comment.userId && (
+              {currentUserId === comment.writerInfo && (
                 <div className="relative">
                   <button
                     onClick={() =>
@@ -129,13 +170,13 @@ const CommentList = ({
                   {activeMenuId === comment.id && (
                     <div className="absolute right-0 mt-1 w-24 bg-white border rounded-lg shadow-lg z-10">
                       <button
-                        onClick={() => handleEditClick(comment.id)}
+                        onClick={() => handleEditClick(comment)}
                         className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
                       >
                         수정
                       </button>
                       <button
-                        onClick={() => handleDeleteClick(comment.id)}
+                        onClick={() => handleDeleteClick(comment)}
                         className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 text-red-600 transition-colors"
                       >
                         삭제
@@ -150,7 +191,6 @@ const CommentList = ({
               {comment.content}
             </p>
 
-            {/* 답글달기 버튼은 depth가 0일 때만 표시 */}
             {depth === 0 && (
               <div className="flex gap-2 mt-2">
                 <button
@@ -172,11 +212,9 @@ const CommentList = ({
               </div>
             )}
 
-            {comment.replies?.length > 0 && (
+            {comment.child?.length > 0 && (
               <div className="mt-4 space-y-4">
-                {comment.replies.map((reply) =>
-                  renderComment(reply, depth + 1)
-                )}
+                {comment.child.map((reply) => renderComment(reply, 1))}
               </div>
             )}
           </div>
@@ -185,17 +223,14 @@ const CommentList = ({
     )
   }
 
+  const totalComments = comments.reduce(
+    (acc, comment) => acc + 1 + (comment.child?.length || 0),
+    0
+  )
+
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold">
-        댓글{' '}
-        {comments.reduce(
-          (acc, comment) => acc + 1 + (comment.replies?.length || 0),
-          0
-        )}
-        개
-      </h3>
-
+      <h3 className="text-lg font-semibold">댓글 {totalComments}개</h3>
       <div className="space-y-6">
         {comments.map((comment) => renderComment(comment))}
       </div>

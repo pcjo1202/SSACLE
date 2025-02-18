@@ -12,7 +12,7 @@ const PresentationControlItem = ({ control }) => {
 
   return (
     <li className="list-none">
-      <ControlBarDropdown isDropdown={isDropdown} dropDownItems={dropDownItems}>
+      <ControlBarDropdown isDropdown={isDropdown}>
         <button
           className={`flex flex-col  transition-all duration-200 justify-center items-center gap-2 px-4 rounded-md ${style} hover:bg-black/40 py-1`}
           onClick={activeFunction}

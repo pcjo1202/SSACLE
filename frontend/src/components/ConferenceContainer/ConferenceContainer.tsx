@@ -1,25 +1,38 @@
 import StreamVideoCard from '@/components/PresentationPage/StreamVideoCard/StreamVideoCard'
 import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import { useConnect } from '@/hooks/useConnect'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import SsaprintVideoLayout from '@/components/layout/SsaprintVideoLayout'
 import SsadcupVideoLayout from '@/components/layout/SsadcupVideoLayout'
+import { useShallow } from 'zustand/shallow'
+import QuestionInfo from '@/components/PresentationPage/QuestionInfo/QuestionInfo'
+
+import type { FC } from 'react'
 
 interface ConferenceContainerProps {
   token: string
 }
-const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
-  const { cameraPublisher, subscribers } = useOpenviduStateStore()
-  // * http://localhost:5173/presentation/:presentationType/:roomId?userId=1234567890
+
+const ConferenceContainer: FC<ConferenceContainerProps> = ({ token }) => {
+  const { cameraPublisher, subscribers, session } = useOpenviduStateStore(
+    useShallow((state) => ({
+      cameraPublisher: state.cameraPublisher,
+      subscribers: state.subscribers,
+      session: state.session,
+    }))
+  )
 
   const { initializeSession, joinSession, leaveSession } = useConnect()
   const { presentationType } = useParams()
+  const firstRenderRef = useRef(false) // 첫 번째 렌더링 여부를 확인하는 참조
 
   const VideoLayout = useMemo(() => {
-    return presentationType === 'ssadcup' // 싸드컵 프리젠테이션 페이지인 경우
-      ? SsadcupVideoLayout
-      : SsaprintVideoLayout
+    if (presentationType === 'ssadcup') {
+      return SsadcupVideoLayout
+    } else if (presentationType === 'ssaprint') {
+      return SsaprintVideoLayout
+    }
   }, [presentationType])
 
   // 처음 컴포넌트가 마운트 될 때 세션 초기화 및 참여
@@ -32,7 +45,8 @@ const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
           })
       }
     }
-    initialize()
+    !firstRenderRef.current && initialize()
+    firstRenderRef.current = true
     return () => leaveSession()
   }, [])
 
@@ -45,7 +59,9 @@ const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
     if (cameraPublisher) {
       Card.push(
         <StreamVideoCard
+          isPublisher={true}
           key={cameraPublisher.stream.connection.connectionId}
+          username={JSON.parse(cameraPublisher.stream.connection.data).username}
           ref={(el: HTMLVideoElement) =>
             el && cameraPublisher.addVideoElement(el)
           }
@@ -56,7 +72,9 @@ const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
       subscribers.forEach((sub, index) =>
         Card.push(
           <StreamVideoCard
+            isPublisher={false}
             key={index}
+            username={JSON.parse(sub.stream.connection.data).username}
             ref={(el: HTMLVideoElement) => el && sub.addVideoElement(el)}
           />
         )
@@ -67,6 +85,7 @@ const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
 
   return (
     <div className="w-full h-full">
+      <QuestionInfo />
       <VideoLayout
         connectCount={sessionConnection} // 컨퍼런스 참여자 수
       >

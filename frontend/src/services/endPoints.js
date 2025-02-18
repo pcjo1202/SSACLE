@@ -151,14 +151,20 @@ export const COMMENT_END_POINT = {
   // 게시글 댓글 관련
   LIST: (boardId) => `/comment/board/${boardId}`, // 게시글의 댓글 목록 조회
   CREATE: (boardId) => `/comment/board/${boardId}`, // 댓글 작성
-  UPDATE: (commentId) => `/comments/${commentId}`, // 댓글 수정
-  DELETE: (commentId) => `/comments/${commentId}`, // 댓글 삭제
+  UPDATE: (commentId) => `/comment/${commentId}`, // 댓글 수정
+  DELETE: (commentId) => `/comment/${commentId}`, // 댓글 삭제
 
   // 대댓글 관련
   SUB_COMMENTS: {
-    LIST: (parentCommentId) => `/comment/reply/comments/${parentCommentId}`, // 대댓글 목록 조회
-    CREATE: (parentCommentId) => `/comment/reply/comments/${parentCommentId}`, // 대댓글 작성
+    LIST: (parentCommentId) => `/comment/reply/${parentCommentId}`, // 대댓글 목록 조회
+    CREATE: (parentCommentId) => `/comment/reply/${parentCommentId}`, // 대댓글 작성
   },
+}
+
+// 노트 구매 관련
+export const NOTE_END_POINT = {
+  LIST: '/teams/diaries',
+  PURCHASE: (teamId) => `/teams/${teamId}/purchase`,
 }
 
 // 노션 관련 -> notionService
@@ -169,3 +175,26 @@ export const NOTION_END_POINT = {
 }
 
 // 아래는 예시
+// 발표 관련 -> presentationService
+export const PRESENTATION_END_POINT = {
+  // 질문 카드 목록 조회
+  QUESTION_CARDS: (sprintId) => `/sprints/${sprintId}/question-cards`,
+  // 특정 질문 카드 조회
+
+  QUESTION_CARD: (sprintId, questionCardId) =>
+    `/sprints/${sprintId}/question-cards/${questionCardId}`,
+
+  // 발표 최종 점수 계산
+  CALCULATE_SCORE: '/calculate',
+  // 발표 상태 업데이트
+  PRESENTATION_STATUS: (sprintId) =>
+    `/ssaprint/${sprintId}/presentation-status`,
+
+  // 발표 참가자 목록 조회
+  PRESENTATION_PARTICIPANTS: (sprintId) =>
+    `/ssaprint/${sprintId}/presentation-participants`,
+
+  // 발표 참가 가능 여부 확인인
+  PRESENTATION_AVAILABILITY: (sprintId) =>
+    `/ssaprint/${sprintId}/presentation-availability`,
+}

@@ -28,6 +28,7 @@ import AdminSsaprintDetail from '@/pages/Admin/SsaprintManagement/SsaprintDetail
 import AdminRoute from '@/components/common/AdminRoute'
 import SsadcupList from '@/pages/Admin/SsadcupManagement/SsadcupListPage'
 import AdminBoardList from '@/pages/Admin/BoardManagement/BoardListPage'
+import MyPage from '@/pages/MyPage/MyPage'
 
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
@@ -69,7 +70,7 @@ const router = createBrowserRouter([
           {
             path: '/user',
             children: [
-              { path: 'profile', element: <h1>Profile</h1> },
+              { path: 'profile', element: <MyPage /> },
               { path: 'help/inquiry', element: <h1>inquiry</h1> },
             ],
           },
@@ -128,16 +129,17 @@ const router = createBrowserRouter([
   },
 
   // 발표 화면 page
+  // {
+  //   element: <GuardedRoute />,
+  //   children: [
   {
-    element: <GuardedRoute />,
-    children: [
-      {
-        path: '/presentation',
-        element: <PresentationLayout />,
-        children: [{ index: true, element: <PresentationPage /> }],
-      },
-    ],
+    // * http://localhost:5173/presentation/:presentationType/:roomId?userId=1234567890
+    path: '/presentation/:presentationType/:roomId',
+    element: <PresentationLayout />,
+    children: [{ index: true, element: <PresentationPage /> }],
   },
+  //   ],
+  // },
 
   // 관리자 관련 page
   {

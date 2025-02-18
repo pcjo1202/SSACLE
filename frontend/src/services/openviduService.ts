@@ -25,3 +25,18 @@ export const fetchToken = async (sessionId: string): Promise<string> => {
     throw error
   }
 }
+
+// 배포 서버 openvidu에서 token 가져오기
+export const fetchServerToken = async (sprintId: string): Promise<number> => {
+  const accessToken = localStorage.getItem('accessToken')
+  const response = await axios.post(
+    `/api/v1/video/sessions/${sprintId}/token`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  )
+  return response.data
+}

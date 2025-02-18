@@ -1,44 +1,51 @@
 import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import { useStreamStore } from '@/store/useStreamStore'
 import { OpenVidu } from 'openvidu-browser'
+import { useShallow } from 'zustand/shallow'
 
 const useScreenShare = () => {
-  const { setIsScreenSharing } = useStreamStore()
-  const {
-    OV,
-    session,
-    cameraPublisher,
-    screenPublisher,
-    setScreenPublisher,
-    setMainStreamManager,
-  } = useOpenviduStateStore()
+  const { isMicOn, isCameraOn, setIsScreenSharing } = useStreamStore(
+    useShallow((state) => ({
+      isMicOn: state.isMicOn,
+      isCameraOn: state.isCameraOn,
+      setIsScreenSharing: state.setIsScreenSharing,
+    }))
+  )
+  const { OV, session, cameraPublisher, screenPublisher, setScreenPublisher } =
+    useOpenviduStateStore(
+      useShallow((state) => ({
+        OV: state.OV,
+        session: state.session,
+        cameraPublisher: state.cameraPublisher,
+        screenPublisher: state.screenPublisher,
+        setScreenPublisher: state.setScreenPublisher,
+      }))
+    )
 
   // 화면 공유 시작
   const startScreenShare = async () => {
     if (!session || !OV) return
 
-    // 메인 스트림 저장
-    // 만약 이미 카메라 publisher가 publish되어 있다면, unpublish 처리합니다.
-    if (cameraPublisher) {
-      await session?.unpublish(cameraPublisher)
-    }
-
     try {
       // 화면 공유 초기화
       const screenPublisher = await OV?.initPublisherAsync(undefined, {
         videoSource: 'screen',
-        publishAudio: true,
+        publishAudio: isMicOn,
         mirror: false,
       })
 
       try {
+        // 만약 이미 카메라 publisher가 publish되어 있다면, unpublish 처리합니다.
+        if (cameraPublisher) {
+          await session?.unpublish(cameraPublisher)
+        }
+
         await session?.publish(screenPublisher)
       } catch (err) {
         console.error('publish 실패:', err)
       }
 
       setScreenPublisher(screenPublisher)
-      setMainStreamManager(screenPublisher)
       setIsScreenSharing(true)
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -81,7 +88,6 @@ const useScreenShare = () => {
     try {
       if (cameraPublisher) {
         await session?.publish(cameraPublisher)
-        setMainStreamManager(cameraPublisher)
       }
     } catch (error) {
       console.error('❌ 화면 공유 종료 후 카메라 복원 실패:', error)
