@@ -92,32 +92,33 @@ const StudyBoardPage = () => {
   // 게시글 구매 뮤테이션
   const purchaseBoardMutation = useMutation({
     mutationFn: (boardId) => fetchPurchaseBoard(boardId),
-    onSuccess: (response) => {
+    onSuccess: () => {
       boardDetailMutation.mutate(selectPostId)
       setShowPayModal(false)
     },
     onError: (error) => {
-      console.error('게시글 구매 실패:', error)
-      alert('게시글 구매에 실패했습니다.')
+      // 여기서 "게시물 구매 실패" 알럿을 제거
+      if (error?.response?.data?.code !== 'BOARD_015') {
+        console.error('게시글 구매 실패:', error)
+      }
     },
   })
 
   // filteredPosts는 이제 posts를 바로 사용
   const filteredPosts = posts
 
-  // 페이지 변경 핸들러
-  const handlePageChange = (newPage) => {
-    setPagination((prev) => ({ ...prev, currentPage: newPage }))
-  }
-
-  // 게시글 클릭 시 실행
   const handlePostClick = (postId) => {
-    // 클릭된 게시글 찾기
-    const clickedPost = filteredPosts.find((post) => post.id === postId)
-
+    const clickedPost = posts.find((post) => post.id === postId)
     if (!clickedPost) return
 
-    // 명예의 전당 게시글이고 작성자가 아닌 경우에만 피클 결제 모달 표시
+    // 이미 구매한 게시글인지 확인 후, 바로 이동 (모달 안 띄움)
+    if (clickedPost.subCategory === 'legend' && clickedPost.isPurchased) {
+      alert('이미 구매한 게시글입니다.')
+      navigate(`/board/edu/${postId}`)
+      return
+    }
+
+    // 구매가 필요한 경우에만 모달 띄우기
     if (
       clickedPost.subCategory === 'legend' &&
       clickedPost.writerInfo !== userData?.nickname
@@ -125,29 +126,110 @@ const StudyBoardPage = () => {
       setSelectPostId(postId)
       setShowPayModal(true)
     } else {
-      // 작성자이거나 일반 게시글인 경우 바로 상세 페이지로 이동
       boardDetailMutation.mutate(postId)
     }
   }
 
-  // 피클 결제 확인 후 게시글 상세 조회
   const handlePayConfirm = async () => {
     const requiredPickles = 7
-    if (userData?.pickles >= requiredPickles) {
-      try {
+
+    try {
+      // 최신 데이터를 조회해서 이미 구매했는지 다시 확인
+      const postDetail = await fetchBoardDetail(selectPostId)
+
+      if (postDetail.isPurchased) {
+        alert('이미 구매한 게시글입니다.')
+        setShowPayModal(false)
+        navigate(`/board/edu/${selectPostId}`)
+        return // 결제 요청 없이 종료
+      }
+
+      // 피클이 충분하면 결제 요청 실행
+      if (userData?.pickles >= requiredPickles) {
         await purchaseBoardMutation.mutateAsync(selectPostId)
-        // 구매 성공 시에만 게시글로 이동
         boardDetailMutation.mutate(selectPostId)
-      } catch (error) {
-        console.error('결제 처리 중 오류 발생:', error)
-        alert('게시글 구매에 실패했습니다.')
+        setShowPayModal(false)
+      } else {
+        alert('피클이 부족합니다.')
         setShowPayModal(false)
       }
-    } else {
-      alert('피클이 부족합니다.')
-      setShowPayModal(false)
+    } catch (error) {
+      // "게시글 구매 실패" 알럿을 제거하고, "이미 구매한 게시글입니다."만 유지
+      if (error?.response?.data?.code === 'BOARD_015') {
+        alert('이미 구매한 게시글입니다.')
+        setShowPayModal(false)
+        navigate(`/board/edu/${selectPostId}`)
+      }
     }
   }
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (newPage) => {
+    setPagination((prev) => ({ ...prev, currentPage: newPage }))
+  }
+
+  // 게시글 클릭 시 실행
+  // const handlePostClick = (postId) => {
+  //   // 클릭된 게시글 찾기
+  //   const clickedPost = filteredPosts.find((post) => post.id === postId)
+
+  //   if (!clickedPost) return
+
+  //   // 명예의 전당 게시글이고 작성자가 아닌 경우에만 피클 결제 모달 표시
+  //   if (
+  //     clickedPost.subCategory === 'legend' &&
+  //     clickedPost.writerInfo !== userData?.nickname
+  //   ) {
+  //     setSelectPostId(postId)
+  //     setShowPayModal(true)
+  //   } else {
+  //     // 작성자이거나 일반 게시글인 경우 바로 상세 페이지로 이동
+  //     boardDetailMutation.mutate(postId)
+  //   }
+  // }
+
+  // 피클 결제 확인 후 게시글 상세 조회
+  // const handlePayConfirm = async () => {
+  //   const requiredPickles = 7
+  //   if (userData?.pickles >= requiredPickles) {
+  //     try {
+  //       await purchaseBoardMutation.mutateAsync(selectPostId)
+  //       // 구매 성공 시에만 게시글로 이동
+  //       boardDetailMutation.mutate(selectPostId)
+  //     } catch (error) {
+  //       console.error('결제 처리 중 오류 발생:', error)
+  //       alert('게시글 구매에 실패했습니다.')
+  //       setShowPayModal(false)
+  //     }
+  //   } else {
+  //     alert('피클이 부족합니다.')
+  //     setShowPayModal(false)
+  //   }
+  // }
+
+  // const handlePayConfirm = async () => {
+  //   const requiredPickles = 7
+
+  //   if (userData?.pickles >= requiredPickles) {
+  //     try {
+  //       await purchaseBoardMutation.mutateAsync(selectPostId)
+  //       boardDetailMutation.mutate(selectPostId)
+  //       setShowPayModal(false)
+  //     } catch (error) {
+  //       if (error?.response?.data?.code === 'BOARD_015') {
+  //         alert('이미 구매한 게시글입니다.')
+  //         setShowPayModal(false)
+  //         navigate(`/board/edu/${selectPostId}`)
+  //       } else {
+  //         console.error('게시글 구매 실패:', error)
+  //         alert('게시글 구매에 실패했습니다.')
+  //       }
+  //     }
+  //   } else {
+  //     alert('피클이 부족합니다.')
+  //     setShowPayModal(false)
+  //   }
+  // }
 
   // 탭 변경 시 페이지 초기화
   const handleTabChange = (tabId) => {
