@@ -439,7 +439,7 @@ const SignupStep2 = () => {
             {/* 회원가입 버튼 */}
             <div className="grid grid-cols-6 gap-4 mb-12">
               <button
-                className="col-span-2 col-start-3 h-12 bg-ssacle-blue rounded-full px-6 text-white text-center text-xl font-bold mb-4"
+                className="col-span-2 col-start-3 h-12 bg-ssacle-blue rounded-full px-6 text-white text-center text-xl font-bold mt-6"
                 onClick={handleSignup}
                 disabled={signupMutation.isLoading}
               >
