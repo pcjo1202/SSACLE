@@ -13,6 +13,8 @@ import FindAccount from '@/pages/Account/LoginPage/FindAccount'
 import SsaprintPage from '@/pages/Ssaprint/SsaprintPage'
 import SsaprintDetailPage from '@/pages/Ssaprint/SsaprintDetailPage'
 import SsaprintJourneyPage from '@/pages/Ssaprint/SsaprintJourneyPage'
+import SsadcupPage from '@/pages/Ssadcup/SsadcupPage'
+import SsaadcpuDetailPage from '@/pages/Ssadcup/SsadcupDetailPage'
 import StudyBoardPage from '@/pages/Board/StudyBoardPage'
 import StartPage from '@/pages/StartPage/StartPage'
 import UserList from '@/pages/Admin/UserManagement/UserList'
@@ -28,6 +30,7 @@ import AdminSsaprintDetail from '@/pages/Admin/SsaprintManagement/SsaprintDetail
 import AdminRoute from '@/components/common/AdminRoute'
 import SsadcupList from '@/pages/Admin/SsadcupManagement/SsadcupListPage'
 import AdminBoardList from '@/pages/Admin/BoardManagement/BoardListPage'
+import NoteBoardPage from '@/pages/Board/NoteBoardPage'
 import MyPage from '@/pages/MyPage/MyPage'
 
 const router = createBrowserRouter([
@@ -92,12 +95,12 @@ const router = createBrowserRouter([
           {
             path: '/ssadcup',
             children: [
-              { index: true, element: <h1>ssadcup</h1> },
-              { path: ':ssadcupId', element: <h1>ssadcupId</h1> },
+              { index: true, element: <SsadcupPage /> },
+              { path: ':ssadcupId', element: <SsaadcpuDetailPage /> },
             ],
           },
 
-          // 게시판 페이지 (학습 게시판, 자유 게시판)
+          // 게시판 페이지 (학습 게시판, 노트 게시판)
           {
             path: '/board',
             children: [
@@ -111,14 +114,11 @@ const router = createBrowserRouter([
                   { path: ':boardId/edit', element: <BoardFormPage /> }, // 기존 게시글 수정
                 ],
               },
-              // 자유 게시판
+              // 노트 게시판
               {
-                path: 'free',
+                path: 'note',
                 children: [
-                  { index: true, element: <FreeBoardPage /> }, // 자유 게시판 메인
-                  { path: ':boardId', element: <BoardDetailPage /> }, // 게시글 상세 페이지
-                  { path: 'write', element: <BoardFormPage /> }, // 새 게시글 작성
-                  { path: ':boardId/edit', element: <BoardFormPage /> }, // 기존 게시글 수정
+                  { index: true, element: <NoteBoardPage /> }, // 노트 게시판 메인
                 ],
               },
             ],

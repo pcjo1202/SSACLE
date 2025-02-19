@@ -4,8 +4,12 @@ import BoardTab from '@/components/Board/List/BoardTab'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PayModal from '@/components/Board/Modal/PayModal'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { fetchBoardDetail, fetchBoardList } from '@/services/boardService'
+import { QueryClient, useMutation, useQuery } from '@tanstack/react-query'
+import {
+  fetchBoardDetail,
+  fetchBoardList,
+  fetchPurchaseBoard,
+} from '@/services/boardService'
 import { fetchUserInfo } from '@/services/mainService'
 import axios from 'axios'
 import httpCommon from '@/services/http-common'
@@ -85,6 +89,16 @@ const StudyBoardPage = () => {
     },
   })
 
+  // 게시글 구매 뮤테이션 수정
+  const purchaseBoardMutation = useMutation({
+    mutationFn: (boardId) => fetchPurchaseBoard(boardId),
+    onSuccess: (response) => {
+      boardDetailMutation.mutate(selectPostId)
+      setShowPayModal(false)
+    },
+    // onError 핸들러 제거 (handlePayConfirm에서 처리)
+  })
+
   // filteredPosts는 이제 posts를 바로 사용
   const filteredPosts = posts
 
@@ -114,15 +128,23 @@ const StudyBoardPage = () => {
   }
 
   // 피클 결제 확인 후 게시글 상세 조회
-  const handlePayConfirm = () => {
-    if (userData?.pickles >= 5) {
-      boardDetailMutation.mutate(selectPostId)
-      setShowPayModal(false)
+  // handlePayConfirm 함수 수정
+  const handlePayConfirm = async () => {
+    const requiredPickles = 7
+    if (userData?.pickles >= requiredPickles) {
+      try {
+        await purchaseBoardMutation.mutateAsync(selectPostId)
+        // 성공 시 처리는 mutation의 onSuccess에서 수행
+      } catch (error) {
+        console.error('결제 처리 중 오류 발생:', error)
+        alert('게시글 구매에 실패했습니다.')
+        setShowPayModal(false)
+      }
     } else {
       alert('피클이 부족합니다.')
+      setShowPayModal(false)
     }
   }
-
   // 탭 변경 시 페이지 초기화
   const handleTabChange = (tabId) => {
     setActiveTab(tabId)
@@ -140,9 +162,9 @@ const StudyBoardPage = () => {
   if (error) return <div>에러가 발생했습니다: {error.message}</div>
 
   return (
-    <main className="min-w-max my-20">
+    <main className="min-w-max">
       {/* 탭 메뉴 */}
-      <section className="my-10">
+      <section className="mb-5">
         <BoardTab
           tabs={studyTabs}
           activeTab={activeTab}
@@ -183,14 +205,15 @@ const StudyBoardPage = () => {
       {/* 글 작성 버튼 */}
       <div className="flex flex-row justify-between">
         <section>
-          <button
-            onClick={handleWrite}
-            className="px-4 py-1 text-white rounded bg-ssacle-blue text-sm"
-          >
-            글 작성하기
-          </button>
+          {activeTab !== 'legend' && (
+            <button
+              onClick={handleWrite}
+              className="px-4 py-1 text-white rounded bg-ssacle-blue text-sm"
+            >
+              글 작성하기
+            </button>
+          )}
         </section>
-        <section>분류 및 검색창</section>
       </div>
 
       <div className="border-b my-3"></div>

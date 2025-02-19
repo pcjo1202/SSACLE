@@ -418,6 +418,7 @@ const SignupStep2 = () => {
                 className="text-ssacle-black text-base font-medium cursor-pointer relative"
                 onMouseEnter={() => setShowTermsTooltip(true)}
                 onMouseLeave={() => setShowTermsTooltip(false)}
+                onClick={() => setTermsChecked(termsChecked === false? true : false)}
               >
                 서비스 이용 약관
                 {showTermsTooltip && (
@@ -442,6 +443,7 @@ const SignupStep2 = () => {
                 className="text-ssacle-black text-base font-medium cursor-pointer relative"
                 onMouseEnter={() => setShowPrivacyTooltip(true)}
                 onMouseLeave={() => setShowPrivacyTooltip(false)}
+                onClick={() => setPrivacyChecked(privacyChecked === false? true : false)}
               >
                 개인정보 수집 / 이용 동의
                 {showPrivacyTooltip && (

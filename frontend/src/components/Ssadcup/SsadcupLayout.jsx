@@ -1,14 +1,12 @@
+// @ts-nocheck
 import Pagination from '@/components/common/Pagination'
 import FilterBar from '@/components/SprintCommon/FilterBar'
 import ItemList from '@/components/SprintCommon/ItemList'
 import SprintBanner from '@/components/SprintCommon/SprintBanner'
-import {
-  fetchCompletedSsaprintList,
-  fetchSsaprintListWithFilter,
-} from '@/services/ssaprintService'
+import { fetchSsadcupListWithFilter } from '@/services/ssadcupService'
 import { useEffect, useState } from 'react'
 
-const SsaprintLayout = () => {
+const SsadcupLayout = () => {
   const [sprints, setSprints] = useState([])
   const [filters, setFilters] = useState({
     status: 0, // 0: 참여 가능, 1: 진행 중, 2: 완료
@@ -40,37 +38,20 @@ const SsaprintLayout = () => {
     let isMounted = true // 최신 요청만 반영하기 위한 플래그
 
     const fetchData = async () => {
-      if (filters.status === 2) {
-        // 참여 완료 스프린트 조회
-        const response = await fetchCompletedSsaprintList(
-          pagination.currentPage - 1,
-          pagination.pageSize
-        )
-
-        if (response && isMounted) {
-          setSprints(response.content || [])
-          setPagination((prev) => ({
-            ...prev,
-            totalPages: response.totalPages,
-            totalElements: response.totalElements,
-          }))
-        }
-      } else {
-        // 참여 가능 스프린트 조회
-        const response = await fetchSsaprintListWithFilter(
-          filters.status,
-          filters.categoryId,
-          pagination.currentPage - 1,
-          pagination.pageSize
-        )
-        if (response && isMounted) {
-          setSprints(response.content || [])
-          setPagination((prev) => ({
-            ...prev,
-            totalPages: response.totalPages,
-            totalElements: response.totalElements,
-          }))
-        }
+      // 참여 가능 스프린트 조회
+      const response = await fetchSsadcupListWithFilter(
+        filters.status,
+        filters.categoryId,
+        pagination.currentPage - 1,
+        pagination.pageSize
+      )
+      if (response && isMounted) {
+        setSprints(response.content || [])
+        setPagination((prev) => ({
+          ...prev,
+          totalPages: response.totalPages,
+          totalElements: response.totalElements,
+        }))
       }
     }
 
@@ -83,11 +64,11 @@ const SsaprintLayout = () => {
 
   return (
     <div className="relative min-h-full flex flex-col">
-      {/* 싸프린트 소개 배너 */}
+      {/* 싸드컵 소개 배너 */}
       <SprintBanner
-        title="싸프린트"
-        description="함께 배우고 성장하는, 짧고 집중적인 스프린트 학습 공간입니다."
-        domain="ssaprint"
+        title="싸드컵"
+        description="함께 도전하고 성장하는, 꾸준하고 깊이 있는 스프린트 학습 공간간입니다."
+        domain="ssadcup"
       />
 
       {/* 필터 UI */}
@@ -101,7 +82,7 @@ const SsaprintLayout = () => {
           items={
             filters.status === 2 ? sprints.map((item) => item.sprint) : sprints
           }
-          domain="ssaprint"
+          domain="ssadcup"
         />
       </section>
 
@@ -117,4 +98,4 @@ const SsaprintLayout = () => {
   )
 }
 
-export default SsaprintLayout
+export default SsadcupLayout
