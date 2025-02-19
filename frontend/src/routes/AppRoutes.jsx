@@ -33,6 +33,8 @@ import AdminBoardList from '@/pages/Admin/BoardManagement/BoardListPage'
 import NoteBoardPage from '@/pages/Board/NoteBoardPage'
 import MyPage from '@/pages/MyPage/MyPage'
 import SsaprintResultPage from '@/pages/Ssaprint/SsaprintResultPage'
+import MyPageActivities from '@/components/MyPage/MyPageActivities'
+import MyPageContent from '@/components/MyPage/MyPageContent'
 
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
@@ -73,8 +75,16 @@ const router = createBrowserRouter([
           { path: '/main', element: <MainPage /> },
           {
             path: '/user',
+            element: <MyPage />,
             children: [
-              { path: 'profile', element: <MyPage /> },
+              {
+                path: 'profile',
+                children: [
+                  { index: true, element: <MyPageContent /> },
+                  { path: 'account', element: <MyPageContent /> },
+                  { path: 'activities', element: <MyPageActivities /> },
+                ],
+              },
               { path: 'help/inquiry', element: <h1>inquiry</h1> },
             ],
           },

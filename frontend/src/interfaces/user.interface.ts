@@ -13,3 +13,12 @@ export type PresentationParticipants = {
   point: number
   users: User[]
 }
+
+export type Sprint = {
+  id: number
+  name: string
+  type: string
+  duration: number
+  endAt: string
+  teamId: number
+}
