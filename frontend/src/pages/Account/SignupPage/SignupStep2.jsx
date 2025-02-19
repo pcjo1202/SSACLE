@@ -424,7 +424,7 @@ const SignupStep2 = () => {
               >
                 서비스 이용 약관
                 {showTermsTooltip && (
-                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-6 bg-black text-white text-sm p-2 rounded-md shadow-md whitespace-nowrap">
+                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-6 bg-ssacle-black text-white text-sm p-2 rounded-md shadow-md whitespace-nowrap">
                     본 서비스 이용을 위해 필수적인 약관입니다.
                     <br />
                     서비스 제공, 보안 관리 등을 위해 사용됩니다.
@@ -448,7 +448,7 @@ const SignupStep2 = () => {
               >
                 개인정보 수집 / 이용 동의
                 {showPrivacyTooltip && (
-                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-6 bg-black text-white text-sm p-2 rounded-md shadow-md whitespace-nowrap">
+                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-6 bg-ssacle-black text-white text-sm p-2 rounded-md shadow-md whitespace-nowrap">
                     회원가입 및 서비스 제공을 위해 최소한의 개인정보를 수집하며,
                     <br />
                     법령에 따라 안전하게 관리됩니다.
