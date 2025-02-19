@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { fetchSendVerification, fetchCheckCode } from '@/services/userService'
+import { EmblaCarousel } from '@/components/Signup/Carousel'
 
 const SignupStep1 = () => {
   const navigate = useNavigate()
@@ -73,10 +74,10 @@ const SignupStep1 = () => {
   }
 
   return (
-    <div className="w-full h-screen flex justify-center items-center">
+    <div className="w-full flex justify-center items-center">
       <div className="min-w-[75rem] flex flex-col md:flex-row items-center justify-center gap-10">
         {/* 좌측 컨텐츠 */}
-        <div className="w-[25rem] bg-white p-12 rounded-lg shadow-md text-center">
+        {/* <div className="w-[25rem] bg-white p-12 rounded-lg shadow-md text-center">
           <h2 className="text-lg font-bold text-ssacle-blue mb-4">
             SSAFY인 인증하는 방법
           </h2>
@@ -111,10 +112,10 @@ const SignupStep1 = () => {
                   만들어놓은 채널에 인증 코드가 전송됩니다!
                 </li>
               </ol>
-            )}
-          </div>
+            )} */}
+        {/* </div> */}
 
-          {/* 화살표 네비게이션 */}
+        {/* 화살표 네비게이션
           <div className="flex justify-center mt-4">
             <button
               className={`w-6 h-6 ${step === 1 ? 'text-ssacle-gray' : 'text-ssacle-blue'}`}
@@ -130,7 +131,10 @@ const SignupStep1 = () => {
             >
               ▶️
             </button>
-          </div>
+          </div> */}
+        {/* 좌측 컨텐츠 - 캐러셀 적용 */}
+
+          <EmblaCarousel />
         </div>
 
         {/* 우측 회원가입 폼 */}
