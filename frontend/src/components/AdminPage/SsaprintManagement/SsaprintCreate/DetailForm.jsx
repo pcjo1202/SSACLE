@@ -113,7 +113,7 @@ const DetailsForm = () => {
         <div className="mt-4">
           <label className="text-ssacle-black text-sm font-bold">
             최대 인원 수{' '}
-            <span className="text-ssacle-gray text-xs">(2인 ~ 4인)</span>
+            <span className="text-ssacle-gray text-xs">(2인 ~ 4인)</span> <span  className="text-ssacle-gray text-xs font-medium"> tip. 방향키를 이용하면 입력이 편해요!</span>
           </label>
           <input
             type="number"
