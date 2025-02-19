@@ -12,13 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ssafy.com.ssacle.global.aws.S3ImageUploader;
-import ssafy.com.ssacle.global.jwt.JwtFilter;
 import ssafy.com.ssacle.global.jwt.JwtTokenUtil;
-import ssafy.com.ssacle.sprint.dto.SprintRecommendResponseDTO;
-import ssafy.com.ssacle.sprint.dto.SprintSummaryResponse;
-import ssafy.com.ssacle.sprint.repository.SprintRepository;
-import ssafy.com.ssacle.team.domain.Team;
-import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.user.domain.RefreshToken;
 import ssafy.com.ssacle.user.domain.Role;
 import ssafy.com.ssacle.user.domain.User;
@@ -29,13 +23,10 @@ import ssafy.com.ssacle.user.exception.LoginErrorCode;
 import ssafy.com.ssacle.user.exception.UpdateProfileErrorCode;
 import ssafy.com.ssacle.user.repository.RefreshRepository;
 import ssafy.com.ssacle.user.repository.UserRepository;
-import ssafy.com.ssacle.sprint.domain.Sprint;
-import ssafy.com.ssacle.usercategory.domain.UserCategory;
 import ssafy.com.ssacle.usercategory.repository.UserCategoryRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +56,13 @@ public class UserService {
 
         return userRepository.findUserWithTeamsByEmail(userEmail)
                 .orElseThrow(RuntimeException::new);
+    }
+
+    public User getAuthenticatedUserWithPurchasedBoards() {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return userRepository.findUserWithPurchasedBoardsByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("사용자 찾을 수 없음"));
     }
 
     /** ✅ 로그인 및 Access/Refresh Token 생성 */

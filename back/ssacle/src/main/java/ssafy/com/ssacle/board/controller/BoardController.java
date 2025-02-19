@@ -83,10 +83,9 @@ public class BoardController implements BoardSwaggerController{
         return ResponseEntity.ok().body(boardService.getBoardsByBoardTypeName(name, userId, pageable));
     }
 
-    @PostMapping("/{boardId}/purchase")
+    @Override
     public ResponseEntity<BoardResponseDTO> purchaseBoard(@PathVariable Long boardId) {
-        User user = userService.getAuthenticatedUser();
-
+        User user = userService.getAuthenticatedUserWithPurchasedBoards();
         return ResponseEntity.ok(boardService.buyBoard(user, boardId));
     }
 }

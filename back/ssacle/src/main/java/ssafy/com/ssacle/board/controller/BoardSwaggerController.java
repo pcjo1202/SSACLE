@@ -132,5 +132,15 @@ public interface BoardSwaggerController {
     ResponseEntity<Page<BoardResponseDTO>> getBoardsByBoardTypePaged(
             @RequestParam("name") String name, Pageable pageable
     );
+
+    @Operation(summary = "보드 구매", description = "사용자가 특정 보드를 구매합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "구매 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "400", description = "이미 구매한 보드 또는 보드가 존재하지 않음"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @PostMapping("/{boardId}/purchase")
+    ResponseEntity<BoardResponseDTO> purchaseBoard(@PathVariable Long boardId);
 }
 

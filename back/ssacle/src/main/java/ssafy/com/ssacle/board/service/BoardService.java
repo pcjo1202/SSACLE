@@ -1,5 +1,6 @@
 package ssafy.com.ssacle.board.service;
 
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import ssafy.com.ssacle.board.repository.BoardRepository;
 import ssafy.com.ssacle.board.repository.BoardTypeRepository;
 import ssafy.com.ssacle.global.jwt.JwtTokenUtil;
 import ssafy.com.ssacle.user.domain.User;
+import ssafy.com.ssacle.user.exception.PickleNotEnoughException;
 import ssafy.com.ssacle.user.repository.UserRepository;
 import ssafy.com.ssacle.user.service.UserService;
 import ssafy.com.ssacle.userboard.domain.UserBoard;
@@ -29,6 +31,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ssafy.com.ssacle.user.exception.UpdateProfileErrorCode.PICKLE_NOT_ENOUGH;
+
 @Service
 @RequiredArgsConstructor
 public class BoardService {
@@ -39,7 +43,7 @@ public class BoardService {
     private final UserBoardRepository userBoardRepository;
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
-
+    private final EntityManager entityManager;
     /** 📌 1. 모든 게시글 목록 조회 */
     @Transactional
     public List<BoardResponseDTO> getAllBoards() {
@@ -184,6 +188,7 @@ public class BoardService {
     /** 보드 구입 로직 */
     @Transactional
     public BoardResponseDTO buyBoard(User user, Long boardId) {
+
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_NOT_FOUND));
 
@@ -191,9 +196,16 @@ public class BoardService {
             throw new BoardException(BoardErrorCode.BOARD_ALREADY_PURCHASED);
         }
 
-        user.purchaseBoard(board);
+        if (user.getPickles() < 7) {
+            throw new PickleNotEnoughException(PICKLE_NOT_ENOUGH);
+        }
+        user.setPickles(user.getPickles()-7);
         userRepository.save(user);
-        userBoardRepository.save(UserBoard.create(user, board));
+
+        UserBoard userBoard = UserBoard.create(user,board);
+        user.getPurchasedBoards().add(userBoard);
+
+        userBoardRepository.save(userBoard);
 
         return convertToDto(board, true);
     }
