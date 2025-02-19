@@ -51,7 +51,7 @@ const GuardedRoute = () => {
   }, [data, isLoading])
 
   if (isValidating) {
-    return <div>인증 확인 중...</div>
+    return
   }
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/account/login" replace />
