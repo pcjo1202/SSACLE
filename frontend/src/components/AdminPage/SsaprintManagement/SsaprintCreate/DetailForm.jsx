@@ -17,7 +17,7 @@ const DetailsForm = () => {
   const [isDataUpdated, setIsDataUpdated] = useState(false)
   // GPT 데이터를 description 상태에 저장
   useEffect(() => {
-    // 데이터가 존재하고, API 로딩이 끝난 상태에서만 실행
+    // gptData가 존재하고, API 로딩이 끝난 상태에서만 실행
     if (gptData && !isPending && !isDataUpdated) {
       setDescription((prev) => {
         const newDescription = {
@@ -26,16 +26,14 @@ const DetailsForm = () => {
           detailDescription:
             gptData.detailDescription || prev.detailDescription || '',
           recommendedFor: gptData.recommendedFor || prev.recommendedFor || '',
-          todos: gptData.todos
+          todos: Array.isArray(gptData.todos) // 🔥 gptData.todos가 배열인지 확인
             ? gptData.todos
                 .map((todo) => `${todo.date}: ${todo.tasks.join(', ')}`)
                 .join('\n')
-            : prev.todos || '',
+            : typeof gptData.todos === 'string' // 🔥 문자열이면 그대로 사용
+              ? gptData.todos
+              : prev.todos || '', // 🔥 잘못된 데이터라면 이전 값 유지
         }
-        // console.log(
-        //   '🔥 컨텍스트 업데이트 실행 (setDescription):',
-        //   newDescription
-        // )
         return newDescription
       })
       setIsDataUpdated(true) // 한 번만 실행되도록 설정
@@ -44,7 +42,9 @@ const DetailsForm = () => {
 
   // description.todos를 날짜별로 분리하고 가공
   const parseTodos = () => {
-    if (!description.todos) return []
+    if (!description.todos || typeof description.todos !== 'string') return []
+    console.log('description.todos:', description.todos)
+    console.log('type of description.todos:', typeof description.todos)
 
     return description.todos.split('\n').map((entry, index) => {
       const [date, tasks] = entry.split(': ')
