@@ -1,4 +1,3 @@
-// @ts-nocheck
 import AngularLogo from '@/assets/logo/Angular.png'
 import AWSLogo from '@/assets/logo/AWS.png'
 import AzureLogo from '@/assets/logo/Azure.png'
@@ -24,42 +23,41 @@ import PythonLogo from '@/assets/logo/Python.png'
 import ReactLogo from '@/assets/logo/React.png'
 import RedisLogo from '@/assets/logo/Redis.png'
 import RubyOnRailsLogo from '@/assets/logo/RubyOnRails.png'
-import SpringLogo from '@/assets/logo/Spring.png'
+import SpringLogo from '@/assets/logo/spring.png'
 import SvelteLogo from '@/assets/logo/Svelte.png'
-import VueJSLogo from '@/assets/logo/VueJS.png'
+import VueJSLogo from '@/assets/logo/vue.png'
 
 export const useGetImage = () => {
+  const stackLogos = {
+    Angular: AngularLogo,
+    AWS: AWSLogo,
+    Azure: AzureLogo,
+    'C#': CSharpLogo,
+    'C++': CPPLogo,
+    CSS3: CSS3Logo,
+    default: DefaultLogo,
+    Django: DjangoLogo,
+    Docker: DockerLogo,
+    'Google Cloud': GoogleCloudLogo,
+    HTML5: HTML5Logo,
+    Java: JavaLogo,
+    JavaScript: JavaScriptLogo,
+    Kubernetes: KubernetesLogo,
+    MariaDB: MariaDBLogo,
+    MongoDB: MongoDBLogo,
+    MySQL: MySQLLogo,
+    NestJS: NestJSLogo,
+    'Node.js': NodeJSLogo,
+    Oracle: OracleLogo,
+    PostgreSQL: PostgreSQLLogo,
+    Python: PythonLogo,
+    React: ReactLogo,
+    Redis: RedisLogo,
+    'Ruby on Rails': RubyOnRailsLogo,
+    Spring: SpringLogo,
+    Svelte: SvelteLogo,
+    'Vue.js': VueJSLogo,
+  }
 
-    const stackLogos = {
-        Angular: AngularLogo,
-        AWS: AWSLogo,
-        Azure: AzureLogo,
-        'C#': CSharpLogo,
-        'C++': CPPLogo,
-        CSS3: CSS3Logo,
-        default: DefaultLogo,
-        Django: DjangoLogo,
-        Docker: DockerLogo,
-        'Google Cloud': GoogleCloudLogo,
-        HTML5: HTML5Logo,
-        Java: JavaLogo,
-        JavaScript: JavaScriptLogo,
-        Kubernetes: KubernetesLogo,
-        MariaDB: MariaDBLogo,
-        MongoDB: MongoDBLogo,
-        MySQL: MySQLLogo,
-        NestJS: NestJSLogo,
-        'Node.js': NodeJSLogo,
-        Oracle: OracleLogo,
-        PostgreSQL: PostgreSQLLogo,
-        Python: PythonLogo,
-        React: ReactLogo,
-        Redis: RedisLogo,
-        'Ruby on Rails': RubyOnRailsLogo,
-        Spring: SpringLogo,
-        Svelte: SvelteLogo,
-        'Vue.js': VueJSLogo,
-    }
-
-    return stackLogos
+  return stackLogos
 }
