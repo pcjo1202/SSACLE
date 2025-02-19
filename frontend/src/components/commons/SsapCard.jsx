@@ -2,7 +2,7 @@
 import { useGetImage } from '@/hooks/useGetImage'
 import { useNavigate } from 'react-router-dom'
 
-const SsapCard = ({ sprintData }) => {
+const SsapCard = ({ sprintData, idx }) => {
   const navigate = useNavigate()
   const imageList = useGetImage()
 
@@ -27,7 +27,9 @@ const SsapCard = ({ sprintData }) => {
   }
 
   return (
-    <div className="bg-gradient-to-bl from-purple-400 via-purple-500 to-purple-600 h-54 w-full rounded-xl p-5 relative">
+    <div
+      className={`animate-fade-in-down bg-gradient-to-bl from-purple-300 via-purple-400 to-purple-500 h-54 w-full rounded-xl p-5 relative`}
+    >
       <div className="text-white">
         <p className="text-2xl font-bold mb-3">{requiredSkills[0]}</p>
         <p className="text-sm font-semibold mb-3">{title}</p>
