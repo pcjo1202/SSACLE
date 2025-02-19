@@ -10,11 +10,9 @@ import { useShallow } from 'zustand/shallow'
 import { useParams } from 'react-router-dom'
 import { usePresentationStore } from '@/store/usePresentationStore'
 
-interface StepContainerProps {
-  children: React.ReactNode
-}
+interface StepContainerProps {}
 
-const StepContainer: FC<StepContainerProps> = ({ children }) => {
+const StepContainer: FC<StepContainerProps> = () => {
   const session = useOpenviduStateStore((state) => state.session)
   const { roomId } = useParams()
 
@@ -167,6 +165,6 @@ const StepContainer: FC<StepContainerProps> = ({ children }) => {
         break
     }
   }, [presentationStatus])
-  return <div>{children}</div>
+  return <div></div>
 }
 export default StepContainer

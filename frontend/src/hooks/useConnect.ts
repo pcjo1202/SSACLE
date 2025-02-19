@@ -126,6 +126,14 @@ export const useConnect = () => {
       session.disconnect()
     }
 
+    // 미디어 트랙해제
+    const track = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    })
+
+    track.getTracks().map((track) => track.stop())
+
     setOV(null)
     setSession(null)
     setSubscribers([])
@@ -133,45 +141,6 @@ export const useConnect = () => {
     setCameraPublisher(null)
     setScreenPublisher(null)
   }, [])
-
-  // 카메라 전환
-  // const switchCamera = useCallback(async () => {
-  //   try {
-  //     if (!OV || !currentVideoDevice) return
-
-  //     const devices = await OV.getDevices()
-  //     const videoDevices = devices.filter(
-  //       (device) => device.kind === 'videoinput'
-  //     )
-
-  //     if (videoDevices && videoDevices.length > 1) {
-  //       const newVideoDevice = videoDevices.filter(
-  //         (device) => device.deviceId !== currentVideoDevice.deviceId
-  //       )
-
-  //       if (newVideoDevice.length > 0) {
-  //         const newPublisher = OV.initPublisher(undefined, {
-  //           videoSource: newVideoDevice[0].deviceId,
-  //           publishAudio: true,
-  //           publishVideo: true,
-  //           mirror: true,
-  //         })
-
-  //         // 기존 카메라 발행자가 있으면 제거
-  //         if (mainStreamManager instanceof Publisher) {
-  //           await session?.unpublish(mainStreamManager)
-  //         }
-  //         await session?.publish(newPublisher)
-  //         setCurrentVideoDevice(newVideoDevice[0] as Device)
-
-  //         setCameraPublisher(newPublisher)
-  //         setMainStreamManager(newPublisher)
-  //       }
-  //     }
-  //   } catch (e) {
-  //     console.error(e)
-  //   }
-  // }, [OV, currentVideoDevice, mainStreamManager, session])
 
   return { initializeSession, joinSession, leaveSession }
 }

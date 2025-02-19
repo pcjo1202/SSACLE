@@ -138,6 +138,21 @@ const SsaprintVoteContainer: FC<SsaprintVoteContainerProps> = ({
     })
   }
 
+  const test = [
+    {
+      teamId: '123123123',
+      score: 100,
+    },
+    {
+      teamId: '123123123',
+      score: 100,
+    },
+    {
+      teamId: '123123123',
+      score: 100,
+    },
+  ]
+
   // 단계 이동 및 제출 핸들러
   const handleNext = () => setStep(Math.min(step + 1, 2))
   const handlePrev = () => setStep(Math.max(step - 1, 0))

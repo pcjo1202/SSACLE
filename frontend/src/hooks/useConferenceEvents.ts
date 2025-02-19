@@ -292,6 +292,9 @@ export function useConferenceEvents() {
       // setConnectionCount()
       const remoteConnectionCount = sessionRef.current?.remoteConnections.size
 
+      console.log('remoteConnectionCount', remoteConnectionCount)
+      console.log('targetConnectionCount', targetConnectionCount)
+
       // 시작 전, 모든 참여자가 접속 완료 시, 발표 시작 신호 전송
       const isAllConnection =
         presentationStatus === 'INITIAL' &&
