@@ -11,7 +11,7 @@ const Header = () => {
     try {
       await fetchLogout()
       localStorage.removeItem('accessToken')
-      navigate('/account/login', { replace: true })
+      navigate('/', { replace: true })
     } catch (error) {
       console.error('로그아웃 실패:', error)
       alert('로그아웃 중 오류가 발생했습니다.')
@@ -25,7 +25,7 @@ const Header = () => {
       <div className="flex items-center justify-between h-16 px-4 md:px-8 lg:px-48 max-w-[1920px] mx-auto">
         {/* 로고 */}
         <Link
-          to="/main"
+          to="/"
           className="text-3xl font-bold transition-transform text-ssacle-blue font-montserrat hover:scale-105"
         >
           SSACLE

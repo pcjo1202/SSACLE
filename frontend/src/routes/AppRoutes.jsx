@@ -35,6 +35,7 @@ import MyPage from '@/pages/MyPage/MyPage'
 import SsaprintResultPage from '@/pages/Ssaprint/SsaprintResultPage'
 import MyPageActivities from '@/components/MyPage/MyPageActivities'
 import MyPageContent from '@/components/MyPage/MyPageContent'
+import AccountLayout from '@/components/layout/AccountLayout'
 
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
@@ -47,7 +48,7 @@ const router = createBrowserRouter([
       // 계정 인증 관련 (로그인, 회원가입, 관심사 등록 등)
       {
         path: '/account',
-        // element: <UnGuardedRoute />,
+        element: <AccountLayout />,
         children: [
           // 로그인 page
           { path: 'login', element: <LoginPage /> },
