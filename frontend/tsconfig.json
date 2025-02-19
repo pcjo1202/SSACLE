@@ -12,8 +12,8 @@
       "@/*": ["src/*"]
     },
     "moduleResolution": "node", // 모듈 해석 방법 지정
-    "esModuleInterop": true, // ES6 모듈 호환성 활성화
-    "types": ["vite/client"]
+    "esModuleInterop": true // ES6 모듈 호환성 활성화
+    // "types": ["vite/client"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
