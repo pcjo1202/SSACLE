@@ -6,8 +6,6 @@ const SsapCard = ({ sprintData }) => {
   const navigate = useNavigate()
   const imageList = useGetImage()
 
-
-
   const {
     sprintId,
     title,
@@ -20,8 +18,7 @@ const SsapCard = ({ sprintData }) => {
     endDate,
   } = sprintData
 
-  const logoPath =
-    imageList[requiredSkills[0]] || '/src/assets/logo/default.png'
+  const logoPath = imageList[requiredSkills[0]] || imageList.default
 
   // 신청하기 클릭 핸들러 (버튼을 눌렀을 때만 이동)
   const handleApply = (e) => {
