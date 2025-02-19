@@ -7,7 +7,7 @@ import SprintParticipationModal from '@/components/SprintCommon/SprintParticipat
 import Button from '@/components/common/Button'
 import SprintDetail from '@/components/SprintCommon/SprintDetail'
 
-const SsaprintDetailLayout = ({ sprintData }) => {
+const SsadcupDetailLayout = ({ sprintData }) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
 
@@ -37,9 +37,7 @@ const SsaprintDetailLayout = ({ sprintData }) => {
 
   if (!sprintData || !sprintData.sprint) {
     return (
-      <p className="text-gray-500 text-center">
-        싸프린트 정보를 불러오는 중...
-      </p>
+      <p className="text-gray-500 text-center">싸드컵 정보를 불러오는 중...</p>
     )
   }
 
@@ -56,9 +54,9 @@ const SsaprintDetailLayout = ({ sprintData }) => {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="mt-16 flex flex-col gap-4">
       <h2 className="text-lg font-semibold flex items-center gap-2 pb-2 border-b-4 border-gray-200 min-w-[1000px] max-w-full flex-shrink-0">
-        싸프린트 Info 💡
+        싸드컵 Info 💡
       </h2>
 
       <div className="flex gap-4 md:flex-row h-[17rem]">
@@ -87,11 +85,11 @@ const SsaprintDetailLayout = ({ sprintData }) => {
               className="w-full bg-green-600 hover:bg-green-700"
               onClick={handleMoveToSprint}
             >
-              내 싸프린트 노트 열기
+              내 싸드컵 노트 열기
             </Button>
           ) : (
             <Button className="w-full" onClick={() => setIsOpen(true)}>
-              싸프린트 참여하기
+              싸드컵 참여하기
             </Button>
           )}
         </div>
@@ -109,4 +107,4 @@ const SsaprintDetailLayout = ({ sprintData }) => {
   )
 }
 
-export default SsaprintDetailLayout
+export default SsadcupDetailLayout

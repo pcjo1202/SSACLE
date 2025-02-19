@@ -14,6 +14,7 @@ import SsaprintPage from '@/pages/Ssaprint/SsaprintPage'
 import SsaprintDetailPage from '@/pages/Ssaprint/SsaprintDetailPage'
 import SsaprintJourneyPage from '@/pages/Ssaprint/SsaprintJourneyPage'
 import SsadcupPage from '@/pages/Ssadcup/SsadcupPage'
+import SsaadcpuDetailPage from '@/pages/Ssadcup/SsadcupDetailPage'
 import StudyBoardPage from '@/pages/Board/StudyBoardPage'
 import StartPage from '@/pages/StartPage/StartPage'
 import UserList from '@/pages/Admin/UserManagement/UserList'
@@ -31,6 +32,7 @@ import SsadcupList from '@/pages/Admin/SsadcupManagement/SsadcupListPage'
 import AdminBoardList from '@/pages/Admin/BoardManagement/BoardListPage'
 import NoteBoardPage from '@/pages/Board/NoteBoardPage'
 import MyPage from '@/pages/MyPage/MyPage'
+import SsaprintResultPage from '@/pages/Ssaprint/SsaprintResultPage'
 
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
@@ -83,6 +85,7 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <SsaprintPage /> },
               { path: ':sprintId', element: <SsaprintDetailPage /> },
+              { path: ':sprintId/result', element: <SsaprintResultPage /> },
             ],
           },
           {
@@ -95,7 +98,7 @@ const router = createBrowserRouter([
             path: '/ssadcup',
             children: [
               { index: true, element: <SsadcupPage /> },
-              { path: ':ssadcupId', element: <h1>ssadcupId</h1> },
+              { path: ':ssadcupId', element: <SsaadcpuDetailPage /> },
             ],
           },
 
