@@ -53,10 +53,7 @@ import ssafy.com.ssacle.userteam.repository.UserTeamRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -95,7 +92,7 @@ public class DataInitializer {
             initializeSprints(sprintRepository,categoryRepository,sprintCategoryRepository);
 //            initializeSprintParticipation(sprintRepository, userRepository, teamRepository, sprintService, questionCardService, diaryService);
 //            initializeTeams(sprintRepository,teamRepository,userRepository,userTeamRepository);
-            initializeSsaldCups(ssaldCupRepository, sprintRepository, categoryRepository,ssaldCupCategoryRepository, sprintCategoryRepository);
+//            initializeSsaldCups(ssaldCupRepository, sprintRepository, categoryRepository,ssaldCupCategoryRepository, sprintCategoryRepository);
             //initializeSsaldCupParticipation(ssaldCupRepository, userRepository, teamRepository);
         };
     }
@@ -230,6 +227,70 @@ public class DataInitializer {
             Category azure = Category.builder().categoryName("Azure").parent(infra).level(2).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/Azure.png").build();
             Category aws = Category.builder().categoryName("AWS").parent(infra).level(2).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/AWS.png").build();
             categoryRepository.saveAll(List.of(docker, kunernetes, googlecloud, azure, aws));
+
+            Category android = Category.builder().categoryName("Android").parent(mobile).level(2)
+                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/Android.png").build();
+            Category ios = Category.builder().categoryName("iOS").parent(mobile).level(2)
+                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/iOS.png").build();
+            categoryRepository.saveAll(List.of(android, ios));
+
+// Mobile 하위 카테고리
+            List<Category> mobileChildren = List.of(
+                    Category.builder().categoryName("Jetpack Compose").parent(android).level(3).build(),
+                    Category.builder().categoryName("Kotlin Coroutines").parent(android).level(3).build(),
+                    Category.builder().categoryName("SwiftUI").parent(ios).level(3).build(),
+                    Category.builder().categoryName("Combine").parent(ios).level(3).build()
+            );
+            categoryRepository.saveAll(mobileChildren);
+
+// DevOps 중간 카테고리
+            Category ciCd = Category.builder().categoryName("CI/CD").parent(devOps).level(2)
+                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/CI-CD.png").build();
+            Category infraAsCode = Category.builder().categoryName("Infrastructure as Code").parent(devOps).level(2)
+                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/Terraform.png").build();
+            categoryRepository.saveAll(List.of(ciCd, infraAsCode));
+
+// DevOps 하위 카테고리
+            List<Category> devOpsChildren = List.of(
+                    Category.builder().categoryName("Jenkins").parent(ciCd).level(3).build(),
+                    Category.builder().categoryName("GitHub Actions").parent(ciCd).level(3).build(),
+                    Category.builder().categoryName("Terraform").parent(infraAsCode).level(3).build(),
+                    Category.builder().categoryName("Ansible").parent(infraAsCode).level(3).build()
+            );
+            categoryRepository.saveAll(devOpsChildren);
+
+// AI/ML 중간 카테고리
+            Category deepLearning = Category.builder().categoryName("Deep Learning").parent(aiMl).level(2)
+                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/DeepLearning.png").build();
+            Category mlOps = Category.builder().categoryName("MLOps").parent(aiMl).level(2)
+                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/MLOps.png").build();
+            categoryRepository.saveAll(List.of(deepLearning, mlOps));
+
+// AI/ML 하위 카테고리
+            List<Category> aiMlChildren = List.of(
+                    Category.builder().categoryName("TensorFlow").parent(deepLearning).level(3).build(),
+                    Category.builder().categoryName("PyTorch").parent(deepLearning).level(3).build(),
+                    Category.builder().categoryName("Kubeflow").parent(mlOps).level(3).build(),
+                    Category.builder().categoryName("MLflow").parent(mlOps).level(3).build()
+            );
+            categoryRepository.saveAll(aiMlChildren);
+
+// Security 중간 카테고리
+            Category networkSecurity = Category.builder().categoryName("Network Security").parent(security).level(2)
+                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/NetworkSecurity.png").build();
+            Category appSecurity = Category.builder().categoryName("Application Security").parent(security).level(2)
+                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/AppSecurity.png").build();
+            categoryRepository.saveAll(List.of(networkSecurity, appSecurity));
+
+// Security 하위 카테고리
+            List<Category> securityChildren = List.of(
+                    Category.builder().categoryName("SSL/TLS").parent(networkSecurity).level(3).build(),
+                    Category.builder().categoryName("Firewall").parent(networkSecurity).level(3).build(),
+                    Category.builder().categoryName("OWASP Top 10").parent(appSecurity).level(3).build(),
+                    Category.builder().categoryName("SAST/DAST").parent(appSecurity).level(3).build()
+            );
+            categoryRepository.saveAll(securityChildren);
+
 
             System.out.println("Extended category data added");
         } else {
@@ -810,89 +871,196 @@ public class DataInitializer {
 
 
 
-    @Transactional
-    public void initializeSprints(SprintRepository sprintRepository,
-                                  CategoryRepository categoryRepository,
-                                  SprintCategoryRepository sprintCategoryRepository) {
-        if (sprintRepository.count() == 0) {
-            List<Sprint> sprints = new ArrayList<>();
-            List<SprintCategory> sprintCategories = new ArrayList<>();
-            LocalDateTime now = LocalDateTime.now();
-            Random random = new Random();
+//    @Transactional
+//    public void initializeSprints(SprintRepository sprintRepository,
+//                                  CategoryRepository categoryRepository,
+//                                  SprintCategoryRepository sprintCategoryRepository) {
+//        if (sprintRepository.count() == 0) {
+//            List<Sprint> sprints = new ArrayList<>();
+//            List<SprintCategory> sprintCategories = new ArrayList<>();
+//            LocalDateTime now = LocalDateTime.now();
+//            Random random = new Random();
+//
+//            // ✅ level 3인 카테고리만 조회
+//            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
+//
+//            for (Category category : lowestLevelCategories) {
+//                List<Long> categoryIds = new ArrayList<>();
+//                categoryIds.add(category.getId());
+//                // ✅ 부모 카테고리와 조부모 카테고리 초기화
+//                Category parent = category.getParent();
+//
+//                if (parent != null) {
+//                    categoryIds.add(parent.getId());
+//                    Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+//                    if (grandParent != null) {
+//                        categoryIds.add(grandParent.getId());
+//                    }
+//                }
+//                StringBuilder sb = new StringBuilder();
+//                for(Long catgoryId : categoryIds){
+//                    Category c= categoryRepository.findById(catgoryId).orElseThrow(()-> new CategoryNotExistException());
+//                    sb.append(c.getCategoryName()+" ");
+//                }
+//                String recommend = sb.toString().trim();
+//                recommend.replaceAll(" ",",");
+//                for (int i = 0; i < 3; i++) { // 각 카테고리당 3개씩 생성
+//                    LocalDateTime startAt;
+//                    LocalDateTime endAt;
+//
+//                    if (i == 0) { // 시작 전 (status = 0)
+//                        int start = random.nextInt(2);
+//                        startAt = now.plusDays(start + 3);
+//                        endAt = startAt.plusDays(start+ 10);
+//                    } else if (i == 1) { // 진행 중 (status = 1)
+//                        startAt = now.minusDays(7);
+//                        endAt = now;
+//                    } else { // 종료됨 (status = 2)
+//                        int start = random.nextInt(2);
+//                        startAt = now.minusDays(start + 9);
+//                        endAt = startAt.minusDays(start+2);
+//                    }
+//
+//                    Sprint sprint = SprintBuilder.builder()
+//                            .name(category.getCategoryName() + " Sprint " + (i + 1))
+//                            .basicDescription("학습 내용: " + category.getCategoryName())
+//                            .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
+//                            .recommendedFor(recommend)
+//                            .startAt(startAt)
+//                            .endAt(endAt)
+//                            .announceAt(endAt)
+//                            .maxMembers(2+random.nextInt(3))
+//                            .defaultTodos(generateTodos(startAt)) // 7일치 Todo 데이터 추가
+//                            .build();
+//                    if(i==1){
+//                        sprint.setStatus(1);
+//                    }else if(i==2){
+//                        sprint.setStatus(2);
+//                    }
+//                    sprintRepository.save(sprint);
+//
+//                    // ✅ 부모, 조부모 카테고리 연결
+//                    categoryIds.forEach(categoryId -> {
+//                        Category sprintCategory = categoryRepository.findById(categoryId)
+//                                .orElseThrow(CategoryNotExistException::new);
+//                        sprintCategoryRepository.save(new SprintCategory(sprint, sprintCategory));
+//                    });
+//
+//                    sprints.add(sprint);
+//                }
+//            }
+//            System.out.println("스프린트 데이터가 성공적으로 추가되었습니다.");
+//        } else {
+//            System.out.println("스프린트 데이터가 이미 존재합니다.");
+//        }
+//    }
+@Transactional
+public void initializeSprints(SprintRepository sprintRepository,
+                              CategoryRepository categoryRepository,
+                              SprintCategoryRepository sprintCategoryRepository) {
+    if (sprintRepository.count() == 0) {
+        List<Sprint> sprints = new ArrayList<>();
+        List<SprintCategory> sprintCategories = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        Random random = new Random();
 
-            // ✅ level 3인 카테고리만 조회
-            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
+        // ✅ level 3인 카테고리만 조회
+        List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
 
-            for (Category category : lowestLevelCategories) {
-                List<Long> categoryIds = new ArrayList<>();
-                categoryIds.add(category.getId());
-                // ✅ 부모 카테고리와 조부모 카테고리 초기화
-                Category parent = category.getParent();
+        // ✅ 카테고리별 스프린트 명
+        Map<String, List<String>> sprintNames = Map.ofEntries(
+                Map.entry("Spring Boot", List.of("Spring Boot Mastery", "Spring REST API 초격차", "Spring Security 전문가 과정")),
+                Map.entry("React", List.of("React Ninja Training", "React Hook 실전 활용", "Next.js 완벽 정복")),
+                Map.entry("MySQL", List.of("MySQL 퍼포먼스 튜닝", "SQL 인덱싱 고급 과정", "Sharding & Replication")),
+                Map.entry("Docker", List.of("Docker 완전 정복", "DevOps를 위한 Docker 실습", "Docker Compose로 CI/CD 구축")),
+                Map.entry("Kubernetes", List.of("Kubernetes 실전 마스터", "클러스터 자동화 도전", "Helm을 활용한 배포")),
+                Map.entry("AI/ML", List.of("AI 모델 배포 실전", "딥러닝 프로젝트 도전", "PyTorch로 컴퓨터 비전 구현")),
+                Map.entry("Security", List.of("네트워크 보안 완벽 가이드", "OWASP Top 10 실습", "웹 애플리케이션 보안 전문가 과정")),
+                Map.entry("Node.js", List.of("Node.js 백엔드 핵심 과정", "Express.js로 RESTful API 개발", "NestJS 실전 프로젝트")),
+                Map.entry("Vue.js", List.of("Vue 3 완벽 마스터", "Nuxt.js로 SEO 최적화", "Pinia & Vuex 상태 관리")),
+                Map.entry("Android", List.of("Jetpack Compose로 UI 설계", "Kotlin Coroutines로 비동기 처리", "MVVM 아키텍처 완벽 적용")),
+                Map.entry("iOS", List.of("SwiftUI로 iOS 앱 개발", "Combine 프레임워크 완전 정복", "CoreData를 활용한 데이터 저장")),
+                Map.entry("DevOps", List.of("Jenkins로 CI/CD 구축", "GitHub Actions 자동화", "Terraform으로 인프라 관리"))
+        );
 
-                if (parent != null) {
-                    categoryIds.add(parent.getId());
-                    Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
-                    if (grandParent != null) {
-                        categoryIds.add(grandParent.getId());
-                    }
+        // ✅ 기본 설명 (한 줄 소개)
+        Map<String, String> basicDescriptions = Map.ofEntries(
+                Map.entry("Spring Boot", "Spring Boot로 강력한 백엔드 구축!"),
+                Map.entry("React", "⚛React로 빠르고 유연한 UI를 만들어보세요!"),
+                Map.entry("MySQL", "MySQL을 활용한 고성능 데이터베이스 구축!"),
+                Map.entry("Docker", "Docker로 컨테이너 환경을 자유롭게 구성!"),
+                Map.entry("Kubernetes", "Kubernetes로 자동화된 인프라 운영!"),
+                Map.entry("AI/ML", "AI와 ML을 활용한 데이터 기반 혁신!"),
+                Map.entry("Security", "보안의 기본부터 심화까지 완벽 가이드!"),
+                Map.entry("Node.js", "Node.js로 서버 개발을 효율적으로!"),
+                Map.entry("Vue.js", "Vue.js로 직관적인 프론트엔드 개발!"),
+                Map.entry("Android", "최신 Android 기술을 실전에서 학습!"),
+                Map.entry("iOS", "iOS 앱 개발을 Swift로 경험해보세요!"),
+                Map.entry("DevOps", "DevOps 문화와 CI/CD 자동화를 배우세요!")
+        );
+
+        Map<String, String> detailDescriptions = Map.ofEntries(
+                Map.entry("Spring Boot", "Spring Boot 기반 RESTful API, 보안, 배포까지 마스터!"),
+                Map.entry("React", "React Hooks와 Next.js를 활용한 실전 프로젝트 도전!"),
+                Map.entry("MySQL", "인덱싱, 조인 최적화, Replication & Sharding 실습!"),
+                Map.entry("Docker", "Dockerfile 작성부터 Kubernetes 연동까지 완벽 가이드!"),
+                Map.entry("Kubernetes", "클러스터 구성, Helm 차트 활용, 배포 자동화 도전!"),
+                Map.entry("AI/ML", "TensorFlow와 PyTorch로 머신러닝 모델을 만들고 배포!"),
+                Map.entry("Security", "OWASP Top 10 실습과 모의 해킹을 통한 보안 학습!"),
+                Map.entry("Node.js", "NestJS, Express.js 기반 백엔드 서버 개발 실습!"),
+                Map.entry("Vue.js", "Vue 3 Composition API와 Nuxt.js를 활용한 최적화!"),
+                Map.entry("Android", "Jetpack Compose, 코루틴, MVVM 패턴 완벽 학습!"),
+                Map.entry("iOS", "SwiftUI와 Combine을 활용한 최신 iOS 앱 개발!"),
+                Map.entry("DevOps", "Jenkins, GitHub Actions, Terraform을 활용한 CI/CD 구축!")
+        );
+
+
+        for (Category category : lowestLevelCategories) {
+            List<String> names = sprintNames.getOrDefault(category.getCategoryName(), List.of(category.getCategoryName() + " Sprint"));
+            String basicDescription = basicDescriptions.getOrDefault(category.getCategoryName(), "🔥 최신 기술을 배우고 혁신을 이루어보세요!");
+            String detailDescription = detailDescriptions.getOrDefault(category.getCategoryName(), "최신 기술을 실전 프로젝트에 적용하며 성장할 수 있는 기회!");
+
+            for (String sprintName : names) {
+                LocalDateTime startAt;
+                LocalDateTime endAt;
+
+                int type = random.nextInt(3);
+                if (type == 0) { // 시작 전 (status = 0)
+                    startAt = now.plusDays(3 + random.nextInt(3));
+                    endAt = startAt.plusDays(10 + random.nextInt(5));
+                } else if (type == 1) { // 진행 중 (status = 1)
+                    startAt = now.minusDays(7);
+                    endAt = now.plusDays(3);
+                } else { // 종료됨 (status = 2)
+                    startAt = now.minusDays(10 + random.nextInt(5));
+                    endAt = startAt.plusDays(5 + random.nextInt(3));
                 }
-                StringBuilder sb = new StringBuilder();
-                for(Long catgoryId : categoryIds){
-                    Category c= categoryRepository.findById(catgoryId).orElseThrow(()-> new CategoryNotExistException());
-                    sb.append(c.getCategoryName()+" ");
-                }
-                String recommend = sb.toString().trim();
-                recommend.replaceAll(" ",",");
-                for (int i = 0; i < 3; i++) { // 각 카테고리당 3개씩 생성
-                    LocalDateTime startAt;
-                    LocalDateTime endAt;
 
-                    if (i == 0) { // 시작 전 (status = 0)
-                        int start = random.nextInt(2);
-                        startAt = now.plusDays(start + 3);
-                        endAt = startAt.plusDays(start+ 10);
-                    } else if (i == 1) { // 진행 중 (status = 1)
-                        startAt = now.minusDays(7);
-                        endAt = now;
-                    } else { // 종료됨 (status = 2)
-                        int start = random.nextInt(2);
-                        startAt = now.minusDays(start + 9);
-                        endAt = startAt.minusDays(start+2);
-                    }
+                Sprint sprint = SprintBuilder.builder()
+                        .name(sprintName)
+                        .basicDescription(basicDescription)
+                        .detailDescription(detailDescription)
+                        .recommendedFor(category.getCategoryName() + " Enthusiasts")
+                        .startAt(startAt)
+                        .endAt(endAt)
+                        .announceAt(endAt)
+                        .maxMembers(2 + random.nextInt(4))
+                        .defaultTodos(generateTodos(startAt))
+                        .build();
 
-                    Sprint sprint = SprintBuilder.builder()
-                            .name(category.getCategoryName() + " Sprint " + (i + 1))
-                            .basicDescription("학습 내용: " + category.getCategoryName())
-                            .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
-                            .recommendedFor(recommend)
-                            .startAt(startAt)
-                            .endAt(endAt)
-                            .announceAt(endAt)
-                            .maxMembers(2+random.nextInt(3))
-                            .defaultTodos(generateTodos(startAt)) // 7일치 Todo 데이터 추가
-                            .build();
-                    if(i==1){
-                        sprint.setStatus(1);
-                    }else if(i==2){
-                        sprint.setStatus(2);
-                    }
-                    sprintRepository.save(sprint);
+                sprint.setStatus(type);
+                sprintRepository.save(sprint);
+                sprints.add(sprint);
 
-                    // ✅ 부모, 조부모 카테고리 연결
-                    categoryIds.forEach(categoryId -> {
-                        Category sprintCategory = categoryRepository.findById(categoryId)
-                                .orElseThrow(CategoryNotExistException::new);
-                        sprintCategoryRepository.save(new SprintCategory(sprint, sprintCategory));
-                    });
-
-                    sprints.add(sprint);
-                }
+                sprintCategoryRepository.save(new SprintCategory(sprint, category));
             }
-            System.out.println("스프린트 데이터가 성공적으로 추가되었습니다.");
-        } else {
-            System.out.println("스프린트 데이터가 이미 존재합니다.");
         }
+        System.out.println("🚀 스프린트 데이터가 성공적으로 추가되었습니다!");
+    } else {
+        System.out.println("✅ 스프린트 데이터가 이미 존재합니다.");
     }
+}
+
 //
     /** 7일치 TodoRequest 생성 */
     private List<TodoRequest> generateTodos(LocalDateTime startAt) {
@@ -976,146 +1144,146 @@ public class DataInitializer {
 //        System.out.println("✅ 모든 Sprint에 admin1~admin2이 참가하고, 특정 Sprint에 QuestionCard 및 Diary가 추가되었습니다.");
 //    }
 
-    @Transactional
-    public void initializeSsaldCups(SsaldCupRepository ssaldCupRepository,
-                                    SprintRepository sprintRepository,
-                                    CategoryRepository categoryRepository,
-                                    SsaldCupCategoryRepository ssaldCupCategoryRepository,
-                                    SprintCategoryRepository sprintCategoryRepository) {
-        if (ssaldCupRepository.count() == 0) {
-            List<SsaldCup> ssaldCups = new ArrayList<>();
-            List<SsaldCupCategory> ssaldCupCategories = new ArrayList<>();
-            LocalDateTime now = LocalDateTime.now();
-            Random random = new Random();
-            List<Category> midLevelCategories = categoryRepository.findMidLevelCategoriesByJoin();
-            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
-
-            for (Category category : midLevelCategories) {
-                List<Long> categoryIds = new ArrayList<>();
-                categoryIds.add(category.getId());
-                Category parent = category.getParent();
-                if (parent != null) {
-                    categoryIds.add(parent.getId());
-                }
-
-                for (int i = 0; i < 3; i++) {
-                    LocalDateTime startAt;
-                    LocalDateTime endAt;
-
-                    if (i == 0) { // 시작 전 (status = 0)
-                        int start = random.nextInt(2);
-                        if(start<=0)
-                            start=1;
-                        int week = random.nextInt(8);
-                        if(week <=0)
-                            week=1;
-                        startAt = now.plusDays(start);
-                        endAt = startAt.plusDays(start).plusWeeks(week);
-                    } else if (i == 1) { // 진행 중 (status = 1)
-                        int week = random.nextInt(5);
-                        if(week <=0)
-                            week=1;
-                        startAt = now.minusWeeks(week);
-                        endAt = now;
-                    } else { // 종료됨 (status = 2)
-                        int start = random.nextInt(2);
-                        if(start<=0)
-                            start=1;
-                        int week = random.nextInt(6);
-                        if(week <=0)
-                            week=1;
-                        startAt = now.minusDays(start).minusWeeks(week+2);
-                        endAt = startAt.minusDays(start).minusWeeks(week+2).plusWeeks(1);
-                    }
-
-//                    // ✅ 1번 싸드컵은 9주 동안 진행되도록 설정
-//                    if (ssaldCups.isEmpty()) {
-//                        startAt = now;
-//                        endAt = startAt.plusWeeks(9);
-//                    }
-
-                    SsaldCup ssaldCup = SsaldCupBuilder.builder()
-                            .name(category.getCategoryName() + " SsaldCup " + (i + 1))
-                            .basicDescription("학습 내용: " + category.getCategoryName())
-                            .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
-                            .maxTeams(random.nextInt(8)) // ✅ 10팀 설정
-                            .maxTeamMembers(random.nextInt(4))
-                            .startAt(startAt)
-                            .endAt(endAt)
-                            .build();
-                    if(ssaldCup.getStartAt().isAfter(now)){
-                        ssaldCup.setStatus(0);
-                    }else if(ssaldCup.getStartAt().isEqual(now) || (ssaldCup.getStartAt().isBefore(now) && ssaldCup.getEndAt().isAfter(now)))
-                        ssaldCup.setStatus(1);
-                    else ssaldCup.setStatus(2);
-                    StringBuilder recommend = new StringBuilder();
-                    ssaldCupRepository.save(ssaldCup);
-                    StringBuilder sb = new StringBuilder();
-                    for (Long categoryId : categoryIds) {
-                        Category ssaldCupCategory = categoryRepository.findById(categoryId)
-                                .orElseThrow(CategoryNotExistException::new);
-                        ssaldCupCategoryRepository.save(new SsaldCupCategory(ssaldCup, ssaldCupCategory));
-                        sb.append(ssaldCupCategory.getCategoryName()).append(" ");
-                    }
-                    String recommendFor = sb.toString().trim().replaceAll(" ", ",");
+//    @Transactional
+//    public void initializeSsaldCups(SsaldCupRepository ssaldCupRepository,
+//                                    SprintRepository sprintRepository,
+//                                    CategoryRepository categoryRepository,
+//                                    SsaldCupCategoryRepository ssaldCupCategoryRepository,
+//                                    SprintCategoryRepository sprintCategoryRepository) {
+//        if (ssaldCupRepository.count() == 0) {
+//            List<SsaldCup> ssaldCups = new ArrayList<>();
+//            List<SsaldCupCategory> ssaldCupCategories = new ArrayList<>();
+//            LocalDateTime now = LocalDateTime.now();
+//            Random random = new Random();
+//            List<Category> midLevelCategories = categoryRepository.findMidLevelCategoriesByJoin();
+//            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
 //
-//                    categoryIds.forEach(categoryId -> {
+//            for (Category category : midLevelCategories) {
+//                List<Long> categoryIds = new ArrayList<>();
+//                categoryIds.add(category.getId());
+//                Category parent = category.getParent();
+//                if (parent != null) {
+//                    categoryIds.add(parent.getId());
+//                }
+//
+//                for (int i = 0; i < 3; i++) {
+//                    LocalDateTime startAt;
+//                    LocalDateTime endAt;
+//
+//                    if (i == 0) { // 시작 전 (status = 0)
+//                        int start = random.nextInt(2);
+//                        if(start<=0)
+//                            start=1;
+//                        int week = random.nextInt(8);
+//                        if(week <=0)
+//                            week=1;
+//                        startAt = now.plusDays(start);
+//                        endAt = startAt.plusDays(start).plusWeeks(week);
+//                    } else if (i == 1) { // 진행 중 (status = 1)
+//                        int week = random.nextInt(5);
+//                        if(week <=0)
+//                            week=1;
+//                        startAt = now.minusWeeks(week);
+//                        endAt = now;
+//                    } else { // 종료됨 (status = 2)
+//                        int start = random.nextInt(2);
+//                        if(start<=0)
+//                            start=1;
+//                        int week = random.nextInt(6);
+//                        if(week <=0)
+//                            week=1;
+//                        startAt = now.minusDays(start).minusWeeks(week+2);
+//                        endAt = startAt.minusDays(start).minusWeeks(week+2).plusWeeks(1);
+//                    }
+//
+////                    // ✅ 1번 싸드컵은 9주 동안 진행되도록 설정
+////                    if (ssaldCups.isEmpty()) {
+////                        startAt = now;
+////                        endAt = startAt.plusWeeks(9);
+////                    }
+//
+//                    SsaldCup ssaldCup = SsaldCupBuilder.builder()
+//                            .name(category.getCategoryName() + " SsaldCup " + (i + 1))
+//                            .basicDescription("학습 내용: " + category.getCategoryName())
+//                            .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
+//                            .maxTeams(random.nextInt(8)) // ✅ 10팀 설정
+//                            .maxTeamMembers(random.nextInt(4))
+//                            .startAt(startAt)
+//                            .endAt(endAt)
+//                            .build();
+//                    if(ssaldCup.getStartAt().isAfter(now)){
+//                        ssaldCup.setStatus(0);
+//                    }else if(ssaldCup.getStartAt().isEqual(now) || (ssaldCup.getStartAt().isBefore(now) && ssaldCup.getEndAt().isAfter(now)))
+//                        ssaldCup.setStatus(1);
+//                    else ssaldCup.setStatus(2);
+//                    StringBuilder recommend = new StringBuilder();
+//                    ssaldCupRepository.save(ssaldCup);
+//                    StringBuilder sb = new StringBuilder();
+//                    for (Long categoryId : categoryIds) {
 //                        Category ssaldCupCategory = categoryRepository.findById(categoryId)
 //                                .orElseThrow(CategoryNotExistException::new);
 //                        ssaldCupCategoryRepository.save(new SsaldCupCategory(ssaldCup, ssaldCupCategory));
-//                        recommend.append(ssaldCupCategory.getCategoryName()+" ");
-//                    });
-                    recommendFor.replaceAll(" ",",");
-                    ssaldCups.add(ssaldCup);
-
-                    List<Category> relatedLowestCategories = lowestLevelCategories.stream()
-                            .filter(lowestCategory -> lowestCategory.getParent() != null &&
-                                    lowestCategory.getParent().getId().equals(category.getId()))
-                            .collect(Collectors.toList());
-
-                    int duration = (int)ChronoUnit.WEEKS.between(startAt, endAt);
-                    LocalDateTime start =startAt;
-                    for (int j = 0; j < duration; j++) {
-                        LocalDateTime sprintStart=start;
-                        if(j>0)
-                            sprintStart=sprintStart.plusWeeks(j);
-                        LocalDateTime sprintEnd = start.plusWeeks(j+1);
-                        LocalDateTime announceAt = sprintEnd;
-                        if(relatedLowestCategories.size()==0)
-                            continue;
-                        int rand = random.nextInt(relatedLowestCategories.size());
-                        int num = rand > 0 ? rand : 0;
-                        Category selectedLowestCategory = relatedLowestCategories.get(num);
-
-                        Sprint sprint = SprintBuilder.builder()
-                                .name(ssaldCup.getName() + "_Sprint_" + (j + 1))
-                                .basicDescription("학습 내용: " + category.getCategoryName())
-                                .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
-                                .recommendedFor(recommendFor)
-                                .startAt(sprintStart)
-                                .endAt(sprintEnd)
-                                .announceAt(announceAt)
-                                .maxMembers(ssaldCup.getMaxTeamMembers())
-                                .sequence(j + 1)
-                                .ssaldCup(ssaldCup)
-                                .build();
-                        LocalDateTime time = LocalDateTime.now();
-                        if(sprint.getStartAt().isAfter(time))
-                            sprint.setStatus(0);
-                        else if(sprint.getStartAt().isEqual(time) || (sprint.getStartAt().isBefore(time)&& sprint.getEndAt().isAfter(time)))
-                            sprint.setStatus(1);
-                        else
-                            sprint.setStatus(2);
-                        sprintRepository.save(sprint);
-                        sprintCategoryRepository.save(new SprintCategory(sprint, selectedLowestCategory));
-                    }
-                }
-            }
-            System.out.println("싸드컵과 하위 스프린트가 추가되었습니다.");
-        } else {
-            System.out.println("싸드컵 더미 데이터가 이미 존재합니다.");
-        }
-    }
+//                        sb.append(ssaldCupCategory.getCategoryName()).append(" ");
+//                    }
+//                    String recommendFor = sb.toString().trim().replaceAll(" ", ",");
+////
+////                    categoryIds.forEach(categoryId -> {
+////                        Category ssaldCupCategory = categoryRepository.findById(categoryId)
+////                                .orElseThrow(CategoryNotExistException::new);
+////                        ssaldCupCategoryRepository.save(new SsaldCupCategory(ssaldCup, ssaldCupCategory));
+////                        recommend.append(ssaldCupCategory.getCategoryName()+" ");
+////                    });
+//                    recommendFor.replaceAll(" ",",");
+//                    ssaldCups.add(ssaldCup);
+//
+//                    List<Category> relatedLowestCategories = lowestLevelCategories.stream()
+//                            .filter(lowestCategory -> lowestCategory.getParent() != null &&
+//                                    lowestCategory.getParent().getId().equals(category.getId()))
+//                            .collect(Collectors.toList());
+//
+//                    int duration = (int)ChronoUnit.WEEKS.between(startAt, endAt);
+//                    LocalDateTime start =startAt;
+//                    for (int j = 0; j < duration; j++) {
+//                        LocalDateTime sprintStart=start;
+//                        if(j>0)
+//                            sprintStart=sprintStart.plusWeeks(j);
+//                        LocalDateTime sprintEnd = start.plusWeeks(j+1);
+//                        LocalDateTime announceAt = sprintEnd;
+//                        if(relatedLowestCategories.size()==0)
+//                            continue;
+//                        int rand = random.nextInt(relatedLowestCategories.size());
+//                        int num = rand > 0 ? rand : 0;
+//                        Category selectedLowestCategory = relatedLowestCategories.get(num);
+//
+//                        Sprint sprint = SprintBuilder.builder()
+//                                .name(ssaldCup.getName() + "_Sprint_" + (j + 1))
+//                                .basicDescription("학습 내용: " + category.getCategoryName())
+//                                .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
+//                                .recommendedFor(recommendFor)
+//                                .startAt(sprintStart)
+//                                .endAt(sprintEnd)
+//                                .announceAt(announceAt)
+//                                .maxMembers(ssaldCup.getMaxTeamMembers())
+//                                .sequence(j + 1)
+//                                .ssaldCup(ssaldCup)
+//                                .build();
+//                        LocalDateTime time = LocalDateTime.now();
+//                        if(sprint.getStartAt().isAfter(time))
+//                            sprint.setStatus(0);
+//                        else if(sprint.getStartAt().isEqual(time) || (sprint.getStartAt().isBefore(time)&& sprint.getEndAt().isAfter(time)))
+//                            sprint.setStatus(1);
+//                        else
+//                            sprint.setStatus(2);
+//                        sprintRepository.save(sprint);
+//                        sprintCategoryRepository.save(new SprintCategory(sprint, selectedLowestCategory));
+//                    }
+//                }
+//            }
+//            System.out.println("싸드컵과 하위 스프린트가 추가되었습니다.");
+//        } else {
+//            System.out.println("싸드컵 더미 데이터가 이미 존재합니다.");
+//        }
+//    }
 
 
 
