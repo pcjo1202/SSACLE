@@ -205,7 +205,7 @@ const BoardDetailPage = () => {
 
   const handlePayConfirm = async () => {
     try {
-      const requiredPickles = 5
+      const requiredPickles = 7
       if (userData?.pickles >= requiredPickles) {
         setShowPayModal(false)
         navigate(`/board/${boardType}/${selectedPostId}`)

@@ -89,14 +89,17 @@ const StudyBoardPage = () => {
     },
   })
 
-  // 게시글 구매 뮤테이션 수정
+  // 게시글 구매 뮤테이션
   const purchaseBoardMutation = useMutation({
     mutationFn: (boardId) => fetchPurchaseBoard(boardId),
     onSuccess: (response) => {
       boardDetailMutation.mutate(selectPostId)
       setShowPayModal(false)
     },
-    // onError 핸들러 제거 (handlePayConfirm에서 처리)
+    onError: (error) => {
+      console.error('게시글 구매 실패:', error)
+      alert('게시글 구매에 실패했습니다.')
+    },
   })
 
   // filteredPosts는 이제 posts를 바로 사용
@@ -128,13 +131,13 @@ const StudyBoardPage = () => {
   }
 
   // 피클 결제 확인 후 게시글 상세 조회
-  // handlePayConfirm 함수 수정
   const handlePayConfirm = async () => {
     const requiredPickles = 7
     if (userData?.pickles >= requiredPickles) {
       try {
         await purchaseBoardMutation.mutateAsync(selectPostId)
-        // 성공 시 처리는 mutation의 onSuccess에서 수행
+        // 구매 성공 시에만 게시글로 이동
+        boardDetailMutation.mutate(selectPostId)
       } catch (error) {
         console.error('결제 처리 중 오류 발생:', error)
         alert('게시글 구매에 실패했습니다.')
@@ -145,6 +148,7 @@ const StudyBoardPage = () => {
       setShowPayModal(false)
     }
   }
+
   // 탭 변경 시 페이지 초기화
   const handleTabChange = (tabId) => {
     setActiveTab(tabId)
