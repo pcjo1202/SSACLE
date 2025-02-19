@@ -62,7 +62,7 @@ interface PresentationStore {
 export const usePresentationStore = create<PresentationStore>((set) => ({
   // 발표 진행 관련
   isAllConnection: false,
-  targetConnectionCount: 6, // 테스트 용도
+  targetConnectionCount: 4, // 테스트 용도
   setTargetConnectionCount: (targetConnectionCount) =>
     set({ targetConnectionCount }),
 
