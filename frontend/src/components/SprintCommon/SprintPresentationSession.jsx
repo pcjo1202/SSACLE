@@ -24,7 +24,7 @@ const SprintPresentationSession = ({ sprint }) => {
     //   return
     // }
     navigate(
-      `/presentation/ssaprint/${sprint.id}?useId=${userId}&username=${userNickname}`
+      `/presentation/ssaprint/${sprint.id}?userId=${userId}&username=${userNickname}`
     )
   }
   return (
@@ -41,8 +41,8 @@ const SprintPresentationSession = ({ sprint }) => {
       </p>
 
       {/* D-Day & 입장 버튼 */}
-      <div className="mt-7 mb-1 flex items-center justify-between">
-        <span className="text-blue-600 text-md font-bold">
+      <div className="flex items-center justify-between mb-1 mt-7">
+        <span className="font-bold text-blue-600 text-md">
           {dDay === 0 ? 'D-DAY' : `D-DAY ${dDay}`}
         </span>
 
