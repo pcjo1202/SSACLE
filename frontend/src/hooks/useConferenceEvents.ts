@@ -306,11 +306,11 @@ export function useConferenceEvents() {
       // setConnectionCount()
 
       // 이미 참여 중인 사람인지 확인
-      if (
-        sessionRef.current?.remoteConnections.has(event.connection.connectionId)
-      ) {
-        return
-      }
+      // if (
+      //   sessionRef.current?.remoteConnections.has(event.connection.connectionId)
+      // ) {
+      //   return
+      // }
 
       const remoteConnectionCount = sessionRef.current?.remoteConnections.size
 
