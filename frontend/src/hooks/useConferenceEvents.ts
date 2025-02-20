@@ -228,6 +228,10 @@ export function useConferenceEvents() {
     const currentSession = sessionRef.current
     const streamType = event.stream?.typeOfVideo?.toLowerCase() // 스트림 타입 확인
 
+    console.log(
+      '👍🏻새로운 스트림 생성 발견 - videoType',
+      JSON.parse(event.stream.connection.data)
+    )
     console.log('새로운 스트림 생성 발견 - videoType', streamType)
     const isMyStream =
       event.stream?.connection?.connectionId ===
