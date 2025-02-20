@@ -4,17 +4,26 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useQueryClient } from '@tanstack/react-query'
 import { User } from '@/interfaces/user.interface'
+import ProfileUpdateForm from '@/components/MyPage/ProfileUpdateForm'
+import httpCommon from '@/services/http-common'
 
 interface MyPageProfileSectionProps {}
 
 const MyPageProfileSection: FC<MyPageProfileSectionProps> = ({}) => {
   const queryClient = useQueryClient()
 
+  const defaultProfileImage = '/images/default-profile.png'
+
   const userInfo: User | undefined = queryClient.getQueryData(['userInfo'])
 
   const { nickname, pickles, level, profile } = userInfo ?? {}
 
   const profileImageInputRef = useRef<ReactNode>(null)
+
+  const handleUpdateProfile = async () => {
+    const response = await httpCommon.patch('/user/update-profile', {})
+    console.log(response)
+  }
 
   return (
     <Card className="overflow-hidden animate-fade-in-down">
@@ -24,7 +33,11 @@ const MyPageProfileSection: FC<MyPageProfileSectionProps> = ({}) => {
       <CardContent>
         <div className="flex items-center gap-6">
           <div className="relative w-24 h-24">
-            <div className="w-full h-full rounded-full bg-ssacle-sky" />
+            <img
+              src={profile ? profile : defaultProfileImage}
+              alt=""
+              className="object-cover w-full h-full rounded-full"
+            />
             <input
               type="file"
               name=""
@@ -58,9 +71,14 @@ const MyPageProfileSection: FC<MyPageProfileSectionProps> = ({}) => {
                 </Badge>
               </span>
             </div>
-            <Button variant="outline" size="sm">
-              프로필 수정
+            <Button onClick={handleUpdateProfile} variant="outline" size="sm">
+              프로필 수정 반영
             </Button>
+            {/* <ProfileUpdateForm> */}
+            {/* <Button variant="outline" size="sm">
+              프로필 수정
+            </Button> */}
+            {/* </ProfileUpdateForm> */}
           </div>
         </div>
       </CardContent>
