@@ -397,6 +397,10 @@ public class DataInitializer {
                             "사람과 비슷한 인공지능이 범죄에 연루된다면",
                             "https://www.seoul.co.kr/news/plan/science-diverse-story/2024/12/27/20241227500176?wlog_tag3=naver"
                     },
+                    {
+                            "내 재물운 어때? 은근 용하네 답답한 청년들의 상담사 된 인공지능",
+                            "https://view.asiae.co.kr/article/2024122714492037903"
+                    },
                     //내일 날짜 뉴스
                     {
                             "내년 서울 지하철 전 역에 AI CCTV",
@@ -409,6 +413,10 @@ public class DataInitializer {
                     {
                             "AI로 제조업 안전사고 예방한다…산업부, R&D 사업 공모",
                             "https://n.news.naver.com/mnews/article/001/0015183769?sid=105"
+                    },
+                    {
+                            "2030년 AI 시장 1조달러로 성장 한국, 성공 가능성 높아",
+                            "https://n.news.naver.com/mnews/article/001/0015183770?sid=105"
                     },
                     // 1일 전 뉴스
                     {
@@ -423,6 +431,10 @@ public class DataInitializer {
                             "AI 활용 처지면 반도체도 조선도 끝 필사적인 재계",
                             "https://n.news.naver.com/mnews/article/421/0008029877?sid=101"
                     },
+                    {
+                            "통신·AI 체험 LGU+, 대학생 앰배서더 유쓰피릿 15기 모집",
+                            "https://n.news.naver.com/mnews/article/003/0013023386?sid=105"
+                    },
                     // 2일 전 뉴스
                     {
                             "인천시 민원, 이제 인공지능이 해결해드립니다",
@@ -435,6 +447,10 @@ public class DataInitializer {
                     {
                             "정확도 80% 인공지능으로 신소재 재료 물질 설계한다",
                             "https://www.yna.co.kr/view/AKR20250110102200063?input=1195m"
+                    },
+                    {
+                            "단짠단짠 파스타 만들어 드릴게요 AI 셰프까지 나왔다",
+                            "https://www.hankyung.com/article/2025011092041"
                     },
                     // 3일 전 뉴스
                     {
@@ -449,6 +465,10 @@ public class DataInitializer {
                             "중국 AI의 역습, 제2·제3의 딥시크는 누구?",
                             "https://news.nate.com/view/20250207000003"
                     },
+                    {
+                            "SK텔레콤, CES 2025서 혁신적인 AI 미래기술 선보인다",
+                            "https://www.hankyung.com/article/202412233343g"
+                    },
                     // 4일 전 뉴스
                     {
                             "샘 올트먼 오픈 AI CEO 데이터센터용 AI 반도체 직접 개발",
@@ -461,6 +481,10 @@ public class DataInitializer {
                     {
                             "2년뒤면 인간같은 AI, 韓 AI투자 속도 높여야[김현아의 IT세상읽기]",
                             "https://n.news.naver.com/mnews/hotissue/article/018/0005934572?type=series&cid=1084419"
+                    },
+                    {
+                            "AI 혁신 넘어 QPU 시대 머지않아 도래",
+                            "https://n.news.naver.com/mnews/article/037/0000035682"
                     },
                     // 5일 전 뉴스
                     {
@@ -475,6 +499,10 @@ public class DataInitializer {
                             "국정원, 딥시크 기술검증 정보수집 과한 데다 中 서버에 저장",
                             "https://n.news.naver.com/mnews/article/003/0013056074?sid=105"
                     },
+                    {
+                            "포항시, 생성형 AI 딥시크 선제적 차단 안전성 우려 해소 시까지",
+                            "https://n.news.naver.com/mnews/article/022/0004009213?sid=102"
+                    },
                     // 6일 전 뉴스
                     {
                             "챗GPT 대항마 그록3 17일 첫 선, 머스크 지구 가장 똑똑한 AI",
@@ -488,11 +516,15 @@ public class DataInitializer {
                             "美 빅테크, 아시아·중동에 AI 투자 확대 인재·인프라 늘려",
                             "https://n.news.naver.com/mnews/article/092/0002363347?sid=105"
                     },
+                    {
+                            "1등 AI 시험 AICE 합격 땐 학점따고 승진 가산점",
+                            "https://n.news.naver.com/mnews/article/015/0005094825?sid=105"
+                    }
             };
 
             // 뉴스 데이터 추가
             for (int i = 0; i < newsData.length; i++) {
-                LocalDateTime newsDate = today.plusDays(i/3);
+                LocalDateTime newsDate = today.plusDays(i/4);
                 AINews news = AINews.builder()
                         .title(newsData[i][0])
                         .url(newsData[i][1])
