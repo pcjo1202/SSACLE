@@ -1,4 +1,4 @@
-import type { FC } from 'react'
+import { useEffect, useState, type FC } from 'react'
 import {
   AlertDialog,
   AlertDialogContent,
@@ -12,30 +12,101 @@ import { Separator } from '@/components/ui/separator'
 import { useQuery } from '@tanstack/react-query'
 import httpCommon from '@/services/http-common'
 import { cn } from '@/lib/utils'
+import { Button } from '../ui/button'
 
 interface MypageCategoryChangeProps {
   children: React.ReactNode
 }
 
+interface Category {
+  id: number
+  categoryName: string
+  subCategories: SubCategory[]
+}
+
+interface SubCategory {
+  id: number
+  categoryName: string
+  subCategories: SubCategory[]
+}
+
+interface UserCategory {
+  id: number
+  categoryName: string
+  image: string | null
+}
+
 const MypageCategoryChange: FC<MypageCategoryChangeProps> = ({ children }) => {
-  const { data: category } = useQuery({
-    queryKey: ['category'],
-    queryFn: () => {
-      return httpCommon.get('/category/all').then((res) => res.data)
-    },
-  })
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<Set<string>>(
+    new Set()
+  )
+  // 카테고리 전체
+  const { data: category, isSuccess: isSuccessCategory } = useQuery<Category[]>(
+    {
+      queryKey: ['category'],
+      queryFn: async () => {
+        return await httpCommon.get('/category/all').then((res) => res.data)
+      },
+    }
+  )
 
-  const { data: userCategory } = useQuery({
+  // 유저 관심 카테고리
+  const { data: userCategory, isSuccess: isSuccessUser } = useQuery<
+    UserCategory[]
+  >({
     queryKey: ['userCategory'],
-    queryFn: () => {
-      return httpCommon.get('/user/interested-category').then((res) => res.data)
+    queryFn: async () => {
+      return await httpCommon
+        .get('/user/interested-category')
+        .then((res) => res.data)
     },
   })
 
-  console.log(userCategory)
+  useEffect(() => {
+    if (isSuccessCategory && isSuccessUser) {
+      // console.log('category', category)
+      // console.log('userCategory', userCategory)
+      const userCategoryNames = userCategory?.map(
+        (userCategory) => userCategory.categoryName
+      )
+      setSelectedCategory(new Set(userCategoryNames))
+    }
+  }, [isSuccessCategory, isSuccessUser])
+
+  // 카테고리 클릭 시 선택된 카테고리 추가
+  const handleCategoryClick = (categoryName: string) => {
+    if (selectedCategory.has(categoryName)) {
+      setSelectedCategory((prev) => {
+        const newSet = new Set(prev)
+        newSet.delete(categoryName)
+        return newSet
+      })
+    } else {
+      setSelectedCategory((prev) => {
+        const newSet = new Set(prev)
+        newSet.add(categoryName)
+        return newSet
+      })
+    }
+  }
+
+  // 카테고리 변경 버튼 클릭 시 카테고리 변경
+  const handleChangeCategory = async () => {
+    try {
+      await httpCommon.patch('/user/interested-category/update', {
+        interestCategoryNames: Array.from(selectedCategory),
+      })
+      alert('카테고리 변경이 완료되었습니다.')
+      setIsOpen(false)
+    } catch (error) {
+      console.error(error)
+      alert('카테고리 변경에 실패했습니다.')
+    }
+  }
 
   return (
-    <AlertDialog>
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger>{children}</AlertDialogTrigger>
       <AlertDialogContent className="max-w-[800px]">
         <AlertDialogHeader>
@@ -52,7 +123,7 @@ const MypageCategoryChange: FC<MypageCategoryChangeProps> = ({ children }) => {
                 subCategories,
               }) => (
                 <div key={firstId} className="flex flex-col gap-4">
-                  <h1 className="text-xl font-bold">{firsrtCategoryName}</h1>
+                  <h1 className="text-xl font-bold">✅ {firsrtCategoryName}</h1>
                   <div className="flex flex-wrap gap-6">
                     {subCategories.length > 0 &&
                       subCategories.map(
@@ -62,9 +133,12 @@ const MypageCategoryChange: FC<MypageCategoryChangeProps> = ({ children }) => {
                             className="flex flex-wrap gap-x-6 gap-y-4"
                           >
                             <Badge
+                              onClick={() => handleCategoryClick(categoryName)}
                               variant="secondary"
                               className={cn(
-                                'px-4 py-2 text-base transition-all cursor-pointer bg-ssacle-sky hover:bg-ssacle-blue/50 hover:scale-102'
+                                'px-4 py-2 text-base transition-all cursor-pointer bg-ssacle-sky hover:bg-ssacle-blue/50 hover:scale-102',
+                                selectedCategory.has(categoryName) &&
+                                  'bg-ssacle-blue text-white hover:bg-ssacle-blue/80'
                               )}
                             >
                               {categoryName}
@@ -72,8 +146,16 @@ const MypageCategoryChange: FC<MypageCategoryChangeProps> = ({ children }) => {
                             {subCategories.length > 0 &&
                               subCategories.map(({ id, categoryName }) => (
                                 <Badge
+                                  onClick={() =>
+                                    handleCategoryClick(categoryName)
+                                  }
+                                  key={id}
                                   variant="secondary"
-                                  className="px-4 py-2 text-base transition-all cursor-pointer bg-ssacle-sky hover:bg-ssacle-blue/50 hover:scale-102"
+                                  className={cn(
+                                    'px-4 py-2 text-base transition-all cursor-pointer bg-ssacle-sky hover:bg-ssacle-blue/50 hover:scale-102',
+                                    selectedCategory.has(categoryName) &&
+                                      'bg-ssacle-blue text-white hover:bg-ssacle-blue/80'
+                                  )}
                                 >
                                   {categoryName}
                                 </Badge>
@@ -87,6 +169,17 @@ const MypageCategoryChange: FC<MypageCategoryChangeProps> = ({ children }) => {
               )
             )}
           </div>
+        </div>
+        <div className="flex justify-end gap-4">
+          <Button
+            onClick={handleChangeCategory}
+            className="bg-ssacle-blue hover:bg-ssacle-blue/80"
+          >
+            변경하기
+          </Button>
+          <Button onClick={() => setIsOpen(false)} variant="destructive">
+            취소
+          </Button>
         </div>
       </AlertDialogContent>
     </AlertDialog>

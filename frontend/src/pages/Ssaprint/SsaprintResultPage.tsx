@@ -42,8 +42,6 @@ const SsaprintResultPage: FC<SsaprintResultPageProps> = ({ results }) => {
     { userId: '1234211', username: '난 말하는 감자', score: 200 },
   ]
 
-  console.log('👨🏻‍💻roomId', sprintId)
-
   const {
     data: presentationParticipants,
     isSuccess: isPresentationParticipantsSuccess,
@@ -77,8 +75,6 @@ const SsaprintResultPage: FC<SsaprintResultPageProps> = ({ results }) => {
   const myTeamId = presentationParticipants?.find((participant) =>
     participant.users.some((user) => user.id === userInfo?.id)
   )?.id
-
-  console.log('👨🏻‍💻myTeamId', myTeamId)
 
   return (
     <div className="flex flex-col items-center justify-center gap-10 p-6 py-32">
