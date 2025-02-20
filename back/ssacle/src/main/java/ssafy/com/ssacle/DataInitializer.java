@@ -1200,7 +1200,6 @@ public class DataInitializer {
                     .defaultTodos(generateExpressTodos(startAt))
                     .build();
             sprint11.setStatus(1);
-            sprint11.setCurrentMembers(4);
             sprintRepository.save(sprint11);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1301,7 +1300,6 @@ public class DataInitializer {
                     .defaultTodos(generateReactTodos(startAt))
                     .build();
             sprint14.setStatus(0);
-            sprint14.setCurrentMembers(2);
             sprintRepository.save(sprint14);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1321,7 +1319,6 @@ public class DataInitializer {
                     .defaultTodos(generateReactTodos(startAt))
                     .build();
             testsprint14.setStatus(0);
-            testsprint14.setCurrentMembers(2);
             sprintRepository.save(testsprint14);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1545,7 +1542,6 @@ public class DataInitializer {
                     .defaultTodos(generateVueTodos(startAt))
                     .build();
             sprint21.setStatus(0);
-            sprint21.setCurrentMembers(2);
             sprintRepository.save(sprint21);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
