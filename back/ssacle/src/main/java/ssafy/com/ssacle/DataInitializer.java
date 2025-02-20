@@ -837,6 +837,25 @@ public class DataInitializer {
                 sprintCategoryRepository.save(new SprintCategory(sprint, sprintCategory));
             });
 
+            Sprint testsprint = SprintBuilder.builder()
+                    .name("Sprint Boot 감자 스터디 챌린지2")
+                    .basicDescription("Spring Boot 입문자들의 모임입니다.")
+                    .detailDescription("기본적인 GetMapping, PostMapping 등과 어노테이션에 대한 학습을 목표로 합니다.")
+                    .recommendedFor("Spring Boot가 처음이신분\nAnnotation에 대한 학습을 진행하고 싶으신 분")
+                    .startAt(startAt)
+                    .endAt(endAt.minusHours(4))
+                    .announceAt(endAt)
+                    .maxMembers(4)
+                    .defaultTodos(generateSpringBootTodos(startAt))
+                    .build();
+            testsprint.setStatus(1);
+            sprintRepository.save(testsprint);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(testsprint, sprintCategory));
+            });
+
             categoryIds = new ArrayList<>();
             categoryIds.add(springBoot.getId());
             parent = springBoot.getParent();
@@ -1288,6 +1307,26 @@ public class DataInitializer {
                 Category sprintCategory = categoryRepository.findById(categoryId)
                         .orElseThrow(CategoryNotExistException::new);
                 sprintCategoryRepository.save(new SprintCategory(sprint14, sprintCategory));
+            });
+
+            Sprint testsprint14 = SprintBuilder.builder()
+                    .name("React useState 기초 입문2")
+                    .basicDescription("React의 useState를 처음 배우는 분들을 위한 스프린트입니다.")
+                    .detailDescription("React의 상태 관리 개념을 익히고, useState의 기본적인 사용법을 연습합니다.")
+                    .recommendedFor("React 입문자\n컴포넌트 상태 관리 개념이 궁금하신 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt.minusHours(3))
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateReactTodos(startAt))
+                    .build();
+            testsprint14.setStatus(0);
+            testsprint14.setCurrentMembers(2);
+            sprintRepository.save(testsprint14);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(testsprint14, sprintCategory));
             });
 
             categoryIds = new ArrayList<>();
@@ -1892,6 +1931,25 @@ public class DataInitializer {
                 Category sprintCategory = categoryRepository.findById(categoryId)
                         .orElseThrow(CategoryNotExistException::new);
                 sprintCategoryRepository.save(new SprintCategory(sprint33, sprintCategory));
+            });
+
+            Sprint testsprint33 = SprintBuilder.builder()
+                    .name("인덱스와 조인 최적화2")
+                    .basicDescription("인덱스를 활용하여 SQL 조인 성능을 최적화하는 방법을 배우는 스프린트입니다.")
+                    .detailDescription("Nested Loop Join, Hash Join, Merge Join 등 다양한 조인 기법을 학습하고, 인덱스와 결합하여 최적의 쿼리 성능을 만드는 전략을 익힙니다.")
+                    .recommendedFor("대량 데이터 조인을 빠르게 처리하고 싶은 개발자\nSQL 조인 최적화를 통해 시스템 성능을 개선하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt.minusHours(4))
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateIndexTodos(startAt))
+                    .build();
+            testsprint33.setStatus(0);
+            sprintRepository.save(testsprint33);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(testsprint33, sprintCategory));
             });
 
             categoryIds = new ArrayList<>();
