@@ -1,4 +1,4 @@
-import { ReactNode, useRef, type FC } from 'react'
+import { ReactNode, useRef, useState, type FC } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -10,18 +10,38 @@ import httpCommon from '@/services/http-common'
 interface MyPageProfileSectionProps {}
 
 const MyPageProfileSection: FC<MyPageProfileSectionProps> = ({}) => {
-  const queryClient = useQueryClient()
-
   const defaultProfileImage = '/images/default-profile.png'
-
+  const queryClient = useQueryClient()
   const userInfo: User | undefined = queryClient.getQueryData(['userInfo'])
-
   const { nickname, pickles, level, profile } = userInfo ?? {}
 
+  const [profileImage, setProfileImage] = useState<File | null>(null)
   const profileImageInputRef = useRef<ReactNode>(null)
 
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    console.log(file)
+    setProfileImage(file)
+
+    // 프로필 이미지 미리보기
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const image = e.target?.result as string
+      setProfileImage(image)
+    }
+    reader.readAsDataURL(file)
+  }
+
   const handleUpdateProfile = async () => {
-    const response = await httpCommon.patch('/user/update-profile', {})
+    const response = await httpCommon.patch(
+      '/user/update-profile',
+      {},
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    )
     console.log(response)
   }
 
@@ -34,25 +54,27 @@ const MyPageProfileSection: FC<MyPageProfileSectionProps> = ({}) => {
         <div className="flex items-center gap-6">
           <div className="relative w-24 h-24">
             <img
-              src={profile ? profile : defaultProfileImage}
+              src={profileImage ? profileImage : defaultProfileImage}
               alt=""
               className="object-cover w-full h-full rounded-full"
             />
             <input
               type="file"
-              name=""
-              id=""
+              name="profileImageInput"
+              id="profileImageInput"
               ref={profileImageInputRef as React.RefObject<HTMLInputElement>}
               className="hidden"
+              onChange={handleProfileImageChange}
             />
             <div className="absolute bottom-0 right-0 p-1 bg-white rounded-full shadow-sm">
               <Button
+                htmlFor="profileImageInput"
                 variant="ghost"
                 size="icon"
                 className="w-6 h-6 rounded-full"
-                onClick={() => {
-                  profileImageInputRef.current?.click()
-                }}
+                // onClick={() => {
+                //   profileImageInputRef.current?.click()
+                // }}
               >
                 <span className="sr-only">프로필 이미지 변경</span>
                 📷
