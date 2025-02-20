@@ -333,10 +333,12 @@ export function useConferenceEvents() {
           // 10초 뒤 모달 닫기
           setTimeout(() => {
             // 강제 시작
-            setPresentationStatus(
-              PRESENTATION_STATUS.START as PresentationStatus
-            )
-            setIsModalOpen(false)
+            if (modalStep === ModalSteps.INITIAL.WAITING) {
+              setPresentationStatus(
+                PRESENTATION_STATUS.START as PresentationStatus
+              )
+              setIsModalOpen(false)
+            }
           }, 1000 * 10)
         }, 1000 * 10) // 실제 : 6초 뒤 신호 전송, 테스트 1초
       }
