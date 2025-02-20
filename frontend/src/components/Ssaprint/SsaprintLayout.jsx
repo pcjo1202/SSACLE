@@ -107,7 +107,12 @@ const SsaprintLayout = () => {
       <section className="mt-5 w-full min-h-[412px]">
         <ItemList
           items={
-            filters.status === 2 ? sprints.map((item) => item.sprint) : sprints
+            filters.status === 2
+              ? sprints.map((item) => ({
+                  sprint: item.sprint,
+                  teamId: item.teamId, // 완료된 스프린트면 sprint랑 teamId 함께 전달
+                }))
+              : sprints // status !== 2일 경우 sprint만 전달
           }
           domain="ssaprint"
         />
