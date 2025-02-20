@@ -829,7 +829,7 @@ public class DataInitializer {
                     .maxMembers(4)
                     .defaultTodos(generateSpringBootTodos(startAt))
                     .build();
-            sprint.setStatus(1);
+            sprint.setStatus(0);
             sprintRepository.save(sprint);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -848,7 +848,7 @@ public class DataInitializer {
                     .maxMembers(4)
                     .defaultTodos(generateSpringBootTodos(startAt))
                     .build();
-            testsprint.setStatus(1);
+            testsprint.setStatus(0);
             sprintRepository.save(testsprint);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
