@@ -15,9 +15,9 @@ interface SsaprintResultPageProps {
 const SsaprintResultPage: FC<SsaprintResultPageProps> = ({ results }) => {
   // Sample data. In practice you might get these via API or state management.
   const defaultResults: RankingResult[] = [
-    { userId: '1234211', username: '박창조', score: 200 },
-    { userId: '3231231', username: '홍길동', score: 150 },
-    { userId: '1233213', username: '김철수', score: 120 },
+    { userId: '1234211', username: '난 말하는 감자', score: 200 },
+    // { userId: '3231231', username: '홍길동', score: 150 },
+    // { userId: '1233213', username: '김철수', score: 120 },
   ]
 
   // Use passed results if available, otherwise default results.
@@ -28,7 +28,7 @@ const SsaprintResultPage: FC<SsaprintResultPageProps> = ({ results }) => {
   rankingResults.sort((a, b) => b.score - a.score)
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 ">
+    <div className="flex flex-col items-center justify-center p-6 py-32">
       <h1 className="mb-12 text-4xl font-extrabold text-gray-800 animate-fade-in-down">
         최종 평가 결과
       </h1>
@@ -52,7 +52,7 @@ const SsaprintResultPage: FC<SsaprintResultPageProps> = ({ results }) => {
         </div>
 
         {/* 2등 */}
-        <div className="relative flex items-center p-6 transition-all duration-300 transform border-2 border-gray-200 shadow-lg animate-slide-in-right bg-gradient-to-r from-gray-50 to-white rounded-xl hover:shadow-xl hover:scale-102 group">
+        {/* <div className="relative flex items-center p-6 transition-all duration-300 transform border-2 border-gray-200 shadow-lg animate-slide-in-right bg-gradient-to-r from-gray-50 to-white rounded-xl hover:shadow-xl hover:scale-102 group">
           <div className="mr-6 text-6xl animate-bounce-gentle-delay">🥈</div>
           <div className="flex-1">
             <div className="text-2xl font-bold text-gray-800 transition-colors group-hover:text-gray-900">
@@ -65,10 +65,10 @@ const SsaprintResultPage: FC<SsaprintResultPageProps> = ({ results }) => {
               </span>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* 3등 */}
-        <div className="relative flex items-center p-6 transition-all duration-300 transform border-2 border-gray-200 shadow-lg animate-slide-in-left bg-gradient-to-r from-orange-50 to-white rounded-xl hover:shadow-xl hover:scale-102 group">
+        {/* <div className="relative flex items-center p-6 transition-all duration-300 transform border-2 border-gray-200 shadow-lg animate-slide-in-left bg-gradient-to-r from-orange-50 to-white rounded-xl hover:shadow-xl hover:scale-102 group">
           <div className="mr-6 text-6xl animate-bounce-gentle-delay-more">
             🥉
           </div>
@@ -83,7 +83,7 @@ const SsaprintResultPage: FC<SsaprintResultPageProps> = ({ results }) => {
               </span>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

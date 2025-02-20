@@ -576,7 +576,7 @@ export const createModalStepConfig = ({
           text: '결과 확인하기',
           onClick: async () => {
             await leaveSession()
-            navigate('/presentation/result') // 결과 페이지로 이동
+            navigate(`/ssaprint/${roomId}/result`) // 결과 페이지로 이동
             closeModal()
           },
           style: '',
