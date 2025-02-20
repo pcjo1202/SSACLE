@@ -237,12 +237,13 @@ export function useConferenceEvents() {
       event.stream?.connection?.connectionId ===
       currentSession?.connection.connectionId // 내 스트림 여부 확인
 
-    // 이미 존재하는 스트림인지 확인
+    // 현재 스트림 참여자 중 존재하는 스트림인지 확인
     if (
-      currentSession?.remoteConnections.has(
-        event.stream?.connection?.connectionId
-      )
+      currentSession?.streamManagers.some((each) => {
+        return each.stream.streamId === event.stream?.streamId
+      })
     ) {
+      console.log('이미 존재하는 스트림', event.stream)
       return
     }
 
