@@ -315,29 +315,24 @@ public class SprintService {
                 .build();
     }
 
-    @Transactional
-    public List<SprintSummaryResponse> getParticipateSprint(User user) {
 
+    @Transactional(readOnly = true)
+    public List<SprintSummaryResponse> getParticipateSprint(User user) {
         List<Team> teams = teamRepository.findTeamsByUserId(user.getId());
-        if (teams.isEmpty()) {
-            return Collections.emptyList();
+        List<SprintSummaryResponse> list = new ArrayList<>();
+
+        for (Team team : teams) {
+            Sprint sprint = team.getSprint();
+            if (sprint != null) { // Null 체크 추가
+                SprintSummaryResponse response = SprintSummaryResponse.of(sprint, team.getId());
+                list.add(response);
+            }
         }
 
-        Map<Long, Long> sprintToTeamMap = teams.stream()
-                .collect(Collectors.toMap(team -> team.getSprint().getId(), Team::getId, (existing, replacement) -> existing)); // 중복 Sprint ID는 기존 값 유지
-
-        List<Long> sprintIds = new ArrayList<>(sprintToTeamMap.keySet());
-
-        List<Sprint> sprints = sprintRepository.findSprintsByTeamIds(sprintIds);
-
-        // ✅ Sprint와 Team ID 매핑하여 Response 생성
-        return sprints.stream()
-                .map(sprint -> {
-                    Long teamId = sprintToTeamMap.getOrDefault(sprint.getId(), null); // 매핑된 팀 ID 가져오기
-                    return SprintSummaryResponse.of(sprint, teamId);
-                })
-                .toList();
+        return list;
     }
+
+
 
 
     @Transactional

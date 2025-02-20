@@ -20,9 +20,7 @@ public interface SprintRepository extends JpaRepository<Sprint, Long>, SprintRep
     @Query("SELECT s FROM Sprint s LEFT JOIN FETCH s.teams")
     List<Sprint> findAllWithTeams();
 
-    @Query("SELECT DISTINCT s FROM Sprint s " +
-            "JOIN s.teams t " +
-            "WHERE t.id IN :teamIds")
+    @Query("SELECT DISTINCT s FROM Sprint s JOIN s.teams t WHERE t.id IN :teamIds")
     List<Sprint> findSprintsByTeamIds(@Param("teamIds") List<Long> teamIds);
 //    @Query("SELECT DISTINCT s FROM Sprint s " +
 //            "JOIN FETCH s.teams t " +
