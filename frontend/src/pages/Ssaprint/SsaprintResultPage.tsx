@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button'
-import { PresentationParticipants } from '@/interfaces/user.interface'
-import { useQueryClient } from '@tanstack/react-query'
+import { PresentationParticipants, User } from '@/interfaces/user.interface'
+import httpCommon from '@/services/http-common'
+import { fetchPresentationParticipants } from '@/services/presentationService'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { FC } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -16,30 +18,67 @@ interface SsaprintResultPageProps {
   results?: RankingResult[]
 }
 
+const DEFAULT_TARGET_PARTICIPANT = {
+  id: 29,
+  name: '열정 2배!',
+  point: 0,
+  users: [
+    {
+      id: 9,
+      nickname: '열정 두배요',
+      level: 1,
+      pickles: 300,
+      profile: null,
+      categoryNames: null,
+    },
+  ],
+}
+
 const SsaprintResultPage: FC<SsaprintResultPageProps> = ({ results }) => {
   const navigate = useNavigate()
-  const { roomId } = useParams()
+  const { sprintId } = useParams()
 
   const defaultResults: RankingResult[] = [
     { userId: '1234211', username: '난 말하는 감자', score: 200 },
   ]
-  const queryClient = useQueryClient()
-  const presentationParticipants = queryClient.getQueryData<
-    PresentationParticipants[]
-  >(['presentation-participants'])
 
-  console.log(presentationParticipants)
+  console.log('👨🏻‍💻roomId', sprintId)
 
-  const targetParticipants =
-    (presentationParticipants && presentationParticipants[0].name) ??
-    '난 말하는 감자'
+  const {
+    data: presentationParticipants,
+    isSuccess: isPresentationParticipantsSuccess,
+  } = useQuery<PresentationParticipants[]>({
+    queryKey: ['presentation-participants'],
+    queryFn: () => fetchPresentationParticipants(sprintId ?? 'test-session-id'),
+    staleTime: 1000 * 60 * 5, // 10분 동안 캐시 유지
+    refetchInterval: 1000 * 5, // 10초 동안 캐시 유지
+    enabled: !!sprintId,
+  })
 
-  // Use passed results if available, otherwise default results.
-  const rankingResults: RankingResult[] =
-    results && results.length >= 3 ? results : defaultResults
+  const { data: userInfo } = useQuery<User>({
+    queryKey: ['userInfo'],
+    queryFn: async () => {
+      return await httpCommon.get('/user/summary').then((res) => res.data)
+    },
+    staleTime: 1000 * 60 * 60, // 1시간 동안 캐시 유지
+    gcTime: 1000 * 60 * 60, // 1시간 동안 캐시 유지
+  })
+  // const queryClient = useQueryClient()
+  // const presentationParticipants = queryClient.getQueryData<
+  //   PresentationParticipants[]
+  // >(['presentation-participants'])
 
-  // Ensure the ranking is sorted in descending order by score.
-  rankingResults.sort((a, b) => b.score - a.score)
+  // 1등 팀 정보
+  const targetParticipant =
+    (presentationParticipants && presentationParticipants[0]) ??
+    DEFAULT_TARGET_PARTICIPANT
+
+  // 내 팀 정보
+  const myTeamId = presentationParticipants?.find((participant) =>
+    participant.users.some((user) => user.id === userInfo?.id)
+  )?.id
+
+  console.log('👨🏻‍💻myTeamId', myTeamId)
 
   return (
     <div className="flex flex-col items-center justify-center gap-10 p-6 py-32">
@@ -58,7 +97,7 @@ const SsaprintResultPage: FC<SsaprintResultPageProps> = ({ results }) => {
           <div className="mr-6 text-7xl animate-bounce-gentle">🥇</div>
           <div className="flex-1">
             <div className="mb-2 text-3xl font-extrabold text-yellow-700 transition-colors group-hover:text-yellow-800">
-              {targetParticipants}
+              {targetParticipant.name}
             </div>
             <div className="flex items-center gap-2 text-xl text-gray-700">
               <span className="font-semibold">보상 </span>
@@ -70,44 +109,11 @@ const SsaprintResultPage: FC<SsaprintResultPageProps> = ({ results }) => {
           <div className="absolute w-40 h-40 bg-yellow-200 rounded-full -right-20 -bottom-20 opacity-20" />
         </div>
 
-        {/* 2등 */}
-        {/* <div className="relative flex items-center p-6 transition-all duration-300 transform border-2 border-gray-200 shadow-lg animate-slide-in-right bg-gradient-to-r from-gray-50 to-white rounded-xl hover:shadow-xl hover:scale-102 group">
-          <div className="mr-6 text-6xl animate-bounce-gentle-delay">🥈</div>
-          <div className="flex-1">
-            <div className="text-2xl font-bold text-gray-800 transition-colors group-hover:text-gray-900">
-              {rankingResults[1].username}
-            </div>
-            <div className="flex items-center gap-2 text-lg text-gray-600">
-              <span>득점:</span>
-              <span className="text-xl font-semibold">
-                {rankingResults[1].score}
-              </span>
-            </div>
-          </div>
-        </div> */}
-
-        {/* 3등 */}
-        {/* <div className="relative flex items-center p-6 transition-all duration-300 transform border-2 border-gray-200 shadow-lg animate-slide-in-left bg-gradient-to-r from-orange-50 to-white rounded-xl hover:shadow-xl hover:scale-102 group">
-          <div className="mr-6 text-6xl animate-bounce-gentle-delay-more">
-            🥉
-          </div>
-          <div className="flex-1">
-            <div className="text-2xl font-bold text-gray-800 transition-colors group-hover:text-gray-900">
-              {rankingResults[2].username}
-            </div>
-            <div className="flex items-center gap-2 text-lg text-gray-600">
-              <span>득점:</span>
-              <span className="text-xl font-semibold">
-                {rankingResults[2].score}
-              </span>
-            </div>
-          </div>
-        </div> */}
         <div className="flex items-center justify-center mt-10">
           <Button
             onClick={() => {
-              navigate(`/my-sprints/${roomId}`, {
-                state: { sprintId: roomId, teamId: 1 },
+              navigate(`/my-sprints/${sprintId}`, {
+                state: { sprintId, teamId: myTeamId },
               })
             }}
             className="w-2/3 px-10 py-6 text-lg rounded-full bg-ssacle-blue hover:bg-ssacle-blue/80"
