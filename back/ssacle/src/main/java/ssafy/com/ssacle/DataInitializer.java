@@ -816,8 +816,8 @@ public class DataInitializer {
                 }
             }
 
-            LocalDateTime startAt = now.minusDays(6).plusHours(1);
-            LocalDateTime endAt = now.plusHours(5);
+            LocalDateTime startAt = now.plusDays(6);
+            LocalDateTime endAt = now.plusDays(12);
             Sprint sprint = SprintBuilder.builder()
                     .name("Sprint Boot 감자 스터디 챌린지")
                     .basicDescription("Spring Boot 입문자들의 모임입니다.")
