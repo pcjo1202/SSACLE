@@ -27,7 +27,7 @@ const SessionInitializer = () => {
   const { data: token, isSuccess } = useQuery({
     queryKey: ['openvidu-token'],
     queryFn: async () => {
-      const sessionId = await fetchSessionId(roomId ?? 'test-session-id')
+      // const sessionId = await fetchSessionId(roomId ?? 'test-session-id')
       // const token = await fetchToken(sessionId)
       // return token
       const serverToken = await fetchServerToken(roomId ?? 'test-session-id')
