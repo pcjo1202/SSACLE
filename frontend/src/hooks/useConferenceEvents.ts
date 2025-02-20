@@ -325,10 +325,19 @@ export function useConferenceEvents() {
 
       // ! 모든 참여자가 접속 완료 시, 발표 시작 신호 전송
       if (isAllConnection) {
+        console.log('👨🏻‍💻모든 참여자가 접속 완료')
         setPresentationStatus(PRESENTATION_STATUS.READY as PresentationStatus)
         setTimeout(() => {
           setIsModalOpen(true)
           setModalStep(ModalSteps.INITIAL.READY)
+          // 10초 뒤 모달 닫기
+          setTimeout(() => {
+            // 강제 시작
+            setPresentationStatus(
+              PRESENTATION_STATUS.START as PresentationStatus
+            )
+            setIsModalOpen(false)
+          }, 1000 * 10)
         }, 1000 * 10) // 실제 : 6초 뒤 신호 전송, 테스트 1초
       }
 

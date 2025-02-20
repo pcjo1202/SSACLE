@@ -44,7 +44,7 @@ export const usePresentationControls = () => {
       isFullScreen: state.isFullScreen,
     }))
   )
-  const { openModal, setModalStep, setIsModalOpen } = useModal()
+  const { modalStep, openModal, setModalStep, setIsModalOpen } = useModal()
   const { startScreenShare, stopScreenShare } = useScreenShare()
   const { roomConnectionData, roomId } = useRoomStateStore(
     useShallow((state) => ({
@@ -63,10 +63,11 @@ export const usePresentationControls = () => {
         // 효과 띄우기
         setModalStep(ModalSteps.WARNING.EFFECT_WARNING)
         setIsModalOpen(true)
-        console.log('session', session)
-        console.log('roomConnectionData', roomConnectionData[roomId])
-        console.log('session', session)
-        console.log('presentationStatus', presentationStatus)
+        console.log('1️⃣session', session)
+        console.log('2️⃣roomConnectionData', roomConnectionData[roomId])
+        console.log('3️⃣subscribers', subscribers)
+        console.log('4️⃣modalStep', modalStep)
+        console.log('5️⃣presentationStatus', presentationStatus)
       },
     },
     {
