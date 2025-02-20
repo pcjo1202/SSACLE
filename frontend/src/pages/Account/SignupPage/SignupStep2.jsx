@@ -255,7 +255,7 @@ const SignupStep2 = () => {
 
   return (
     <>
-      <div className="w-full h-auto flex justify-center items-center mt-24">
+      <div className="w-full h-auto flex justify-center items-center">
         <div className="grid grid-cols-12 gap-4 shrink-0">
           <div className="col-span-6 col-start-4">
             <h1 className="text-ssacle-blue text-3xl font-bold text-center mb-10">
@@ -463,7 +463,7 @@ const SignupStep2 = () => {
             )}
 
             {/* 회원가입 버튼 */}
-            <div className="grid grid-cols-6 gap-4 mb-12">
+            <div className="grid grid-cols-6 gap-4">
               <button
                 className="col-span-2 col-start-3 h-12 bg-ssacle-blue rounded-full px-6 text-white text-center text-xl font-bold mt-6"
                 onClick={handleSignup}
