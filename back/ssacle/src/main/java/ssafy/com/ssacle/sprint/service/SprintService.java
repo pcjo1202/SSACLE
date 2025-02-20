@@ -467,4 +467,12 @@ public class SprintService {
                 .map(UserResponse::from)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void updatePresentationEnd(Long sprintId){
+        Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(SprintNotExistException::new);
+        sprint.setStatus(2);
+        sprint.setPresentationStatus(PresentationStatus.END);
+        sprintRepository.save(sprint);
+    }
 }

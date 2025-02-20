@@ -35,6 +35,12 @@ public class PresentationController implements PresentationSwaggerController{
     }
 
     @Override
+    public ResponseEntity<Void> updatePresentationEnd(Long sprintId) {
+        sprintService.updatePresentationEnd(sprintId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
     public ResponseEntity<Boolean> checkPresentationAvailability(Long sprintId) {
         boolean canParticipate = sprintService.checkPresentationAvailability(sprintId);
         return ResponseEntity.ok(canParticipate);
