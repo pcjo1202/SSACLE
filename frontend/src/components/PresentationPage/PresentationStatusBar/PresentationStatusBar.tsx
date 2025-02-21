@@ -98,7 +98,7 @@ const PresentationStatusBar: FC<PresentationStatusBarProps> = ({}) => {
               </div>
               <div className="flex items-center gap-4 text-sm text-white">
                 <span>남은 발표 시간</span>
-                <span className="text-lg font-bold">00:00</span>
+                <span className="text-lg font-bold">10:00</span>
               </div>
             </>
           )}
