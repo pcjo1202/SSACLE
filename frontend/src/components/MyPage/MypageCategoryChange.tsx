@@ -34,10 +34,10 @@ const MypageCategoryChange: FC<MypageCategoryChangeProps> = ({ children }) => {
     }
   )
 
-  const queryClient = useQueryClient()
-  const userCategoryNames = queryClient.getQueryData<UserCategory[]>([
-    'userCategory',
-  ])
+  // const queryClient = useQueryClient()
+  // const userCategoryNames = queryClient.getQueryData<UserCategory[]>([
+  //   'userCategory',
+  // ])
 
   // 유저 관심 카테고리
   const { data: userCategory, isSuccess: isSuccessUser } = useQuery<
@@ -58,6 +58,7 @@ const MypageCategoryChange: FC<MypageCategoryChangeProps> = ({ children }) => {
       const userCategoryNames = userCategory?.map(
         (userCategory) => userCategory.categoryName
       )
+      console.log('userCategoryNamesdfsdfddsfds', userCategoryNames)
       setSelectedCategory(new Set(userCategoryNames))
     }
   }, [isSuccessCategory, isSuccessUser])

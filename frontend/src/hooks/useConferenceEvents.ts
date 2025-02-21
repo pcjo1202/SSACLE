@@ -101,6 +101,7 @@ export function useConferenceEvents() {
     readySignalHandler,
     endSignalHandler,
     voteSignalHandler,
+    testSignalHandler,
   } = useSignalEvents({
     myConnectionId,
     setIsModalOpen,
@@ -210,6 +211,9 @@ export function useConferenceEvents() {
 
     // 평가 내용 시그널
     sessionRef.current.on('signal:vote', voteSignalHandler)
+
+    // 테스트 시그널
+    sessionRef.current.on('signal:test', testSignalHandler)
     // 클린업 함수
     return () => {
       if (sessionRef.current) {

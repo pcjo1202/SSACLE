@@ -56,6 +56,12 @@ export const useSignalEvents = ({
     score: number
   }
 
+  const testSignalHandler = useCallback((event: SignalEvent) => {
+    const { data: signalType } = JSON.parse(event.data as string)
+    console.log('✨ signalType', signalType)
+    debouncedAllHandleSignal.current(signalType)
+  }, [])
+
   // 평가 내용 시그널 처리
   const voteSignalHandler = useCallback((event: SignalEvent) => {
     const { data } = JSON.parse(event.data as string)
@@ -223,5 +229,6 @@ export const useSignalEvents = ({
     readySignalHandler,
     endSignalHandler,
     voteSignalHandler,
+    testSignalHandler,
   }
 }

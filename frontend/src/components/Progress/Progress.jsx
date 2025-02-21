@@ -1,6 +1,7 @@
 import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
+import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import { CheckIcon, Circle } from 'lucide-react'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 const Progress = ({
   activeStep, // 현재 진행 단계
@@ -10,12 +11,58 @@ const Progress = ({
   lineColor = 'bg-gray-700', // 선 색상
   className = '',
 }) => {
+  const session = useOpenviduStateStore((state) => state.session)
+
+  const sessionRef = useRef(session)
+  useEffect(() => {
+    sessionRef.current = session
+  }, [session])
+
+  const sendSignal = (data) => {
+    sessionRef.current?.signal({
+      data: JSON.stringify({ data }),
+      type: 'test',
+    })
+  }
+
   const steps = [
-    { step: '준비', status: PRESENTATION_STATUS.READY },
-    { step: '발표', status: PRESENTATION_STATUS.START },
-    { step: '질문', status: PRESENTATION_STATUS.QUESTION_INIT },
-    { step: '평가', status: PRESENTATION_STATUS.VOTE_INIT },
-    { step: '완료', status: PRESENTATION_STATUS.END },
+    { step: '준비', status: PRESENTATION_STATUS.READY, onClick: () => {} },
+    {
+      step: '발표',
+      status: PRESENTATION_STATUS.START,
+      onClick: () => {
+        // 발표 시작
+        sendSignal(PRESENTATION_STATUS.READY)
+        console.log('발표 시작')
+      },
+    },
+    {
+      step: '질문',
+      status: PRESENTATION_STATUS.QUESTION_ANSWER,
+      onClick: () => {
+        // 질문 시작
+        sendSignal(PRESENTATION_STATUS.QUESTION_READY)
+        console.log('질문 시작')
+      },
+    },
+    {
+      step: '평가',
+      status: PRESENTATION_STATUS.VOTE_START,
+      onClick: () => {
+        // 평가 시작
+        sendSignal(PRESENTATION_STATUS.VOTE_INIT)
+        console.log('평가 시작')
+      },
+    },
+    {
+      step: '완료',
+      status: PRESENTATION_STATUS.VOTE_START,
+      onClick: () => {
+        // 완료
+        sendSignal(PRESENTATION_STATUS.VOTE_END)
+        console.log('완료')
+      },
+    },
   ]
 
   // 현재 진행 단계 인덱스 찾기
@@ -26,7 +73,11 @@ const Progress = ({
   return (
     <div className={`flex items-center ${className} gap-16`}>
       {steps.map((step, idx) => (
-        <div key={idx} className="relative flex items-center justify-center ">
+        <div
+          onClick={step.onClick}
+          key={idx}
+          className="relative flex items-center justify-center cursor-pointer"
+        >
           <div className="flex flex-col items-center justify-center gap-1">
             <div
               className={`w-5 h-5 rounded-full flex items-center justify-center
