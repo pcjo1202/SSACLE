@@ -12,7 +12,7 @@ const MyPageSidebar: FC<MyPageSidebarProps> = ({}) => {
           onClick={() => {
             navigate('/user/profile')
           }}
-          className="w-full px-4 py-2.5 text-left text-sm font-medium rounded-lg bg-primary/10 text-primary"
+          className="w-full px-4 py-2.5 text-left text-sm font-medium rounded-lg text-primary hover:bg-primary/10 transition-colors"
         >
           내 정보
         </button>
@@ -28,7 +28,7 @@ const MyPageSidebar: FC<MyPageSidebarProps> = ({}) => {
           onClick={() => {
             navigate('/user/profile/activities')
           }}
-          className="w-full px-4 py-2.5 text-left text-sm font-medium rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+          className="w-full px-4 py-2.5 text-left text-sm font-medium rounded-lg text-muted-foreground hover:bg-primary/10 transition-colors"
         >
           나의 활동
         </button>
