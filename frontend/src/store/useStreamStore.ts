@@ -14,7 +14,7 @@ interface StreamStore {
 
 export const useStreamStore = create<StreamStore>((set, get) => ({
   isMicOn: false, // 마이크 켜짐 여부
-  isCameraOn: false, // 카메라 켜짐 여부
+  isCameraOn: true, // 카메라 켜짐 여부
   isScreenSharing: false, // 화면 공유 여부
   isFullScreen: false, // 전체화면 여부
   setIsMicOn: (isMicOn: boolean) => set({ isMicOn }),
