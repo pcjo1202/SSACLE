@@ -816,16 +816,16 @@ public class DataInitializer {
                 }
             }
 
-            LocalDateTime startAt = now.plusDays(6);
-            LocalDateTime endAt = now.plusDays(12);
+            LocalDateTime startAt = LocalDateTime.of(2025, 2, 20, 9, 0, 0);
+            LocalDateTime endAt = LocalDateTime.of(2025, 2, 21, 18, 0, 0);
             Sprint sprint = SprintBuilder.builder()
-                    .name("Sprint Boot 감자 스터디 챌린지")
+                    .name("Spring Boot 감자 스터디 챌린지")
                     .basicDescription("Spring Boot 입문자들의 모임입니다.")
                     .detailDescription("기본적인 GetMapping, PostMapping 등과 어노테이션에 대한 학습을 목표로 합니다.")
                     .recommendedFor("Spring Boot가 처음이신분\nAnnotation에 대한 학습을 진행하고 싶으신 분")
                     .startAt(startAt)
-                    .endAt(endAt.minusHours(4))
-                    .announceAt(endAt)
+                    .endAt(endAt)
+                    .announceAt(LocalDateTime.of(2025, 2, 21, 14, 0, 0))
                     .maxMembers(4)
                     .defaultTodos(generateSpringBootTodos(startAt))
                     .build();
@@ -838,13 +838,13 @@ public class DataInitializer {
             });
 
             Sprint testsprint = SprintBuilder.builder()
-                    .name("Sprint Boot 감자 스터디 챌린지2")
+                    .name("Spring Boot 감자 스터디 챌린지2")
                     .basicDescription("Spring Boot 입문자들의 모임입니다.")
                     .detailDescription("기본적인 GetMapping, PostMapping 등과 어노테이션에 대한 학습을 목표로 합니다.")
                     .recommendedFor("Spring Boot가 처음이신분\nAnnotation에 대한 학습을 진행하고 싶으신 분")
                     .startAt(startAt)
-                    .endAt(endAt.minusHours(4))
-                    .announceAt(endAt)
+                    .endAt(endAt)
+                    .announceAt(LocalDateTime.of(2025, 2, 21, 14, 0, 0))
                     .maxMembers(4)
                     .defaultTodos(generateSpringBootTodos(startAt))
                     .build();
@@ -933,7 +933,7 @@ public class DataInitializer {
             startAt = now.plusDays(1);
             endAt = now.plusDays(7);
             Sprint sprint3 = SprintBuilder.builder()
-                    .name("Sprint MVC 패턴 관련 스프린트")
+                    .name("Spring MVC 패턴 관련 스프린트")
                     .basicDescription("Spring MVC 스프린트")
                     .detailDescription("Builder 패턴에 대해서 깊은 학습을 위해 스프린트를 만들었습니다.")
                     .recommendedFor("단순히 생성자를 사용하는 것이 아닌 Builder 패턴을 통한 범용성 넓은 생성에 관심을 갖춘 사람")
@@ -971,7 +971,7 @@ public class DataInitializer {
                     .startAt(startAt)
                     .endAt(endAt)
                     .announceAt(endAt)
-                    .maxMembers(2+random.nextInt(6))
+                    .maxMembers(4)
                     .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
             sprint4.setStatus(0);
@@ -1028,7 +1028,7 @@ public class DataInitializer {
             startAt = now.plusDays(3);
             endAt = now.plusDays(5);
             Sprint sprint6 = SprintBuilder.builder()
-                    .name("Sprint Security에 대한 깊은 이해를 위한 스프린트")
+                    .name("Spring Security에 대한 깊은 이해를 위한 스프린트")
                     .basicDescription("Spring Security 잘 알고 쓰자")
                     .detailDescription("Spring Security 설정에 있어 프로젝트에서 복붙이 아닌 전체적인 서비스를 이해하며 Config 파일을 짜자")
                     .recommendedFor("탄탄한 보안 구축에 흥미를 가지시는 분\nSpring Security에서 하는 일에 대한 깊은 이해를 목표로 하시는 분\nJWTFilter와 Spring Security에 대한 차이와 어떤 작용을 하는지 궁금하신 분")
@@ -1186,8 +1186,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(4);
-            endAt = now.plusDays(2);
+            startAt = now.plusDays(4);
+            endAt = now.plusDays(10);
             Sprint sprint11 = SprintBuilder.builder()
                     .name("ExpressJS 스프린트")
                     .basicDescription("비동기에 대해서 깊게 알아보자")
@@ -1199,7 +1199,7 @@ public class DataInitializer {
                     .maxMembers(4)
                     .defaultTodos(generateExpressTodos(startAt))
                     .build();
-            sprint11.setStatus(1);
+            sprint11.setStatus(0);
             sprintRepository.save(sprint11);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1286,8 +1286,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.plusDays(4);
-            endAt = now.plusDays(10);
+            startAt = LocalDateTime.of(2025, 2, 24, 9, 0, 0);
+            endAt = LocalDateTime.of(2025, 3, 2, 18, 0, 0);
             Sprint sprint14 = SprintBuilder.builder()
                     .name("React useState 기초 입문")
                     .basicDescription("React의 useState를 처음 배우는 분들을 위한 스프린트입니다.")
@@ -1295,12 +1295,13 @@ public class DataInitializer {
                     .recommendedFor("React 입문자\n컴포넌트 상태 관리 개념이 궁금하신 분")
                     .startAt(startAt)
                     .endAt(endAt)
-                    .announceAt(endAt.minusHours(3))
+                    .announceAt(LocalDateTime.of(2025, 3, 2, 16, 0, 0)) // 변경된 announceAt 값 적용
                     .maxMembers(4)  // 5~10명
                     .defaultTodos(generateReactTodos(startAt))
                     .build();
             sprint14.setStatus(0);
             sprintRepository.save(sprint14);
+
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
                         .orElseThrow(CategoryNotExistException::new);
@@ -1314,7 +1315,7 @@ public class DataInitializer {
                     .recommendedFor("React 입문자\n컴포넌트 상태 관리 개념이 궁금하신 분")
                     .startAt(startAt)
                     .endAt(endAt)
-                    .announceAt(endAt.minusHours(3))
+                    .announceAt(LocalDateTime.of(2025, 3, 2, 16, 0, 0)) // 변경된 announceAt 값 적용
                     .maxMembers(4)  // 5~10명
                     .defaultTodos(generateReactTodos(startAt))
                     .build();
@@ -1908,8 +1909,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.plusDays(4);
-            endAt = now.plusDays(10);
+            startAt = LocalDateTime.of(2025, 2, 20, 9, 0, 0);
+            endAt = LocalDateTime.of(2025, 2, 22, 18, 0, 0);
             Sprint sprint33 = SprintBuilder.builder()
                     .name("인덱스와 조인 최적화")
                     .basicDescription("인덱스를 활용하여 SQL 조인 성능을 최적화하는 방법을 배우는 스프린트입니다.")
@@ -1917,7 +1918,7 @@ public class DataInitializer {
                     .recommendedFor("대량 데이터 조인을 빠르게 처리하고 싶은 개발자\nSQL 조인 최적화를 통해 시스템 성능을 개선하고 싶은 분")
                     .startAt(startAt)
                     .endAt(endAt)
-                    .announceAt(endAt.minusHours(4))
+                    .announceAt(LocalDateTime.of(2025, 2, 22, 16, 0, 0))
                     .maxMembers(4)  // 5~10명
                     .defaultTodos(generateIndexTodos(startAt))
                     .build();
@@ -1936,7 +1937,7 @@ public class DataInitializer {
                     .recommendedFor("대량 데이터 조인을 빠르게 처리하고 싶은 개발자\nSQL 조인 최적화를 통해 시스템 성능을 개선하고 싶은 분")
                     .startAt(startAt)
                     .endAt(endAt)
-                    .announceAt(endAt.minusHours(4))
+                    .announceAt(LocalDateTime.of(2025, 2, 22, 16, 0, 0))
                     .maxMembers(4)  // 5~10명
                     .defaultTodos(generateIndexTodos(startAt))
                     .build();
@@ -3280,14 +3281,10 @@ public class DataInitializer {
         String[][] tasksByDay = {
                 {"SQL 조인의 기본 개념 학습", "INNER JOIN, LEFT JOIN, RIGHT JOIN 차이 이해", "실습을 위한 샘플 데이터 생성"},
                 {"Nested Loop Join 개념 이해", "인덱스 미적용 vs 적용 비교", "실제 쿼리 실행 계획 분석"},
-                {"Hash Join 개념과 활용", "대량 데이터 조인 시 성능 비교", "조인 키에 대한 해시 인덱스 적용 실험"},
-                {"Merge Join 개념과 정렬 최적화", "정렬된 데이터셋을 활용한 성능 개선", "쿼리 실행 계획 비교"},
-                {"복합 인덱스를 활용한 조인 최적화", "WHERE 조건과 조인 성능 분석", "카디널리티와 인덱스 선택 기준 학습"},
-                {"실전 조인 최적화 실습", "대량 데이터셋을 이용한 성능 비교", "실제 프로젝트 환경에서 인덱스 튜닝 적용"},
-                {"최종 리뷰 및 성능 테스트", "인덱스 생성 및 삭제에 따른 성능 차이 분석", "전체적인 최적화 전략 정리 및 QA 세션"}
+                {"Hash Join 개념과 활용", "대량 데이터 조인 시 성능 비교", "조인 키에 대한 해시 인덱스 적용 실험"}
         };
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 3; i++) {
             LocalDate date = startAt.toLocalDate().plusDays(i);
             List<String> tasks = List.of(tasksByDay[i]);
 
@@ -3327,16 +3324,11 @@ public class DataInitializer {
         Random random = new Random();
 
         String[][] tasksByDay = {
-                {"Spring Boot 개요 및 프로젝트 생성", "Spring Initializr를 활용한 프로젝트 생성", "기본적인 폴더 구조 이해"},
-                {"Controller와 요청 매핑", "@GetMapping, @PostMapping, @RequestMapping 학습", "간단한 API 엔드포인트 작성"},
-                {"Spring Boot의 DI와 IoC 개념", "@Component, @Service, @Autowired 학습", "의존성 주입을 활용한 서비스 레이어 구현"},
-                {"Spring Boot의 데이터 처리", "Spring Data JPA 기본 개념", "@Entity, @Repository를 사용한 데이터베이스 연동"},
-                {"Spring Boot 예외 처리 및 로깅", "@ExceptionHandler, @ControllerAdvice를 활용한 글로벌 예외 처리", "SLF4J 및 Logback 설정"},
-                {"Spring Boot 프로젝트 실습", "RestController 기반의 간단한 CRUD API 개발", "Swagger를 활용한 API 문서화"},
-                {"최종 프로젝트 구현 및 코드 리뷰", "Spring Boot 프로젝트 배포 및 실행", "스터디 최종 정리 및 QA 세션"}
+                {"Spring Boot 개요 및 프로젝트 생성", "@GetMapping, @PostMapping, @RequestMapping 학습", "간단한 API 엔드포인트 작성"},
+                {"Spring Boot의 DI와 IoC 개념", "@Component, @Service, @Autowired 학습", "의존성 주입을 활용한 서비스 레이어 구현"}
         };
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 2; i++) {
             LocalDate date = startAt.toLocalDate().plusDays(i);
             List<String> tasks = List.of(tasksByDay[i]);
 
