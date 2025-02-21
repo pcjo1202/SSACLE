@@ -27,6 +27,8 @@ const MyPageSkillSection: FC<MyPageSkillSectionProps> = ({}) => {
         .get('/user/interested-category')
         .then((res) => res.data)
     },
+    staleTime: 0, // 데이터가 즉시 stale 상태가 되도록 설정
+    gcTime: 0, // 데이터가 즉시 stale 상태가 되도록 설정
   })
 
   return (
