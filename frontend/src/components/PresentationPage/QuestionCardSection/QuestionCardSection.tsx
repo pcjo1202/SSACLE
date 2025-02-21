@@ -50,6 +50,27 @@ const QuestionCardSection = () => {
       teamId: 0,
       opened: true,
     },
+    {
+      id: 2,
+      description: '브라우저 렌더링에 대해 설명해주세요.',
+      createdAt: '2025-02-18T09:42:59.160Z',
+      teamId: 0,
+      opened: true,
+    },
+    {
+      id: 2,
+      description: '브라우저 렌더링에 대해 설명해주세요.',
+      createdAt: '2025-02-18T09:42:59.160Z',
+      teamId: 0,
+      opened: true,
+    },
+    {
+      id: 2,
+      description: '브라우저 렌더링에 대해 설명해주세요.',
+      createdAt: '2025-02-18T09:42:59.160Z',
+      teamId: 0,
+      opened: true,
+    },
   ]
 
   const queryClient = useQueryClient()

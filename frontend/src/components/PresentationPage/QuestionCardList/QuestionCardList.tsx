@@ -22,7 +22,7 @@ const QuestionCardList: FC<QuestionCardListProps> = ({
     <div
       className={cn(
         !isSelectedQuestion &&
-          'flex items-center justify-around w-full h-full gap-3',
+          'flex items-center justify-around w-full flex-wrap h-full gap-3',
         'transition-all duration-300 ease-in-out overflow-auto'
       )}
     >
