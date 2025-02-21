@@ -1,11 +1,12 @@
-import { User } from '@/interfaces/user.interface'
-import { useQueryClient } from '@tanstack/react-query'
+import { User, UserCategory } from '@/interfaces/user.interface'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { FC } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import MypageCategoryChange from '@/components/MyPage/MypageCategoryChange'
+import httpCommon from '@/services/http-common'
 
 interface MyPageSkillSectionProps {}
 
@@ -15,6 +16,18 @@ const MyPageSkillSection: FC<MyPageSkillSectionProps> = ({}) => {
   const userInfo: User | undefined = queryClient.getQueryData(['userInfo'])
 
   const { categoryNames } = userInfo ?? {}
+
+  // 유저 관심 카테고리
+  const { data: userCategory, isSuccess: isSuccessUser } = useQuery<
+    UserCategory[]
+  >({
+    queryKey: ['userCategory'],
+    queryFn: async () => {
+      return await httpCommon
+        .get('/user/interested-category')
+        .then((res) => res.data)
+    },
+  })
 
   return (
     <Card className="delay-700 animate-fade-in-down">

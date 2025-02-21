@@ -22,3 +22,21 @@ export type Sprint = {
   endAt: string
   teamId: number
 }
+
+export interface Category {
+  id: number
+  categoryName: string
+  subCategories: SubCategory[]
+}
+
+export interface SubCategory {
+  id: number
+  categoryName: string
+  subCategories: SubCategory[]
+}
+
+export interface UserCategory {
+  id: number
+  categoryName: string
+  image: string | null
+}

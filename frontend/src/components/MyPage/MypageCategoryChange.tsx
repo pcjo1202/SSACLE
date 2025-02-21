@@ -9,31 +9,14 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import httpCommon from '@/services/http-common'
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
+import { Category, UserCategory } from '@/interfaces/user.interface'
 
 interface MypageCategoryChangeProps {
   children: React.ReactNode
-}
-
-interface Category {
-  id: number
-  categoryName: string
-  subCategories: SubCategory[]
-}
-
-interface SubCategory {
-  id: number
-  categoryName: string
-  subCategories: SubCategory[]
-}
-
-interface UserCategory {
-  id: number
-  categoryName: string
-  image: string | null
 }
 
 const MypageCategoryChange: FC<MypageCategoryChangeProps> = ({ children }) => {
@@ -50,6 +33,11 @@ const MypageCategoryChange: FC<MypageCategoryChangeProps> = ({ children }) => {
       },
     }
   )
+
+  const queryClient = useQueryClient()
+  const userCategoryNames = queryClient.getQueryData<UserCategory[]>([
+    'userCategory',
+  ])
 
   // 유저 관심 카테고리
   const { data: userCategory, isSuccess: isSuccessUser } = useQuery<
