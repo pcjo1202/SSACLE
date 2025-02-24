@@ -1,5 +1,7 @@
 <img style="width: 100vh;" src='/docs/images/ssacle_banner.png' alt='로고 이미지'/>
 
+<img style="width: 100vh;" src='/docs/gif/SSACLE_intro.gif' alt=''/>
+
 > 🕰️ **진행 기간** : _2025. 01.06 ~ 2025. 02 .21 **(7주)**_
 
 
@@ -63,22 +65,21 @@ _**👍🏻 Frontend**_
 ## 1️⃣ 로그인/회원가입
 > _""_ 
 
-<img src='' alt='gif'/>
+<img src='/docs/gif/SSACLE_signup.gif' alt='gif'/>
 
 ## 2️⃣ 싸프린트
 > _""_ 
 
-<img style="width: 100vh;" src='' alt='gif'/>
+<img style="width: 100vh;" src='/docs/gif/SSACLE_ssaprint_join.gif' alt='gif'/>
 
 ## 3️⃣ 싸드컵
 > _""_ 
 
-<img style="width: 100vh;" src='' alt='gif'/>
 
 ## 4️⃣ 화상 발표 기능
 > _""_ 
 
-<img style="width: 100vh;" src='' alt='gif'/>
+<img style="width: 100vh;" src='/docs/gif/SSACLE_presentation.gif' alt='gif'/>
 
 ## 5️⃣ 자유게시판
 > _""_ 
@@ -88,12 +89,12 @@ _**👍🏻 Frontend**_
 ## 6️⃣ 학습게시판
 > _""_ 
 
-<img style="width: 100vh;" src='' alt='gif'/>
+<img style="width: 100vh;" src='/docs/gif/SSACLE_board.gif' alt='gif'/>
 
 ## 7️⃣ 관리자 기능
 > _""_ 
 
-<img style="width: 100vh;" src='' alt='gif'/>
+<img style="width: 100vh;" src='/docs/gif/SSACLE_admin.gif' alt='gif'/>
 
 
 # 😎 컨벤션
