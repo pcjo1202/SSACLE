@@ -1,22 +1,11 @@
-# SSACLE
-> ""
-
 <img style="width: 100vh;" src='/docs/images/ssacle_banner.png' alt='로고 이미지'/>
 
-<br/>
-
-<img src='' alt='gif'/>
+> 🕰️ **진행 기간** : _2025. 01.06 ~ 2025. 02 .21 **(7주)**_
 
 
-# 👨🏻‍💻팀원
+### ✅ 주요 기능 summary
 
-|  김태영 | 박창조 | 김희수 | 이아영 | 전성호 | 김수현 |
-|:---:|:---:|:---:|:----:|:---:|:---:|
-| [![](https://github.com/pcjo1202.png?width=150px)](https://github.com/pcjo1202) | [![](https://github.com/TaeYeong14.png?width=150px)](https://github.com/TaeYeong14) | [![](https://github.com/hseegr.png?width=150px)](https://github.com/hseegr) | [![](https://github.com/aaaange.png?width=150px)](https://github.com/aaaange) |[![](https://github.com/aaaange.png?width=150px)](https://github.com/aaaange) |[![](https://github.com/aaaange.png?width=150px)](https://github.com/aaaange) |
-| FE | FE, 인프라 | FE | FE | BE | BE |
-
-
-# ✅ 주요 기능 summary
+---
 
 - 1️⃣ 로그인/회원가입 
 - 2️⃣ 싸프린트
@@ -26,7 +15,12 @@
 - 6️⃣ 학습게시판
 - 7️⃣ 관리자 기능
 
+# 👨🏻‍💻 함께한 팀원
 
+|  김태영 | 박창조 | 김희수 | 이아영 | 전성호 | 김수현 |
+|:---:|:---:|:---:|:----:|:---:|:---:|
+| [![](https://github.com/TaeYeong14.png?width=150px)](https://github.com/TaeYeong14) | [![](https://github.com/pcjo1202.png?width=150px)](https://github.com/pcjo1202) | [![](https://github.com/hseegr.png?width=150px)](https://github.com/hseegr) | [![](https://github.com/aaaange.png?width=150px)](https://github.com/aaaange) |[![](https://github.com/{}.png?width=150px)](https://github.com/{}) |[![](https://github.com/{}.png?width=150px)](https://github.com/{}) |
+| FE | FE, 인프라 | FE | FE | BE | BE |
 
 # ✨ 기술 스택
 
@@ -61,7 +55,45 @@ _**👍🏻 Frontend**_
 
 # ✨ 시스템 아키텍처
 
-<div style="width :100vh; "><img src='./ssacle_banner.png' alt='시스템 아키텍처처'/></div>
+<div style="width :100vh; "><img src='/docs/images/시스템아키텍처.png' alt='시스템 아키텍처'/></div>
+
+
+# 🔭 주요 기능
+
+## 1️⃣ 로그인/회원가입
+> _""_ 
+
+<img src='' alt='gif'/>
+
+## 2️⃣ 싸프린트
+> _""_ 
+
+<img style="width: 100vh;" src='' alt='gif'/>
+
+## 3️⃣ 싸드컵
+> _""_ 
+
+<img style="width: 100vh;" src='' alt='gif'/>
+
+## 4️⃣ 화상 발표 기능
+> _""_ 
+
+<img style="width: 100vh;" src='' alt='gif'/>
+
+## 5️⃣ 자유게시판
+> _""_ 
+
+<img style="width: 100vh;" src='' alt='gif'/>
+
+## 6️⃣ 학습게시판
+> _""_ 
+
+<img style="width: 100vh;" src='' alt='gif'/>
+
+## 7️⃣ 관리자 기능
+> _""_ 
+
+<img style="width: 100vh;" src='' alt='gif'/>
 
 
 # 😎 컨벤션
@@ -79,15 +111,3 @@ _**👍🏻 Frontend**_
 
 # 🗂️ 폴더 구조
 [폴더 구조 확인하러 가기 ↗️](https://past-alder-21d.notion.site/Frontend-bd8d69c754e44e95b90287f08f9703ff?pvs=4)
-
-# 주요 기능
-
-## 1️⃣ 로그인/회원가입
-
-## 2️⃣ 싸프린트
-
-## 3️⃣ 싸드컵
-
-## 4️⃣ 게시판
-
-## 5️⃣ 관리자
